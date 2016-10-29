@@ -1,0 +1,21 @@
+{
+  "name": "vue-meta",
+  "version": "0.0.0",
+  "description": "manage page meta info in Vue 2.0 server-rendered apps",
+  "main": "index.js",
+  "repository": {
+    "url": "git@github.com:declandewet/vue-meta.git",
+    "type": "git"
+  },
+  "scripts": {
+    "lint": "standard"
+  },
+  "author": "Declan de Wet <declandewet@me.com>",
+  "license": "MIT",
+  "devDependencies": {
+    "standard": "^8.5.0"
+  },
+  "standard": {
+    "globals": ["Vue", "define"]
+  }
+}
