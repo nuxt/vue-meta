@@ -1,4 +1,6 @@
 # vue-meta
+[![Gitter](https://badges.gitter.im/vue-meta/Lobby.svg)](https://gitter.im/vue-meta/Lobby)
+
 Manage page meta info in Vue 2.0 server-rendered components. Supports streaming. No dependencies.
 
 > **Please note** that this project is still in very early alpha development and is *not* considered to be production ready.
