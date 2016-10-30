@@ -71,6 +71,21 @@
               return '<' + type + ' ' + VUE_META_ATTRIBUTE + '="true">' + data + '</' + type + '>'
             }
           }
+        case 'htmlAttrs': {
+          return {
+            toString: function toString () {
+              var attributeStr = ''
+              var attr
+              for (attr in data) {
+                if (data.hasOwnProperty(attr)) {
+                  attributeStr += typeof data[attr] !== 'undefined' ? (attr + '="' + data[attr] + '"') : attr
+                  attributeStr += ' '
+                }
+              }
+              return attributeStr.trim()
+            }
+          }
+        }
       }
     }
 
@@ -81,6 +96,9 @@
       var newMeta = this.getMetaInfo()
       if (newMeta.title) {
         updateTitle(newMeta.title)
+      }
+      if (newMeta.htmlAttrs) {
+        updateHtmlAttrs(newMeta.htmlAttrs)
       }
     }
 
@@ -113,8 +131,11 @@
    * @return {Object} metaInfo - the merged options
    */
   function getMetaInfoDefinition (Vue, $instance, metaInfo) {
-    // set default for first run
-    metaInfo = metaInfo || {}
+    // set defaults for first run
+    metaInfo = Vue.util.extend(metaInfo || {
+      title: 'Untitled',
+      htmlAttrs: {}
+    })
 
     // if current instance has a metaInfo option...
     if ($instance.$options.metaInfo) {
@@ -156,6 +177,40 @@
    */
   function updateTitle (title) {
     document.title = title || document.title
+  }
+
+  /**
+   * updates the document's html tag attributes
+   * @param  {Object} attrs - the new document html attributes
+   */
+  function updateHtmlAttrs (attrs) {
+    var tag = document.getElementsByTagName('html')[0]
+    var vueMetaAttrString = tag.getAttribute(VUE_META_ATTRIBUTE)
+    var vueMetaAttrs = vueMetaAttrString ? vueMetaAttrString.split(',') : []
+    var toRemove = [].concat(vueMetaAttrs)
+    var attr
+    for (attr in attrs) {
+      if (attrs.hasOwnProperty(attr)) {
+        var val = attrs[attr] || ''
+        tag.setAttribute(attr, val)
+        if (vueMetaAttrs.indexOf(attr) === -1) {
+          vueMetaAttrs.push(attr)
+        }
+        var saveIndex = toRemove.indexOf(attr)
+        if (saveIndex !== -1) {
+          toRemove.splice(saveIndex, 1)
+        }
+      }
+    }
+    var i = toRemove.length - 1
+    for (; i >= 0; i--) {
+      tag.removeAttribute(toRemove[i])
+    }
+    if (vueMetaAttrs.length === toRemove.length) {
+      tag.removeAttribute(VUE_META_ATTRIBUTE)
+    } else {
+      tag.setAttribute(VUE_META_ATTRIBUTE, vueMetaAttrs.join(','))
+    }
   }
 
   // automatic installation when global context
