@@ -4,6 +4,9 @@
   // initialize vue-meta
   var VueMeta = {}
 
+  // initialize manager
+  var _manager = {}
+
   /**
    * Registers the plugin with Vue.js
    * Pass it like so: Vue.use(VueMeta)
@@ -15,29 +18,47 @@
 
     // set installation inspection flag
     VueMeta.install.installed = true
-    
+
     // listen for when components mount - when they do,
     // update the meta info & the DOM
     Vue.mixin({
-      mounted () {
-        this.$root.$updateMeta()
+      mounted: function mounted () {
+        this.$root.$vueMeta.updateMetaInfo()
       }
     })
-    
-    /**
-     * Updates meta info and renders it to the DOM
-     */
-    Vue.prototype.$updateMeta = function $updateMeta () {
-      var newMeta = this.$meta()
-      document.title = newMeta.title
+
+    // guard against `$vueMeta` being redefined on new server requests
+    if (!Vue.prototype.hasOwnProperty('$vueMeta')) {
+      // define API methods on the `$vueMeta` instance property
+      Object.defineProperty(Vue.prototype, '$vueMeta', {
+        enumerable: true,
+        /**
+         * Meta info manager API factory
+         * @return {Object} - the API for this plugin
+         */
+        get: function get () {
+          _manager.getMetaInfo = _manager.getMetaInfo || Vue.util.bind(getMetaInfo, this)
+          _manager.updateMetaInfo = _manager.updateMetaInfo || updateMetaInfo
+          return _manager
+        }
+      })
     }
 
     /**
-     * Does the grunt work of exposing component meta options
-     * to the server-rendered context
+     * Updates meta info and renders it to the DOM
+     */
+    function updateMetaInfo () {
+      var newMeta = this.getMetaInfo()
+      if (newMeta.title) {
+        updateTitle(newMeta.title)
+      }
+    }
+
+    /**
+     * Fetches corresponding meta info for the current component state
      * @return {Object} - all the meta info for currently matched components
      */
-    Vue.prototype.$meta = function $meta () {
+    function getMetaInfo () {
       return getMetaInfoDefinition(Vue, this)
     }
   }
@@ -46,11 +67,11 @@
    * Recursively traverses each component, checking for a `metaInfo`
    * option. It then merges all these options into one object, giving
    * higher priority to deeply nested components.
-   * 
+   *
    * NOTE: This function uses Vue.prototype.$children, the results of which
    *       are not gauranted to be in order. For this reason, try to avoid
    *       using the same `metaInfo` property in sibling components.
-   *       
+   *
    * @param  {Function} Vue - the Vue constructor
    * @param  {Object} $instance - the current instance
    * @param  {Object} [metaInfo={}] - the merged options
@@ -59,10 +80,12 @@
   function getMetaInfoDefinition (Vue, $instance, metaInfo) {
     // set default for first run
     metaInfo = metaInfo || {}
+
     // if current instance has a metaInfo option...
     if ($instance.$options.metaInfo) {
       var componentMetaInfo = $instance.$options.metaInfo
       var key
+
       // ...convert all function type keys to raw data
       // (this allows meta info to be inferred from props & data)...
       for (key in componentMetaInfo) {
@@ -73,9 +96,11 @@
           }
         }
       }
+
       // ...then merge the data into metaInfo
       metaInfo = Vue.util.mergeOptions(metaInfo, componentMetaInfo)
     }
+
     // check if any children also have a metaInfo option, if so, merge
     // them into existing data
     var len = $instance.$children.length
@@ -85,7 +110,16 @@
         metaInfo = getMetaInfoDefinition(Vue, $instance.$children[i], metaInfo)
       }
     }
+
     return metaInfo
+  }
+
+  /**
+   * updates the document title
+   * @param  {String} title - the new title of the document
+   */
+  function updateTitle (title) {
+    document.title = title || document.title
   }
 
   // automatic installation when global context
