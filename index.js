@@ -1,6 +1,8 @@
 (function (global) {
   'use strict'
 
+  var VUE_META_ATTRIBUTE = 'data-vue-meta'
+
   // initialize vue-meta
   var VueMeta = {}
 
@@ -34,7 +36,42 @@
     Vue.prototype.$vueMeta = function $vueMeta () {
       _manager.getMetaInfo = _manager.getMetaInfo || Vue.util.bind(getMetaInfo, this)
       _manager.updateMetaInfo = _manager.updateMetaInfo || updateMetaInfo
+      _manager.inject = _manager.inject || inject
       return _manager
+    }
+
+    /**
+     * Converts the state of the meta info object such that each item
+     * can be compiled to a tag string on the server
+     * @return {Object} - server meta info with `toString` methods
+     */
+    function inject () {
+      var info = this.getMetaInfo()
+      var serverMetaInfo = {}
+      var key
+      for (key in info) {
+        if (info.hasOwnProperty(key)) {
+          serverMetaInfo[key] = generateServerInjector(key, info[key])
+        }
+      }
+      return serverMetaInfo
+    }
+
+    /**
+     * Converts a meta info property to one that can be stringified on the server
+     * @param  {String} type - the type of data to convert
+     * @param  {(String|Object|Array<Object>)} data - the data value
+     * @return {Object} - the new injector
+     */
+    function generateServerInjector (type, data) {
+      switch (type) {
+        case 'title':
+          return {
+            toString: function toString () {
+              return '<' + type + ' ' + VUE_META_ATTRIBUTE + '="true">' + data + '</' + type + '>'
+            }
+          }
+      }
     }
 
     /**
