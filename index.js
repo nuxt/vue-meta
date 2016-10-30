@@ -23,26 +23,18 @@
     // update the meta info & the DOM
     Vue.mixin({
       mounted: function mounted () {
-        this.$root.$vueMeta.updateMetaInfo()
+        this.$root.$vueMeta().updateMetaInfo()
       }
     })
 
-    // guard against `$vueMeta` being redefined on new server requests
-    if (!Vue.prototype.hasOwnProperty('$vueMeta')) {
-      // define API methods on the `$vueMeta` instance property
-      Object.defineProperty(Vue.prototype, '$vueMeta', {
-        enumerable: true,
-
-        /**
-         * Meta info manager API factory
-         * @return {Object} - the API for this plugin
-         */
-        get: function get () {
-          _manager.getMetaInfo = _manager.getMetaInfo || Vue.util.bind(getMetaInfo, this)
-          _manager.updateMetaInfo = _manager.updateMetaInfo || updateMetaInfo
-          return _manager
-        }
-      })
+    /**
+     * returns a cached manager API for use on the server
+     * @return {Object} - manager (The programmatic API for this module)
+     */
+    Vue.prototype.$vueMeta = function $vueMeta () {
+      _manager.getMetaInfo = _manager.getMetaInfo || Vue.util.bind(getMetaInfo, this)
+      _manager.updateMetaInfo = _manager.updateMetaInfo || updateMetaInfo
+      return _manager
     }
 
     /**
@@ -62,6 +54,7 @@
     function getMetaInfo () {
       var info = getMetaInfoDefinition(Vue, this)
       if (info.titleTemplate) {
+        info.titleChunk = info.title
         info.title = info.titleTemplate.replace('%s', info.title)
       }
       return info
