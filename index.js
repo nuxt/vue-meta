@@ -32,6 +32,7 @@
       // define API methods on the `$vueMeta` instance property
       Object.defineProperty(Vue.prototype, '$vueMeta', {
         enumerable: true,
+
         /**
          * Meta info manager API factory
          * @return {Object} - the API for this plugin
@@ -59,7 +60,11 @@
      * @return {Object} - all the meta info for currently matched components
      */
     function getMetaInfo () {
-      return getMetaInfoDefinition(Vue, this)
+      var info = getMetaInfoDefinition(Vue, this)
+      if (info.titleTemplate) {
+        info.title = info.titleTemplate.replace('%s', info.title)
+      }
+      return info
     }
   }
 
@@ -111,6 +116,7 @@
       }
     }
 
+    // meta info is ready for consumption
     return metaInfo
   }
 
