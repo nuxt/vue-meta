@@ -28,7 +28,7 @@
      * Updates meta info and renders it to the DOM
      */
     Vue.prototype.$updateMeta = function $updateMeta () {
-      const newMeta = this.$meta()
+      var newMeta = this.$meta()
       document.title = newMeta.title
     }
 
@@ -59,9 +59,22 @@
   function getMetaInfoDefinition (Vue, $instance, metaInfo) {
     // set default for first run
     metaInfo = metaInfo || {}
-    // if current instance has a metaInfo option, merge it in
+    // if current instance has a metaInfo option...
     if ($instance.$options.metaInfo) {
-      metaInfo = Vue.util.mergeOptions(metaInfo, $instance.$options.metaInfo)
+      var componentMetaInfo = $instance.$options.metaInfo
+      var key
+      // ...convert all function type keys to raw data
+      // (this allows meta info to be inferred from props & data)...
+      for (key in componentMetaInfo) {
+        if (componentMetaInfo.hasOwnProperty(key)) {
+          var val = componentMetaInfo[key]
+          if (typeof val === 'function') {
+            componentMetaInfo[key] = val.call($instance)
+          }
+        }
+      }
+      // ...then merge the data into metaInfo
+      metaInfo = Vue.util.mergeOptions(metaInfo, componentMetaInfo)
     }
     // check if any children also have a metaInfo option, if so, merge
     // them into existing data
