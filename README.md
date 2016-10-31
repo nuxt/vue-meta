@@ -6,6 +6,25 @@ Manage page meta info in Vue 2.0 server-rendered components. Supports streaming.
 > **Please note** that this project is still in very early alpha development and is *not* considered to be production ready.
 > **You have been warned.** There is no sanitization yet, no tests, and you might even find some features are still missing.
 
+```html
+<template>
+  ...
+</template>
+
+<script>
+  export default {
+    metaInfo: {
+      title: 'My Example App', // set a title
+      titleTemplate: '%s - Yay!', // title is now "My Example App - Yay!"
+      htmlAttrs: {
+        lang: 'en',
+        amp: undefined // "amp" has no value
+      }
+    }
+  }
+</script>
+```
+
 # Description
 `vue-meta` is a [Vue 2.0](https://vuejs.org) plugin that allows you to manage your app's meta information, much like [`react-helmet`](https://github.com/nfl/react-helmet) does for React. However, instead of setting your data as props passed to a proprietary component, you simply export it as part of your component's data using the `metaInfo` property.
 
@@ -228,6 +247,84 @@ In any of your components, define a `metaInfo` property:
     metaInfo: {
       // title will be injected into parent titleTemplate
       title: 'About Us'
+    }
+  }
+</script>
+```
+
+# FAQ
+
+Here are some answers to some frequently asked questions.
+
+## How do I use component data in `metaInfo`?
+Specify a function instead of a property.
+
+**BlogPost.vue:**
+```html
+<template>
+  <div id="page">
+    <h1>{{ title }}</h1>
+  </div>
+</template>
+
+<script>
+  export default {
+    name: 'BlogPost',
+    data: () => ({
+      title: 'Sample blog post'
+    }),
+    metaInfo: {
+      title () {
+        return this.title
+      }
+    }
+  }
+</script>
+```
+
+## How do I use component props in `metaInfo`?
+The same way you use data.
+
+**BlogPostWrapper.vue**
+```html
+<template>
+  <div id="page">
+    <blog-post :title="title"></blog-post>
+  </div>
+</template>
+
+<script>
+  import BlogPost from './BlogPost.vue'
+  
+  export default {
+    name: 'BlogPostWrapper',
+    components: { BlogPost },
+    data: () => ({
+      posts: [{ title: 'hello world' }]
+    }),
+    metaInfo: {
+      title: 'Blog Posts'
+    }
+  }
+</script>
+```
+
+**BlogPost.vue**
+```html
+<template>
+  <div id="page">
+    <h1>{{ title }}</h1>
+  </div>
+</template>
+
+<script>
+  export default {
+    name: 'BlogPost',
+    props: ['title'],
+    metaInfo: {
+      title () {
+        return this.title
+      }
     }
   }
 </script>
