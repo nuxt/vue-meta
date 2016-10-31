@@ -5,6 +5,7 @@
   "author": "Declan de Wet <declandewet@me.com>",
   "bugs": "https://github.com/declandewet/vue-meta/issues",
   "devDependencies": {
+    "doctoc": "^1.2.0",
     "rimraf": "^2.5.4",
     "rollup": "^0.36.3",
     "rollup-plugin-buble": "^0.14.0",
@@ -38,7 +39,8 @@
     "build": "rollup -c",
     "lint": "standard --verbose | snazzy",
     "prebuild": "rimraf lib",
-    "pretest": "npm run lint"
+    "pretest": "npm run lint",
+    "toc": "doctoc README.md --title '# Table of Contents'"
   },
   "standard": {
     "globals": [

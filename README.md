@@ -25,6 +25,25 @@ Manage page meta info in Vue 2.0 server-rendered components. Supports streaming.
 </script>
 ```
 
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+# Table of Contents
+
+- [Description](#description)
+- [Install](#install)
+- [Usage](#usage)
+    - [Step 1: Preparing the plugin](#step-1-preparing-the-plugin)
+    - [Step 2: Exposing `$meta` to `bundleRenderer`](#step-2-exposing-meta-to-bundlerenderer)
+    - [Step 3: Server-side rendering with `inject()`](#step-3-server-side-rendering-with-inject)
+      - [`renderToString()`](#rendertostring)
+      - [`renderToStream()`](#rendertostream)
+    - [Step 4: Start defining `metaInfo`](#step-4-start-defining-metainfo)
+- [FAQ](#faq)
+  - [How do I use component data in `metaInfo`?](#how-do-i-use-component-data-in-metainfo)
+  - [How do I use component props in `metaInfo`?](#how-do-i-use-component-props-in-metainfo)
+
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
+
 # Description
 `vue-meta` is a [Vue 2.0](https://vuejs.org) plugin that allows you to manage your app's meta information, much like [`react-helmet`](https://github.com/nfl/react-helmet) does for React. However, instead of setting your data as props passed to a proprietary component, you simply export it as part of your component's data using the `metaInfo` property.
 
