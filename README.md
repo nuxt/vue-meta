@@ -302,11 +302,8 @@ The same way you use data.
     name: 'BlogPostWrapper',
     components: { BlogPost },
     data: () => ({
-      posts: [{ title: 'hello world' }]
-    }),
-    metaInfo: {
-      title: 'Blog Posts'
-    }
+      title: 'Example blog post'
+    })
   }
 </script>
 ```
