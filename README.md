@@ -1,7 +1,7 @@
 ![vue-meta](http://imgh.us/vuemeta_2.svg)
 ---
 
-[![dependencies Status](https://david-dm.org/declandewet/vue-meta/status.svg)](https://david-dm.org/declandewet/vue-meta) [![devDependencies Status](https://david-dm.org/declandewet/vue-meta/dev-status.svg)](https://david-dm.org/declandewet/vue-meta?type=dev) [![Gitter](https://badges.gitter.im/vue-meta/Lobby.svg)](https://gitter.im/vue-meta/Lobby)
+[![Build Status](https://travis-ci.org/declandewet/vue-meta.svg?branch=master)](https://travis-ci.org/declandewet/vue-meta) [![dependencies Status](https://david-dm.org/declandewet/vue-meta/status.svg)](https://david-dm.org/declandewet/vue-meta) [![devDependencies Status](https://david-dm.org/declandewet/vue-meta/dev-status.svg)](https://david-dm.org/declandewet/vue-meta?type=dev) [![Gitter](https://badges.gitter.im/vue-meta/Lobby.svg)](https://gitter.im/vue-meta/Lobby)
 
 Manage page meta info in Vue 2.0 server-rendered components. Supports streaming.
 
