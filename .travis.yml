@@ -1,0 +1,17 @@
+language: node_js
+cache:
+  directories:
+    - $HOME/.npm
+    - $HOME/.yarn-cache
+    - node_modules
+branches:
+  only:
+    - master
+node_js:
+  - "6"
+before_install:
+  - npm i -g yarn --cache-min 999999999
+install:
+  - yarn
+script:
+  - yarn test
