@@ -8,10 +8,10 @@ export default {
   dest: './lib/index.js',
   moduleName: 'VueMeta',
   plugins: [
-    buble(),
     nodeResolve({
       jsnext: true
     }),
-    commonjs()
+    commonjs(),
+    buble()
   ]
 }
