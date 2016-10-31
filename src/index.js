@@ -137,7 +137,7 @@ function getMetaInfoDefinition (Vue, $instance, metaInfo = {
     // (this allows meta info to be inferred from props & data)...
     for (let key in componentMetaInfo) {
       if (componentMetaInfo.hasOwnProperty(key)) {
-        var val = componentMetaInfo[key]
+        const val = componentMetaInfo[key]
         if (typeof val === 'function') {
           componentMetaInfo[key] = val.call($instance)
         }
@@ -152,8 +152,7 @@ function getMetaInfoDefinition (Vue, $instance, metaInfo = {
   // them into existing data
   const len = $instance.$children.length
   if (len) {
-    var i = 0
-    for (; i < len; i++) {
+    for (let i = 0; i < len; i++) {
       metaInfo = getMetaInfoDefinition(Vue, $instance.$children[i], metaInfo)
     }
   }

@@ -1,10 +1,10 @@
-const fs = require('fs')
-const path = require('path')
-const express = require('express')
-const rewrite = require('express-urlrewrite')
-const webpack = require('webpack')
-const webpackDevMiddleware = require('webpack-dev-middleware')
-const WebpackConfig = require('./webpack.config')
+import fs from 'fs'
+import path from 'path'
+import express from 'express'
+import rewrite from 'express-urlrewrite'
+import webpack from 'webpack'
+import webpackDevMiddleware from 'webpack-dev-middleware'
+import WebpackConfig from './webpack.config.babel'
 
 const app = express()
 

@@ -4,10 +4,15 @@
   "version": "0.0.0",
   "author": "Declan de Wet <declandewet@me.com>",
   "bugs": "https://github.com/declandewet/vue-meta/issues",
+  "dependencies": {
+    "deepmerge": "^1.2.0"
+  },
   "devDependencies": {
+    "babel-cli": "^6.18.0",
     "babel-core": "^6.18.0",
     "babel-loader": "^6.2.7",
     "babel-preset-es2015": "^6.18.0",
+    "babel-register": "^6.18.0",
     "chai": "^3.5.0",
     "css-loader": "^0.25.0",
     "doctoc": "^1.2.0",
@@ -17,6 +22,7 @@
     "karma": "^1.3.0",
     "karma-chai": "^0.1.0",
     "karma-mocha": "^1.2.0",
+    "karma-mocha-reporter": "^2.2.0",
     "karma-phantomjs-launcher": "^1.0.2",
     "karma-webpack": "^1.8.0",
     "mocha": "^3.1.2",
@@ -55,12 +61,12 @@
     "type": "git"
   },
   "scripts": {
-    "dev": "node examples/server.js",
     "build": "rollup -c",
+    "dev": "babel-node examples/server.js",
     "lint": "standard --verbose | snazzy",
-    "test": "karma start karma.conf.js",
     "prebuild": "rimraf lib",
     "pretest": "npm run lint",
+    "test": "karma start karma.conf.js",
     "toc": "doctoc README.md --title '# Table of Contents'"
   },
   "standard": {
@@ -71,8 +77,5 @@
       "it",
       "expect"
     ]
-  },
-  "dependencies": {
-    "deepmerge": "^1.2.0"
   }
 }

@@ -1,8 +1,8 @@
-const fs = require('fs')
-const path = require('path')
-const webpack = require('webpack')
+import fs from 'fs'
+import path from 'path'
+import webpack from 'webpack'
 
-module.exports = {
+export default {
 
   devtool: 'inline-source-map',
 
