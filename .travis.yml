@@ -15,3 +15,5 @@ install:
   - yarn
 script:
   - yarn test
+after_script:
+  - yarn run codecov

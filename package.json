@@ -16,6 +16,7 @@
     "babel-preset-es2015": "^6.18.0",
     "babel-register": "^6.18.0",
     "chai": "^3.5.0",
+    "codecov": "^1.0.1",
     "cross-env": "^3.1.3",
     "css-loader": "^0.25.0",
     "doctoc": "^1.2.0",
@@ -69,6 +70,7 @@
     "type": "git"
   },
   "scripts": {
+    "codecov": "codecov",
     "build": "rollup -c",
     "dev": "babel-node examples/server.js",
     "lint": "standard --verbose | snazzy",
