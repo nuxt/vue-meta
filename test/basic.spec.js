@@ -1,6 +1,19 @@
+import Vue from 'vue'
+import Meta from 'vue-meta'
+
+Vue.use(Meta)
+
 describe('basic', () => {
-  it('does something', () => {
-    console.log('tests have yet to be written')
-    expect(2).to.equal(3)
+  it('sets the document title', () => {
+    new Vue({
+      template: `
+        <div id="app">
+        </div>
+      `,
+      metaInfo: {
+        title: 'Foo'
+      }
+    }).$mount()
+    expect(document.title).to.equal('Foo')
   })
 })
