@@ -8,6 +8,8 @@
     "rimraf": "^2.5.4",
     "rollup": "^0.36.3",
     "rollup-plugin-buble": "^0.14.0",
+    "rollup-plugin-commonjs": "^5.0.5",
+    "rollup-plugin-node-resolve": "^2.0.0",
     "snazzy": "^5.0.0",
     "standard": "^8.5.0"
   },
@@ -43,5 +45,8 @@
       "Vue",
       "define"
     ]
+  },
+  "dependencies": {
+    "deepmerge": "^1.2.0"
   }
 }

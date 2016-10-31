@@ -1,3 +1,4 @@
+import deepMerge from 'deepmerge'
 import { VUE_META_ATTRIBUTE } from './constants'
 
 // initialize vue-meta
@@ -69,11 +70,14 @@ VueMeta.install = function install (Vue) {
         return {
           toString () {
             let attributeStr = ''
+            let watchedAttrs = []
             for (let attr in data) {
               if (data.hasOwnProperty(attr)) {
+                watchedAttrs.push(attr)
                 attributeStr += `${typeof data[attr] !== 'undefined' ? `${attr}="${data[attr]}"` : attr} `
               }
             }
+            attributeStr += `${VUE_META_ATTRIBUTE}="${watchedAttrs.join(',')}"`
             return attributeStr.trim()
           }
         }
@@ -141,7 +145,7 @@ function getMetaInfoDefinition (Vue, $instance, metaInfo = {
     }
 
     // ...then merge the data into metaInfo
-    metaInfo = Vue.util.mergeOptions(metaInfo, componentMetaInfo)
+    metaInfo = deepMerge(metaInfo, componentMetaInfo)
   }
 
   // check if any children also have a metaInfo option, if so, merge

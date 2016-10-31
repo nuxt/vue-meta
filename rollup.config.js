@@ -1,3 +1,5 @@
+import commonjs from 'rollup-plugin-commonjs'
+import nodeResolve from 'rollup-plugin-node-resolve'
 import buble from 'rollup-plugin-buble'
 
 export default {
@@ -5,5 +7,11 @@ export default {
   format: 'umd',
   dest: './lib/index.js',
   moduleName: 'VueMeta',
-  plugins: [buble()]
+  plugins: [
+    buble(),
+    nodeResolve({
+      jsnext: true
+    }),
+    commonjs()
+  ]
 }
