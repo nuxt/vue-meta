@@ -1,9 +1,12 @@
 ![vue-meta](http://imgh.us/vuemeta_2.svg)
+
+**Manage page meta info in Vue components. SSR + Streaming supported.**
+
 ---
 
 [![github release](https://img.shields.io/github/release/declandewet/vue-meta.svg)](https://github.com/declandewet/vue-meta/releases/latest) [![npm version](https://img.shields.io/npm/v/vue-meta.svg)](http://npmjs.org/package/vue-meta) [![Build Status](https://travis-ci.org/declandewet/vue-meta.svg?branch=master)](https://travis-ci.org/declandewet/vue-meta) [![codecov](https://codecov.io/gh/declandewet/vue-meta/branch/master/graph/badge.svg)](https://codecov.io/gh/declandewet/vue-meta) [![dependencies Status](https://david-dm.org/declandewet/vue-meta/status.svg)](https://david-dm.org/declandewet/vue-meta) [![devDependencies Status](https://david-dm.org/declandewet/vue-meta/dev-status.svg)](https://david-dm.org/declandewet/vue-meta?type=dev) [![npm downloads](https://img.shields.io/npm/dm/vue-meta.svg)](http://npm-stat.com/charts.html?package=vue-meta) [![Gitter](https://badges.gitter.im/vue-meta/Lobby.svg)](https://gitter.im/vue-meta/Lobby)
 
-Manage page meta info in Vue 2.0 server-rendered components. Supports streaming.
+---
 
 > **Please note** that this project is still in very early alpha development and is *not* considered to be production ready.
 > **You have been warned.** There is no sanitization yet, no tests, and you might even find some features are still missing.
