@@ -56,6 +56,8 @@ export default new Router({
 })
 ```
 
+If you don't care about server-side rendering, you can skip straight to [step 4](#step-4-start-defining-metainfo). Otherwise, continue. :smile:
+
 ### Step 2: Exposing `$meta` to `bundleRenderer`
 
 You'll need to expose the results of the `$meta` method that `vue-meta` adds to the Vue instance to the bundle render context before you can begin injecting your meta information. You'll need to do this in your server entry file:
