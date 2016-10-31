@@ -1,21 +1,47 @@
 {
   "name": "vue-meta",
-  "version": "0.0.0",
   "description": "manage page meta info in Vue 2.0 server-rendered apps",
-  "main": "index.js",
+  "version": "0.0.0",
+  "author": "Declan de Wet <declandewet@me.com>",
+  "bugs": "https://github.com/declandewet/vue-meta/issues",
+  "devDependencies": {
+    "rimraf": "^2.5.4",
+    "rollup": "^0.36.3",
+    "rollup-plugin-buble": "^0.14.0",
+    "snazzy": "^5.0.0",
+    "standard": "^8.5.0"
+  },
+  "homepage": "https://github.com/declandewet/vue-meta",
+  "keywords": [
+    "attribute",
+    "google",
+    "head",
+    "helmet",
+    "info",
+    "meta",
+    "seo",
+    "server",
+    "ssr",
+    "title",
+    "universal",
+    "vue"
+  ],
+  "license": "MIT",
+  "main": "lib",
   "repository": {
     "url": "git@github.com:declandewet/vue-meta.git",
     "type": "git"
   },
   "scripts": {
-    "lint": "standard"
-  },
-  "author": "Declan de Wet <declandewet@me.com>",
-  "license": "MIT",
-  "devDependencies": {
-    "standard": "^8.5.0"
+    "build": "rollup -c",
+    "lint": "standard --verbose | snazzy",
+    "prebuild": "rimraf lib",
+    "pretest": "npm run lint"
   },
   "standard": {
-    "globals": ["Vue", "define"]
+    "globals": [
+      "Vue",
+      "define"
+    ]
   }
 }
