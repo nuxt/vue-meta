@@ -15,10 +15,21 @@ export default function VueMeta (Vue) {
   // bind the $meta method to this component instance
   Vue.prototype.$meta = $meta
 
-  // watch for client side updates
+  // store an id to keep track of DOM updates
+  let requestId = null
+
+  // watch for client side component updates
   Vue.mixin({
     mounted () {
-      updateClientMetaInfo(getMetaInfo(this.$root))
+      // batch potential DOM updates to prevent extraneous re-rendering
+      window.cancelAnimationFrame(requestId)
+
+      requestId = window.requestAnimationFrame(() => {
+        requestId = null
+
+        // update the meta info
+        updateClientMetaInfo(getMetaInfo(this.$root))
+      })
     }
   })
 }
