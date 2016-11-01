@@ -8,7 +8,6 @@ import { VUE_META_ATTRIBUTE } from './constants'
  * @return {Object} - the new injector
  */
 export default function generateServerInjector (type, data) {
-  console.log('server injector called for', type, 'with', data)
   switch (type) {
     case 'title':
       return {
