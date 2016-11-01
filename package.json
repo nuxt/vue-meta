@@ -85,7 +85,11 @@
       "define",
       "describe",
       "it",
-      "expect"
+      "expect",
+      "before",
+      "beforeEach",
+      "after",
+      "afterEach"
     ]
   }
 }

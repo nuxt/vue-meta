@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="http://imgh.us/Group_5.svg" alt="vue-meta">
+  <img src="http://imgur.com/258WtHI.png" alt="vue-meta">
 </p>
 
 <h5 align="center">
