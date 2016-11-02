@@ -26,7 +26,8 @@ export default {
   module: {
     loaders: [
       { test: /\.js$/, exclude: /node_modules/, loader: 'babel' },
-      { test: /\.vue$/, loader: 'vue' }
+      { test: /\.vue$/, loader: 'vue' },
+      { test: /\.json$/, loader: 'json' }
     ]
   },
 
