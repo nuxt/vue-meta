@@ -1,6 +1,6 @@
-import updateTitle from './updateTitle'
-import updateTagAttributes from './updateTagAttributes'
-import { SERVER_RENDERED_ATTRIBUTE } from './constants'
+import updateTitle from './updaters/updateTitle'
+import updateTagAttributes from './updaters/updateTagAttributes'
+import { SERVER_RENDERED_ATTRIBUTE } from '../shared/constants'
 
 if (typeof window !== 'undefined' && window !== null) {
   var htmlTag = document.getElementsByTagName('html')[0]

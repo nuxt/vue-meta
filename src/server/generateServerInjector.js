@@ -1,5 +1,5 @@
-import titleGenerator from './titleGenerator'
-import attrsGenerator from './attrsGenerator'
+import titleGenerator from './generators/titleGenerator'
+import attrsGenerator from './generators/attrsGenerator'
 
 /**
  * Converts a meta info property to one that can be stringified on the server

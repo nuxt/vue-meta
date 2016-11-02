@@ -1,4 +1,4 @@
-import { VUE_META_ATTRIBUTE } from './constants'
+import { VUE_META_ATTRIBUTE } from '../../shared/constants'
 
 /**
  * Generates title output for the server

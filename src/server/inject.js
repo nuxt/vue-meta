@@ -1,4 +1,4 @@
-import getMetaInfo from './getMetaInfo'
+import getMetaInfo from '../shared/getMetaInfo'
 import generateServerInjector from './generateServerInjector'
 
 /**
