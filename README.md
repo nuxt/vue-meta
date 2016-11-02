@@ -3,7 +3,7 @@
 </p>
 
 <h5 align="center">
-  Manage page meta info in Vue 2.0 components. SSR + Streaming supported.
+  Manage page meta info in Vue 2.0 components. SSR + Streaming supported. Inspired by <a href="https://github.com/nfl/react-helmet">react-helmet</a>
 </h5>
 
 <p align="center">
@@ -54,6 +54,12 @@
       - [Simple Rendering with `renderToString()`](#simple-rendering-with-rendertostring)
       - [Streaming Rendering with `renderToStream()`](#streaming-rendering-with-rendertostream)
   - [Step 3: Start defining `metaInfo`](#step-3-start-defining-metainfo)
+    - [Recognized `metaInfo` Properties](#recognized-metainfo-properties)
+      - [`title` (String)](#title-string)
+      - [`titleTemplate` (String)](#titletemplate-string)
+      - [`htmlAttrs` (Object)](#htmlattrs-object)
+      - [`bodyAttrs` (Object)](#bodyattrs-object)
+    - [How `metaInfo` is Resolved](#how-metainfo-is-resolved)
 - [Performance](#performance)
     - [How to prevent the update on the initial page render](#how-to-prevent-the-update-on-the-initial-page-render)
 - [FAQ](#faq)
@@ -120,29 +126,18 @@ You'll need to expose the results of the `$meta` method that `vue-meta` adds to 
 import app from './app'
 
 const router = app.$router
-const store = app.$store
 const meta = app.$meta() // here
 
 export default (context) => {
   router.push(context.url)
-  return Promise.all(
-    router.getMatchedComponents().map(
-      (component) => component.preFetch
-        ? component.preFetch(store)
-        : component
-    )
-  )
-    .then(() => {
-      context.initialState = store.state
-      context.meta = meta // and here
-      return app
-    })
+  context.meta = meta // and here
+  return app
 }
 ```
 
 ### Step 2.2: Populating the document meta info with `inject()`
 
-All that's left for you to do now before you can begin using `metaInfo` options in your components is to make sure they work on the server by `inject`-ing them. You have two methods at your disposal:
+All that's left for you to do now before you can begin using `metaInfo` options in your components is to make sure they work on the server by `inject`-ing them so you can call `text()` on each item to render out the necessary info. You have two methods at your disposal:
 
 #### Simple Rendering with `renderToString()`
 
@@ -151,40 +146,27 @@ Considerably the easiest method to wrap your head around is if your Vue server m
 **server.js:**
 
 ```js
-...
-app.get('*', (request, response) => {
-  const context = { url: request.url }
-  
+app.get('*', (req, res) => {
+  const context = { url: req.url }
   renderer.renderToString(context, (error, html) => {
-    if (error) {
-      ...
-    } else {
-      const { initialState, meta } = context
-      const metaInfo = meta.inject()
-      
-      response.send(`
-        <!doctype html>
-        <html data-vue-meta-server-rendered ${metaInfo.htmlAttrs.toString()}>
-          <head>
-            ${metaInfo.title.toString()}
-            <script>
-              window.__INITIAL_STATE__ = ${ !initialState
-                ? '{}'
-                : serialize(initialState, { isJSON: true })
-              }
-            </script>
-          </head>
-          <body>
-            ${html}
-            <script src="/assets/vendor.bundle.js"></script>
-            <script src="/assets/client.bundle.js"></script>
-          </body>
-        </html>
-      `)
-    }
+    if (error) return res.send(error.stack)
+    const { meta } = context
+    const { title, htmlAttrs, bodyAttrs } = meta.inject()
+    return res.send(`
+      <!doctype html>
+      <html data-vue-meta-server-rendered ${htmlAttrs.text()}>
+        <head>
+          ${title.text()}
+        </head>
+        <body ${bodyAttrs.text()}>
+          ${html}
+          <script src="/assets/vendor.bundle.js"></script>
+          <script src="/assets/client.bundle.js"></script>
+        </body>
+      </html>
+    `)
   })
 })
-...
 ```
 
 #### Streaming Rendering with `renderToStream()`
@@ -193,53 +175,35 @@ A little more complex, but well worth it, is to instead stream your response. `v
 
 **server.js**
 ```js
-app.get('*', (request, response) => {
-  const context = { url: request.url }
+app.get('*', (req, res) => {
+  const context = { url: req.url }
   const renderStream = renderer.renderToStream(context)
   let firstChunk = true
-  
-  response.write('<!doctype html>')
-  
   renderStream.on('data', (chunk) => {
     if (firstChunk) {
-      const metaInfo = context.meta.inject()
-      
-      if (metaInfo.htmlAttrs) {
-        response.write(`<html data-vue-meta-server-rendered ${metaInfo.htmlAttrs.toString()}>`)
-      }
-      
-      response.write('<head>')
-      
-      if (metaInfo.title) {
-        response.write(metaInfo.title.toString())
-      }
-      
-      response.write('</head><body>')
-      
-      if (context.initialState) {
-        response.write(
-          `<script>window.__INITIAL_STATE__=${
-            serialize(context.initialState, { isJSON: true })
-          }</script>`
-        )
-      }
-      
       firstChunk = false
+      const { meta } = context
+      const { title, htmlAttrs, bodyAttrs } = meta.inject()
+      res.write(`
+        <!doctype html>
+        <html data-vue-meta-server-rendered ${htmlAttrs.text()}>
+          <head>
+            ${title.text()}
+          </head>
+          <body ${bodyAttrs.text()}>
+      `)
     }
-    response.write(chunk)
+    res.write(chunk)
   })
-  
   renderStream.on('end', () => {
-    response.end(`
-      <script src="/assets/vendor.bundle.js"></script>
-      <script src="/assets/client.bundle.js"></script>
-      </body></html>
+    res.end(`
+          <script src="/assets/vendor.bundle.js"></script>
+          <script src="/assets/client.bundle.js"></script>
+        </body>
+      </html>
     `)
   })
-  
-  renderStream.on('error', (error) => {
-    response.status(500).end(`<pre>${error.stack}</pre>`)
-  })
+  renderStream.on('error', (error) => res.status(500).end(`<pre>${error.stack}</pre>`))
 })
 ```
 
@@ -306,6 +270,90 @@ In any of your components, define a `metaInfo` property:
   }
 </script>
 ```
+
+### Recognized `metaInfo` Properties
+
+#### `title` (String)
+
+Maps to the inner-text value of the `<title>` element.
+
+```js
+{
+  metaInfo: {
+    title: 'Foo Bar'
+  }
+}
+```
+
+```html
+<title>Foo Bar</title>
+```
+
+#### `titleTemplate` (String)
+
+The value of `title` will be injected into the `%s` placeholder in `titleTemplate` before being rendered.
+
+```js
+{
+  metaInfo: {
+    title: 'Foo Bar',
+    titleTemplate: '%s - Baz'
+  }
+}
+```
+
+```html
+<title>Foo Bar - Baz</title>
+```
+
+#### `htmlAttrs` (Object)
+
+Each **key:value** maps to the equivalent **attribute:value** of the `<html>` element.
+
+```js
+{
+  metaInfo: {
+    htmlAttrs: {
+      foo: 'bar',
+      amp: undefined
+    }
+  }
+}
+```
+
+```html
+<html foo="bar" amp></title>
+```
+
+#### `bodyAttrs` (Object)
+
+Each **key:value** maps to the equivalent **attribute:value** of the `<body>` element.
+
+```js
+{
+  metaInfo: {
+    bodyAttrs: {
+      bar: 'baz' 
+    }
+  }
+}
+```
+
+```html
+<body bar="baz">Foo Bar</body>
+```
+
+### How `metaInfo` is Resolved
+
+You can define a `metaInfo` property on any component in the tree. Child components that have `metaInfo` will recursively merge their `metaInfo` into the parent context, overwriting any duplicate properties. To better illustrate, consider this component heirarchy:
+
+```html
+<parent>
+  <child></child>
+</parent>
+```
+
+If both `<parent>` _and_ `<child>` define a `title` property inside `metaInfo`, then the `title` that gets rendered will resolve to the `title` defined inside `<child>`.
 
 # Performance
 
