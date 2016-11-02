@@ -309,7 +309,7 @@ In any of your components, define a `metaInfo` property:
 
 # Performance
 
-On the client, `vue-meta` batches DOM updates using [`requestAnimationFrame`](https://developer.mozilla.org/en-US/docs/Web/API/window/requestAnimationFrame). It needs to do this because it registers a Vue mixin that subscribes to the [`mounted`](https://vuejs.org/api/#mounted) lifecycle hook on all components in order to be notified that renders have occurred and data is ready. If `vue-meta` did not batch updates, the DOM meta info would be re-calculated and re-updated for every component on the page in quick-succession.
+On the client, `vue-meta` batches DOM updates using [`requestAnimationFrame`](https://developer.mozilla.org/en-US/docs/Web/API/window/requestAnimationFrame). It needs to do this because it registers a Vue mixin that subscribes to the [`beforeMount`](https://vuejs.org/api/#beforeMount) lifecycle hook on all components in order to be notified that renders have occurred and data is ready. If `vue-meta` did not batch updates, the DOM meta info would be re-calculated and re-updated for every component on the page in quick-succession.
 
 Thanks to batch updating, the update will only occurr once - even if the correct meta info has already been compiled by the server. If you don't want this behaviour, see below.
 

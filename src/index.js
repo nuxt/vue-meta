@@ -20,7 +20,7 @@ export default function VueMeta (Vue) {
 
   // watch for client side component updates
   Vue.mixin({
-    mounted () {
+    beforeMount () {
       // batch potential DOM updates to prevent extraneous re-rendering
       window.cancelAnimationFrame(requestId)
 
@@ -28,7 +28,7 @@ export default function VueMeta (Vue) {
         requestId = null
 
         // update the meta info
-        updateClientMetaInfo(getMetaInfo(this.$root))
+        updateClientMetaInfo(getMetaInfo(this.$root), this.$root)
       })
     }
   })
