@@ -1,4 +1,5 @@
-import { VUE_META_ATTRIBUTE } from './constants'
+import titleGenerator from './titleGenerator'
+import attrsGenerator from './attrsGenerator'
 
 /**
  * Converts a meta info property to one that can be stringified on the server
@@ -10,24 +11,9 @@ import { VUE_META_ATTRIBUTE } from './constants'
 export default function generateServerInjector (type, data) {
   switch (type) {
     case 'title':
-      return {
-        text: () => `<${type} ${VUE_META_ATTRIBUTE}="true">${data}</${type}>`
-      }
+      return titleGenerator(type, data)
     case 'htmlAttrs':
     case 'bodyAttrs':
-      return {
-        text () {
-          let attributeStr = ''
-          let watchedAttrs = []
-          for (let attr in data) {
-            if (data.hasOwnProperty(attr)) {
-              watchedAttrs.push(attr)
-              attributeStr += `${typeof data[attr] !== 'undefined' ? `${attr}="${data[attr]}"` : attr} `
-            }
-          }
-          attributeStr += `${VUE_META_ATTRIBUTE}="${watchedAttrs.join(',')}"`
-          return attributeStr.trim()
-        }
-      }
+      return attrsGenerator(type, data)
   }
 }
