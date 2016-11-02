@@ -4,9 +4,9 @@ import { VUE_META_ATTRIBUTE } from './constants'
  * updates the document's html tag attributes
  *
  * @param  {Object} attrs - the new document html attributes
- * @param  {HTMLElement} [tag=<html/>] - the <html> tag
+ * @param  {HTMLElement} tag - the HTMLElment tag to update with new attrs
  */
-export default function updateHtmlTagAttributes (attrs, tag = document.getElementsByTagName('html')[0]) {
+export default function updateTagAttributes (attrs, tag) {
   const vueMetaAttrString = tag.getAttribute(VUE_META_ATTRIBUTE)
   const vueMetaAttrs = vueMetaAttrString ? vueMetaAttrString.split(',') : []
   const toRemove = [].concat(vueMetaAttrs)

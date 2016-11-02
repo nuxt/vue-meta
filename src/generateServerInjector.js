@@ -11,11 +11,12 @@ export default function generateServerInjector (type, data) {
   switch (type) {
     case 'title':
       return {
-        toString: () => `<${type} ${VUE_META_ATTRIBUTE}="true">${data}</${type}>`
+        text: () => `<${type} ${VUE_META_ATTRIBUTE}="true">${data}</${type}>`
       }
-    case 'htmlAttrs': {
+    case 'htmlAttrs':
+    case 'bodyAttrs':
       return {
-        toString () {
+        text () {
           let attributeStr = ''
           let watchedAttrs = []
           for (let attr in data) {
@@ -28,6 +29,5 @@ export default function generateServerInjector (type, data) {
           return attributeStr.trim()
         }
       }
-    }
   }
 }

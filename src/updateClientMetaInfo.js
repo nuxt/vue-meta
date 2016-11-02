@@ -1,9 +1,10 @@
-import updateTitleTag from './updateTitleTag'
-import updateHtmlTagAttributes from './updateHtmlTagAttributes'
+import updateTitle from './updateTitle'
+import updateTagAttributes from './updateTagAttributes'
 import { SERVER_RENDERED_ATTRIBUTE } from './constants'
 
 if (typeof window !== 'undefined' && window !== null) {
   var htmlTag = document.getElementsByTagName('html')[0]
+  var bodyTag = document.getElementsByTagName('body')[0]
 }
 
 /**
@@ -14,13 +15,14 @@ if (typeof window !== 'undefined' && window !== null) {
 export default function updateClientMetaInfo (newInfo, $root) {
   // if this is not a server render, then update
   if (htmlTag.getAttribute(SERVER_RENDERED_ATTRIBUTE) === null) {
-    if (newInfo.title) {
-      updateTitleTag(newInfo.title)
-    }
+    // update the title
+    updateTitle(newInfo.title)
 
-    if (newInfo.htmlAttrs) {
-      updateHtmlTagAttributes(newInfo.htmlAttrs, htmlTag)
-    }
+    // update <html> attrs
+    updateTagAttributes(newInfo.htmlAttrs, htmlTag)
+
+    // update <body> attrs
+    updateTagAttributes(newInfo.bodyAttrs, bodyTag)
   } else {
     htmlTag.removeAttribute(SERVER_RENDERED_ATTRIBUTE)
   }

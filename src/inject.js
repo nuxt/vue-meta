@@ -9,12 +9,21 @@ import generateServerInjector from './generateServerInjector'
  * @return {Object} - server meta info with `toString` methods
  */
 export default function inject () {
-  const info = getMetaInfo(this.$root)
-  const serverMetaInfo = {}
+  const Vue = this.constructor
+
+  // get meta info with sensible defaults
+  const info = Vue.util.extend({
+    title: '',
+    htmlAttrs: {},
+    bodyAttrs: {}
+  }, getMetaInfo(this.$root))
+
+  // generate server injectors
   for (let key in info) {
     if (info.hasOwnProperty(key) && key !== 'titleTemplate') {
-      serverMetaInfo[key] = generateServerInjector(key, info[key])
+      info[key] = generateServerInjector(key, info[key])
     }
   }
-  return serverMetaInfo
+
+  return info
 }
