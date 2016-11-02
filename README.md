@@ -3,7 +3,7 @@
 </p>
 
 <h5 align="center">
-  Manage page meta info in Vue components. SSR + Streaming supported.
+  Manage page meta info in Vue 2.0 components. SSR + Streaming supported.
 </h5>
 
 <p align="center">
@@ -17,13 +17,6 @@
 <a href="https://david-dm.org/declandewet/vue-meta"><img src="https://david-dm.org/declandewet/vue-meta/status.svg" alt="dependencies Status"></a> <a href="https://david-dm.org/declandewet/vue-meta?type=dev"><img src="https://david-dm.org/declandewet/vue-meta/dev-status.svg" alt="devDependencies Status"></a><br>
 <a href="http://npm-stat.com/charts.html?package=vue-meta"><img src="https://img.shields.io/npm/dm/vue-meta.svg" alt="npm downloads"></a> <a href="https://gitter.im/declandewet/vue-meta"><img src="https://badges.gitter.im/declandewet/vue-meta.svg" alt="Gitter"></a>
 </p>
-
-<br>
-<hr style="height: 1px">
-<br>
-
-> **Please note** that this project is still in very early alpha development and is *not* considered to be production ready.
-> **You have been warned.** There is no sanitization yet, no tests, and you might even find some features are still missing.
 
 ```html
 <template>
@@ -49,14 +42,20 @@
 # Table of Contents
 
 - [Description](#description)
-- [Install](#install)
+- [Disclaimer](#disclaimer)
+- [Installation](#installation)
+    - [Yarn](#yarn)
+    - [NPM](#npm)
 - [Usage](#usage)
-    - [Step 1: Preparing the plugin](#step-1-preparing-the-plugin)
-    - [Step 2: Exposing `$meta` to `bundleRenderer`](#step-2-exposing-meta-to-bundlerenderer)
-    - [Step 3: Server-side rendering with `inject()`](#step-3-server-side-rendering-with-inject)
-      - [`renderToString()`](#rendertostring)
-      - [`renderToStream()`](#rendertostream)
-    - [Step 4: Start defining `metaInfo`](#step-4-start-defining-metainfo)
+  - [Step 1: Preparing the plugin](#step-1-preparing-the-plugin)
+  - [Step 2: Server Rendering (Optional)](#step-2-server-rendering-optional)
+    - [Step 2.1: Exposing `$meta` to `bundleRenderer`](#step-21-exposing-meta-to-bundlerenderer)
+    - [Step 2.2: Populating the document meta info with `inject()`](#step-22-populating-the-document-meta-info-with-inject)
+      - [Simple Rendering with `renderToString()`](#simple-rendering-with-rendertostring)
+      - [Streaming Rendering with `renderToStream()`](#streaming-rendering-with-rendertostream)
+  - [Step 3: Start defining `metaInfo`](#step-3-start-defining-metainfo)
+- [Performance](#performance)
+    - [How to prevent the update on the initial page render](#how-to-prevent-the-update-on-the-initial-page-render)
 - [FAQ](#faq)
   - [How do I use component data in `metaInfo`?](#how-do-i-use-component-data-in-metainfo)
   - [How do I use component props in `metaInfo`?](#how-do-i-use-component-props-in-metainfo)
@@ -68,16 +67,26 @@
 
 These properties, when set on a deeply nested component, will cleverly overwrite their parent components' `metaInfo`, thereby enabling custom info for each top-level view as well as coupling meta info directly to deeply nested subcomponents for more maintainable code.
 
-# Install 
+# Disclaimer
 
+**Please note** that this project is still in very early alpha development and is *not* considered to be production ready.
+**You have been warned.** There is no sanitization yet, no tests, and you might even find some features are still missing.
+
+# Installation
+
+### Yarn
 ```sh
 $ yarn add vue-meta
-# or $ npm install vue-meta --save
+```
+
+### NPM
+```sh
+$ npm install vue-meta --save
 ```
 
 # Usage
 
-### Step 1: Preparing the plugin
+## Step 1: Preparing the plugin
 > This step is optional if you don't need SSR and `Vue` is available as a global variable. `vue-meta` will install itself in this case.
 
 In order to use this plugin, you first need to pass it to `Vue.use` in a file that runs both on the server and on the client before your root instance is mounted. If you're using [`vue-router`](https://github.com/vuejs/vue-router), then your main `router.js` file is a good place:
@@ -96,9 +105,13 @@ export default new Router({
 })
 ```
 
-If you don't care about server-side rendering, you can skip straight to [step 4](#step-4-start-defining-metainfo). Otherwise, continue. :smile:
+If you don't care about server-side rendering, you can skip straight to [step 3](#step-3-start-defining-metainfo). Otherwise, continue. :smile:
 
-### Step 2: Exposing `$meta` to `bundleRenderer`
+## Step 2: Server Rendering (Optional)
+
+If you have an isomorphic/universal webapp, you'll likely want to render your metadata on the server side as well. Here's how.
+
+### Step 2.1: Exposing `$meta` to `bundleRenderer`
 
 You'll need to expose the results of the `$meta` method that `vue-meta` adds to the Vue instance to the bundle render context before you can begin injecting your meta information. You'll need to do this in your server entry file:
 
@@ -127,11 +140,11 @@ export default (context) => {
 }
 ```
 
-### Step 3: Server-side rendering with `inject()`
+### Step 2.2: Populating the document meta info with `inject()`
 
 All that's left for you to do now before you can begin using `metaInfo` options in your components is to make sure they work on the server by `inject`-ing them. You have two methods at your disposal:
 
-#### `renderToString()`
+#### Simple Rendering with `renderToString()`
 
 Considerably the easiest method to wrap your head around is if your Vue server markup is rendered out as a string:
 
@@ -151,7 +164,7 @@ app.get('*', (request, response) => {
       
       response.send(`
         <!doctype html>
-        <html ${metaInfo.htmlAttrs.toString()}>
+        <html data-vue-meta-server-rendered ${metaInfo.htmlAttrs.toString()}>
           <head>
             ${metaInfo.title.toString()}
             <script>
@@ -174,7 +187,7 @@ app.get('*', (request, response) => {
 ...
 ```
 
-#### `renderToStream()`
+#### Streaming Rendering with `renderToStream()`
 
 A little more complex, but well worth it, is to instead stream your response. `vue-meta` supports streaming with no effort (on it's part :stuck_out_tongue_winking_eye:) thanks to Vue's clever `bundleRenderer` context injection:
 
@@ -192,7 +205,7 @@ app.get('*', (request, response) => {
       const metaInfo = context.meta.inject()
       
       if (metaInfo.htmlAttrs) {
-        response.write(`<html ${metaInfo.htmlAttrs.toString()}>`)
+        response.write(`<html data-vue-meta-server-rendered ${metaInfo.htmlAttrs.toString()}>`)
       }
       
       response.write('<head>')
@@ -230,7 +243,7 @@ app.get('*', (request, response) => {
 })
 ```
 
-### Step 4: Start defining `metaInfo`
+## Step 3: Start defining `metaInfo`
 
 In any of your components, define a `metaInfo` property:
 
@@ -293,6 +306,25 @@ In any of your components, define a `metaInfo` property:
   }
 </script>
 ```
+
+# Performance
+
+On the client, `vue-meta` batches DOM updates using [`requestAnimationFrame`](https://developer.mozilla.org/en-US/docs/Web/API/window/requestAnimationFrame). It needs to do this because it registers a Vue mixin that subscribes to the [`mounted`](https://vuejs.org/api/#mounted) lifecycle hook on all components in order to be notified that renders have occurred and data is ready. If `vue-meta` did not batch updates, the DOM meta info would be re-calculated and re-updated for every component on the page in quick-succession.
+
+Thanks to batch updating, the update will only occurr once - even if the correct meta info has already been compiled by the server. If you don't want this behaviour, see below.
+
+### How to prevent the update on the initial page render
+
+Add the `data-vue-meta-server-rendered` attribute to the `<html>` tag on the server-side:
+
+```html
+<html data-vue-meta-server-rendered>
+...
+```
+
+`vue-meta` will check for this attribute whenever it attempts to update the DOM - if it exists, `vue-meta` will just remove it and perform no updates. If it does not exist, `vue-meta` will perform updates as usual.
+
+> **Note:** While this may seem verbose, it _is_ intentional. Having `vue-meta` handle this for you automatically would limit interoperability with other server-side programming languages. If you use PHP to power your server, for example, you might also have meta info handled on the server already and want to prevent this extraneous update.
 
 # FAQ
 
