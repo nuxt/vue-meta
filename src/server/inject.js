@@ -15,7 +15,13 @@ export default function inject () {
   const info = Vue.util.extend({
     title: '',
     htmlAttrs: {},
-    bodyAttrs: {}
+    bodyAttrs: {},
+    meta: [],
+    script: [],
+    noscript: [],
+    style: [],
+    link: [],
+    base: {}
   }, getMetaInfo(this.$root))
 
   // generate server injectors

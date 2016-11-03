@@ -1,5 +1,6 @@
 import titleGenerator from './generators/titleGenerator'
 import attrsGenerator from './generators/attrsGenerator'
+import tagGenerator from './generators/tagGenerator'
 
 /**
  * Converts a meta info property to one that can be stringified on the server
@@ -15,5 +16,7 @@ export default function generateServerInjector (type, data) {
     case 'htmlAttrs':
     case 'bodyAttrs':
       return attrsGenerator(type, data)
+    default:
+      return tagGenerator(type, data)
   }
 }
