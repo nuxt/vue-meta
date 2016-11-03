@@ -3,7 +3,7 @@
 </p>
 
 <h5 align="center">
-  Manage page meta info in Vue 2.0 components. SSR + Streaming supported. Inspired by <a href="https://github.com/nfl/react-helmet">react-helmet</a>
+  Manage page meta info in Vue 2.0 components. SSR + Streaming supported. Inspired by <a href="https://github.com/nfl/react-helmet">react-helmet</a>.
 </h5>
 
 <p align="center">
@@ -59,6 +59,12 @@
       - [`titleTemplate` (String)](#titletemplate-string)
       - [`htmlAttrs` (Object)](#htmlattrs-object)
       - [`bodyAttrs` (Object)](#bodyattrs-object)
+      - [`base` (Object)](#base-object)
+      - [`meta` ([Object])](#meta-object)
+      - [`link` ([Object])](#link-object)
+      - [`style` ([Object])](#style-object)
+      - [`script` ([Object])](#script-object)
+      - [`noscript` ([Object])](#noscript-object)
     - [How `metaInfo` is Resolved](#how-metainfo-is-resolved)
 - [Performance](#performance)
     - [How to prevent the update on the initial page render](#how-to-prevent-the-update-on-the-initial-page-render)
@@ -150,13 +156,26 @@ app.get('*', (req, res) => {
   const context = { url: req.url }
   renderer.renderToString(context, (error, html) => {
     if (error) return res.send(error.stack)
-    const { meta } = context
-    const { title, htmlAttrs, bodyAttrs } = meta.inject()
+    const { 
+      title,
+      htmlAttrs,
+      bodyAttrs,
+      link,
+      style,
+      script,
+      noscript,
+      meta
+    } = context.meta.inject()
     return res.send(`
       <!doctype html>
       <html data-vue-meta-server-rendered ${htmlAttrs.text()}>
         <head>
+          ${meta.text()}
           ${title.text()}
+          ${link.text()}
+          ${style.text()}
+          ${script.text()}
+          ${noscript.text()}
         </head>
         <body ${bodyAttrs.text()}>
           ${html}
@@ -182,13 +201,26 @@ app.get('*', (req, res) => {
   renderStream.on('data', (chunk) => {
     if (firstChunk) {
       firstChunk = false
-      const { meta } = context
-      const { title, htmlAttrs, bodyAttrs } = meta.inject()
+      const { 
+        title,
+        htmlAttrs,
+        bodyAttrs,
+        link,
+        style,
+        script,
+        noscript,
+        meta
+      } = context.meta.inject()
       res.write(`
         <!doctype html>
         <html data-vue-meta-server-rendered ${htmlAttrs.text()}>
           <head>
+            ${meta.text()}
             ${title.text()}
+            ${link.text()}
+            ${style.text()}
+            ${script.text()}
+            ${noscript.text()}
           </head>
           <body ${bodyAttrs.text()}>
       `)
@@ -343,6 +375,116 @@ Each **key:value** maps to the equivalent **attribute:value** of the `<body>` el
 <body bar="baz">Foo Bar</body>
 ```
 
+#### `base` (Object)
+
+Maps to a newly-created `<base>` element, where object properties map to attributes. 
+
+```js
+{
+  metaInfo: {
+    base: { target: '_blank', href: '/' }
+  }
+}
+```
+
+```html
+<base target="_blank" href="/">
+```
+
+#### `meta` ([Object])
+
+Each item in the array maps to a newly-created `<meta>` element, where object properties map to attributes. 
+
+```js
+{
+  metaInfo: {
+    meta: [
+      { charset: 'utf-8' },
+      { name: 'viewport', content: 'width=device-width, initial-scale=1' }
+    ]
+  }
+}
+```
+
+```html
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+```
+
+#### `link` ([Object])
+
+Each item in the array maps to a newly-created `<link>` element, where object properties map to attributes. 
+
+```js
+{
+  metaInfo: {
+    link: [
+      { rel: 'stylesheet', src: '/css/index.css' },
+      { rel: 'favicon', src: 'favicon.ico' }
+    ]
+  }
+}
+```
+
+```html
+<link rel="stylesheet" src="/css/index.css">
+<link rel="favicon" src="favicon.ico">
+```
+
+#### `style` ([Object])
+
+Each item in the array maps to a newly-created `<style>` element, where object properties map to attributes. 
+
+```js
+{
+  metaInfo: {
+    style: [
+      { cssText: '.foo { color: red }', type: 'text/css' }
+    ]
+  }
+}
+```
+
+```html
+<style type="text/css">.foo { color: red }</style>
+```
+
+#### `script` ([Object])
+
+Each item in the array maps to a newly-created `<script>` element, where object properties map to attributes. 
+
+```js
+{
+  metaInfo: {
+    sript: [
+      { innerHTML: '{ "@context": "http://schema.org" }', type: 'application/ld+json' }
+    ]
+  }
+}
+```
+
+```html
+<script type="application/ld+json">{ "@context": "http://schema.org" }</script>
+```
+
+#### `noscript` ([Object])
+
+Each item in the array maps to a newly-created `<noscript>` element, where object properties map to attributes. 
+
+```js
+{
+  metaInfo: {
+    nosript: [
+      { innerHTML: 'This website requires JavaScript.' }
+    ]
+  }
+}
+```
+
+```html
+<noscript>This website requires JavaScript.</noscript>
+```
+
 ### How `metaInfo` is Resolved
 
 You can define a `metaInfo` property on any component in the tree. Child components that have `metaInfo` will recursively merge their `metaInfo` into the parent context, overwriting any duplicate properties. To better illustrate, consider this component heirarchy:
@@ -379,7 +521,7 @@ Add the `data-vue-meta-server-rendered` attribute to the `<html>` tag on the ser
 Here are some answers to some frequently asked questions.
 
 ## How do I use component data in `metaInfo`?
-Specify a function instead of a property.
+Specify a function instead of an object. It will need to return the same type as its definition.
 
 **BlogPost.vue:**
 ```html
@@ -405,7 +547,7 @@ Specify a function instead of a property.
 ```
 
 ## How do I use component props in `metaInfo`?
-The same way you use data.
+The same way you use data - specify a function instead of an object. It will need to return the same type as its definition.
 
 **BlogPostWrapper.vue**
 ```html

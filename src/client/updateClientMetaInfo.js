@@ -40,9 +40,7 @@ export default function updateClientMetaInfo (newInfo, $root) {
     // update tags
     for (let i = 0, len = tags.length; i < len; i++) {
       const tag = tags[i]
-      if (newInfo[tag]) {
-        updateTags(tag, newInfo[tag], headTag)
-      }
+      updateTags(tag, newInfo[tag], headTag)
     }
   } else {
     htmlTag.removeAttribute(SERVER_RENDERED_ATTRIBUTE)
