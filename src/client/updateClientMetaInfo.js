@@ -13,19 +13,13 @@ const tags = [
   'noscript'
 ]
 
-// hoisted vars but only in the browser
-if (typeof window !== 'undefined' && window !== null) {
-  var htmlTag = document.getElementsByTagName('html')[0]
-  var bodyTag = document.getElementsByTagName('body')[0]
-  var headTag = document.getElementsByTagName('head')[0]
-}
-
 /**
  * Performs client-side updates when new meta info is received
  *
  * @param  {Object} newInfo - the meta info to update to
  */
 export default function updateClientMetaInfo (newInfo, $root) {
+  const htmlTag = document.getElementsByTagName('html')[0]
   // if this is not a server render, then update
   if (htmlTag.getAttribute(SERVER_RENDERED_ATTRIBUTE) === null) {
     // initialize tracked changes
@@ -39,12 +33,12 @@ export default function updateClientMetaInfo (newInfo, $root) {
     updateTagAttributes(newInfo.htmlAttrs, htmlTag)
 
     // update <body> attrs
-    updateTagAttributes(newInfo.bodyAttrs, bodyTag)
+    updateTagAttributes(newInfo.bodyAttrs, document.getElementsByTagName('body')[0])
 
     // update tags
     for (let i = 0, len = tags.length; i < len; i++) {
       const tag = tags[i]
-      const { oldTags, newTags } = updateTags(tag, newInfo[tag], headTag)
+      const { oldTags, newTags } = updateTags(tag, newInfo[tag], document.getElementsByTagName('head')[0])
       if (newTags.length) {
         addedTags[tag] = newTags
         removedTags[tag] = oldTags
