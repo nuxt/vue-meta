@@ -15,7 +15,7 @@ export default function getMetaInfo (component) {
   for (let key in info) {
     if (info.hasOwnProperty(key)) {
       const value = info[key]
-      if (typeof value === 'function') {
+      if (typeof value === 'function' && key !== 'changed') {
         info[key] = value()
       }
     }

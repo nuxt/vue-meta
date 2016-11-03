@@ -11,8 +11,8 @@ describe('basic', () => {
 
   function setMetaInfo (metaInfo) {
     return new Promise((resolve) => {
+      metaInfo = Vue.util.extend(metaInfo, { changed: resolve })
       vm = new Vue({ el: container, metaInfo })
-      vm.$on('vue-meta-update', resolve)
     })
   }
 

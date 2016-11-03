@@ -65,6 +65,7 @@
       - [`style` ([Object])](#style-object)
       - [`script` ([Object])](#script-object)
       - [`noscript` ([Object])](#noscript-object)
+      - [`changed` (Function)](#changed-function)
     - [How `metaInfo` is Resolved](#how-metainfo-is-resolved)
 - [Performance](#performance)
     - [How to prevent the update on the initial page render](#how-to-prevent-the-update-on-the-initial-page-render)
@@ -483,6 +484,25 @@ Each item in the array maps to a newly-created `<noscript>` element, where objec
 
 ```html
 <noscript>This website requires JavaScript.</noscript>
+```
+
+#### `changed` (Function)
+
+Will be called when the client `metaInfo` updates/changes. Receives the following parameters:
+- `newInfo` (Object) - The new state of the `metaInfo` object.
+- `addedTags` ([HTMLElement]) - a list of elements that were added.
+- `removedTags` ([HTMLElement]) - a list of elements that were removed.
+
+`this` context is the component instance `changed` is defined on.
+
+```js
+{
+  metaInfo: {
+    changed (newInfo, addedTags, removedTags) {
+      console.log('Meta info was updated!')
+    }
+  }
+}
 ```
 
 ### How `metaInfo` is Resolved
