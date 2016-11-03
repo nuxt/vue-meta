@@ -1,10 +1,23 @@
 import updateTitle from './updaters/updateTitle'
 import updateTagAttributes from './updaters/updateTagAttributes'
+import updateTags from './updaters/updateTags'
 import { SERVER_RENDERED_ATTRIBUTE } from '../shared/constants'
 
+// tags to watch
+const tags = [
+  'meta',
+  'link',
+  'base',
+  'style',
+  'script',
+  'noscript'
+]
+
+// hoisted vars but only in the browser
 if (typeof window !== 'undefined' && window !== null) {
   var htmlTag = document.getElementsByTagName('html')[0]
   var bodyTag = document.getElementsByTagName('body')[0]
+  var headTag = document.getElementsByTagName('head')[0]
 }
 
 /**
@@ -23,6 +36,14 @@ export default function updateClientMetaInfo (newInfo, $root) {
 
     // update <body> attrs
     updateTagAttributes(newInfo.bodyAttrs, bodyTag)
+
+    // update tags
+    for (let i = 0, len = tags.length; i < len; i++) {
+      const tag = tags[i]
+      if (newInfo[tag]) {
+        updateTags(tag, newInfo[tag], headTag)
+      }
+    }
   } else {
     htmlTag.removeAttribute(SERVER_RENDERED_ATTRIBUTE)
   }

@@ -31,5 +31,10 @@ export default function getMetaInfo (component) {
     info.title = info.titleTemplate.replace(/%s/g, info.titleChunk)
   }
 
+  // convert base tag to an array
+  if (info.base) {
+    info.base = Object.keys(info.base).length ? [info.base] : []
+  }
+
   return info
 }

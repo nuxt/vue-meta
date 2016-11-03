@@ -21,7 +21,7 @@ export default function inject () {
     noscript: [],
     style: [],
     link: [],
-    base: {}
+    base: []
   }, getMetaInfo(this.$root))
 
   // generate server injectors

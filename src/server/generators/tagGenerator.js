@@ -10,11 +10,6 @@ import { VUE_META_ATTRIBUTE } from '../../shared/constants'
 export default function tagGenerator (type, tags) {
   return {
     text () {
-      // there can only be one `base` tag on a page, so we give it special treatment
-      if (type === 'base') {
-        tags = Object.keys(tags).length ? [tags] : []
-      }
-
       // build a string containing all tags of this type
       return tags.reduce((tagsStr, tag) => {
         // build a string containing all attributes of this tag
