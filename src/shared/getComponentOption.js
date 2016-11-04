@@ -14,7 +14,7 @@ import deepmerge from 'deepmerge'
  * @return {Object} - final aggregated result
  */
 export default function getComponentOption (opts, result = {}) {
-  const { component, option, deep } = opts
+  const { component, option, deep, arrayMerge } = opts
   const { $options } = component
 
   // only collect option data if it exists
@@ -34,7 +34,7 @@ export default function getComponentOption (opts, result = {}) {
     }
 
     // merge with existing options
-    result = deepmerge(result, data)
+    result = deepmerge(result, data, { arrayMerge })
   }
 
   // collect & aggregate child options if deep = true
@@ -42,7 +42,7 @@ export default function getComponentOption (opts, result = {}) {
     const { $children } = component
     for (let i = 0, len = $children.length; i < len; i++) {
       const component = $children[i]
-      result = getComponentOption({ option, deep, component }, result)
+      result = getComponentOption({ option, deep, component, arrayMerge }, result)
     }
   }
 
