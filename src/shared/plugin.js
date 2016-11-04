@@ -28,7 +28,7 @@ export default function VueMeta (Vue) {
         requestId = null
 
         // update the meta info
-        updateClientMetaInfo(getMetaInfo(this.$root), this.$root)
+        updateClientMetaInfo(getMetaInfo(this.$root))
       })
     }
   })

@@ -18,7 +18,7 @@ const tags = [
  *
  * @param  {Object} newInfo - the meta info to update to
  */
-export default function updateClientMetaInfo (newInfo, $root) {
+export default function updateClientMetaInfo (newInfo) {
   const htmlTag = document.getElementsByTagName('html')[0]
   // if this is not a server render, then update
   if (htmlTag.getAttribute(SERVER_RENDERED_ATTRIBUTE) === null) {
