@@ -34,14 +34,22 @@ export default function getComponentOption (opts, result = {}) {
       }
 
       // merge with existing options
-      result = deepmerge(result, data, { arrayMerge })
+      result = deepmerge(result, data, {
+        clone: true,
+        arrayMerge
+      })
 
       // collect & aggregate child options if deep = true
       if (deep) {
         const { $children } = component
         for (let i = 0, len = $children.length; i < len; i++) {
           const component = $children[i]
-          result = getComponentOption({ option, deep, component, arrayMerge }, result)
+          result = getComponentOption({
+            option,
+            deep,
+            component,
+            arrayMerge
+          }, result)
         }
       }
 

@@ -67,6 +67,7 @@
       - [`noscript` ([Object])](#noscript-object)
       - [`changed` (Function)](#changed-function)
     - [How `metaInfo` is Resolved](#how-metainfo-is-resolved)
+        - [Lists of Tags](#lists-of-tags)
 - [Performance](#performance)
     - [How to prevent the update on the initial page render](#how-to-prevent-the-update-on-the-initial-page-render)
 - [FAQ](#faq)
@@ -516,6 +517,69 @@ You can define a `metaInfo` property on any component in the tree. Child compone
 ```
 
 If both `<parent>` _and_ `<child>` define a `title` property inside `metaInfo`, then the `title` that gets rendered will resolve to the `title` defined inside `<child>`.
+
+#### Lists of Tags
+
+When specifying an array in `metaInfo`, like in the below examples, the default behaviour is to simply concatenate the lists.
+
+**Input:**
+```js
+// parent component
+{
+  metaInfo: {
+    meta: [
+      { charset: 'utf-8' },
+      { name: 'description', content: 'foo' }
+    ]
+  }
+}
+// child component
+{
+  metaInfo: {
+    meta: [
+      { name: 'description', content: 'bar' }
+    ]
+  }
+}
+```
+
+**Output:**
+```html
+<meta charset="utf-8">
+<meta name="description" content="foo">
+<meta name="description" content="bar">
+```
+
+This is not what we want, since the meta `description` needs to be unique for every page. If you want to change this behaviour such that `description` is instead replaced, then give it a `vmid`:
+
+**Input:**
+```js
+// parent component
+{
+  metaInfo: {
+    meta: [
+      { charset: 'utf-8' },
+      { vmid: 'description', name: 'description', content: 'foo' }
+    ]
+  }
+}
+// child component
+{
+  metaInfo: {
+    meta: [
+      { vmid: 'description', name: 'description', content: 'bar' }
+    ]
+  }
+}
+```
+
+**Output:**
+```html
+<meta charset="utf-8">
+<meta vmid="description" name="description" content="bar">
+```
+
+While solutions like `react-helmet` manage the occurrence order and merge behaviour for you automatically, it involves a lot more code and is therefore prone to failure in some edge-cases, whereas this method is _almost_ bulletproof because of its versatility.
 
 # Performance
 
