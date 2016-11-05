@@ -12,7 +12,10 @@ export default (config) => {
       'test/index.js': ['webpack']
     },
     coverageReporter: {
-      type: 'lcov'
+      type: 'lcov',
+      includeAllSources: true,
+      dir: 'coverage',
+      subdir: '.'
     },
     webpack: webpackConfig,
     webpackMiddleware: {
