@@ -24,14 +24,10 @@ export default function getComponentOption (opts, result = {}) {
 
     if (typeof data === 'object') {
       // bind context of option methods (if any) to this component
-      for (const key in data) {
-        if (data.hasOwnProperty(key)) {
-          const value = data[key]
-          if (typeof value === 'function') {
-            data[key] = value.bind(component)
-          }
-        }
-      }
+      Object.keys(data).forEach((key) => {
+        const value = data[key]
+        data[key] = typeof value === 'function' ? value.bind(component) : value
+      })
 
       // merge with existing options
       result = deepmerge(result, data, {
@@ -40,17 +36,15 @@ export default function getComponentOption (opts, result = {}) {
       })
 
       // collect & aggregate child options if deep = true
-      if (deep) {
-        const { $children } = component
-        for (let i = 0, len = $children.length; i < len; i++) {
-          const component = $children[i]
+      if (deep && component.$children.length) {
+        component.$children.forEach((childComponent) => {
           result = getComponentOption({
+            component: childComponent,
             option,
             deep,
-            component,
             arrayMerge
           }, result)
-        }
+        })
       }
 
       return result

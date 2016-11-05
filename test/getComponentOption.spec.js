@@ -7,10 +7,31 @@ describe('getComponentOption', () => {
 
   afterEach(() => component.$destroy())
 
+  it('returns an empty object when no matching options are found', () => {
+    component = new Vue()
+    const fetchedOption = getComponentOption({ component, option: 'noop' })
+    expect(fetchedOption).to.eql({})
+  })
+
   it('fetches the given option from the given component', () => {
     component = new Vue({ someOption: 'foo' })
     const fetchedOption = getComponentOption({ component, option: 'someOption' })
     expect(fetchedOption).to.eql('foo')
+  })
+
+  it('binds option method context to the component instance', () => {
+    component = new Vue({
+      data: {
+        age: 44
+      },
+      foo: {
+        bar () {
+          return this.age
+        }
+      }
+    })
+    const fetchedOption = getComponentOption({ component, option: 'foo' })
+    expect(fetchedOption.bar()).to.equal(44)
   })
 
   it('fetches deeply nested component options and merges them', () => {
