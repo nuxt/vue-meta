@@ -1,3 +1,4 @@
+import deepmerge from 'deepmerge'
 import getComponentOption from './getComponentOption'
 
 /**
@@ -8,12 +9,32 @@ import getComponentOption from './getComponentOption'
  * @return {Object} - returned meta info
  */
 export default function getMetaInfo (component) {
+  // set some sane defaults
+  const defaultInfo = {
+    title: '',
+    titleChunk: '',
+    titleTemplate: '%s',
+    htmlAttrs: {},
+    bodyAttrs: {},
+    meta: [],
+    base: [],
+    link: [],
+    style: [],
+    script: [],
+    noscript: []
+  }
+
   // collect & aggregate all metaInfo $options
-  let info = getComponentOption({
+  const info = getComponentOption({
     component,
     option: 'metaInfo',
     deep: true,
     arrayMerge (target, source) {
+      // we concat the arrays without merging objects contained therein,
+      // but we check for a `vmid` property on each object in the array
+      // using an O(1) lookup associative array exploit
+      // note the use of "for in" - we are looping through arrays here, not
+      // plain objects
       const destination = []
       for (let targetIndex in target) {
         const targetItem = target[targetIndex]
@@ -35,29 +56,26 @@ export default function getMetaInfo (component) {
   })
 
   // if any info options are a function, coerce them to the result of a call
-  for (let key in info) {
-    if (info.hasOwnProperty(key)) {
-      const value = info[key]
-      if (typeof value === 'function' && key !== 'changed') {
-        info[key] = value()
-      }
-    }
-  }
+  Object.keys(info).forEach((key) => {
+    const val = info[key]
+    info[key] = typeof val === 'function' && key !== 'changed' ? val() : val
+  })
 
-  // backup the title chunk
+  // backup the title chunk in case user wants access to it
   if (info.title) {
     info.titleChunk = info.title
   }
 
   // replace title with populated template
-  if (info.titleTemplate && info.titleChunk) {
+  if (info.titleTemplate) {
     info.title = info.titleTemplate.replace(/%s/g, info.titleChunk)
   }
 
-  // convert base tag to an array
+  // convert base tag to an array so it can be handled the same way
+  // as the other tags
   if (info.base) {
     info.base = Object.keys(info.base).length ? [info.base] : []
   }
 
-  return info
+  return deepmerge(defaultInfo, info)
 }
