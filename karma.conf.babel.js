@@ -9,10 +9,13 @@ export default (config) => {
     reporters: ['mocha', 'coverage'],
     files: ['test/index.js'],
     preprocessors: {
-      'test/index.js': ['webpack']
+      'test/index.js': ['webpack', 'sourcemap']
     },
     coverageReporter: {
-      type: 'lcov',
+      reporters: [
+        { type: 'lcov' },
+        { type: 'text' }
+      ],
       includeAllSources: true,
       dir: 'coverage',
       subdir: '.'
@@ -22,7 +25,8 @@ export default (config) => {
       noInfo: true
     },
     mochaReporter: {
-      showDiff: true
+      showDiff: true,
+      output: 'full'
     },
     singleRun: true
   })
