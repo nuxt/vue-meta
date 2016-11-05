@@ -46,6 +46,7 @@
 - [Installation](#installation)
     - [Yarn](#yarn)
     - [NPM](#npm)
+    - [CDN](#cdn)
 - [Usage](#usage)
   - [Step 1: Preparing the plugin](#step-1-preparing-the-plugin)
   - [Step 2: Server Rendering (Optional)](#step-2-server-rendering-optional)
@@ -67,7 +68,7 @@
       - [`noscript` ([Object])](#noscript-object)
       - [`changed` (Function)](#changed-function)
     - [How `metaInfo` is Resolved](#how-metainfo-is-resolved)
-        - [Lists of Tags](#lists-of-tags)
+      - [Lists of Tags](#lists-of-tags)
 - [Performance](#performance)
     - [How to prevent the update on the initial page render](#how-to-prevent-the-update-on-the-initial-page-render)
 - [FAQ](#faq)
@@ -97,6 +98,18 @@ $ yarn add vue-meta
 ```sh
 $ npm install vue-meta --save
 ```
+
+### CDN
+
+Use the links below - if you want a previous version, check the instructions at https://unpkg.com.
+
+<!-- start CDN generator - do **NOT** remove this comment -->
+**Uncompressed:**
+> https://unpkg.com/vue-meta@0.0.0/lib/vue-meta.js
+
+**Minified:**
+> https://unpkg.com/vue-meta@0.0.0/lib/vue-meta.min.js
+<!-- end CDN generator - do **NOT** remove this comment -->
 
 # Usage
 

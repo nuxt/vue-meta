@@ -42,12 +42,15 @@
     "rollup-plugin-node-resolve": "^2.0.0",
     "snazzy": "^5.0.0",
     "standard": "^8.5.0",
+    "uglify-js": "^2.7.4",
+    "update-section": "^0.3.3",
     "vue": "^2.0.3",
     "vue-loader": "^9.7.0",
     "webpack": "beta",
     "webpack-dev-server": "beta"
   },
   "homepage": "https://github.com/declandewet/vue-meta",
+  "jsnext:main": "lib/jsnext/vue-meta.js",
   "keywords": [
     "attribute",
     "google",
@@ -63,7 +66,8 @@
     "vue"
   ],
   "license": "MIT",
-  "main": "lib",
+  "main": "lib/vue-meta.js",
+  "module": "lib/jsnext/vue-meta.js",
   "nyc": {
     "exclude": [
       "test/**/*.js"
@@ -74,14 +78,19 @@
     "type": "git"
   },
   "scripts": {
-    "codecov": "codecov",
     "build": "rollup -c",
+    "codecov": "codecov",
     "dev": "babel-node examples/server.js",
     "lint": "standard --verbose | snazzy",
+    "minify": "uglifyjs lib/vue-meta.js -cm --comments -o lib/vue-meta.min.js",
+    "postbuild": "npm run minify",
+    "postminify": "npm run toc",
+    "posttoc": "npm run update-cdn",
     "prebuild": "rimraf lib",
     "pretest": "npm run lint",
     "test": "cross-env NODE_ENV=test karma start karma.conf.js",
-    "toc": "doctoc README.md --title '# Table of Contents'"
+    "toc": "doctoc README.md --title '# Table of Contents'",
+    "update-cdn": "babel-node scripts/update-cdn.js"
   },
   "standard": {
     "globals": [

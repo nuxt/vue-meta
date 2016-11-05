@@ -3,17 +3,25 @@ import nodeResolve from 'rollup-plugin-node-resolve'
 import json from 'rollup-plugin-json'
 import buble from 'rollup-plugin-buble'
 
+const pkg = require('./package.json')
+
 export default {
   entry: './src/index.js',
-  format: 'umd',
-  dest: './lib/index.js',
-  moduleName: 'VueMeta',
+  targets: [
+    { dest: pkg.main, format: 'umd', moduleName: 'VueMeta' },
+    { dest: pkg['jsnext:main'], format: 'es' }
+  ],
   plugins: [
     json(),
-    nodeResolve({
-      jsnext: true
-    }),
+    nodeResolve({ jsnext: true }),
     commonjs(),
     buble()
-  ]
+  ],
+  banner: `
+    /**
+     * vue-meta v${pkg.version}
+     * (c) ${new Date().getFullYear()} Declan de Wet
+     * @license MIT
+     */
+  `.replace(/ {4}/gm, '').trim()
 }
