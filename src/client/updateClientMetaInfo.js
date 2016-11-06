@@ -3,16 +3,6 @@ import updateTagAttributes from './updaters/updateTagAttributes'
 import updateTags from './updaters/updateTags'
 import { SERVER_RENDERED_ATTRIBUTE } from '../shared/constants'
 
-// tags to watch
-const tags = [
-  'meta',
-  'link',
-  'base',
-  'style',
-  'script',
-  'noscript'
-]
-
 /**
  * Performs client-side updates when new meta info is received
  *
@@ -26,30 +16,38 @@ export default function updateClientMetaInfo (newInfo) {
     const addedTags = {}
     const removedTags = {}
 
-    // update the title
-    updateTitle(newInfo.title)
-
-    // update <html> attrs
-    updateTagAttributes(newInfo.htmlAttrs, htmlTag)
-
-    // update <body> attrs
-    updateTagAttributes(newInfo.bodyAttrs, document.getElementsByTagName('body')[0])
-
-    // update tags
-    for (let i = 0, len = tags.length; i < len; i++) {
-      const tag = tags[i]
-      const { oldTags, newTags } = updateTags(tag, newInfo[tag], document.getElementsByTagName('head')[0])
-      if (newTags.length) {
-        addedTags[tag] = newTags
-        removedTags[tag] = oldTags
+    Object.keys(newInfo).forEach((key) => {
+      switch (key) {
+        // update the title
+        case 'title':
+          updateTitle(newInfo.title)
+          break
+        // update attributes
+        case 'htmlAttrs':
+        case 'bodyAttrs':
+          updateTagAttributes(newInfo[key], key === 'htmlAttrs' ? htmlTag : document.getElementsByTagName('body')[0])
+          break
+        // ignore these
+        case 'titleChunk':
+        case 'titleTemplate':
+        case 'changed':
+          break
+        // catch-all update tags
+        default:
+          const { oldTags, newTags } = updateTags(key, newInfo[key], document.getElementsByTagName('head')[0])
+          if (newTags.length) {
+            addedTags[key] = newTags
+            removedTags[key] = oldTags
+          }
       }
-    }
+    })
 
-    // emit event
+    // emit "event" with new info
     if (typeof newInfo.changed === 'function') {
       newInfo.changed(newInfo, addedTags, removedTags)
     }
   } else {
+    // remove the server render attribute so we can update on changes
     htmlTag.removeAttribute(SERVER_RENDERED_ATTRIBUTE)
   }
 }
