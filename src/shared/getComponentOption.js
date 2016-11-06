@@ -34,22 +34,21 @@ export default function getComponentOption (opts, result = {}) {
         clone: true,
         arrayMerge
       })
-
-      // collect & aggregate child options if deep = true
-      if (deep && component.$children.length) {
-        component.$children.forEach((childComponent) => {
-          result = getComponentOption({
-            component: childComponent,
-            option,
-            deep,
-            arrayMerge
-          }, result)
-        })
-      }
-
-      return result
+    } else {
+      result = data
     }
-    result = data
+  }
+
+  // collect & aggregate child options if deep = true
+  if (deep && component.$children.length) {
+    component.$children.forEach((childComponent) => {
+      result = getComponentOption({
+        component: childComponent,
+        option,
+        deep,
+        arrayMerge
+      }, result)
+    })
   }
 
   return result
