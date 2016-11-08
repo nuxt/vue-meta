@@ -172,14 +172,7 @@ app.get('*', (req, res) => {
   renderer.renderToString(context, (error, html) => {
     if (error) return res.send(error.stack)
     const { 
-      title,
-      htmlAttrs,
-      bodyAttrs,
-      link,
-      style,
-      script,
-      noscript,
-      meta
+      title, htmlAttrs, bodyAttrs, link, style, script, noscript, meta
     } = context.meta.inject()
     return res.send(`
       <!doctype html>
@@ -212,34 +205,25 @@ A little more complex, but well worth it, is to instead stream your response. `v
 app.get('*', (req, res) => {
   const context = { url: req.url }
   const renderStream = renderer.renderToStream(context)
-  let firstChunk = true
+  renderStream.once('data', () => {
+    const {
+      title, htmlAttrs, bodyAttrs, link, style, script, noscript, meta
+    } = context.meta.inject()
+    res.write(`
+      <!doctype html>
+      <html data-vue-meta-server-rendered ${htmlAttrs.text()}>
+        <head>
+          ${meta.text()}
+          ${title.text()}
+          ${link.text()}
+          ${style.text()}
+          ${script.text()}
+          ${noscript.text()}
+        </head>
+        <body ${bodyAttrs.text()}>
+    `)
+  })
   renderStream.on('data', (chunk) => {
-    if (firstChunk) {
-      firstChunk = false
-      const { 
-        title,
-        htmlAttrs,
-        bodyAttrs,
-        link,
-        style,
-        script,
-        noscript,
-        meta
-      } = context.meta.inject()
-      res.write(`
-        <!doctype html>
-        <html data-vue-meta-server-rendered ${htmlAttrs.text()}>
-          <head>
-            ${meta.text()}
-            ${title.text()}
-            ${link.text()}
-            ${style.text()}
-            ${script.text()}
-            ${noscript.text()}
-          </head>
-          <body ${bodyAttrs.text()}>
-      `)
-    }
     res.write(chunk)
   })
   renderStream.on('end', () => {
