@@ -5,7 +5,7 @@ import Router from 'vue-router'
 Vue.use(Router)
 Vue.use(VueMeta)
 
-const ChildComponent = () => ({
+const ChildComponent = {
   name: `child-component`,
   props: ['page'],
   template: `<h3>You're looking at the <strong>{{ page }}</strong> page</h3>`,
@@ -14,13 +14,16 @@ const ChildComponent = () => ({
       return this.page
     }
   }
-})
+}
 
+// this wrapper function is not a requirement for vue-router,
+// just a demonstration that render-function style components also work.
+// See https://github.com/declandewet/vue-meta/issues/9 for more info.
 function view (page) {
   return {
     name: `section-${page}`,
     render (h) {
-      return h(ChildComponent(), {
+      return h(ChildComponent, {
         props: { page }
       })
     }

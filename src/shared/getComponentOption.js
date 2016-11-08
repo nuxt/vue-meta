@@ -23,12 +23,6 @@ export default function getComponentOption (opts, result = {}) {
     const data = $options[option]
 
     if (typeof data === 'object') {
-      // bind context of option methods (if any) to this component
-      Object.keys(data).forEach((key) => {
-        const value = data[key]
-        data[key] = typeof value === 'function' ? value.bind(component) : value
-      })
-
       // merge with existing options
       result = deepmerge(result, data, {
         clone: true,

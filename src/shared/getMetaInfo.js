@@ -1,5 +1,6 @@
 import deepmerge from 'deepmerge'
 import getComponentOption from './getComponentOption'
+import mergeComponentData from './mergeComponentData'
 
 /**
  * Returns the correct meta info for the given component
@@ -55,12 +56,6 @@ export default function getMetaInfo (component) {
     }
   })
 
-  // if any info options are a function, coerce them to the result of a call
-  Object.keys(info).forEach((key) => {
-    const val = info[key]
-    info[key] = typeof val === 'function' && key !== 'changed' ? val() : val
-  })
-
   // backup the title chunk in case user wants access to it
   if (info.title) {
     info.titleChunk = info.title
@@ -77,5 +72,16 @@ export default function getMetaInfo (component) {
     info.base = Object.keys(info.base).length ? [info.base] : []
   }
 
-  return deepmerge(defaultInfo, info)
+  const metaInfo = deepmerge(defaultInfo, info)
+  const componentData = mergeComponentData(component)
+
+  // inject component context into functions & call to normalize data
+  Object.keys(metaInfo).forEach((key) => {
+    const val = metaInfo[key]
+    if (typeof val === 'function') {
+      metaInfo[key] = val.call(componentData)
+    }
+  })
+
+  return metaInfo
 }

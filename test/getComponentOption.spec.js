@@ -19,21 +19,6 @@ describe('getComponentOption', () => {
     expect(fetchedOption).to.eql('foo')
   })
 
-  it('binds option method context to the component instance', () => {
-    component = new Vue({
-      data: {
-        age: 44
-      },
-      foo: {
-        bar () {
-          return this.age
-        }
-      }
-    })
-    const fetchedOption = getComponentOption({ component, option: 'foo' })
-    expect(fetchedOption.bar()).to.equal(44)
-  })
-
   it('fetches deeply nested component options and merges them', () => {
     Vue.component('merge-child', { template: '<div></div>', foo: { bar: 'baz' } })
 

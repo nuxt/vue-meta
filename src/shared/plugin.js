@@ -26,9 +26,10 @@ export default function VueMeta (Vue) {
 
       requestId = window.requestAnimationFrame(() => {
         requestId = null
+        const info = getMetaInfo(this.$root)
 
         // update the meta info
-        updateClientMetaInfo(getMetaInfo(this.$root))
+        updateClientMetaInfo(info)
       })
     }
   })
