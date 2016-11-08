@@ -13,10 +13,14 @@ const content = readFileSync(readmePath, 'utf-8')
 const update = `
   <!-- start CDN generator - do **NOT** remove this comment -->
   **Uncompressed:**
-  > ${cdnUrl}
+  \`\`\`html
+  <script src="${cdnUrl}"></script>
+  \`\`\`
 
   **Minified:**
-  > ${minifiedUrl}
+  \`\`\`html
+  <script src="${minifiedUrl}"></script>
+  \`\`\`
   <!-- end CDN generator - do **NOT** remove this comment -->
 `.trim().replace(/ {2}/gm, '')
 
