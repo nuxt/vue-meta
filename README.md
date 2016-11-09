@@ -78,6 +78,7 @@
   - [How do I use component data in `metaInfo`?](#how-do-i-use-component-data-in-metainfo)
   - [How do I use component props in `metaInfo`?](#how-do-i-use-component-props-in-metainfo)
   - [How do I populate `metaInfo` from the result of an asynchronous action?](#how-do-i-populate-metainfo-from-the-result-of-an-asynchronous-action)
+- [Examples](#examples)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
@@ -713,4 +714,8 @@ Then in your component, you can call `refresh()` to trigger an update once the f
 
 Just make sure that whatever data source you're using (`store` if you're using Vuex, component `data` otherwise) has some sane defaults set so Vue doesn't complain about `null` property accessors.
 
-Check out the [vuex-async](https://github.com/declandewet/vue-meta/tree/master/examples/vuex-async) example for a far more detailed demonstration of how this works. 
+Check out the [vuex-async](https://github.com/declandewet/vue-meta/tree/master/examples/vuex-async) example for a far more detailed demonstration of how this works.
+
+# Examples
+
+To run the examples; clone this repository & run `npm install` in the root directory, and then run `npm run dev`. Head to http://localhost:8080.
