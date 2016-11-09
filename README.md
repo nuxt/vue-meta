@@ -1,3 +1,6 @@
+> **Please note** that this project is still in very early alpha development and is *not* considered to be production ready.
+> **You have been warned.** There is no sanitization yet, hardly any tests, and you might find some bugs.
+
 <p align="center">
   <img src="http://imgur.com/258WtHI.png" alt="vue-meta">
 </p>
@@ -86,7 +89,7 @@ These properties, when set on a deeply nested component, will cleverly overwrite
 # Disclaimer
 
 **Please note** that this project is still in very early alpha development and is *not* considered to be production ready.
-**You have been warned.** There is no sanitization yet, no tests, and you might even find some features are still missing.
+**You have been warned.** There is no sanitization yet, hardly any tests, and you might find some bugs.
 
 # Installation
 
