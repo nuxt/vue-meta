@@ -10,7 +10,7 @@
   import { mapGetters } from 'vuex'
 
   export default {
-    name: 'blog-post',
+    name: 'post',
     beforeMount () {
       const { slug } = this.$route.params
       this.$store.dispatch('getPost', { slug })

@@ -9,14 +9,14 @@ describe('getComponentOption', () => {
 
   it('returns an empty object when no matching options are found', () => {
     component = new Vue()
-    const fetchedOption = getComponentOption({ component, option: 'noop' })
-    expect(fetchedOption).to.eql({})
+    const { mergedOption } = getComponentOption({ component, option: 'noop' })
+    expect(mergedOption).to.eql({})
   })
 
   it('fetches the given option from the given component', () => {
     component = new Vue({ someOption: 'foo' })
-    const fetchedOption = getComponentOption({ component, option: 'someOption' })
-    expect(fetchedOption).to.eql('foo')
+    const { mergedOption } = getComponentOption({ component, option: 'someOption' })
+    expect(mergedOption).to.eql('foo')
   })
 
   it('fetches deeply nested component options and merges them', () => {
@@ -28,8 +28,8 @@ describe('getComponentOption', () => {
       el: container
     })
 
-    const fetchedOption = getComponentOption({ component, option: 'foo', deep: true })
-    expect(fetchedOption).to.eql({ bar: 'baz', fizz: 'buzz' })
+    const { mergedOption } = getComponentOption({ component, option: 'foo', deep: true })
+    expect(mergedOption).to.eql({ bar: 'baz', fizz: 'buzz' })
   })
 
   it('allows for a custom array merge strategy', () => {
@@ -48,7 +48,7 @@ describe('getComponentOption', () => {
       el: container
     })
 
-    const fetchedOption = getComponentOption({
+    const { mergedOption } = getComponentOption({
       component,
       option: 'foo',
       deep: true,
@@ -57,7 +57,7 @@ describe('getComponentOption', () => {
       }
     })
 
-    expect(fetchedOption).to.eql([
+    expect(mergedOption).to.eql([
       { name: 'flower', content: 'tulip' },
       { name: 'flower', content: 'rose' }
     ])

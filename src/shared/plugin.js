@@ -1,6 +1,4 @@
-import getMetaInfo from './getMetaInfo'
-import $meta from '../server/$meta'
-import updateClientMetaInfo from '../client/updateClientMetaInfo'
+import $meta from './$meta'
 
 // automatic install
 if (typeof Vue !== 'undefined') {
@@ -26,10 +24,7 @@ export default function VueMeta (Vue) {
 
       requestId = window.requestAnimationFrame(() => {
         requestId = null
-        const info = getMetaInfo(this.$root)
-
-        // update the meta info
-        updateClientMetaInfo(info)
+        this.$meta().refresh()
       })
     }
   })

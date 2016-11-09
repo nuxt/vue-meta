@@ -1,4 +1,5 @@
-import inject from './inject'
+import inject from '../server/inject'
+import refresh from '../client/refresh'
 
 /**
  * Returns an injector for server-side rendering.
@@ -7,5 +8,8 @@ import inject from './inject'
  */
 export default function $meta () {
   // bind inject method to this component
-  return { inject: inject.bind(this) }
+  return {
+    inject: inject.bind(this),
+    refresh: refresh.bind(this)
+  }
 }

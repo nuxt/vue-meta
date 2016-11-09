@@ -12,9 +12,11 @@ import deepmerge from 'deepmerge'
  * @param  {Boolean} opts.deep - look for data in child components as well?
  * @param  {Function} opts.arrayMerge - how should arrays be merged?
  * @param  {Object} [result={}] - result so far
- * @return {Object} - final aggregated result
+ * @return {Object} result - final aggregated result
+ * @return {Object} result.mergedOption - the actual merged options
+ * @return {Object} result.deepestComponentWithMetaInfo - the deepest component in the heirarchy that has a `metaInfo` instance property
  */
-export default function getComponentOption (opts, result = {}) {
+export default function getComponentOption (opts, result = { mergedOption: {} }) {
   const { component, option, deep, arrayMerge } = opts
   const { $options } = component
 
@@ -24,12 +26,13 @@ export default function getComponentOption (opts, result = {}) {
 
     if (typeof data === 'object') {
       // merge with existing options
-      result = deepmerge(result, data, {
+      result.mergedOption = deepmerge(result.mergedOption, data, {
         clone: true,
         arrayMerge
       })
+      result.deepestComponentWithMetaInfo = component
     } else {
-      result = data
+      result.mergedOption = data
     }
   }
 

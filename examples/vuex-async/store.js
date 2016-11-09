@@ -35,6 +35,9 @@ export default new Vuex.Store({
 
   // GETTERS
   getters: {
+    isLoading (state) {
+      return state.isLoading
+    },
     post (state) {
       return state.post
     },
@@ -48,6 +51,9 @@ export default new Vuex.Store({
 
   // MUTATIONS
   mutations: {
+    loadingState (state, { isLoading }) {
+      state.isLoading = isLoading
+    },
     getPost (state, { slug }) {
       state.post = state.posts.find((post) => post.slug === slug)
     }
@@ -56,7 +62,16 @@ export default new Vuex.Store({
   // ACTIONS
   actions: {
     getPost ({ commit }, payload) {
-      commit('getPost', payload)
+      commit('loadingState', { isLoading: true })
+      // we have to return a promise from this action so we know
+      // when it is finished
+      return new Promise((resolve) => {
+        setTimeout(() => {
+          commit('getPost', payload)
+          resolve()
+        }, 2000)
+      })
+        .then(() => commit('loadingState', { isLoading: false }))
     }
   }
 })
