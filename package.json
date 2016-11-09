@@ -3,6 +3,10 @@
   "description": "manage page meta info in Vue 2.0 server-rendered apps",
   "version": "0.1.0",
   "author": "Declan de Wet <declandewet@me.com>",
+  "files": [
+    "lib",
+    "yarn.lock"
+  ],
   "bugs": "https://github.com/declandewet/vue-meta/issues",
   "dependencies": {
     "deepmerge": "^1.2.0",
