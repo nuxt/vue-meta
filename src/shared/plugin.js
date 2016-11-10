@@ -1,5 +1,6 @@
 import assign from 'object-assign'
 import $meta from './$meta'
+import batchUpdate from '../client/batchUpdate'
 
 import {
   VUE_META_KEY_NAME,
@@ -33,18 +34,31 @@ export default function VueMeta (Vue, options = {}) {
   Vue.prototype.$meta = $meta(options)
 
   // store an id to keep track of DOM updates
-  let requestId = null
+  let batchID = null
 
   // watch for client side component updates
   Vue.mixin({
+    beforeCreate () {
+      // coerce function-style metaInfo to a computed prop so we can observe
+      // it on creation
+      if (typeof this.$options[options.keyName] === 'function') {
+        this.$options.computed.$metaInfo = this.$options[options.keyName]
+      }
+    },
+    created () {
+      // if computed $metaInfo exists, watch it for updates & trigger a refresh
+      // when it changes (i.e. automatically handle async actions that affect metaInfo)
+      // credit for this suggestion goes to [Sébastien Chopin](https://github.com/Atinux)
+      if (this.$metaInfo) {
+        this.$watch('$metaInfo', () => {
+          // batch potential DOM updates to prevent extraneous re-rendering
+          batchID = batchUpdate(batchID, () => this.$meta().refresh())
+        })
+      }
+    },
     beforeMount () {
       // batch potential DOM updates to prevent extraneous re-rendering
-      window.cancelAnimationFrame(requestId)
-
-      requestId = window.requestAnimationFrame(() => {
-        requestId = null
-        this.$meta().refresh()
-      })
+      batchID = batchUpdate(batchID, () => this.$meta().refresh())
     }
   })
 }
