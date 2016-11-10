@@ -5,3 +5,13 @@
     <p>Inspect Element to see the meta info</p>
   </div>
 </template>
+
+<script>
+  export default {
+    metaInfo: {
+      meta: [
+        { vmid: 'charset', charset: 'utf-8' }
+      ]
+    }
+  }
+</script>

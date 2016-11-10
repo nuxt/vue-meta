@@ -9,9 +9,9 @@ Vue.component('child', {
   render (h) {
     return h('h3', null, this.page)
   },
-  metaInfo: {
-    title () {
-      return this.page
+  metaInfo () {
+    return {
+      title: this.page
     }
   }
 })

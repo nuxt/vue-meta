@@ -28,9 +28,12 @@
       'isLoading',
       'post'
     ]),
-    metaInfo: {
-      title () {
-        return this.isLoading ? 'Loading...' : this.post.title
+    metaInfo () {
+      return {
+        title: this.isLoading ? 'Loading...' : this.post.title,
+        meta: [
+          { vmid: 'description', name: 'description', content: this.post.title }
+        ]
       }
     }
   }

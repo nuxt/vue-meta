@@ -18,9 +18,12 @@
     computed: mapGetters([
       'post'
     ]),
-    metaInfo: {
-      title () {
-        return this.post.title
+    metaInfo () {
+      return {
+        title: this.post.title,
+        meta: [
+          { vmid: 'description', name: 'description', content: this.post.title }
+        ]
       }
     }
   }

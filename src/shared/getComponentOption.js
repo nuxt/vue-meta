@@ -13,26 +13,28 @@ import deepmerge from 'deepmerge'
  * @param  {Function} opts.arrayMerge - how should arrays be merged?
  * @param  {Object} [result={}] - result so far
  * @return {Object} result - final aggregated result
- * @return {Object} result.mergedOption - the actual merged options
- * @return {Object} result.deepestComponentWithMetaInfo - the deepest component in the heirarchy that has a `metaInfo` instance property
  */
-export default function getComponentOption (opts, result = { mergedOption: {} }) {
+export default function getComponentOption (opts, result = {}) {
   const { component, option, deep, arrayMerge } = opts
   const { $options } = component
 
   // only collect option data if it exists
   if (typeof $options[option] !== 'undefined' && $options[option] !== null) {
-    const data = $options[option]
+    let data = $options[option]
+
+    // if option is a function, replace it with it's result
+    if (typeof data === 'function') {
+      data = data.call(component)
+    }
 
     if (typeof data === 'object') {
       // merge with existing options
-      result.mergedOption = deepmerge(result.mergedOption, data, {
+      result = deepmerge(result, data, {
         clone: true,
         arrayMerge
       })
-      result.deepestComponentWithMetaInfo = component
     } else {
-      result.mergedOption = data
+      result = data
     }
   }
 
