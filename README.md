@@ -52,6 +52,7 @@
     - [CDN](#cdn)
 - [Usage](#usage)
   - [Step 1: Preparing the plugin](#step-1-preparing-the-plugin)
+      - [Options](#options)
   - [Step 2: Server Rendering (Optional)](#step-2-server-rendering-optional)
     - [Step 2.1: Exposing `$meta` to `bundleRenderer`](#step-21-exposing-meta-to-bundlerenderer)
     - [Step 2.2: Populating the document meta info with `inject()`](#step-22-populating-the-document-meta-info-with-inject)
@@ -137,6 +138,19 @@ Vue.use(Meta)
 
 export default new Router({
   ...
+})
+```
+
+#### Options
+
+`vue-meta` allows a few custom options:
+
+```js
+Vue.use(Meta, {
+  keyName: 'metaInfo', // the component option name that vue-meta looks for meta info on.
+  attribute: 'data-vue-meta', // the attribute name vue-meta adds to the tags it observes
+  ssrAttribute: 'data-vue-meta-server-rendered', // the attribute name that lets vue-meta know that meta info has already been server-rendered
+  tagIDKeyName: 'vmid' // the property name that vue-meta uses to determine whether to overwrite or append a tag
 })
 ```
 
