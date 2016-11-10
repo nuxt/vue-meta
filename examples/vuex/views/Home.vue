@@ -20,7 +20,10 @@
       postsCount: 'publishedPostsCount'
     }),
     metaInfo: {
-      title: 'Home'
+      title: 'Home',
+      meta: [
+        { vmid: 'description', name: 'description', content: 'The home page' }
+      ]
     }
   }
 </script>

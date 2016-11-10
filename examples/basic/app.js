@@ -10,12 +10,12 @@ new Vue({
       <p>Inspect Element to see the meta info</p>
     </div>
   `,
-  metaInfo: {
+  metaInfo: () => ({
     title: 'Basic',
     titleTemplate: '%s | Vue Meta Examples',
     htmlAttrs: {
       lang: 'en',
       amp: undefined
     }
-  }
+  })
 }).$mount('#app')

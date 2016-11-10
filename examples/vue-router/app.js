@@ -10,9 +10,9 @@ const ChildComponent = {
   name: `child-component`,
   props: ['page'],
   template: `<h3>You're looking at the <strong>{{ page }}</strong> page</h3>`,
-  metaInfo: {
-    title () {
-      return this.page
+  metaInfo () {
+    return {
+      title: this.page
     }
   }
 }

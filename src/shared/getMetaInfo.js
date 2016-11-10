@@ -25,7 +25,7 @@ export default function getMetaInfo (component) {
   }
 
   // collect & aggregate all metaInfo $options
-  const { mergedOption: info, deepestComponentWithMetaInfo } = getComponentOption({
+  const info = getComponentOption({
     component,
     option: 'metaInfo',
     deep: true,
@@ -71,15 +71,5 @@ export default function getMetaInfo (component) {
     info.base = Object.keys(info.base).length ? [info.base] : []
   }
 
-  const metaInfo = deepmerge(defaultInfo, info)
-
-  // inject component context into functions & call to normalize data
-  Object.keys(metaInfo).forEach((key) => {
-    const val = metaInfo[key]
-    if (typeof val === 'function') {
-      metaInfo[key] = val.call(deepestComponentWithMetaInfo)
-    }
-  })
-
-  return metaInfo
+  return deepmerge(defaultInfo, info)
 }

@@ -75,8 +75,7 @@
 - [Performance](#performance)
     - [How to prevent the update on the initial page render](#how-to-prevent-the-update-on-the-initial-page-render)
 - [FAQ](#faq)
-  - [How do I use component data in `metaInfo`?](#how-do-i-use-component-data-in-metainfo)
-  - [How do I use component props in `metaInfo`?](#how-do-i-use-component-props-in-metainfo)
+  - [How do I use component props and/or component data in `metaInfo`?](#how-do-i-use-component-props-andor-component-data-in-metainfo)
   - [How do I populate `metaInfo` from the result of an asynchronous action?](#how-do-i-populate-metainfo-from-the-result-of-an-asynchronous-action)
 - [Examples](#examples)
 
@@ -610,71 +609,56 @@ Add the `data-vue-meta-server-rendered` attribute to the `<html>` tag on the ser
 
 Here are some answers to some frequently asked questions.
 
-## How do I use component data in `metaInfo`?
-Specify a function instead of an object. It will need to return the same type as its definition.
+## How do I use component props and/or component data in `metaInfo`?
 
-**BlogPost.vue:**
+Easy. Instead of defining `metaInfo` as an object, define it as a function and access `this` as usual:
+
+**Post.vue:**
 ```html
 <template>
-  <div id="page">
+  <div>
     <h1>{{ title }}</h1>
   </div>
 </template>
 
 <script>
   export default {
-    name: 'BlogPost',
-    data: () => ({
-      title: 'Sample blog post'
-    }),
-    metaInfo: {
-      title () {
-        return this.title
+    name: 'post',
+    props: ['title'],
+    data () {
+      return {
+        description: 'A blog post about some stuff'
+      }
+    },
+    metaInfo () 
+      return {
+        title: this.title,
+        meta: [
+          { vmid: 'description', name: 'description', content: this.description }
+        ]
       }
     }
   }
 </script>
 ```
 
-## How do I use component props in `metaInfo`?
-The same way you use data - specify a function instead of an object. It will need to return the same type as its definition.
-
-**BlogPostWrapper.vue**
+**PostContainer.vue:**
 ```html
 <template>
-  <div id="page">
-    <blog-post :title="title"></blog-post>
+  <div>
+    <post :title="title"></post>
   </div>
 </template>
 
 <script>
-  import BlogPost from './BlogPost.vue'
+  import Post from './Post.vue'
   
   export default {
-    name: 'BlogPostWrapper',
-    components: { BlogPost },
-    data: () => ({
-      title: 'Example blog post'
-    })
-  }
-</script>
-```
-
-**BlogPost.vue**
-```html
-<template>
-  <div id="page">
-    <h1>{{ title }}</h1>
-  </div>
-</template>
-
-<script>
-  export default {
-    name: 'BlogPost',
-    props: ['title'],
-    metaInfo: {
-      title () {
-        return this.title
+    name: 'post-container',
+    components: { Post },
+    data () {
+      return {
+        title: 'Example blog post'
       }
     }
   }
