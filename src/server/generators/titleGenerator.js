@@ -1,4 +1,6 @@
-export default function _titleGenerator ({ attribute }) {
+export default function _titleGenerator (options = {}) {
+  const { attribute } = options
+
   /**
    * Generates title output for the server
    *

@@ -2,7 +2,7 @@ import titleGenerator from './generators/titleGenerator'
 import attrsGenerator from './generators/attrsGenerator'
 import tagGenerator from './generators/tagGenerator'
 
-export default function _generateServerInjector (options) {
+export default function _generateServerInjector (options = {}) {
   /**
    * Converts a meta info property to one that can be stringified on the server
    *

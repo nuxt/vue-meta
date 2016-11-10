@@ -1,7 +1,8 @@
 import deepmerge from 'deepmerge'
 import getComponentOption from './getComponentOption'
 
-export default function _getMetaInfo ({ keyName, tagIDKeyName }) {
+export default function _getMetaInfo (options = {}) {
+  const { keyName, tagIDKeyName } = options
   /**
    * Returns the correct meta info for the given component
    * (child components will overwrite parent meta info)

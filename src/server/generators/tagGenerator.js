@@ -1,4 +1,6 @@
-export default function _tagGenerator ({ attribute }) {
+export default function _tagGenerator (options = {}) {
+  const { attribute } = options
+
   /**
    * Generates meta, base, link, style, script, noscript tags for use on the server
    *

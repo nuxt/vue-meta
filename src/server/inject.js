@@ -1,7 +1,7 @@
 import getMetaInfo from '../shared/getMetaInfo'
 import generateServerInjector from './generateServerInjector'
 
-export default function _inject (options) {
+export default function _inject (options = {}) {
   /**
    * Converts the state of the meta info object such that each item
    * can be compiled to a tag string on the server

@@ -1,5 +1,7 @@
 import Vue from 'vue'
-import getMetaInfo from '../src/shared/getMetaInfo'
+import _getMetaInfo from '../src/shared/getMetaInfo'
+
+const getMetaInfo = _getMetaInfo()
 
 describe('getMetaInfo', () => {
   // const container = document.createElement('div')

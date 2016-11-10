@@ -1,4 +1,6 @@
-export default function _attrsGenerator ({ attribute }) {
+export default function _attrsGenerator (options = {}) {
+  const { attribute } = options
+
   /**
    * Generates tag attributes for use on the server.
    *

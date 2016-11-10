@@ -1,7 +1,7 @@
 import getMetaInfo from '../shared/getMetaInfo'
 import updateClientMetaInfo from './updateClientMetaInfo'
 
-export default function _refresh (options) {
+export default function _refresh (options = {}) {
   /**
    * When called, will update the current meta info with new meta info.
    * Useful when updating meta info as the result of an asynchronous

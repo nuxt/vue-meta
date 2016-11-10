@@ -1,7 +1,9 @@
 // borrow the slice method
 const toArray = Function.prototype.call.bind(Array.prototype.slice)
 
-export default function _updateTags ({ attribute }) {
+export default function _updateTags (options = {}) {
+  const { attribute } = options
+
   /**
    * Updates meta tags inside <head> on the client. Borrowed from `react-helmet`:
    * https://github.com/nfl/react-helmet/blob/004d448f8de5f823d10f838b02317521180f34da/src/Helmet.js#L195-L245

@@ -1,4 +1,6 @@
-export default function _updateTagAttributes ({ attribute }) {
+export default function _updateTagAttributes (options = {}) {
+  const { attribute } = options
+
   /**
    * updates the document's html tag attributes
    *

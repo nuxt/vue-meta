@@ -2,7 +2,7 @@ import updateTitle from './updaters/updateTitle'
 import updateTagAttributes from './updaters/updateTagAttributes'
 import updateTags from './updaters/updateTags'
 
-export default function _updateClientMetaInfo (options) {
+export default function _updateClientMetaInfo (options = {}) {
   const { ssrAttribute } = options
 
   /**
