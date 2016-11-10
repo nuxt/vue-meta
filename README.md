@@ -681,38 +681,28 @@ Easy. Instead of defining `metaInfo` as an object, define it as a function and a
 
 ## How do I populate `metaInfo` from the result of an asynchronous action?
 
-`vue-meta` exposes a method called `refresh` on the client-side that allows you to trigger an update at any given point in time.
+`vue-meta` will do this for you automatically when your component state changes.
 
-In the same way you access `$meta().inject()` on the server, you can access `$meta().refresh()`.
-
-For example, if you're using Vuex and you have an action that fetches a `post` asynchronously, you should ensure that it returns a promise so that you are notified when the fetching is complete:
+Just make sure that you're using the function form of `metaInfo`:
 
 ```js
 {
-  actions: {
-    async fetchPost ({ commit }, payload) {
-      const post = yield db.fetch('posts', payload.postId)
-      commit('fetchedPost', post)
+  data () {
+    return {
+      title: 'Foo Bar Baz'
+    }
+  }
+  metaInfo () {
+    return {
+      title: this.title
     }
   }
 }
 ```
 
-Then in your component, you can call `refresh()` to trigger an update once the fetch is complete:
+Check out the [vuex-async](https://github.com/declandewet/vue-meta/tree/master/examples/vuex-async) example for a far more detailed demonstration if you have doubts.
 
-```js
-{
-  beforeMount () {
-    const postId = this.$router.params.id
-    this.$store.dispatch('fetchPost', { postId })
-      .then(() => this.$meta().refresh())
-  }
-}
-```
-
-Just make sure that whatever data source you're using (`store` if you're using Vuex, component `data` otherwise) has some sane defaults set so Vue doesn't complain about `null` property accessors.
-
-Check out the [vuex-async](https://github.com/declandewet/vue-meta/tree/master/examples/vuex-async) example for a far more detailed demonstration of how this works.
+Credit & Thanks for this feature goes to [Sébastien Chopin](https://github.com/Atinux).
 
 # Examples
 

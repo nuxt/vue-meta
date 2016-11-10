@@ -63,15 +63,10 @@ export default new Vuex.Store({
   actions: {
     getPost ({ commit }, payload) {
       commit('loadingState', { isLoading: true })
-      // we have to return a promise from this action so we know
-      // when it is finished
-      return new Promise((resolve) => {
-        setTimeout(() => {
-          commit('getPost', payload)
-          resolve()
-        }, 2000)
-      })
-        .then(() => commit('loadingState', { isLoading: false }))
+      setTimeout(() => {
+        commit('getPost', payload)
+        commit('loadingState', { isLoading: false })
+      }, 2000)
     }
   }
 })

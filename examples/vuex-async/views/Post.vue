@@ -18,11 +18,7 @@
     name: 'post',
     beforeMount () {
       const { slug } = this.$route.params
-      // since fetching a post is asynchronous,
-      // we need to call `this.$meta().refresh()`
-      // to update the meta info
       this.$store.dispatch('getPost', { slug })
-        .then(() => this.$meta().refresh())
     },
     computed: mapGetters([
       'isLoading',
