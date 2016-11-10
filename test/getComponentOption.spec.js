@@ -9,13 +9,13 @@ describe('getComponentOption', () => {
 
   it('returns an empty object when no matching options are found', () => {
     component = new Vue()
-    const { mergedOption } = getComponentOption({ component, option: 'noop' })
+    const mergedOption = getComponentOption({ component, option: 'noop' })
     expect(mergedOption).to.eql({})
   })
 
   it('fetches the given option from the given component', () => {
     component = new Vue({ someOption: 'foo' })
-    const { mergedOption } = getComponentOption({ component, option: 'someOption' })
+    const mergedOption = getComponentOption({ component, option: 'someOption' })
     expect(mergedOption).to.eql('foo')
   })
 
@@ -28,7 +28,7 @@ describe('getComponentOption', () => {
       el: container
     })
 
-    const { mergedOption } = getComponentOption({ component, option: 'foo', deep: true })
+    const mergedOption = getComponentOption({ component, option: 'foo', deep: true })
     expect(mergedOption).to.eql({ bar: 'baz', fizz: 'buzz' })
   })
 
@@ -48,7 +48,7 @@ describe('getComponentOption', () => {
       el: container
     })
 
-    const { mergedOption } = getComponentOption({
+    const mergedOption = getComponentOption({
       component,
       option: 'foo',
       deep: true,
