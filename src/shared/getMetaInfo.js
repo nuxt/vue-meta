@@ -43,7 +43,7 @@ export default function _getMetaInfo (options = {}) {
           let shared = false
           for (let sourceIndex in source) {
             const sourceItem = source[sourceIndex]
-            if (targetItem[tagIDKeyName] === sourceItem[tagIDKeyName]) {
+            if (targetItem[tagIDKeyName] && targetItem[tagIDKeyName] === sourceItem[tagIDKeyName]) {
               shared = true
               break
             }

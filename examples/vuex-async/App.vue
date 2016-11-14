@@ -10,7 +10,7 @@
   export default {
     metaInfo: {
       meta: [
-        { vmid: 'charset', charset: 'utf-8' }
+        { charset: 'utf-8' }
       ]
     }
   }
