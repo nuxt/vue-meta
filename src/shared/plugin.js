@@ -42,6 +42,9 @@ export default function VueMeta (Vue, options = {}) {
       // coerce function-style metaInfo to a computed prop so we can observe
       // it on creation
       if (typeof this.$options[options.keyName] === 'function') {
+        if (typeof this.$options.computed === 'undefined') {
+          this.$options.computed = {}
+        }
         this.$options.computed.$metaInfo = this.$options[options.keyName]
       }
     },
