@@ -8,8 +8,7 @@ const pkg = require('./package.json')
 export default {
   entry: './src/index.js',
   targets: [
-    { dest: pkg.main, format: 'umd', moduleName: 'VueMeta' },
-    { dest: pkg['jsnext:main'], format: 'es' }
+    { dest: pkg.main, format: 'umd', moduleName: 'VueMeta' }
   ],
   plugins: [
     json(),
