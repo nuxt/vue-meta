@@ -70,6 +70,7 @@
       - [`style` ([Object])](#style-object)
       - [`script` ([Object])](#script-object)
       - [`noscript` ([Object])](#noscript-object)
+      - [`__dangerouslyDisableSanitizers` ([String])](#__dangerouslydisablesanitizers-string)
       - [`changed` (Function)](#changed-function)
     - [How `metaInfo` is Resolved](#how-metainfo-is-resolved)
       - [Lists of Tags](#lists-of-tags)
@@ -78,6 +79,7 @@
 - [FAQ](#faq)
   - [How do I use component props and/or component data in `metaInfo`?](#how-do-i-use-component-props-andor-component-data-in-metainfo)
   - [How do I populate `metaInfo` from the result of an asynchronous action?](#how-do-i-populate-metainfo-from-the-result-of-an-asynchronous-action)
+  - [Why doesn't `vue-meta` support `jsnext:main`?](#why-doesnt-vue-meta-support-jsnextmain)
 - [Examples](#examples)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
@@ -111,12 +113,12 @@ Use the links below - if you want a previous version, check the instructions at 
 <!-- start CDN generator - do **NOT** remove this comment -->
 **Uncompressed:**
 ```html
-<script src="https://unpkg.com/vue-meta@0.4.4/lib/vue-meta.js"></script>
+<script src="https://unpkg.com/vue-meta@0.5.0/lib/vue-meta.js"></script>
 ```
 
 **Minified:**
 ```html
-<script src="https://unpkg.com/vue-meta@0.4.4/lib/vue-meta.min.js"></script>
+<script src="https://unpkg.com/vue-meta@0.5.0/lib/vue-meta.min.js"></script>
 ```
 <!-- end CDN generator - do **NOT** remove this comment -->
 
