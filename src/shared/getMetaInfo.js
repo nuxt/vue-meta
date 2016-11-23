@@ -1,4 +1,7 @@
 import deepmerge from 'deepmerge'
+import escapeHTML from 'lodash.escape'
+import isPlainObject from 'lodash.isplainobject'
+import isArray from './isArray'
 import getComponentOption from './getComponentOption'
 
 export default function _getMetaInfo (options = {}) {
@@ -23,11 +26,12 @@ export default function _getMetaInfo (options = {}) {
       link: [],
       style: [],
       script: [],
-      noscript: []
+      noscript: [],
+      __dangerouslyDisableSanitizers: []
     }
 
     // collect & aggregate all metaInfo $options
-    const info = getComponentOption({
+    let info = getComponentOption({
       component,
       option: keyName,
       deep: true,
@@ -73,6 +77,34 @@ export default function _getMetaInfo (options = {}) {
       info.base = Object.keys(info.base).length ? [info.base] : []
     }
 
-    return deepmerge(defaultInfo, info)
+    // sanitizes potentially dangerous characters
+    const escape = (info) => Object.keys(info).reduce((escaped, key) => {
+      const ref = info.__dangerouslyDisableSanitizers
+      const isDisabled = ref && ref.indexOf(key) > -1
+      const val = info[key]
+      if (!isDisabled) {
+        if (typeof val === 'string') {
+          escaped[key] = escapeHTML(val)
+        } else if (isPlainObject(val)) {
+          escaped[key] = escape(val)
+        } else if (isArray(val)) {
+          escaped[key] = val.map(escape)
+        } else {
+          escaped[key] = val
+        }
+      } else {
+        escaped[key] = val
+      }
+
+      return escaped
+    }, {})
+
+    // merge with defaults
+    info = deepmerge(defaultInfo, info)
+
+    // begin sanitization
+    info = escape(info)
+
+    return info
   }
 }
