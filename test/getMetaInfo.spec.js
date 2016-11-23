@@ -36,7 +36,8 @@ describe('getMetaInfo', () => {
       link: [],
       style: [],
       script: [],
-      noscript: []
+      noscript: [],
+      __dangerouslyDisableSanitizers: []
     })
   })
 
