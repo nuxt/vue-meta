@@ -41,7 +41,7 @@ describe('getMetaInfo', () => {
     })
   })
 
-  it('returns metaInfos when used in component', () => {
+  it('returns metaInfo when used in component', () => {
     component = new Vue({
       metaInfo: {
         title: 'Hello',
@@ -63,7 +63,8 @@ describe('getMetaInfo', () => {
       link: [],
       style: [],
       script: [],
-      noscript: []
+      noscript: [],
+      __dangerouslyDisableSanitizers: []
     })
   })
 })
