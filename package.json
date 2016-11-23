@@ -57,7 +57,6 @@
     "webpack-dev-server": "beta"
   },
   "homepage": "https://github.com/declandewet/vue-meta",
-  "jsnext:main": "lib/jsnext/vue-meta.js",
   "keywords": [
     "attribute",
     "google",
@@ -74,7 +73,6 @@
   ],
   "license": "MIT",
   "main": "lib/vue-meta.js",
-  "module": "lib/jsnext/vue-meta.js",
   "nyc": {
     "exclude": [
       "test/**/*.js"

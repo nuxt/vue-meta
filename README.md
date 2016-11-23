@@ -704,6 +704,14 @@ Check out the [vuex-async](https://github.com/declandewet/vue-meta/tree/master/e
 
 Credit & Thanks for this feature goes to [Sébastien Chopin](https://github.com/Atinux).
 
+## Why doesn't `vue-meta` support `jsnext:main`?
+
+Originally, it did - however, it caused [problems](https://github.com/declandewet/vue-meta/issues/25). Essentially, Vue [does not support](https://github.com/vuejs/vue/issues/2880) `jsnext:main`, and does not introspect for the `default` property that is transpiled from the ES2015 source, thus breaking module resolution.
+
+Given that `jsnext:main` is a non-standard property that won't stick around for long, and `vue-meta` is bundled into one file with no dynamic module internals as well as the fact that if you're using `vue-meta`, you're 99.9% likely to not be using it conditionally - the decision has been made to drop support for it entirely.
+
+If this were not the case, you would have to instruct Babel to convert `default` imports to the proper commonjs module syntax via a plugin, which is not ideal since many users in the Vue landscape write their code in TypeScript, not Babel.
+
 # Examples
 
 To run the examples; clone this repository & run `npm install` in the root directory, and then run `npm run dev`. Head to http://localhost:8080.
