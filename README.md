@@ -1,5 +1,5 @@
 > **Please note** that this project is still in very early alpha development and is *not* considered to be production ready.
-> **You have been warned.** There is no sanitization yet, hardly any tests, and you might find some bugs.
+> **You have been warned.** There might still be a few bugs and many tests have yet to be written.
 
 <p align="center">
   <img src="http://imgur.com/258WtHI.png" alt="vue-meta">
@@ -90,7 +90,7 @@ These properties, when set on a deeply nested component, will cleverly overwrite
 # Disclaimer
 
 **Please note** that this project is still in very early alpha development and is *not* considered to be production ready.
-**You have been warned.** There is no sanitization yet, hardly any tests, and you might find some bugs.
+**You have been warned.** There might still be a few bugs and many tests have yet to be written.
 
 # Installation
 
@@ -505,6 +505,27 @@ Each item in the array maps to a newly-created `<noscript>` element, where objec
 ```html
 <noscript>This website requires JavaScript.</noscript>
 ```
+
+#### `__dangerouslyDisableSanitizers` ([String])
+
+By default, `vue-meta` sanitizes HTML entities in _every_ property. You can disable this behaviour on a per-property basis using `__dangerouslyDisableSantizers`. Just pass it a list of properties you want sanitization to be disabled on:
+
+```js
+{
+  metaInfo: {
+    title: '<I will be sanitized>',
+    meta: [{ vmid: 'description', name: 'description', content: '& I will not be <sanitized>'}],
+    __dangerouslyDisableSanitizers: ['meta']
+  }
+}
+```
+
+```html
+<title>&lt;I will be sanitized&gt;</title>
+<meta vmid="description" name="description" content="& I will not be <sanitized>">
+```
+
+:warning: **Using this option is not recommended unless you know exactly what you are doing.** By disabling sanitization, you are opening potential vectors for attacks such as SQL injection & Cross-Site Scripting (XSS). Be very careful to not compromise your application.
 
 #### `changed` (Function)
 

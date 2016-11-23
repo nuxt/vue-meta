@@ -10,6 +10,8 @@
   "bugs": "https://github.com/declandewet/vue-meta/issues",
   "dependencies": {
     "deepmerge": "^1.2.0",
+    "lodash.escape": "^4.0.1",
+    "lodash.isplainobject": "^4.0.6",
     "object-assign": "^4.1.0"
   },
   "devDependencies": {
@@ -52,6 +54,7 @@
     "vue": "^2.0.3",
     "vue-loader": "^10.0.0",
     "vue-router": "^2.0.1",
+    "vue-template-compiler": "^2.1.0",
     "vuex": "^2.0.0",
     "webpack": "beta",
     "webpack-dev-server": "beta"
