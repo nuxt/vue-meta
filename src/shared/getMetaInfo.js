@@ -1,8 +1,23 @@
 import deepmerge from 'deepmerge'
-import escapeHTML from 'lodash.escape'
 import isPlainObject from 'lodash.isplainobject'
 import isArray from './isArray'
 import getComponentOption from './getComponentOption'
+
+const escapeHTML = (str) => typeof window === 'undefined'
+  // server-side escape sequence
+  ? String(str)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#x27;')
+  // client-side escape sequence
+  : String(str)
+    .replace(/&/g, '\u0026')
+    .replace(/</g, '\u003c')
+    .replace(/>/g, '\u003e')
+    .replace(/"/g, '\u0022')
+    .replace(/'/g, '\u0027')
 
 export default function _getMetaInfo (options = {}) {
   const { keyName, tagIDKeyName } = options
