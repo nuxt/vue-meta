@@ -20,7 +20,7 @@ if (typeof Vue !== 'undefined') {
  */
 export default function VueMeta (Vue, options = {}) {
   // set some default options
-  const defaultOptions = {
+  let defaultOptions = {
     keyName: VUE_META_KEY_NAME,
     attribute: VUE_META_ATTRIBUTE,
     ssrAttribute: VUE_META_SERVER_RENDERED_ATTRIBUTE,
