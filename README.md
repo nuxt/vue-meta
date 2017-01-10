@@ -479,7 +479,7 @@ Each item in the array maps to a newly-created `<script>` element, where object 
 ```js
 {
   metaInfo: {
-    sript: [
+    script: [
       { innerHTML: '{ "@context": "http://schema.org" }', type: 'application/ld+json' }
     ]
   }
@@ -497,7 +497,7 @@ Each item in the array maps to a newly-created `<noscript>` element, where objec
 ```js
 {
   metaInfo: {
-    nosript: [
+    noscript: [
       { innerHTML: 'This website requires JavaScript.' }
     ]
   }
