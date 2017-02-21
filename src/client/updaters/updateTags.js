@@ -24,9 +24,9 @@ export default function _updateTags (options = {}) {
 
         for (const attr in tag) {
           if (tag.hasOwnProperty(attr)) {
-            if (attribute === 'innerHTML') {
+            if (attr === 'innerHTML') {
               newElement.innerHTML = tag.innerHTML
-            } else if (attribute === 'cssText') {
+            } else if (attr === 'cssText') {
               if (newElement.styleSheet) {
                 newElement.styleSheet.cssText = tag.cssText
               } else {
