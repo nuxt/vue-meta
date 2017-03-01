@@ -1,4 +1,4 @@
-### Due to injury, I have been unable to maintain this project and will be unable for some time. Since the new Vue 2.2 updates, a method of managing the meta info has landed in core. See these docs for reference: https://github.com/vuejs/vue/tree/36810163386dd4f2690d8d1c4b1016f17e467e2d/packages/vue-server-renderer#template
+### Due to injury, I have been unable to maintain this project and will be unable for some time. This does not mean I have abandoned this project, I am just unable to work on it right now. Sorry for the inconvenience!
 
 > **Please note** that this project is still in very early alpha development and is *not* considered to be production ready.
 > **You have been warned.** There might still be a few bugs and many tests have yet to be written.
