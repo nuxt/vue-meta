@@ -1,8 +1,3 @@
-### Due to injury, I have been unable to maintain this project and will be unable for some time. This does not mean I have abandoned this project, I am just unable to work on it right now. Sorry for the inconvenience!
-
-> **Please note** that this project is still in very early alpha development and is *not* considered to be production ready.
-> **You have been warned.** There might still be a few bugs and many tests have yet to be written.
-
 <p align="center">
   <img src="http://imgur.com/258WtHI.png" alt="vue-meta">
 </p>
