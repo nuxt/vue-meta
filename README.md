@@ -110,12 +110,12 @@ Use the links below - if you want a previous version, check the instructions at 
 <!-- start CDN generator - do **NOT** remove this comment -->
 **Uncompressed:**
 ```html
-<script src="https://unpkg.com/vue-meta@0.5.4/lib/vue-meta.js"></script>
+<script src="https://unpkg.com/vue-meta@0.5.5/lib/vue-meta.js"></script>
 ```
 
 **Minified:**
 ```html
-<script src="https://unpkg.com/vue-meta@0.5.4/lib/vue-meta.min.js"></script>
+<script src="https://unpkg.com/vue-meta@0.5.5/lib/vue-meta.min.js"></script>
 ```
 <!-- end CDN generator - do **NOT** remove this comment -->
 
