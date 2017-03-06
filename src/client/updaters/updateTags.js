@@ -18,6 +18,20 @@ export default function _updateTags (options = {}) {
     const newTags = []
     let indexToDelete
 
+    if (tags.length > 1) {
+      // remove duplicates that could have been found by merging tags
+      // which include a mixin with metaInfo and that mixin is used
+      // by multiple components on the same page
+      const found = []
+      tags = tags.map(x => {
+        const k = JSON.stringify(x)
+        if (found.indexOf(k) < 0) {
+          found.push(k)
+          return x
+        }
+      }).filter(x => x)
+    }
+
     if (tags && tags.length) {
       tags.forEach((tag) => {
         const newElement = document.createElement(type)
