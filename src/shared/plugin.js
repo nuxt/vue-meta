@@ -9,14 +9,6 @@ import {
   VUE_META_TAG_LIST_ID_KEY_NAME
 } from './constants'
 
-// set some default options
-const defaultOptions = {
-  keyName: VUE_META_KEY_NAME,
-  attribute: VUE_META_ATTRIBUTE,
-  ssrAttribute: VUE_META_SERVER_RENDERED_ATTRIBUTE,
-  tagIDKeyName: VUE_META_TAG_LIST_ID_KEY_NAME
-}
-
 // automatic install
 if (typeof Vue !== 'undefined') {
   Vue.use(VueMeta)
@@ -27,6 +19,13 @@ if (typeof Vue !== 'undefined') {
  * @param {Function} Vue - the Vue constructor.
  */
 export default function VueMeta (Vue, options = {}) {
+  // set some default options
+  const defaultOptions = {
+    keyName: VUE_META_KEY_NAME,
+    attribute: VUE_META_ATTRIBUTE,
+    ssrAttribute: VUE_META_SERVER_RENDERED_ATTRIBUTE,
+    tagIDKeyName: VUE_META_TAG_LIST_ID_KEY_NAME
+  }
   // combine options
   options = assign(defaultOptions, options)
 
