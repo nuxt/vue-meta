@@ -439,16 +439,16 @@ Each item in the array maps to a newly-created `<link>` element, where object pr
 {
   metaInfo: {
     link: [
-      { rel: 'stylesheet', src: '/css/index.css' },
-      { rel: 'favicon', src: 'favicon.ico' }
+      { rel: 'stylesheet', href: '/css/index.css' },
+      { rel: 'favicon', href: 'favicon.ico' }
     ]
   }
 }
 ```
 
 ```html
-<link rel="stylesheet" src="/css/index.css">
-<link rel="favicon" src="favicon.ico">
+<link rel="stylesheet" href="/css/index.css">
+<link rel="favicon" href="favicon.ico">
 ```
 
 #### `style` ([Object])
