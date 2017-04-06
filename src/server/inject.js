@@ -15,7 +15,7 @@ export default function _inject (options = {}) {
 
     // generate server injectors
     for (let key in info) {
-      if (info.hasOwnProperty(key) && key !== 'titleTemplate') {
+      if (info.hasOwnProperty(key) && key !== 'titleTemplate' && key !== 'titleChunk') {
         info[key] = generateServerInjector(options)(key, info[key])
       }
     }
