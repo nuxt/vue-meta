@@ -43,7 +43,7 @@
     "rollup-plugin-json": "^2.0.2",
     "rollup-plugin-node-resolve": "^2.0.0",
     "snazzy": "^6.0.0",
-    "standard": "^8.5.0",
+    "standard": "^10.0.0",
     "uglify-js": "^2.7.4",
     "update-section": "^0.3.3",
     "vue": "^2.0.3",
