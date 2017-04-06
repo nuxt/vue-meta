@@ -61,6 +61,10 @@ export default function VueMeta (Vue, options = {}) {
     beforeMount () {
       // batch potential DOM updates to prevent extraneous re-rendering
       batchID = batchUpdate(batchID, () => this.$meta().refresh())
+    },
+    destroyed () {
+      // batch potential DOM updates to prevent extraneous re-rendering
+      batchID = batchUpdate(batchID, () => this.$meta().refresh())
     }
   })
 }
