@@ -81,6 +81,7 @@
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
+
 # Description
 `vue-meta` is a [Vue 2.0](https://vuejs.org) plugin that allows you to manage your app's meta information, much like [`react-helmet`](https://github.com/nfl/react-helmet) does for React. However, instead of setting your data as props passed to a proprietary component, you simply export it as part of your component's data using the `metaInfo` property.
 
@@ -192,7 +193,7 @@ app.get('*', (req, res) => {
   const context = { url: req.url }
   renderer.renderToString(context, (error, html) => {
     if (error) return res.send(error.stack)
-    const { 
+    const {
       title, htmlAttrs, bodyAttrs, link, style, script, noscript, meta
     } = context.meta.inject()
     return res.send(`
@@ -385,7 +386,7 @@ Each **key:value** maps to the equivalent **attribute:value** of the `<body>` el
 {
   metaInfo: {
     bodyAttrs: {
-      bar: 'baz' 
+      bar: 'baz'
     }
   }
 }
@@ -397,7 +398,7 @@ Each **key:value** maps to the equivalent **attribute:value** of the `<body>` el
 
 #### `base` (Object)
 
-Maps to a newly-created `<base>` element, where object properties map to attributes. 
+Maps to a newly-created `<base>` element, where object properties map to attributes.
 
 ```js
 {
@@ -413,7 +414,7 @@ Maps to a newly-created `<base>` element, where object properties map to attribu
 
 #### `meta` ([Object])
 
-Each item in the array maps to a newly-created `<meta>` element, where object properties map to attributes. 
+Each item in the array maps to a newly-created `<meta>` element, where object properties map to attributes.
 
 ```js
 {
@@ -433,7 +434,7 @@ Each item in the array maps to a newly-created `<meta>` element, where object pr
 
 #### `link` ([Object])
 
-Each item in the array maps to a newly-created `<link>` element, where object properties map to attributes. 
+Each item in the array maps to a newly-created `<link>` element, where object properties map to attributes.
 
 ```js
 {
@@ -453,7 +454,7 @@ Each item in the array maps to a newly-created `<link>` element, where object pr
 
 #### `style` ([Object])
 
-Each item in the array maps to a newly-created `<style>` element, where object properties map to attributes. 
+Each item in the array maps to a newly-created `<style>` element, where object properties map to attributes.
 
 ```js
 {
@@ -471,7 +472,7 @@ Each item in the array maps to a newly-created `<style>` element, where object p
 
 #### `script` ([Object])
 
-Each item in the array maps to a newly-created `<script>` element, where object properties map to attributes. 
+Each item in the array maps to a newly-created `<script>` element, where object properties map to attributes.
 
 ```js
 {
@@ -489,7 +490,7 @@ Each item in the array maps to a newly-created `<script>` element, where object 
 
 #### `noscript` ([Object])
 
-Each item in the array maps to a newly-created `<noscript>` element, where object properties map to attributes. 
+Each item in the array maps to a newly-created `<noscript>` element, where object properties map to attributes.
 
 ```js
 {
@@ -664,7 +665,7 @@ Easy. Instead of defining `metaInfo` as an object, define it as a function and a
         description: 'A blog post about some stuff'
       }
     },
-    metaInfo () 
+    metaInfo ()
       return {
         title: this.title,
         meta: [
@@ -686,7 +687,7 @@ Easy. Instead of defining `metaInfo` as an object, define it as a function and a
 
 <script>
   import Post from './Post.vue'
-  
+
   export default {
     name: 'post-container',
     components: { Post },
