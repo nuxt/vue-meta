@@ -19,6 +19,7 @@ export default function _tagGenerator (options = {}) {
               // these attributes are treated as children on the tag
               case 'innerHTML':
               case 'cssText':
+              case 'once':
                 return attrsStr
 
               // these form the attribute list for this tag
@@ -35,10 +36,15 @@ export default function _tagGenerator (options = {}) {
           // these tag types will have content inserted
           const closed = ['noscript', 'script', 'style'].indexOf(type) === -1
 
+          // generate tag exactly without any other redundance attribute
+          const observeTag = tag.once
+            ? ''
+            : `${attribute}="true" `
+
           // the final string for this specific tag
           return closed
-            ? `${tagsStr}<${type} ${attribute}="true" ${attrs}/>`
-            : `${tagsStr}<${type} ${attribute}="true" ${attrs}>${content}</${type}>`
+            ? `${tagsStr}<${type} ${observeTag}${attrs}/>`
+            : `${tagsStr}<${type} ${observeTag}${attrs}>${content}</${type}>`
         }, '')
       }
     }
