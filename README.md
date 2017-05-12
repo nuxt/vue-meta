@@ -665,7 +665,7 @@ Easy. Instead of defining `metaInfo` as an object, define it as a function and a
         description: 'A blog post about some stuff'
       }
     },
-    metaInfo ()
+    metaInfo () {
       return {
         title: this.title,
         meta: [
