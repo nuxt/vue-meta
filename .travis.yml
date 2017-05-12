@@ -12,7 +12,7 @@ node_js:
 before_install:
   - npm i -g yarn --cache-min 999999999
 install:
-  - yarn
+  - yarn --force
 script:
   - yarn test
 after_script:
