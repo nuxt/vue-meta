@@ -16,6 +16,9 @@ new Vue({
     htmlAttrs: {
       lang: 'en',
       amp: undefined
-    }
+    },
+    meta: [
+      { name: 'description', content: 'Hello', vmid: 'test' }
+    ]
   })
 }).$mount('#app')

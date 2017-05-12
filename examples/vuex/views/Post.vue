@@ -1,7 +1,7 @@
 <template>
   <div>
     <h3>{{ post.title }}</h3>
-    <p>{{ post.content}}<p>
+    <p>{{ post.content}}</p>
     <router-link to="/">Go back home</router-link>
   </div>
 </template>
