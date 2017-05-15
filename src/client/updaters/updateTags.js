@@ -37,6 +37,7 @@ export default function _updateTags (options = {}) {
         const newElement = document.createElement(type)
 
         for (const attr in tag) {
+          console.log(type, attribute, attr)
           if (tag.hasOwnProperty(attr)) {
             if (attr === 'innerHTML') {
               newElement.innerHTML = tag.innerHTML
@@ -46,6 +47,10 @@ export default function _updateTags (options = {}) {
               } else {
                 newElement.appendChild(document.createTextNode(tag.cssText))
               }
+            } else if (attr === options.tagIDKeyName) {
+              const _attr = `data-${attr}`
+              const value = (typeof tag[attr] === 'undefined') ? '' : tag[attr]
+              newElement.setAttribute(_attr, value)
             } else {
               const value = (typeof tag[attr] === 'undefined') ? '' : tag[attr]
               newElement.setAttribute(attr, value)
