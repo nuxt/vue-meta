@@ -34,10 +34,10 @@ export default function _updateTags (options = {}) {
 
     if (tags && tags.length) {
       tags.forEach((tag) => {
+        if (type === '__dangerouslyDisableSanitizers') return
         const newElement = document.createElement(type)
 
         for (const attr in tag) {
-          console.log(type, attribute, attr)
           if (tag.hasOwnProperty(attr)) {
             if (attr === 'innerHTML') {
               newElement.innerHTML = tag.innerHTML

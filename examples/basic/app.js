@@ -19,6 +19,10 @@ new Vue({
     },
     meta: [
       { name: 'description', content: 'Hello', vmid: 'test' }
-    ]
+    ],
+    script: [
+      { innerHTML: '{ "@context": "http://www.schema.org", "@type": "Organization" }', type: 'application/ld+json' }
+    ],
+    __dangerouslyDisableSanitizers: ['script']
   })
 }).$mount('#app')
