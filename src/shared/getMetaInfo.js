@@ -97,7 +97,7 @@ export default function _getMetaInfo (options = {}) {
       const ref = info.__dangerouslyDisableSanitizers
       const isDisabled = ref && ref.indexOf(key) > -1
       const val = info[key]
-      escaped[key] = val;
+      escaped[key] = val
       if (key === '__dangerouslyDisableSanitizers') {
         return escaped
       }
