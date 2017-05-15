@@ -33,6 +33,7 @@ export default function _updateClientMetaInfo (options = {}) {
           case 'titleChunk':
           case 'titleTemplate':
           case 'changed':
+          case '__dangerouslyDisableSanitizers':
             break
           // catch-all update tags
           default:

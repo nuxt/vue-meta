@@ -34,7 +34,6 @@ export default function _updateTags (options = {}) {
 
     if (tags && tags.length) {
       tags.forEach((tag) => {
-        if (type === '__dangerouslyDisableSanitizers') return
         const newElement = document.createElement(type)
 
         for (const attr in tag) {
