@@ -60,13 +60,17 @@ export default function VueMeta (Vue, options = {}) {
     },
     beforeMount () {
       // batch potential DOM updates to prevent extraneous re-rendering
-      batchID = batchUpdate(batchID, () => this.$meta().refresh())
+      if (this.$metaInfo) {
+        batchID = batchUpdate(batchID, () => this.$meta().refresh())
+      }
     },
     destroyed () {
       // do not trigger refresh on the server side
       if (this.$isServer) return
       // re-render meta data when returning from a child component to parent
-      batchID = batchUpdate(batchID, () => this.$meta().refresh())
+      if (this.$metaInfo) {
+        batchID = batchUpdate(batchID, () => this.$meta().refresh())
+      }
     }
   })
 }
