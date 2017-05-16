@@ -38,6 +38,10 @@ export default function VueMeta (Vue, options = {}) {
   // watch for client side component updates
   Vue.mixin({
     beforeCreate () {
+      // Add a marker to know if it uses metaInfo
+      if (typeof this.$options[options.keyName] !== 'undefined') {
+        this._hasMetaInfo = true
+      }
       // coerce function-style metaInfo to a computed prop so we can observe
       // it on creation
       if (typeof this.$options[options.keyName] === 'function') {
@@ -60,7 +64,7 @@ export default function VueMeta (Vue, options = {}) {
     },
     beforeMount () {
       // batch potential DOM updates to prevent extraneous re-rendering
-      if (this.$metaInfo) {
+      if (this._hasMetaInfo) {
         batchID = batchUpdate(batchID, () => this.$meta().refresh())
       }
     },
@@ -68,7 +72,7 @@ export default function VueMeta (Vue, options = {}) {
       // do not trigger refresh on the server side
       if (this.$isServer) return
       // re-render meta data when returning from a child component to parent
-      if (this.$metaInfo) {
+      if (this._hasMetaInfo) {
         batchID = batchUpdate(batchID, () => this.$meta().refresh())
       }
     }
