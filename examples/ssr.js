@@ -32,7 +32,8 @@ const vm = new Vue({
   }
 })
 
-const html = renderer.renderToString(vm, function (err, html) {
+renderer.renderToString(vm, function (err, html) {
+  if (err) throw err
   console.log('Title', vm.$meta().inject().title.text())
   console.log('HTML', vm.$meta().inject().htmlAttrs.text())
   console.log('Meta', vm.$meta().inject().meta.text())
