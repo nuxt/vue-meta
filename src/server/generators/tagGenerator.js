@@ -21,9 +21,11 @@ export default function _tagGenerator (options = {}) {
               case 'cssText':
               case 'once':
                 return attrsStr
-
               // these form the attribute list for this tag
               default:
+                if (attr === options.tagIDKeyName) {
+                  return `${attrsStr} data-${attr}="${tag[attr]}"`
+                }
                 return typeof tag[attr] === 'undefined'
                   ? `${attrsStr} ${attr}`
                   : `${attrsStr} ${attr}="${tag[attr]}"`
