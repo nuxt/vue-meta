@@ -4,6 +4,7 @@ import updateTags from './updaters/updateTags'
 
 export default function _updateClientMetaInfo (options = {}) {
   const { ssrAttribute } = options
+  if (typeof document === 'undefined') { return function () {} }
 
   /**
    * Performs client-side updates when new meta info is received
