@@ -12,8 +12,14 @@ export default function _refresh (options = {}) {
    *
    * @return {Object} - new meta info
    */
-  return function refresh () {
-    const info = getMetaInfo(options)(this.$root)
+  
+  /*
+    * author： cqmimi
+    * Accept the cache component object
+  */
+  return function refresh (component) {
+    let info = null
+    component ? info = getMetaInfo(options)(component) : info = getMetaInfo(options)(this.$root)
     updateClientMetaInfo(options)(info)
     return info
   }

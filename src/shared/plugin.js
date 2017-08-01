@@ -62,6 +62,12 @@ export default function VueMeta (Vue, options = {}) {
         })
       }
     },
+    // Into the cache component will trigger this hook, the current cache components, access to configuration parameters
+    activated () {
+      if (this.$metaInfo) {
+        this.$meta().refresh(this)
+      }
+    },
     beforeMount () {
       // batch potential DOM updates to prevent extraneous re-rendering
       if (this._hasMetaInfo) {
