@@ -12,7 +12,6 @@ export default function _refresh (options = {}) {
    *
    * @return {Object} - new meta info
    */
-  
   /*
     * author： cqmimi
     * Accept the cache component object
