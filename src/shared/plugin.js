@@ -65,7 +65,7 @@ export default function VueMeta (Vue, options = {}) {
     // Into the cache component will trigger this hook, the current cache components, access to configuration parameters
     activated () {
       if (this._hasMetaInfo) {
-        batchID = batchUpdate(batchID, () => this.$meta().refresh())
+        batchID = batchUpdate(batchID, () => this.$meta().refresh(this))
       }
     },
     beforeMount () {
