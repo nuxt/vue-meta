@@ -712,7 +712,7 @@ Just make sure that you're using the function form of `metaInfo`:
     return {
       title: 'Foo Bar Baz'
     }
-  }
+  },
   metaInfo () {
     return {
       title: this.title
