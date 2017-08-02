@@ -52,6 +52,8 @@ export default function VueMeta (Vue, options = {}) {
       }
     },
     created () {
+      // do not trigger refresh on the server side
+      if (this.$isServer) return
       // if computed $metaInfo exists, watch it for updates & trigger a refresh
       // when it changes (i.e. automatically handle async actions that affect metaInfo)
       // credit for this suggestion goes to [Sébastien Chopin](https://github.com/Atinux)
