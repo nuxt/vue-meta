@@ -18,6 +18,8 @@ export default function getComponentOption (opts, result = {}) {
   const { component, option, deep, arrayMerge } = opts
   const { $options } = component
 
+  if (component._inactive) return result
+
   // only collect option data if it exists
   if (typeof $options[option] !== 'undefined' && $options[option] !== null) {
     let data = $options[option]

@@ -62,6 +62,18 @@ export default function VueMeta (Vue, options = {}) {
         })
       }
     },
+    activated () {
+      if (this._hasMetaInfo) {
+        // batch potential DOM updates to prevent extraneous re-rendering
+        batchID = batchUpdate(batchID, () => this.$meta().refresh())
+      }
+    },
+    deactivated () {
+      if (this._hasMetaInfo) {
+        // batch potential DOM updates to prevent extraneous re-rendering
+        batchID = batchUpdate(batchID, () => this.$meta().refresh())
+      }
+    },
     beforeMount () {
       // batch potential DOM updates to prevent extraneous re-rendering
       if (this._hasMetaInfo) {
@@ -73,7 +85,12 @@ export default function VueMeta (Vue, options = {}) {
       if (this.$isServer) return
       // re-render meta data when returning from a child component to parent
       if (this._hasMetaInfo) {
-        batchID = batchUpdate(batchID, () => this.$meta().refresh())
+        // Wait that element is hidden before refreshing meta tags (to support animations)
+        const interval = setInterval(() => {
+          if (this.$el.offsetParent !== null) return
+          clearInterval(interval)
+          batchID = batchUpdate(batchID, () => this.$meta().refresh())
+        }, 50)
       }
     }
   })

@@ -46,7 +46,9 @@ const App = {
       <h1>vue-router</h1>
       <router-link to="/">Home</router-link>
       <router-link to="/about">About</router-link>
-      <router-view></router-view>
+      <transition name="page" mode="out-in">
+        <router-view></router-view>
+      </transition>
       <p>Inspect Element to see the meta info</p>
     </div>
   `
