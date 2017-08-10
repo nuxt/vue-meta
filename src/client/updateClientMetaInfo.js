@@ -26,8 +26,13 @@ export default function _updateClientMetaInfo (options = {}) {
             break
           // update attributes
           case 'htmlAttrs':
+            updateTagAttributes(options)(newInfo[key], htmlTag)
+            break
           case 'bodyAttrs':
-            updateTagAttributes(options)(newInfo[key], key === 'htmlAttrs' ? htmlTag : document.getElementsByTagName('body')[0])
+            updateTagAttributes(options)(newInfo[key], document.getElementsByTagName('body')[0])
+            break
+          case 'headAttrs':
+            updateTagAttributes(options)(newInfo[key], document.getElementsByTagName('head')[0])
             break
           // ignore these
           case 'titleChunk':
