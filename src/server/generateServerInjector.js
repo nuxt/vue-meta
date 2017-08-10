@@ -16,6 +16,7 @@ export default function _generateServerInjector (options = {}) {
         return titleGenerator(options)(type, data)
       case 'htmlAttrs':
       case 'bodyAttrs':
+      case 'headAttrs':
         return attrsGenerator(options)(type, data)
       default:
         return tagGenerator(options)(type, data)
