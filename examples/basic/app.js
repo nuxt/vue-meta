@@ -17,6 +17,9 @@ new Vue({
       lang: 'en',
       amp: undefined
     },
+    headAttrs: {
+      test: true
+    },
     meta: [
       { name: 'description', content: 'Hello', vmid: 'test' }
     ],
