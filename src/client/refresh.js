@@ -14,7 +14,7 @@ export default function _refresh (options = {}) {
    */
   return function refresh () {
     const info = getMetaInfo(options)(this.$root)
-    updateClientMetaInfo(options)(info)
+    updateClientMetaInfo(options).call(this, info)
     return info
   }
 }

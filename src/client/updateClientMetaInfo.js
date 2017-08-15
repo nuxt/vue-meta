@@ -52,7 +52,7 @@ export default function _updateClientMetaInfo (options = {}) {
 
       // emit "event" with new info
       if (typeof newInfo.changed === 'function') {
-        newInfo.changed(newInfo, addedTags, removedTags)
+        newInfo.changed.call(this, newInfo, addedTags, removedTags)
       }
     } else {
       // remove the server render attribute so we can update on changes
