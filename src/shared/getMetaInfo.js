@@ -36,6 +36,7 @@ export default function _getMetaInfo (options = {}) {
       titleTemplate: '%s',
       htmlAttrs: {},
       bodyAttrs: {},
+      headAttrs: {},
       meta: [],
       base: [],
       link: [],

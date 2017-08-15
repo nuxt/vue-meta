@@ -4,7 +4,7 @@ export default function _attrsGenerator (options = {}) {
   /**
    * Generates tag attributes for use on the server.
    *
-   * @param  {('bodyAttrs'|'htmlAttrs')} type - the type of attributes to generate
+   * @param  {('bodyAttrs'|'htmlAttrs'|'headAttrs')} type - the type of attributes to generate
    * @param  {Object} data - the attributes to generate
    * @return {Object} - the attribute generator
    */
