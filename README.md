@@ -375,7 +375,7 @@ Each **key:value** maps to the equivalent **attribute:value** of the `<html>` el
 ```
 
 ```html
-<html foo="bar" amp></title>
+<html foo="bar" amp></html>
 ```
 
 #### `bodyAttrs` (Object)
