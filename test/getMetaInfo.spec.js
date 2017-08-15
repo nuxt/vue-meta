@@ -30,6 +30,7 @@ describe('getMetaInfo', () => {
       titleChunk: '',
       titleTemplate: '%s',
       htmlAttrs: {},
+      headAttrs: {},
       bodyAttrs: {},
       meta: [],
       base: [],
@@ -55,6 +56,7 @@ describe('getMetaInfo', () => {
       titleChunk: 'Hello',
       titleTemplate: '%s',
       htmlAttrs: {},
+      headAttrs: {},
       bodyAttrs: {},
       meta: [
         { charset: 'utf-8' }
