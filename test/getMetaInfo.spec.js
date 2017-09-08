@@ -129,4 +129,42 @@ describe('getMetaInfo', () => {
       __dangerouslyDisableSanitizers: []
     })
   })
+
+  it('has the proper `this` binding when using function titleTemplates', () => {
+    const titleTemplate = function (chunk) {
+      return `${chunk} ${this.helloWorldText}`
+    }
+
+    component = new Vue({
+      metaInfo: {
+        title: 'Hello',
+        titleTemplate: titleTemplate,
+        meta: [
+          { charset: 'utf-8' }
+        ]
+      },
+      data () {
+        return {
+          helloWorldText: 'Function World'
+        }
+      }
+    })
+    expect(getMetaInfo(component)).to.eql({
+      title: 'Hello Function World',
+      titleChunk: 'Hello',
+      titleTemplate: titleTemplate,
+      htmlAttrs: {},
+      headAttrs: {},
+      bodyAttrs: {},
+      meta: [
+        { charset: 'utf-8' }
+      ],
+      base: [],
+      link: [],
+      style: [],
+      script: [],
+      noscript: [],
+      __dangerouslyDisableSanitizers: []
+    })
+  })
 })
