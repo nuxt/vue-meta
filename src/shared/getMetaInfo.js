@@ -85,7 +85,7 @@ export default function _getMetaInfo (options = {}) {
     // replace title with populated template
     if (info.titleTemplate) {
       if (typeof info.titleTemplate === 'function') {
-        info.title = info.titleTemplate(info.titleChunk)
+        info.title = info.titleTemplate.call(component, info.titleChunk)
       } else {
         info.title = info.titleTemplate.replace(/%s/g, info.titleChunk)
       }
