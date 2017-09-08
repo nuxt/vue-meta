@@ -84,7 +84,11 @@ export default function _getMetaInfo (options = {}) {
 
     // replace title with populated template
     if (info.titleTemplate) {
-      info.title = info.titleTemplate.replace(/%s/g, info.titleChunk)
+      if (typeof info.titleTemplate === 'function') {
+        info.title = info.titleTemplate(info.titleChunk)
+      } else {
+        info.title = info.titleTemplate.replace(/%s/g, info.titleChunk)
+      }
     }
 
     // convert base tag to an array so it can be handled the same way
