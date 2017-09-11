@@ -69,4 +69,102 @@ describe('getMetaInfo', () => {
       __dangerouslyDisableSanitizers: []
     })
   })
+
+  it('properly uses string titleTemplates', () => {
+    component = new Vue({
+      metaInfo: {
+        title: 'Hello',
+        titleTemplate: '%s World',
+        meta: [
+          { charset: 'utf-8' }
+        ]
+      }
+    })
+    expect(getMetaInfo(component)).to.eql({
+      title: 'Hello World',
+      titleChunk: 'Hello',
+      titleTemplate: '%s World',
+      htmlAttrs: {},
+      headAttrs: {},
+      bodyAttrs: {},
+      meta: [
+        { charset: 'utf-8' }
+      ],
+      base: [],
+      link: [],
+      style: [],
+      script: [],
+      noscript: [],
+      __dangerouslyDisableSanitizers: []
+    })
+  })
+
+  it('properly uses function titleTemplates', () => {
+    const titleTemplate = chunk => `${chunk} Function World`
+
+    component = new Vue({
+      metaInfo: {
+        title: 'Hello',
+        titleTemplate: titleTemplate,
+        meta: [
+          { charset: 'utf-8' }
+        ]
+      }
+    })
+    expect(getMetaInfo(component)).to.eql({
+      title: 'Hello Function World',
+      titleChunk: 'Hello',
+      titleTemplate: titleTemplate,
+      htmlAttrs: {},
+      headAttrs: {},
+      bodyAttrs: {},
+      meta: [
+        { charset: 'utf-8' }
+      ],
+      base: [],
+      link: [],
+      style: [],
+      script: [],
+      noscript: [],
+      __dangerouslyDisableSanitizers: []
+    })
+  })
+
+  it('has the proper `this` binding when using function titleTemplates', () => {
+    const titleTemplate = function (chunk) {
+      return `${chunk} ${this.helloWorldText}`
+    }
+
+    component = new Vue({
+      metaInfo: {
+        title: 'Hello',
+        titleTemplate: titleTemplate,
+        meta: [
+          { charset: 'utf-8' }
+        ]
+      },
+      data () {
+        return {
+          helloWorldText: 'Function World'
+        }
+      }
+    })
+    expect(getMetaInfo(component)).to.eql({
+      title: 'Hello Function World',
+      titleChunk: 'Hello',
+      titleTemplate: titleTemplate,
+      htmlAttrs: {},
+      headAttrs: {},
+      bodyAttrs: {},
+      meta: [
+        { charset: 'utf-8' }
+      ],
+      base: [],
+      link: [],
+      style: [],
+      script: [],
+      noscript: [],
+      __dangerouslyDisableSanitizers: []
+    })
+  })
 })
