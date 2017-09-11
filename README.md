@@ -342,7 +342,7 @@ Maps to the inner-text value of the `<title>` element.
 <title>Foo Bar</title>
 ```
 
-#### `titleTemplate` (String)
+#### `titleTemplate` (String | Function)
 
 The value of `title` will be injected into the `%s` placeholder in `titleTemplate` before being rendered. The original title will be available on `metaInfo.titleChunk`.
 
@@ -357,6 +357,15 @@ The value of `title` will be injected into the `%s` placeholder in `titleTemplat
 
 ```html
 <title>Foo Bar - Baz</title>
+```
+
+The property can also be a function (from [v1.2.0](https://github.com/declandewet/vue-meta/releases/tag/v1.2.0)):
+
+```js
+titleTemplate: (titleChunk) => {
+  // If undefined or blank then we don't need the hyphen
+  return titleChunk ? `${titleChunk} - Site Title` : 'Site Title';
+}
 ```
 
 #### `htmlAttrs` (Object)
