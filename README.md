@@ -58,7 +58,7 @@
   - [Step 3: Start defining `metaInfo`](#step-3-start-defining-metainfo)
     - [Recognized `metaInfo` Properties](#recognized-metainfo-properties)
       - [`title` (String)](#title-string)
-      - [`titleTemplate` (String)](#titletemplate-string)
+      - [`titleTemplate` (String)](#titletemplate-string--function)
       - [`htmlAttrs` (Object)](#htmlattrs-object)
       - [`bodyAttrs` (Object)](#bodyattrs-object)
       - [`base` (Object)](#base-object)
