@@ -42,7 +42,9 @@ export default function _updateClientMetaInfo (options = {}) {
             break
           // catch-all update tags
           default:
-            const { oldTags, newTags } = updateTags(options)(key, newInfo[key], document.getElementsByTagName('head')[0])
+            const headTag = document.getElementsByTagName('head')[0]
+            const bodyTag = document.getElementsByTagName('body')[0]
+            const { oldTags, newTags } = updateTags(options)(key, newInfo[key], headTag, bodyTag)
             if (newTags.length) {
               addedTags[key] = newTags
               removedTags[key] = oldTags

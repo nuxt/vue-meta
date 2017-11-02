@@ -10,9 +10,10 @@ export default function _tagGenerator (options = {}) {
    */
   return function tagGenerator (type, tags) {
     return {
-      text () {
+      text ({inBody = false} = {}) {
         // build a string containing all tags of this type
         return tags.reduce((tagsStr, tag) => {
+          if (!!tag.inBody !== inBody) return tagsStr
           // build a string containing all attributes of this tag
           const attrs = Object.keys(tag).reduce((attrsStr, attr) => {
             switch (attr) {
