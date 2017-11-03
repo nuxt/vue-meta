@@ -193,7 +193,7 @@ app.get('*', (req, res) => {
   const context = { url: req.url }
   renderer.renderToString(context, (error, html) => {
     if (error) return res.send(error.stack)
-    const bodyOpt = { inBody: true }
+    const bodyOpt = { body: true }
     const {
       title, htmlAttrs, bodyAttrs, link, style, script, noscript, meta
     } = context.meta.inject()
@@ -230,7 +230,7 @@ app.get('*', (req, res) => {
   const context = { url: req.url }
   const renderStream = renderer.renderToStream(context)
   renderStream.once('data', () => {
-    const bodyOpt = { inBody: true }
+    const bodyOpt = { body: true }
     const {
       title, htmlAttrs, bodyAttrs, link, style, script, noscript, meta
     } = context.meta.inject()
@@ -501,13 +501,13 @@ Each item in the array maps to a newly-created `<script>` element, where object 
 <script type="application/ld+json">{ "@context": "http://schema.org" }</script>
 ```
 
-If your browser doesn't support `defer` or any other reason, you want to put `<script>` before `</body>`, use `inBody`.
+If your browser doesn't support `defer` or any other reason, you want to put `<script>` before `</body>`, use `body`.
 
 ```js
 {
   metaInfo: {
     script: [
-      { innerHTML: 'console.log("I am in body");', type: 'text/javascript', inBody: true }
+      { innerHTML: 'console.log("I am in body");', type: 'text/javascript', body: true }
     ]
   }
 }

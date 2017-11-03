@@ -73,7 +73,7 @@ export default function _updateTags (options = {}) {
 
     oldTags.forEach((tag) => tag.parentNode.removeChild(tag))
     newTags.forEach((tag) => {
-      if (tag.inBody === true) {
+      if (tag.body === true) {
         bodyTag.appendChild(tag)
       } else {
         headTag.appendChild(tag)
