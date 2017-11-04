@@ -13,8 +13,8 @@ export default function _updateTags (options = {}) {
    * @return {Object} - a representation of what tags changed
    */
   return function updateTags (type, tags, headTag, bodyTag) {
-    const nodes = document.querySelectorAll(`${type}[${attribute}]`)
-    const oldTags = toArray(nodes)
+    const oldHeadTags = toArray(headTag.querySelectorAll(`${type}[${attribute}]`))
+    const oldBodyTags = toArray(bodyTag.querySelectorAll(`${type}[${attribute}][body="true"]`))
     const newTags = []
     let indexToDelete
 
@@ -35,6 +35,7 @@ export default function _updateTags (options = {}) {
     if (tags && tags.length) {
       tags.forEach((tag) => {
         const newElement = document.createElement(type)
+        const oldTags = tag.body !== true ? oldHeadTags : oldBodyTags
 
         for (const attr in tag) {
           if (tag.hasOwnProperty(attr)) {
@@ -70,10 +71,10 @@ export default function _updateTags (options = {}) {
         }
       })
     }
-
+    const oldTags = oldHeadTags.concat(oldBodyTags)
     oldTags.forEach((tag) => tag.parentNode.removeChild(tag))
     newTags.forEach((tag) => {
-      if (tag.body === true) {
+      if (tag.getAttribute('body') === 'true') {
         bodyTag.appendChild(tag)
       } else {
         headTag.appendChild(tag)
