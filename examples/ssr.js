@@ -15,7 +15,8 @@ const vm = new Vue({
       { hid: 'description', name: 'description', content: 'Hello World' }
     ],
     script: [
-      { innerHTML: '{ "@context": "http://www.schema.org", "@type": "Organization" }', type: 'application/ld+json' }
+      { innerHTML: '{ "@context": "http://www.schema.org", "@type": "Organization" }', type: 'application/ld+json' },
+      { innerHTML: '{ "body": "yes" }', body: true, type: 'application/ld+json' }
     ],
     __dangerouslyDisableSanitizers: ['script']
   },
@@ -34,8 +35,10 @@ const vm = new Vue({
 
 renderer.renderToString(vm, function (err, html) {
   if (err) throw err
-  console.log('Title', vm.$meta().inject().title.text())
-  console.log('HTML', vm.$meta().inject().htmlAttrs.text())
-  console.log('Meta', vm.$meta().inject().meta.text())
-  console.log('Script', vm.$meta().inject().script.text())
+  const $meta = vm.$meta().inject()
+  console.log('Title:\n' + $meta.title.text())
+  console.log('\nHTML attrs:\n' + $meta.htmlAttrs.text())
+  console.log('\nMeta:\n' + $meta.meta.text())
+  console.log('\nHead Script:\n' + $meta.script.text())
+  console.log('\nBody Script:\n' + $meta.script.text({ body: true }))
 })

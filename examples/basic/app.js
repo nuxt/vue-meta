@@ -24,7 +24,8 @@ new Vue({
       { name: 'description', content: 'Hello', vmid: 'test' }
     ],
     script: [
-      { innerHTML: '{ "@context": "http://www.schema.org", "@type": "Organization" }', type: 'application/ld+json' }
+      { innerHTML: '{ "@context": "http://www.schema.org", "@type": "Organization" }', type: 'application/ld+json' },
+      { innerHTML: '{ "body": "yes" }', body: true, type: 'application/ld+json' }
     ],
     __dangerouslyDisableSanitizers: ['script']
   })
