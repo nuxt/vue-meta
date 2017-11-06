@@ -58,7 +58,7 @@
   - [Step 3: Start defining `metaInfo`](#step-3-start-defining-metainfo)
     - [Recognized `metaInfo` Properties](#recognized-metainfo-properties)
       - [`title` (String)](#title-string)
-      - [`titleTemplate` (String)](#titletemplate-string--function)
+      - [`titleTemplate` (String | Function)](#titletemplate-string--function)
       - [`htmlAttrs` (Object)](#htmlattrs-object)
       - [`bodyAttrs` (Object)](#bodyattrs-object)
       - [`base` (Object)](#base-object)
@@ -111,12 +111,12 @@ Use the links below - if you want a previous version, check the instructions at 
 <!-- start CDN generator - do **NOT** remove this comment -->
 **Uncompressed:**
 ```html
-<script src="https://unpkg.com/vue-meta@1.2.0/lib/vue-meta.js"></script>
+<script src="https://unpkg.com/vue-meta@1.3.0/lib/vue-meta.js"></script>
 ```
 
 **Minified:**
 ```html
-<script src="https://unpkg.com/vue-meta@1.2.0/lib/vue-meta.min.js"></script>
+<script src="https://unpkg.com/vue-meta@1.3.0/lib/vue-meta.min.js"></script>
 ```
 <!-- end CDN generator - do **NOT** remove this comment -->
 
