@@ -14,7 +14,7 @@ export default function _updateTags (options = {}) {
    */
   return function updateTags (type, tags, headTag, bodyTag) {
     const oldHeadTags = toArray(headTag.querySelectorAll(`${type}[${attribute}]`))
-    const oldBodyTags = toArray(bodyTag.querySelectorAll(`${type}[${attribute}][body="true"]`))
+    const oldBodyTags = toArray(bodyTag.querySelectorAll(`${type}[${attribute}][data-body="true"]`))
     const newTags = []
     let indexToDelete
 
