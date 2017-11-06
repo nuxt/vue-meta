@@ -5,16 +5,16 @@ export default function _updateTags (options = {}) {
   const { attribute } = options
 
   /**
-   * Updates meta tags inside <head> on the client. Borrowed from `react-helmet`:
+   * Updates meta tags inside <head> and <body> on the client. Borrowed from `react-helmet`:
    * https://github.com/nfl/react-helmet/blob/004d448f8de5f823d10f838b02317521180f34da/src/Helmet.js#L195-L245
    *
    * @param  {('meta'|'base'|'link'|'style'|'script'|'noscript')} type - the name of the tag
    * @param  {(Array<Object>|Object)} tags - an array of tag objects or a single object in case of base
    * @return {Object} - a representation of what tags changed
    */
-  return function updateTags (type, tags, headTag) {
-    const nodes = headTag.querySelectorAll(`${type}[${attribute}]`)
-    const oldTags = toArray(nodes)
+  return function updateTags (type, tags, headTag, bodyTag) {
+    const oldHeadTags = toArray(headTag.querySelectorAll(`${type}[${attribute}]`))
+    const oldBodyTags = toArray(bodyTag.querySelectorAll(`${type}[${attribute}][body="true"]`))
     const newTags = []
     let indexToDelete
 
@@ -35,6 +35,7 @@ export default function _updateTags (options = {}) {
     if (tags && tags.length) {
       tags.forEach((tag) => {
         const newElement = document.createElement(type)
+        const oldTags = tag.body !== true ? oldHeadTags : oldBodyTags
 
         for (const attr in tag) {
           if (tag.hasOwnProperty(attr)) {
@@ -70,9 +71,15 @@ export default function _updateTags (options = {}) {
         }
       })
     }
-
+    const oldTags = oldHeadTags.concat(oldBodyTags)
     oldTags.forEach((tag) => tag.parentNode.removeChild(tag))
-    newTags.forEach((tag) => headTag.appendChild(tag))
+    newTags.forEach((tag) => {
+      if (tag.getAttribute('body') === 'true') {
+        bodyTag.appendChild(tag)
+      } else {
+        headTag.appendChild(tag)
+      }
+    })
 
     return { oldTags, newTags }
   }

@@ -193,6 +193,7 @@ app.get('*', (req, res) => {
   const context = { url: req.url }
   renderer.renderToString(context, (error, html) => {
     if (error) return res.send(error.stack)
+    const bodyOpt = { body: true }
     const {
       title, htmlAttrs, bodyAttrs, link, style, script, noscript, meta
     } = context.meta.inject()
@@ -211,6 +212,7 @@ app.get('*', (req, res) => {
           ${html}
           <script src="/assets/vendor.bundle.js"></script>
           <script src="/assets/client.bundle.js"></script>
+          ${script.text(bodyOpt)}
         </body>
       </html>
     `)
@@ -228,6 +230,7 @@ app.get('*', (req, res) => {
   const context = { url: req.url }
   const renderStream = renderer.renderToStream(context)
   renderStream.once('data', () => {
+    const bodyOpt = { body: true }
     const {
       title, htmlAttrs, bodyAttrs, link, style, script, noscript, meta
     } = context.meta.inject()
@@ -252,6 +255,7 @@ app.get('*', (req, res) => {
     res.end(`
           <script src="/assets/vendor.bundle.js"></script>
           <script src="/assets/client.bundle.js"></script>
+          ${script.text(bodyOpt)}
         </body>
       </html>
     `)
@@ -495,6 +499,18 @@ Each item in the array maps to a newly-created `<script>` element, where object 
 
 ```html
 <script type="application/ld+json">{ "@context": "http://schema.org" }</script>
+```
+
+If your browser doesn't support `defer` or any other reason, you want to put `<script>` before `</body>`, use `body`.
+
+```js
+{
+  metaInfo: {
+    script: [
+      { innerHTML: 'console.log("I am in body");', type: 'text/javascript', body: true }
+    ]
+  }
+}
 ```
 
 #### `noscript` ([Object])
