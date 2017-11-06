@@ -47,7 +47,7 @@ export default function _updateTags (options = {}) {
               } else {
                 newElement.appendChild(document.createTextNode(tag.cssText))
               }
-            } else if (attr === options.tagIDKeyName) {
+            } else if ([options.tagIDKeyName, 'body'].includes(attr)) {
               const _attr = `data-${attr}`
               const value = (typeof tag[attr] === 'undefined') ? '' : tag[attr]
               newElement.setAttribute(_attr, value)
@@ -74,7 +74,7 @@ export default function _updateTags (options = {}) {
     const oldTags = oldHeadTags.concat(oldBodyTags)
     oldTags.forEach((tag) => tag.parentNode.removeChild(tag))
     newTags.forEach((tag) => {
-      if (tag.getAttribute('body') === 'true') {
+      if (tag.getAttribute('data-body') === 'true') {
         bodyTag.appendChild(tag)
       } else {
         headTag.appendChild(tag)

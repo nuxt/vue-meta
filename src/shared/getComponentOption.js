@@ -31,10 +31,7 @@ export default function getComponentOption (opts, result = {}) {
 
     if (typeof data === 'object') {
       // merge with existing options
-      result = deepmerge(result, data, {
-        clone: true,
-        arrayMerge
-      })
+      result = deepmerge(result, data, { arrayMerge })
     } else {
       result = data
     }

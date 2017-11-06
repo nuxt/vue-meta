@@ -10,7 +10,7 @@ export default function _tagGenerator (options = {}) {
    */
   return function tagGenerator (type, tags) {
     return {
-      text ({body = false} = {}) {
+      text ({ body = false } = {}) {
         // build a string containing all tags of this type
         return tags.reduce((tagsStr, tag) => {
           if (!!tag.body !== body) return tagsStr
@@ -24,7 +24,7 @@ export default function _tagGenerator (options = {}) {
                 return attrsStr
               // these form the attribute list for this tag
               default:
-                if (attr === options.tagIDKeyName) {
+                if ([options.tagIDKeyName, 'body'].includes(attr)) {
                   return `${attrsStr} data-${attr}="${tag[attr]}"`
                 }
                 return typeof tag[attr] === 'undefined'

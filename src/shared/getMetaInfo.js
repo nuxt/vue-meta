@@ -52,7 +52,7 @@ export default function _getMetaInfo (options = {}) {
       option: keyName,
       deep: true,
       arrayMerge (target, source) {
-        // we concat the arrays without merging objects contained therein,
+        // we concat the arrays without merging objects contained in,
         // but we check for a `vmid` property on each object in the array
         // using an O(1) lookup associative array exploit
         // note the use of "for in" - we are looping through arrays here, not
