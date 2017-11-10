@@ -220,6 +220,17 @@ app.get('*', (req, res) => {
 })
 ```
 
+If you are using a separate template file, edit your head tag with
+
+```html
+<head>
+  {{{ meta.inject().title.text() }}}
+  {{{ meta.inject().meta.text() }}}
+</head>
+```
+
+Notice the use of `{{{` to avoid double escaping. Be extremely cautious when you use `{{{` with `__dangerouslyDisableSanitizers`.
+
 #### Streaming Rendering with `renderToStream()`
 
 A little more complex, but well worth it, is to instead stream your response. `vue-meta` supports streaming with no effort (on it's part :stuck_out_tongue_winking_eye:) thanks to Vue's clever `bundleRenderer` context injection:
@@ -677,7 +688,7 @@ Easy. Instead of defining `metaInfo` as an object, define it as a function and a
 ```html
 <template>
   <div>
-    <h1>{{ title }}</h1>
+    <h1>{{{ title }}}</h1>
   </div>
 </template>
 
