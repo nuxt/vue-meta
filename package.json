@@ -58,7 +58,7 @@
     "phantomjs-prebuilt": "^2.1.15",
     "rimraf": "^2.6.1",
     "rollup": "^0.47.4",
-    "rollup-plugin-buble": "^0.17.0",
+    "rollup-plugin-buble": "^0.18.0",
     "rollup-plugin-commonjs": "^8.1.0",
     "rollup-plugin-json": "^2.3.0",
     "rollup-plugin-node-resolve": "^3.0.0",
