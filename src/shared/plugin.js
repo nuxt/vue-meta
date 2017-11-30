@@ -55,7 +55,7 @@ export default function VueMeta (Vue, options = {}) {
       // if computed $metaInfo exists, watch it for updates & trigger a refresh
       // when it changes (i.e. automatically handle async actions that affect metaInfo)
       // credit for this suggestion goes to [Sébastien Chopin](https://github.com/Atinux)
-      if (this.$isServer && this.$metaInfo) {
+      if (!this.$isServer && this.$metaInfo) {
         this.$watch('$metaInfo', () => {
           // batch potential DOM updates to prevent extraneous re-rendering
           batchID = batchUpdate(batchID, () => this.$meta().refresh())
