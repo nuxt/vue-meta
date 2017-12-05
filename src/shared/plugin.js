@@ -10,7 +10,7 @@ import {
 } from './constants'
 
 // automatic install
-if (typeof window !== 'undefined' && typeof window.Vue != 'undefined') {
+if (typeof window !== 'undefined' && typeof window.Vue !== 'undefined') {
   Vue.use(VueMeta)
 }
 
