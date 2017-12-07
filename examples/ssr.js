@@ -23,10 +23,10 @@ const vm = new Vue({
   components: {
     Hello: {
       template: '<p>Hello</p>',
-      data() {
+      data () {
         return { msg: 'Hello' }
       },
-      metaInfo() {
+      metaInfo () {
         return {
           title: `<b>${this.msg}</b>`,
           meta: [
@@ -34,7 +34,7 @@ const vm = new Vue({
           ]
         }
       },
-      created() {
+      created () {
         this.msg = 'Hi!'
       }
     }
