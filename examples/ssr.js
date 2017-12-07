@@ -23,11 +23,19 @@ const vm = new Vue({
   components: {
     Hello: {
       template: '<p>Hello</p>',
-      metaInfo: {
-        title: 'Coucou',
-        meta: [
-          { hid: 'description', name: 'description', content: 'Coucou' }
-        ]
+      data() {
+        return { msg: 'Hello' }
+      },
+      metaInfo() {
+        return {
+          title: `<b>${this.msg}</b>`,
+          meta: [
+            { hid: 'description', name: 'description', content: this.msg }
+          ]
+        }
+      },
+      created() {
+        this.msg = 'Hi!'
       }
     }
   }
