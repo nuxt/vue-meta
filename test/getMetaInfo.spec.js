@@ -38,7 +38,8 @@ describe('getMetaInfo', () => {
       style: [],
       script: [],
       noscript: [],
-      __dangerouslyDisableSanitizers: []
+      __dangerouslyDisableSanitizers: [],
+      __dangerouslyDisableSanitizersByTagID: {}
     })
   })
 
@@ -66,7 +67,8 @@ describe('getMetaInfo', () => {
       style: [],
       script: [],
       noscript: [],
-      __dangerouslyDisableSanitizers: []
+      __dangerouslyDisableSanitizers: [],
+      __dangerouslyDisableSanitizersByTagID: {}
     })
   })
 
@@ -95,7 +97,8 @@ describe('getMetaInfo', () => {
       style: [],
       script: [],
       noscript: [],
-      __dangerouslyDisableSanitizers: []
+      __dangerouslyDisableSanitizers: [],
+      __dangerouslyDisableSanitizersByTagID: {}
     })
   })
 
@@ -126,7 +129,8 @@ describe('getMetaInfo', () => {
       style: [],
       script: [],
       noscript: [],
-      __dangerouslyDisableSanitizers: []
+      __dangerouslyDisableSanitizers: [],
+      __dangerouslyDisableSanitizersByTagID: {}
     })
   })
 
@@ -164,7 +168,8 @@ describe('getMetaInfo', () => {
       style: [],
       script: [],
       noscript: [],
-      __dangerouslyDisableSanitizers: []
+      __dangerouslyDisableSanitizers: [],
+      __dangerouslyDisableSanitizersByTagID: {}
     })
   })
 })

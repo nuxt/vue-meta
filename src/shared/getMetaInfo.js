@@ -43,7 +43,8 @@ export default function _getMetaInfo (options = {}) {
       style: [],
       script: [],
       noscript: [],
-      __dangerouslyDisableSanitizers: []
+      __dangerouslyDisableSanitizers: [],
+      __dangerouslyDisableSanitizersByTagID: {}
     }
 
     // collect & aggregate all metaInfo $options
@@ -97,13 +98,19 @@ export default function _getMetaInfo (options = {}) {
       info.base = Object.keys(info.base).length ? [info.base] : []
     }
 
+    const ref = info.__dangerouslyDisableSanitizers
+    const refByTagID = info.__dangerouslyDisableSanitizersByTagID
+
     // sanitizes potentially dangerous characters
     const escape = (info) => Object.keys(info).reduce((escaped, key) => {
-      const ref = info.__dangerouslyDisableSanitizers
-      const isDisabled = ref && ref.indexOf(key) > -1
+      let isDisabled = ref && ref.indexOf(key) > -1
+      const tagID = info[tagIDKeyName]
+      if (!isDisabled && tagID) {
+        isDisabled = refByTagID && refByTagID[tagID] && refByTagID[tagID].indexOf(key) > -1
+      }
       const val = info[key]
       escaped[key] = val
-      if (key === '__dangerouslyDisableSanitizers') {
+      if (key === '__dangerouslyDisableSanitizers' || key === '__dangerouslyDisableSanitizersByTagID') {
         return escaped
       }
       if (!isDisabled) {

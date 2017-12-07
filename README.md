@@ -68,6 +68,7 @@
       - [`script` ([Object])](#script-object)
       - [`noscript` ([Object])](#noscript-object)
       - [`__dangerouslyDisableSanitizers` ([String])](#__dangerouslydisablesanitizers-string)
+      - [`__dangerouslyDisableSanitizersByTagID` ({[String]})](#__dangerouslydisablesanitizersbytagid-string)
       - [`changed` (Function)](#changed-function)
     - [How `metaInfo` is Resolved](#how-metainfo-is-resolved)
       - [Lists of Tags](#lists-of-tags)
@@ -559,6 +560,27 @@ By default, `vue-meta` sanitizes HTML entities in _every_ property. You can disa
 ```html
 <title>&lt;I will be sanitized&gt;</title>
 <meta vmid="description" name="description" content="& I will not be <sanitized>">
+```
+
+:warning: **Using this option is not recommended unless you know exactly what you are doing.** By disabling sanitization, you are opening potential vectors for attacks such as SQL injection & Cross-Site Scripting (XSS). Be very careful to not compromise your application.
+
+#### `__dangerouslyDisableSanitizersByTagID` ({[String]})
+
+Provides same functionality as `__dangerouslyDisableSanitizers` but you can specify which property for which `tagIDKeyName`'s sanitization should be disabled. It expects an object with the vmid's as key and an array with property names value:
+
+```js
+{
+  metaInfo: {
+    title: '<I will be sanitized>',
+    meta: [{ vmid: 'description', name: 'still-&-sanitized', content: '& I will not be <sanitized>'}],
+    __dangerouslyDisableSanitizersByTagID: { description: ['content'] }
+  }
+}
+```
+
+```html
+<title>&lt;I will be sanitized&gt;</title>
+<meta vmid="description" name="still-&amp;-sanitized" content="& I will not be <sanitized>">
 ```
 
 :warning: **Using this option is not recommended unless you know exactly what you are doing.** By disabling sanitization, you are opening potential vectors for attacks such as SQL injection & Cross-Site Scripting (XSS). Be very careful to not compromise your application.
