@@ -24,7 +24,7 @@ export default function _tagGenerator (options = {}) {
                 return attrsStr
               // these form the attribute list for this tag
               default:
-                if ([options.tagIDKeyName, 'body'].includes(attr)) {
+                if ([options.tagIDKeyName, 'body'].indexOf(attr) !== -1) {
                   return `${attrsStr} data-${attr}="${tag[attr]}"`
                 }
                 return typeof tag[attr] === 'undefined'

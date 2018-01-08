@@ -47,7 +47,7 @@ export default function _updateTags (options = {}) {
               } else {
                 newElement.appendChild(document.createTextNode(tag.cssText))
               }
-            } else if ([options.tagIDKeyName, 'body'].includes(attr)) {
+            } else if ([options.tagIDKeyName, 'body'].indexOf(attr) !== -1) {
               const _attr = `data-${attr}`
               const value = (typeof tag[attr] === 'undefined') ? '' : tag[attr]
               newElement.setAttribute(_attr, value)
