@@ -67,7 +67,7 @@
     "uglify-js": "^3.0.27",
     "update-section": "^0.3.3",
     "vue": "^2.4.2",
-    "vue-loader": "^13.0.4",
+    "vue-loader": "^14.0.0",
     "vue-router": "^3.0.0",
     "vue-server-renderer": "^2.4.2",
     "vue-template-compiler": "^2.4.2",
