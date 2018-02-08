@@ -96,6 +96,7 @@
   ],
   "license": "MIT",
   "main": "lib/vue-meta.js",
+  "typings": "types/index.d.ts",
   "nyc": {
     "exclude": [
       "test/**/*.js"
