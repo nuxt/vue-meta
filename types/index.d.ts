@@ -1,7 +1,5 @@
-import Vue, { ComponentOptions } from 'vue'
-import { PluginFunction } from 'vue/types/plugin';
-
 import './vue';
+import { PluginFunction } from 'vue/types/plugin';
 
 /**
  * Installation function
