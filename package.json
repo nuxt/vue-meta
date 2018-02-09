@@ -77,7 +77,9 @@
   },
   "files": [
     "lib",
-    "yarn.lock"
+    "yarn.lock",
+    "types/index.d.ts",
+    "types/vue.d.ts"
   ],
   "homepage": "https://github.com/declandewet/vue-meta",
   "keywords": [
@@ -96,6 +98,7 @@
   ],
   "license": "MIT",
   "main": "lib/vue-meta.js",
+  "typings": "types/index.d.ts",
   "nyc": {
     "exclude": [
       "test/**/*.js"
