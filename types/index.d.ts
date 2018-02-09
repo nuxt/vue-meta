@@ -33,18 +33,7 @@ export interface MetaInfo {
     charset?: string,
     content?: string,
     'http-equiv'?: 'content-security-policy' | 'refresh',
-    name?: 'application-name'
-      | 'author'
-      | 'description'
-      | 'generator'
-      | 'keywords'
-      | 'referrer'
-      | 'creator'
-      | 'googlebot'
-      | 'publisher'
-      | 'robots'
-      | 'slurp'
-      | 'viewport',
+    name?: string,
       [key: string]: any
   }[]
 
