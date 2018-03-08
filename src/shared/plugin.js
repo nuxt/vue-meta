@@ -87,7 +87,7 @@ export default function VueMeta (Vue, options = {}) {
       if (this._hasMetaInfo) {
         // Wait that element is hidden before refreshing meta tags (to support animations)
         const interval = setInterval(() => {
-          if (this.$el.offsetParent !== null) return
+          if (this.$el && this.$el.offsetParent !== null) return
           clearInterval(interval)
           batchID = batchUpdate(batchID, () => this.$meta().refresh())
         }, 50)
