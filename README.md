@@ -458,6 +458,30 @@ Each item in the array maps to a newly-created `<meta>` element, where object pr
 <meta name="viewport" content="width=device-width, initial-scale=1">
 ```
 
+Since v1.5.0, you can now set up meta templates that work similar to the titleTemplate:
+
+```js
+{
+  metaInfo: {
+    meta: [
+      { charset: 'utf-8' },
+      {
+        'vmid': 'og:title',
+        'property': 'og:title',
+        'content': 'Test title',
+        'template': chunk => `${chunk} - My page` //or as string template: '%s - My page'
+      }
+    ]
+  }
+}
+```
+
+```html
+<meta charset="utf-8">
+<meta name="og:title" property="og:title" content="Test title - My page">
+```
+
+
 #### `link` ([Object])
 
 Each item in the array maps to a newly-created `<link>` element, where object properties map to attributes.
