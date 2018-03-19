@@ -39,7 +39,7 @@ export default function _tagGenerator (options = {}) {
           // these tag types will have content inserted
           const closed = ['noscript', 'script', 'style'].indexOf(type) === -1
 
-          // generate tag exactly without any other redundance attribute
+          // generate tag exactly without any other redundant attribute
           const observeTag = tag.once
             ? ''
             : `${attribute}="true" `
