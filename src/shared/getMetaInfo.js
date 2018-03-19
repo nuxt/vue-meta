@@ -20,7 +20,7 @@ const escapeHTML = (str) => typeof window === 'undefined'
     .replace(/'/g, '\u0027')
 
 export default function _getMetaInfo (options = {}) {
-  const { keyName, tagIDKeyName } = options
+  const { keyName, tagIDKeyName, metaTemplateKeyName } = options
   /**
    * Returns the correct meta info for the given component
    * (child components will overwrite parent meta info)
@@ -52,6 +52,7 @@ export default function _getMetaInfo (options = {}) {
       component,
       option: keyName,
       deep: true,
+      metaTemplateKeyName,
       arrayMerge (target, source) {
         // we concat the arrays without merging objects contained in,
         // but we check for a `vmid` property on each object in the array

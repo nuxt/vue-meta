@@ -19,3 +19,6 @@ export const VUE_META_SERVER_RENDERED_ATTRIBUTE = 'data-vue-meta-server-rendered
 // that both have `vmid` of "description", then vue-meta will overwrite the
 // shallowest one with the deepest one.
 export const VUE_META_TAG_LIST_ID_KEY_NAME = 'vmid'
+
+// This is the key name for possible meta templates
+export const VUE_META_TEMPLATE_KEY_NAME = 'template'
