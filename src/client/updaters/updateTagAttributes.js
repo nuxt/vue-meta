@@ -2,10 +2,10 @@ export default function _updateTagAttributes (options = {}) {
   const { attribute } = options
 
   /**
-   * updates the document's html tag attributes
+   * Updates the document's html tag attributes
    *
    * @param  {Object} attrs - the new document html attributes
-   * @param  {HTMLElement} tag - the HTMLElment tag to update with new attrs
+   * @param  {HTMLElement} tag - the HTMLElement tag to update with new attrs
    */
   return function updateTagAttributes (attrs, tag) {
     const vueMetaAttrString = tag.getAttribute(attribute)
