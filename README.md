@@ -89,11 +89,6 @@
 
 These properties, when set on a deeply nested component, will cleverly overwrite their parent components' `metaInfo`, thereby enabling custom info for each top-level view as well as coupling meta info directly to deeply nested subcomponents for more maintainable code.
 
-# Disclaimer
-
-**Please note** that this project is still in very early alpha development and is *not* considered to be production ready.
-**You have been warned.** There might still be a few bugs and many tests have yet to be written.
-
 # Installation
 
 ### Yarn
