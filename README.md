@@ -463,7 +463,7 @@ Since v1.5.0, you can now set up meta templates that work similar to the titleTe
       {
         'property': 'og:title',
         'content': 'Test title',
-        'template': chunk => `${chunk} - My page`, //or as string template: '%s - My page'
+        'template': chunk => `${chunk} - My page`, //or as string template: '%s - My page',
         'vmid': 'og:title'
       }
     ]
