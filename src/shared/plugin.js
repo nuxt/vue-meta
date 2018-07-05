@@ -43,7 +43,7 @@ export default function VueMeta (Vue, options = {}) {
       // Add a marker to know if it uses metaInfo
       // _vnode is used to know that it's attached to a real component
       // useful if we use some mixin to add some meta tags (like nuxt-i18n)
-      if (this._vnode && typeof this.$options[options.keyName] !== 'undefined') {
+      if (typeof this.$options[options.keyName] !== 'undefined') {
         this._hasMetaInfo = true
       }
       // coerce function-style metaInfo to a computed prop so we can observe
@@ -93,6 +93,7 @@ export default function VueMeta (Vue, options = {}) {
         const interval = setInterval(() => {
           if (this.$el && this.$el.offsetParent !== null) return
           clearInterval(interval)
+          if (!this.$parent) return
           batchID = batchUpdate(batchID, () => this.$meta().refresh())
         }, 50)
       }
