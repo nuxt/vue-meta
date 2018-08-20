@@ -1,7 +1,7 @@
 {
   "name": "vue-meta",
   "description": "manage page meta info in Vue 2.0 server-rendered apps",
-  "version": "1.5.2",
+  "version": "1.5.3",
   "author": "Declan de Wet <declandewet@me.com>",
   "bugs": "https://github.com/declandewet/vue-meta/issues",
   "scripts": {
