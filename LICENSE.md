@@ -1,6 +1,6 @@
 MIT License
 
-Copyright (c) 2016 Declan de Wet
+Copyright (c) 2016-2018 Declan de Wet & Sébastien Chopin
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
