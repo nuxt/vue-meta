@@ -19,7 +19,7 @@ export default {
   banner: `
     /**
      * vue-meta v${pkg.version}
-     * (c) ${new Date().getFullYear()} Declan de Wet & Atinux
+     * (c) ${new Date().getFullYear()} Declan de Wet & Sébastien Chopin (@Atinux)
      * @license MIT
      */
   `.replace(/ {4}/gm, '').trim()
