@@ -22,3 +22,6 @@ export const VUE_META_TAG_LIST_ID_KEY_NAME = 'vmid'
 
 // This is the key name for possible meta templates
 export const VUE_META_TEMPLATE_KEY_NAME = 'template'
+
+// This is the key name for the content-holding property
+export const VUE_META_CONTENT_KEY = 'content'

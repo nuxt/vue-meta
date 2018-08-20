@@ -20,7 +20,7 @@ const escapeHTML = (str) => typeof window === 'undefined'
     .replace(/'/g, '\u0027')
 
 export default function _getMetaInfo (options = {}) {
-  const { keyName, tagIDKeyName, metaTemplateKeyName } = options
+  const { keyName, tagIDKeyName, metaTemplateKeyName, contentKeyName } = options
   /**
    * Returns the correct meta info for the given component
    * (child components will overwrite parent meta info)
@@ -53,6 +53,7 @@ export default function _getMetaInfo (options = {}) {
       option: keyName,
       deep: true,
       metaTemplateKeyName,
+      contentKeyName,
       arrayMerge (target, source) {
         // we concat the arrays without merging objects contained in,
         // but we check for a `vmid` property on each object in the array
@@ -66,10 +67,21 @@ export default function _getMetaInfo (options = {}) {
           for (let sourceIndex in source) {
             const sourceItem = source[sourceIndex]
             if (targetItem[tagIDKeyName] && targetItem[tagIDKeyName] === sourceItem[tagIDKeyName]) {
+              const targetTemplate = targetItem[metaTemplateKeyName]
+              const sourceTemplate = sourceItem[metaTemplateKeyName]
+              if (targetTemplate && !sourceTemplate) {
+                sourceItem[contentKeyName] = applyTemplate(component)(targetTemplate)(sourceItem[contentKeyName])
+              }
+              // If template defined in child but content in parent
+              if (targetTemplate && sourceTemplate && !sourceItem[contentKeyName]) {
+                sourceItem[contentKeyName] = applyTemplate(component)(sourceTemplate)(targetItem[contentKeyName])
+                delete sourceItem[metaTemplateKeyName]
+              }
               shared = true
               break
             }
           }
+
           if (!shared) {
             destination.push(targetItem)
           }
@@ -79,6 +91,8 @@ export default function _getMetaInfo (options = {}) {
       }
     })
 
+    // Remove all "template" tags from meta
+
     // backup the title chunk in case user wants access to it
     if (info.title) {
       info.titleChunk = info.title
@@ -86,11 +100,7 @@ export default function _getMetaInfo (options = {}) {
 
     // replace title with populated template
     if (info.titleTemplate) {
-      if (typeof info.titleTemplate === 'function') {
-        info.title = info.titleTemplate.call(component, info.titleChunk)
-      } else {
-        info.title = info.titleTemplate.replace(/%s/g, info.titleChunk)
-      }
+      info.title = applyTemplate(component)(info.titleTemplate)(info.titleChunk)
     }
 
     // convert base tag to an array so it can be handled the same way
@@ -140,3 +150,6 @@ export default function _getMetaInfo (options = {}) {
     return info
   }
 }
+
+const applyTemplate = component => template => chunk =>
+  typeof template === 'function' ? template.call(component, chunk) : template.replace(/%s/g, chunk)

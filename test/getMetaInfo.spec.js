@@ -2,6 +2,7 @@ import Vue from 'vue'
 import _getMetaInfo from '../src/shared/getMetaInfo'
 import {
   VUE_META_ATTRIBUTE,
+  VUE_META_CONTENT_KEY,
   VUE_META_KEY_NAME,
   VUE_META_SERVER_RENDERED_ATTRIBUTE,
   VUE_META_TAG_LIST_ID_KEY_NAME,
@@ -14,6 +15,7 @@ const defaultOptions = {
   attribute: VUE_META_ATTRIBUTE,
   ssrAttribute: VUE_META_SERVER_RENDERED_ATTRIBUTE,
   metaTemplateKeyName: VUE_META_TEMPLATE_KEY_NAME,
+  contentKeyName: VUE_META_CONTENT_KEY,
   tagIDKeyName: VUE_META_TAG_LIST_ID_KEY_NAME
 }
 
@@ -352,6 +354,171 @@ describe('getMetaInfo', () => {
           vmid: 'og:title',
           property: 'og:title',
           content: 'Test title'
+        }
+      ],
+      base: [],
+      link: [],
+      style: [],
+      script: [],
+      noscript: [],
+      __dangerouslyDisableSanitizers: [],
+      __dangerouslyDisableSanitizersByTagID: {}
+    })
+  })
+
+  it('properly uses meta templates with one-level-deep nested children content', () => {
+    Vue.component('merge-child', {
+      template: '<div></div>',
+      metaInfo: {
+        title: 'Hello',
+        meta: [
+          {
+            vmid: 'og:title',
+            property: 'og:title',
+            content: 'An important title!'
+          }
+        ]
+      }
+    })
+
+    component = new Vue({
+      metaInfo: {
+        meta: [
+          {
+            vmid: 'og:title',
+            property: 'og:title',
+            content: 'Test title',
+            template: chunk => `${chunk} - My page`
+          }
+        ]
+      },
+      render: (h) => h('div', null, [h('merge-child')]),
+      el: document.createElement('div')
+    })
+
+    expect(getMetaInfo(component)).to.eql({
+      title: 'Hello',
+      titleChunk: 'Hello',
+      titleTemplate: '%s',
+      htmlAttrs: {},
+      headAttrs: {},
+      bodyAttrs: {},
+      meta: [
+        {
+          vmid: 'og:title',
+          property: 'og:title',
+          content: 'An important title! - My page'
+        }
+      ],
+      base: [],
+      link: [],
+      style: [],
+      script: [],
+      noscript: [],
+      __dangerouslyDisableSanitizers: [],
+      __dangerouslyDisableSanitizersByTagID: {}
+    })
+  })
+
+  // TODO: Still failing :( Child template won't be applied if child has no content as well
+
+  it('properly uses meta templates with one-level-deep nested children template', () => {
+    Vue.component('merge-child', {
+      template: '<div></div>',
+      metaInfo: {
+        title: 'Hello',
+        meta: [
+          {
+            vmid: 'og:title',
+            property: 'og:title',
+            template: chunk => `${chunk} - My page`
+          }
+        ]
+      }
+    })
+
+    component = new Vue({
+      metaInfo: {
+        meta: [
+          {
+            vmid: 'og:title',
+            property: 'og:title',
+            content: 'Test title',
+            template: chunk => `${chunk} - SHOULD NEVER HAPPEN`
+          }
+        ]
+      },
+      render: (h) => h('div', null, [h('merge-child')]),
+      el: document.createElement('div')
+    })
+
+    expect(getMetaInfo(component)).to.eql({
+      title: 'Hello',
+      titleChunk: 'Hello',
+      titleTemplate: '%s',
+      htmlAttrs: {},
+      headAttrs: {},
+      bodyAttrs: {},
+      meta: [
+        {
+          vmid: 'og:title',
+          property: 'og:title',
+          content: 'Test title - My page'
+        }
+      ],
+      base: [],
+      link: [],
+      style: [],
+      script: [],
+      noscript: [],
+      __dangerouslyDisableSanitizers: [],
+      __dangerouslyDisableSanitizersByTagID: {}
+    })
+  })
+
+  it('properly uses meta templates with one-level-deep nested children template and content', () => {
+    Vue.component('merge-child', {
+      template: '<div></div>',
+      metaInfo: {
+        title: 'Hello',
+        meta: [
+          {
+            vmid: 'og:title',
+            property: 'og:title',
+            content: 'An important title!',
+            template: chunk => `${chunk} - My page`
+          }
+        ]
+      }
+    })
+
+    component = new Vue({
+      metaInfo: {
+        meta: [
+          {
+            vmid: 'og:title',
+            property: 'og:title',
+            content: 'Test title',
+            template: chunk => `${chunk} - SHOULD NEVER HAPPEN`
+          }
+        ]
+      },
+      render: (h) => h('div', null, [h('merge-child')]),
+      el: document.createElement('div')
+    })
+
+    expect(getMetaInfo(component)).to.eql({
+      title: 'Hello',
+      titleChunk: 'Hello',
+      titleTemplate: '%s',
+      htmlAttrs: {},
+      headAttrs: {},
+      bodyAttrs: {},
+      meta: [
+        {
+          vmid: 'og:title',
+          property: 'og:title',
+          content: 'An important title! - My page'
         }
       ],
       base: [],

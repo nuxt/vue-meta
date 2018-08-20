@@ -15,7 +15,7 @@ import deepmerge from 'deepmerge'
  * @return {Object} result - final aggregated result
  */
 export default function getComponentOption (opts, result = {}) {
-  const { component, option, deep, arrayMerge, metaTemplateKeyName } = opts
+  const { component, option, deep, arrayMerge, metaTemplateKeyName, contentKeyName } = opts
   const { $options } = component
 
   if (component._inactive) return result
@@ -51,7 +51,7 @@ export default function getComponentOption (opts, result = {}) {
   if (metaTemplateKeyName && result.hasOwnProperty('meta')) {
     result.meta = Object.keys(result.meta).map(metaKey => {
       const metaObject = result.meta[metaKey]
-      if (!metaObject.hasOwnProperty(metaTemplateKeyName) || !metaObject.hasOwnProperty('content') || typeof metaObject[metaTemplateKeyName] === 'undefined') {
+      if (!metaObject.hasOwnProperty(metaTemplateKeyName) || !metaObject.hasOwnProperty(contentKeyName) || typeof metaObject[metaTemplateKeyName] === 'undefined') {
         return result.meta[metaKey]
       }
 
