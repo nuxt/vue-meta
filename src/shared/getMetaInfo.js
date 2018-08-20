@@ -71,6 +71,10 @@ export default function _getMetaInfo (options = {}) {
               const sourceTemplate = sourceItem[metaTemplateKeyName]
               if (targetTemplate && !sourceTemplate) {
                 sourceItem[contentKeyName] = applyTemplate(component)(targetTemplate)(sourceItem[contentKeyName])
+              }
+              // If template defined in child but content in parent
+              if (targetTemplate && sourceTemplate && !sourceItem[contentKeyName]) {
+                sourceItem[contentKeyName] = applyTemplate(component)(sourceTemplate)(targetItem[contentKeyName])
                 delete sourceItem[metaTemplateKeyName]
               }
               shared = true
