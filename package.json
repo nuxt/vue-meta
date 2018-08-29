@@ -62,7 +62,7 @@
     "rollup-plugin-commonjs": "^9.1.4",
     "rollup-plugin-json": "^2.3.0",
     "rollup-plugin-node-resolve": "^3.0.0",
-    "snazzy": "^7.0.0",
+    "snazzy": "^8.0.0",
     "standard": "^10.0.3",
     "uglify-js": "^3.0.27",
     "update-section": "^0.3.3",
