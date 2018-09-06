@@ -35,6 +35,9 @@ export default function VueMeta (Vue, options = {}) {
   // bind the $meta method to this component instance
   Vue.prototype.$meta = $meta(options)
 
+  // define optionMergeStrategies for the keyName
+  Vue.config.optionMergeStrategies[options.keyName] = Vue.config.optionMergeStrategies.created
+
   // store an id to keep track of DOM updates
   let batchID = null
 
