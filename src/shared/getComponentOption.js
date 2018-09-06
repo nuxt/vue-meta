@@ -72,7 +72,6 @@ function mergeDataInResult (data, result, component, arrayMerge) {
   if (typeof data === 'object') {
     // merge with existing options
     return deepmerge(result, data, { arrayMerge })
-  } else {
-    return data
   }
+  return data
 }
