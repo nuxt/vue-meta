@@ -43,19 +43,23 @@ describe('getComponentOption', () => {
     expect(mergedOption).to.eql({ bar: 'baz', fizz: 'buzz' })
   })
 
-  it('allows for a custom array merge strategy', () => {
+  it('allows for a custom array merge strategy in object literal', () => {
     Vue.component('array-child', {
       template: '<div></div>',
-      foo: [
-        { name: 'flower', content: 'rose' }
-      ]
+      foo: {
+        flowers: [
+          { name: 'flower', content: 'rose' }
+        ]
+      }
     })
 
     component = new Vue({
       render: (h) => h('div', null, [h('array-child')]),
-      foo: [
-        { name: 'flower', content: 'tulip' }
-      ],
+      foo: {
+        flowers: [
+          { name: 'flower', content: 'tulip' }
+        ]
+      },
       el: container
     })
 
@@ -68,9 +72,64 @@ describe('getComponentOption', () => {
       }
     })
 
-    expect(mergedOption).to.eql([
-      { name: 'flower', content: 'tulip' },
-      { name: 'flower', content: 'rose' }
-    ])
+    expect(mergedOption).to.eql({
+      flowers: [
+        { name: 'flower', content: 'tulip' },
+        { name: 'flower', content: 'rose' }
+      ]
+    })
+  })
+
+  it('merges arrays of objects literal options', () => {
+    component = new Vue({ someOption: [{ foo: 'hello' }, { bar: 'there' }] })
+
+    const mergedOption = getComponentOption({ component, option: 'someOption' })
+    expect(mergedOption).to.eql({ foo: 'hello', bar: 'there' })
+  })
+
+  it('merges arrays of mixed object literals and functions', () => {
+    component = new Vue({
+      cake: 'good',
+      desserts: [
+        { yogurt: 'meh' },
+        function someFunction () {
+          return { cake: this.$options.cake }
+        },
+        function someOtherFunction () {
+          return { pineapple: 'not bad' }
+        }
+      ]
+    })
+
+    const mergedOption = getComponentOption({ component, option: 'desserts' })
+    expect(mergedOption).to.eql({ yogurt: 'meh', cake: 'good', pineapple: 'not bad' })
+  })
+
+  it('uses custom array merge strategy when merging arrays in arrays of options', () => {
+    component = new Vue({
+      template: '<div></div>',
+      foo: [
+        { cars: [{ brand: 'renault', color: 'red' }] },
+        function someFunction () {
+          return { cars: [{ brand: 'peugeot', color: 'blue' }] }
+        }
+      ]
+    })
+
+    const mergedOption = getComponentOption({
+      component,
+      option: 'foo',
+      deep: true,
+      arrayMerge (target, source) {
+        return target.concat(source)
+      }
+    })
+
+    expect(mergedOption).to.eql({
+      cars: [
+        { brand: 'renault', color: 'red' },
+        { brand: 'peugeot', color: 'blue' }
+      ]
+    })
   })
 })

@@ -21,6 +21,9 @@ const defaultOptions = {
 
 const getMetaInfo = _getMetaInfo(defaultOptions)
 
+// define optionMergeStrategies for the keyName
+Vue.config.optionMergeStrategies[VUE_META_KEY_NAME] = Vue.config.optionMergeStrategies.created
+
 describe('getMetaInfo', () => {
   // const container = document.createElement('div')
   let component
@@ -519,6 +522,94 @@ describe('getMetaInfo', () => {
           vmid: 'og:title',
           property: 'og:title',
           content: 'An important title! - My page'
+        }
+      ],
+      base: [],
+      link: [],
+      style: [],
+      script: [],
+      noscript: [],
+      __dangerouslyDisableSanitizers: [],
+      __dangerouslyDisableSanitizersByTagID: {}
+    })
+  })
+
+  it('properly merges mixins options', () => {
+    const mixin1 = {
+      metaInfo: function () {
+        return {
+          title: 'This title will be overridden',
+          meta: [
+            {
+              vmid: 'og:title',
+              property: 'og:title',
+              content: 'This title will be overridden'
+            },
+            {
+              vmid: 'og:fromMixin1',
+              property: 'og:fromMixin1',
+              content: 'This is from mixin1'
+            }
+          ]
+        }
+      }
+    }
+    const mixin2 = {
+      metaInfo: {
+        meta: [
+          {
+            vmid: 'og:fromMixin2',
+            property: 'og:fromMixin2',
+            content: 'This is from mixin2'
+          }
+        ]
+      }
+    }
+    const component = new Vue({
+      mixins: [mixin1, mixin2],
+      metaInfo: {
+        title: 'New Title',
+        meta: [
+          {
+            vmid: 'og:title',
+            property: 'og:title',
+            content: 'New Title! - My page'
+          },
+          {
+            vmid: 'og:description',
+            property: 'og:description',
+            content: 'Some Description'
+          }
+        ]
+      }
+    })
+    expect(getMetaInfo(component)).to.eql({
+      title: 'New Title',
+      titleChunk: 'New Title',
+      titleTemplate: '%s',
+      htmlAttrs: {},
+      headAttrs: {},
+      bodyAttrs: {},
+      meta: [
+        {
+          vmid: 'og:fromMixin1',
+          property: 'og:fromMixin1',
+          content: 'This is from mixin1'
+        },
+        {
+          vmid: 'og:fromMixin2',
+          property: 'og:fromMixin2',
+          content: 'This is from mixin2'
+        },
+        {
+          vmid: 'og:title',
+          property: 'og:title',
+          content: 'New Title! - My page'
+        },
+        {
+          vmid: 'og:description',
+          property: 'og:description',
+          content: 'Some Description'
         }
       ],
       base: [],

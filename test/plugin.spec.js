@@ -30,4 +30,9 @@ describe('plugin', () => {
     const vm = new Vue(Component).$mount()
     expect(vm._hasMetaInfo).to.equal(true)
   })
+
+  it('setup optionMergeStrategies for the keyName', () => {
+    const strats = Vue.config.optionMergeStrategies
+    expect(strats[VUE_META_KEY_NAME]).to.equal(strats.created)
+  })
 })
