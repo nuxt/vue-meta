@@ -813,18 +813,3 @@ If this were not the case, you would have to instruct Babel to convert `default`
 # Examples
 
 To run the examples; clone this repository & run `npm install` in the root directory, and then run `npm run dev`. Head to http://localhost:8080.
-
-# TypeScript Support
-
-If you have problems with types using vue-meta, then you're most probably using vue-class-component.
-In any troublesome situation, just add the following ambient declaration to your types:
-
-```js
-import { MetaInfo } from 'vue-meta';
-
-declare module "vue/types/vue" {
-  interface Vue {
-    metaInfo?: MetaInfo | (() => MetaInfo)
-  }
-}
-```
