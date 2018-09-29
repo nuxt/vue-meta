@@ -1,5 +1,4 @@
 import deepmerge from 'deepmerge'
-import isArray from './isArray'
 
 /**
  * Returns the `opts.option` $option value of the given `opts.component`.
@@ -25,10 +24,16 @@ export default function getComponentOption (opts, result = {}) {
   if (typeof $options[option] !== 'undefined' && $options[option] !== null) {
     let data = $options[option]
 
-    if (isArray(data)) {
-      result = data.reduce((result, dataItem) => mergeDataInResult(dataItem, result, component, arrayMerge), result)
+    // if option is a function, replace it with it's result
+    if (typeof data === 'function') {
+      data = data.call(component)
+    }
+
+    if (typeof data === 'object') {
+      // merge with existing options
+      result = deepmerge(result, data, { arrayMerge })
     } else {
-      result = mergeDataInResult(data, result, component, arrayMerge)
+      result = data
     }
   }
 
@@ -61,17 +66,4 @@ export default function getComponentOption (opts, result = {}) {
     })
   }
   return result
-}
-
-function mergeDataInResult (data, result, component, arrayMerge) {
-  // if option is a function, replace it with it's result
-  if (typeof data === 'function') {
-    data = data.call(component)
-  }
-
-  if (typeof data === 'object') {
-    // merge with existing options
-    return deepmerge(result, data, { arrayMerge })
-  }
-  return data
 }
