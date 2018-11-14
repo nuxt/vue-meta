@@ -13,6 +13,7 @@ export default function _tagGenerator (options = {}) {
       text ({ body = false } = {}) {
         // build a string containing all tags of this type
         return tags.reduce((tagsStr, tag) => {
+          if (Object.keys(tag).length === 0) return tagsStr // Bail on empty tag object
           if (!!tag.body !== body) return tagsStr
           // build a string containing all attributes of this tag
           const attrs = Object.keys(tag).reduce((attrsStr, attr) => {
