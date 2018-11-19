@@ -77,7 +77,6 @@
   },
   "files": [
     "lib",
-    "yarn.lock",
     "types/index.d.ts",
     "types/vue.d.ts"
   ],
