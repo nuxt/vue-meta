@@ -100,7 +100,7 @@ export default function _getMetaInfo (options = {}) {
 
     // replace title with populated template
     if (info.titleTemplate) {
-      info.title = applyTemplate(component)(info.titleTemplate)(info.titleChunk)
+      info.title = applyTemplate(component)(info.titleTemplate)(info.titleChunk || '')
     }
 
     // convert base tag to an array so it can be handled the same way
