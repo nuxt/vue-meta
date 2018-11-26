@@ -44,7 +44,7 @@
     "es6-promise": "^4.1.1",
     "express": "^4.15.4",
     "express-urlrewrite": "^1.2.0",
-    "file-loader": "^1.0.0-rc.0",
+    "file-loader": "^2.0.0",
     "json-loader": "^0.5.7",
     "karma": "^3.0.0",
     "karma-chai": "^0.1.0",
