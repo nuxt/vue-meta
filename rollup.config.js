@@ -6,23 +6,22 @@ import buble from 'rollup-plugin-buble'
 const pkg = require('./package.json')
 
 export default {
-  entry: './src/index.js',
+  input: './src/index.js',
   output: {
     file: pkg.main,
     format: 'umd',
-    name: 'VueMeta'
+    name: 'VueMeta',
+    banner: `/**
+ * vue-meta v${pkg.version}
+ * (c) ${new Date().getFullYear()} Declan de Wet & Sébastien Chopin (@Atinux)
+ * @license MIT
+ */
+`.replace(/ {4}/gm, '').trim()
   },
   plugins: [
     json(),
     nodeResolve({ jsnext: true }),
     commonjs(),
     buble()
-  ],
-  banner: `
-    /**
-     * vue-meta v${pkg.version}
-     * (c) ${new Date().getFullYear()} Declan de Wet & Sébastien Chopin (@Atinux)
-     * @license MIT
-     */
-  `.replace(/ {4}/gm, '').trim()
+  ]
 }
