@@ -45,7 +45,6 @@
     "express": "^4.16.4",
     "express-urlrewrite": "^1.2.0",
     "file-loader": "^2.0.0",
-    "json-loader": "^0.5.7",
     "karma": "^3.1.1",
     "karma-chai": "^0.1.0",
     "karma-coverage": "^1.1.2",

@@ -22,8 +22,7 @@ export default {
   module: {
     rules: [
       { test: /\.js$/, exclude: /node_modules/, use: 'babel-loader' },
-      { test: /\.vue$/, use: 'vue-loader' },
-      { test: /\.json$/, use: 'json-loader' }
+      { test: /\.vue$/, use: 'vue-loader' }
     ]
   },
   resolve: {
