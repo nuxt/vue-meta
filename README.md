@@ -59,6 +59,7 @@
       - [`title` (String)](#title-string)
       - [`titleTemplate` (String | Function)](#titletemplate-string--function)
       - [`htmlAttrs` (Object)](#htmlattrs-object)
+      - [`headAttrs` (Object)](#headattrs-object)
       - [`bodyAttrs` (Object)](#bodyattrs-object)
       - [`base` (Object)](#base-object)
       - [`meta` ([Object])](#meta-object)
@@ -190,12 +191,12 @@ app.get('*', (req, res) => {
     if (error) return res.send(error.stack)
     const bodyOpt = { body: true }
     const {
-      title, htmlAttrs, bodyAttrs, link, style, script, noscript, meta
+      title, htmlAttrs, headAttrs, bodyAttrs, link, style, script, noscript, meta
     } = context.meta.inject()
     return res.send(`
       <!doctype html>
       <html data-vue-meta-server-rendered ${htmlAttrs.text()}>
-        <head>
+        <head ${headAttrs.text()}>
           ${meta.text()}
           ${title.text()}
           ${link.text()}
@@ -238,12 +239,12 @@ app.get('*', (req, res) => {
   renderStream.once('data', () => {
     const bodyOpt = { body: true }
     const {
-      title, htmlAttrs, bodyAttrs, link, style, script, noscript, meta
+      title, htmlAttrs, headAttrs, bodyAttrs, link, style, script, noscript, meta
     } = context.meta.inject()
     res.write(`
       <!doctype html>
       <html data-vue-meta-server-rendered ${htmlAttrs.text()}>
-        <head>
+        <head ${headAttrs.text()}>
           ${meta.text()}
           ${title.text()}
           ${link.text()}
@@ -395,6 +396,24 @@ Each **key:value** maps to the equivalent **attribute:value** of the `<html>` el
 
 ```html
 <html foo="bar" amp></html>
+```
+
+#### `headAttrs` (Object)
+
+Each **key:value** maps to the equivalent **attribute:value** of the `<head>` element.
+
+```js
+{
+  metaInfo: {
+    headAttrs: {
+      foo: 'bar'
+    }
+  }
+}
+```
+
+```html
+<head foo="bar"></head>
 ```
 
 #### `bodyAttrs` (Object)
