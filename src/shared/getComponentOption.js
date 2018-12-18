@@ -1,5 +1,5 @@
 import deepmerge from 'deepmerge'
-import uniqBy from 'lodash.uniqby'
+import uniqBy from './uniqBy'
 import uniqueId from 'lodash.uniqueid'
 
 /**
@@ -67,7 +67,7 @@ export default function getComponentOption (opts, result = {}) {
       return metaObject
     })
     result.meta = uniqBy(
-      result.meta.reverse(),
+      result.meta,
       metaObject => metaObject.hasOwnProperty(tagIDKeyName) ? metaObject[tagIDKeyName] : uniqueId()
     )
   }
