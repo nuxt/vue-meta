@@ -1,4 +1,6 @@
 import deepmerge from 'deepmerge'
+import uniqBy from 'lodash.uniqby'
+import uniqueId from 'lodash.uniqueid'
 
 /**
  * Returns the `opts.option` $option value of the given `opts.component`.
@@ -15,7 +17,7 @@ import deepmerge from 'deepmerge'
  * @return {Object} result - final aggregated result
  */
 export default function getComponentOption (opts, result = {}) {
-  const { component, option, deep, arrayMerge, metaTemplateKeyName, contentKeyName } = opts
+  const { component, option, deep, arrayMerge, metaTemplateKeyName, tagIDKeyName, contentKeyName } = opts
   const { $options } = component
 
   if (component._inactive) return result
@@ -64,6 +66,10 @@ export default function getComponentOption (opts, result = {}) {
 
       return metaObject
     })
+    result.meta = uniqBy(
+      result.meta.reverse(),
+      metaObject => metaObject.hasOwnProperty(tagIDKeyName) ? metaObject[tagIDKeyName] : uniqueId()
+    )
   }
   return result
 }
