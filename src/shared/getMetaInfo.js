@@ -53,6 +53,7 @@ export default function _getMetaInfo (options = {}) {
       option: keyName,
       deep: true,
       metaTemplateKeyName,
+      tagIDKeyName,
       contentKeyName,
       arrayMerge (target, source) {
         // we concat the arrays without merging objects contained in,

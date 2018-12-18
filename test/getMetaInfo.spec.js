@@ -75,6 +75,47 @@ describe('getMetaInfo', () => {
       __dangerouslyDisableSanitizersByTagID: {}
     })
   })
+  it('removes duplicate metaInfo in same component', () => {
+    component = new Vue({
+      metaInfo: {
+        title: 'Hello',
+        meta: [
+          {
+            vmid: 'a',
+            property: 'a',
+            content: 'a'
+          },
+          {
+            vmid: 'a',
+            property: 'a',
+            content: 'b'
+          }
+        ]
+      }
+    })
+    expect(getMetaInfo(component)).to.eql({
+      title: 'Hello',
+      titleChunk: 'Hello',
+      titleTemplate: '%s',
+      htmlAttrs: {},
+      headAttrs: {},
+      bodyAttrs: {},
+      meta: [
+        {
+          vmid: 'a',
+          property: 'a',
+          content: 'b'
+        }
+      ],
+      base: [],
+      link: [],
+      style: [],
+      script: [],
+      noscript: [],
+      __dangerouslyDisableSanitizers: [],
+      __dangerouslyDisableSanitizersByTagID: {}
+    })
+  })
 
   it('properly uses string titleTemplates', () => {
     component = new Vue({
