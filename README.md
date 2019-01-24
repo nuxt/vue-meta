@@ -550,7 +550,7 @@ Each item in the array maps to a newly-created `<script>` element, where object 
 <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js" async="true" defer="true"></script>
 ```
 
-:warning: For inline script to work, sanitizers need to be disabled. Please refer to [\__dangerouslyDisableSanitizers](#__dangerouslydisablesanitizers-string) section below for more info on related risks.
+:warning: You have to disable sanitizers so the content of `innerHTML` won't be escaped. Please refer to [\__dangerouslyDisableSanitizers](#__dangerouslydisablesanitizers-string) section below for more info on related risks.
 
 ```js
 {
