@@ -39,7 +39,7 @@ export interface MetaInfo {
 
   link?: { rel: string, href: string, [key: string]: any }[]
   style?: { cssText: string, type: string, [key: string]: any }[]
-  script?: { innerHTML: string, type: string, [key: string]: any }[]
+  script?: { innerHTML?: string, src?: string, type: string, [key: string]: any }[]
   noscript?: { innerHTML: string, [key: string]: any }[]
 
   __dangerouslyDisableSanitizers?: string[]
