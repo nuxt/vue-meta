@@ -540,8 +540,25 @@ Each item in the array maps to a newly-created `<script>` element, where object 
 {
   metaInfo: {
     script: [
+      { src: 'https://cdn.jsdelivr.net/npm/vue/dist/vue.js', async: true, defer: true }
+    ],
+  }
+}
+```
+
+```html
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js" async="true" defer="true"></script>
+```
+
+:warning: You have to disable sanitizers so the content of `innerHTML` won't be escaped. Please refer to [\__dangerouslyDisableSanitizers](#__dangerouslydisablesanitizers-string) section below for more info on related risks.
+
+```js
+{
+  metaInfo: {
+    script: [
       { innerHTML: '{ "@context": "http://schema.org" }', type: 'application/ld+json' }
-    ]
+    ],
+    __dangerouslyDisableSanitizers: ['script'],
   }
 }
 ```
