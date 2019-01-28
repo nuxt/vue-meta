@@ -1,19 +1,18 @@
 language: node_js
+node_js:
+  - "8"
+  - "11"
 cache:
+  yarn: true
   directories:
-    - $HOME/.npm
-    - $HOME/.yarn-cache
     - node_modules
 branches:
   only:
     - master
-node_js:
-  - "6"
-before_install:
-  - npm i -g yarn --cache-min 999999999
 install:
-  - yarn --force
+  - yarn install
 script:
+  - yarn lint
   - yarn test
-after_script:
-  - yarn run codecov
+after_success:
+  - yarn codecov
