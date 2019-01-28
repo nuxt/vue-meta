@@ -13,6 +13,6 @@ declare module "vue/types/options" {
 
 declare module "vue/types/vue" {
   interface Vue {
-    metaInfo(): MetaInfo
+    $meta(): MetaInfo
   }
 }
