@@ -37,17 +37,20 @@ export default function _tagGenerator (options = {}) {
           // grab child content from one of these attributes, if possible
           const content = tag.innerHTML || tag.cssText || ''
 
-          // these tag types will have content inserted
-          const closed = ['noscript', 'script', 'style'].indexOf(type) === -1
-
           // generate tag exactly without any other redundant attribute
           const observeTag = tag.once
             ? ''
             : `${attribute}="true" `
 
+          // these tags have no end tag
+          const hasEndTag = !['base', 'meta', 'link'].includes(type)
+
+          // these tag types will have content inserted
+          const hasContent = hasEndTag && ['noscript', 'script', 'style'].includes(type)
+
           // the final string for this specific tag
-          return closed
-            ? `${tagsStr}<${type} ${observeTag}${attrs}/>`
+          return !hasContent
+            ? `${tagsStr}<${type} ${observeTag}${attrs}${hasEndTag ? '/' : ''}>`
             : `${tagsStr}<${type} ${observeTag}${attrs}>${content}</${type}>`
         }, '')
       }
