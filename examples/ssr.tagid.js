@@ -1,6 +1,6 @@
 const Vue = require('vue')
 const renderer = require('vue-server-renderer').createRenderer()
-const VueMeta = require('../')
+const VueMeta = require(process.env.NODE_ENV === 'development' ? '../' : 'vue-meta')
 
 Vue.use(VueMeta, {
   tagIDKeyName: 'hid'

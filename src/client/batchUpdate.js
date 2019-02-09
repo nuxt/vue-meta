@@ -1,6 +1,6 @@
 // fallback to timers if rAF not present
 const stopUpdate = (typeof window !== 'undefined' ? window.cancelAnimationFrame : null) || clearTimeout
-const startUpdate = (typeof window !== 'undefined' ? window.requestAnimationFrame : null) || ((cb) => setTimeout(cb, 0))
+const startUpdate = (typeof window !== 'undefined' ? window.requestAnimationFrame : null) || (cb => setTimeout(cb, 0))
 
 /**
  * Performs a batched update. Uses requestAnimationFrame to prevent
@@ -12,7 +12,7 @@ const startUpdate = (typeof window !== 'undefined' ? window.requestAnimationFram
  * @param  {Function} callback - the update to perform
  * @return {Number} id - a new ID
  */
-export default function batchUpdate (id, callback) {
+export default function batchUpdate(id, callback) {
   stopUpdate(id)
   return startUpdate(() => {
     id = null

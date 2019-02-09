@@ -38,3 +38,7 @@ jspm_packages
 
 # built code
 lib
+
+# yarn
+yarn.lock
+yarn-error.log

@@ -1,6 +1,6 @@
 import deepmerge from 'deepmerge'
-import uniqBy from './uniqBy'
 import uniqueId from 'lodash.uniqueid'
+import uniqBy from './uniqBy'
 
 /**
  * Returns the `opts.option` $option value of the given `opts.component`.
@@ -10,21 +10,22 @@ import uniqueId from 'lodash.uniqueid'
  *
  * @param  {Object} opts - options
  * @param  {Object} opts.component - Vue component to fetch option data from
- * @param  {String} opts.option - what option to look for
  * @param  {Boolean} opts.deep - look for data in child components as well?
  * @param  {Function} opts.arrayMerge - how should arrays be merged?
+ * @param  {String} opts.keyName - the name of the option to look for
  * @param  {Object} [result={}] - result so far
  * @return {Object} result - final aggregated result
  */
-export default function getComponentOption (opts, result = {}) {
-  const { component, option, deep, arrayMerge, metaTemplateKeyName, tagIDKeyName, contentKeyName } = opts
+export default function getComponentOption({ component, deep, arrayMerge, keyName, metaTemplateKeyName, tagIDKeyName, contentKeyName } = {}, result = {}) {
   const { $options } = component
 
-  if (component._inactive) return result
+  if (component._inactive) {
+    return result
+  }
 
   // only collect option data if it exists
-  if (typeof $options[option] !== 'undefined' && $options[option] !== null) {
-    let data = $options[option]
+  if (typeof $options[keyName] !== 'undefined' && $options[keyName] !== null) {
+    let data = $options[keyName]
 
     // if option is a function, replace it with it's result
     if (typeof data === 'function') {
@@ -44,14 +45,15 @@ export default function getComponentOption (opts, result = {}) {
     component.$children.forEach((childComponent) => {
       result = getComponentOption({
         component: childComponent,
-        option,
+        keyName,
         deep,
         arrayMerge
       }, result)
     })
   }
+
   if (metaTemplateKeyName && result.hasOwnProperty('meta')) {
-    result.meta = Object.keys(result.meta).map(metaKey => {
+    result.meta = Object.keys(result.meta).map((metaKey) => {
       const metaObject = result.meta[metaKey]
       if (!metaObject.hasOwnProperty(metaTemplateKeyName) || !metaObject.hasOwnProperty(contentKeyName) || typeof metaObject[metaTemplateKeyName] === 'undefined') {
         return result.meta[metaKey]

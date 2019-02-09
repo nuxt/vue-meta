@@ -1,4 +1,3 @@
-import assign from 'object-assign'
 import Vue from 'vue'
 import VueMeta from 'vue-meta'
 import Router from 'vue-router'
@@ -41,6 +40,7 @@ const router = new Router({
 })
 
 const App = {
+  router,
   template: `
     <div id="app">
       <h1>vue-router</h1>
@@ -54,6 +54,6 @@ const App = {
   `
 }
 
-const app = new Vue(assign(App, { router }))
+const app = new Vue(App)
 
 app.$mount('#app')

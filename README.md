@@ -847,4 +847,6 @@ If this were not the case, you would have to instruct Babel to convert `default`
 
 # Examples
 
-To run the examples; clone this repository & run `npm install` in the root directory, and then run `npm run dev`. Head to http://localhost:8080.
+To run the examples; clone this repository & run `cd examples && npm install` in the root directory, and then run `npm run start`. Head to http://localhost:8080.
+
+If you would like to help to develop vue-meta then run `npm install` both in the root and examples dir and run `npm run dev`
