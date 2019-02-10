@@ -7,12 +7,6 @@
 </h5>
 
 <p align="center">
-  <a href="https://github.com/feross/standard">
-    <img src="https://cdn.rawgit.com/feross/standard/master/badge.svg" alt="Standard - JavaScript Style">
-  </a>
-</p>
-
-<p align="center">
 <a href="https://github.com/declandewet/vue-meta/releases/latest"><img src="https://img.shields.io/github/release/declandewet/vue-meta.svg" alt="github release"></a> <a href="http://npmjs.org/package/vue-meta"><img src="https://img.shields.io/npm/v/vue-meta.svg" alt="npm version"></a> <a href="https://travis-ci.org/declandewet/vue-meta"><img src="https://travis-ci.org/declandewet/vue-meta.svg?branch=master" alt="Build Status"></a> <a href="https://codecov.io/gh/declandewet/vue-meta"><img src="https://codecov.io/gh/declandewet/vue-meta/branch/master/graph/badge.svg" alt="codecov"></a><br>
 <a href="https://david-dm.org/declandewet/vue-meta"><img src="https://david-dm.org/declandewet/vue-meta/status.svg" alt="dependencies Status"></a> <a href="https://david-dm.org/declandewet/vue-meta?type=dev"><img src="https://david-dm.org/declandewet/vue-meta/dev-status.svg" alt="devDependencies Status"></a><br>
 <a href="http://npm-stat.com/charts.html?package=vue-meta"><img src="https://img.shields.io/npm/dm/vue-meta.svg" alt="npm downloads"></a> <a href="https://gitter.im/declandewet/vue-meta"><img src="https://badges.gitter.im/declandewet/vue-meta.svg" alt="Gitter"></a>
