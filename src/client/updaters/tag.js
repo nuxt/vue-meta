@@ -1,6 +1,3 @@
-// borrow the slice method
-const toArray = Function.prototype.call.bind(Array.prototype.slice)
-
 /**
  * Updates meta tags inside <head> and <body> on the client. Borrowed from `react-helmet`:
  * https://github.com/nfl/react-helmet/blob/004d448f8de5f823d10f838b02317521180f34da/src/Helmet.js#L195-L245
@@ -10,8 +7,8 @@ const toArray = Function.prototype.call.bind(Array.prototype.slice)
  * @return {Object} - a representation of what tags changed
  */
 export default function updateTag({ attribute, tagIDKeyName } = {}, type, tags, headTag, bodyTag) {
-  const oldHeadTags = toArray(headTag.querySelectorAll(`${type}[${attribute}]`))
-  const oldBodyTags = toArray(bodyTag.querySelectorAll(`${type}[${attribute}][data-body="true"]`))
+  const oldHeadTags = Array.from(headTag.querySelectorAll(`${type}[${attribute}]`))
+  const oldBodyTags = Array.from(bodyTag.querySelectorAll(`${type}[${attribute}][data-body="true"]`))
   const newTags = []
 
   if (tags.length > 1) {
