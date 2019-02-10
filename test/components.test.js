@@ -4,6 +4,7 @@ import { mount, defaultOptions, loadVueMetaPlugin } from './utils'
 import GoodbyeWorld from './fixtures/goodbye-world.vue'
 import HelloWorld from './fixtures/hello-world.vue'
 import KeepAlive from './fixtures/keep-alive.vue'
+import Changed from './fixtures/changed.vue'
 
 const getMetaInfo = component => _getMetaInfo(defaultOptions, component)
 
@@ -75,5 +76,22 @@ describe('client', () => {
 
     const metaInfo = wrapper.vm.$meta().inject()
     expect(metaInfo.title.text()).toEqual('<title data-vue-meta="true">Hello World</title>')
+  })
+
+  test('changed function is called', () => {
+    const parentComponent = new Vue({ render: h => h('div') })
+    const wrapper = mount(Changed, { localVue: Vue, parentComponent })
+
+    let context
+    const changed = jest.fn(function() {
+      context = this
+    })
+    wrapper.setData({ changed })
+    wrapper.setData({ childVisible: true })
+
+    wrapper.vm.$parent.$meta().refresh()
+    expect(changed).toHaveBeenCalledTimes(1)
+    // TODO: this isnt what the docs say
+    expect(context._uid).not.toBe(wrapper.vm._uid)
   })
 })
