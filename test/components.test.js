@@ -83,7 +83,7 @@ describe('client', () => {
     const wrapper = mount(Changed, { localVue: Vue, parentComponent })
 
     let context
-    const changed = jest.fn(function() {
+    const changed = jest.fn(function () {
       context = this
     })
     wrapper.setData({ changed })
