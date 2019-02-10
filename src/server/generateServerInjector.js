@@ -1,3 +1,4 @@
+import { metaInfoAttributeKeys } from '../shared/constants'
 import { titleGenerator, attributeGenerator, tagGenerator } from './generators'
 
 /**
@@ -13,7 +14,7 @@ export default function generateServerInjector(options, type, data) {
     return titleGenerator(options, type, data)
   }
 
-  if (['htmlAttrs', 'headAttrs', 'bodyAttrs'].includes(type)) {
+  if (metaInfoAttributeKeys.includes(type)) {
     return attributeGenerator(options, type, data)
   }
 

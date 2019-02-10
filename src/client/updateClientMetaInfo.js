@@ -1,3 +1,4 @@
+import { metaInfoOptionKeys, metaInfoAttributeKeys } from '../shared/constants'
 import { updateAttribute, updateTag, updateTitle } from './updaters'
 
 const getTag = (tags, tag) => {
@@ -29,13 +30,7 @@ export default function updateClientMetaInfo(options = {}, newInfo) {
 
     Object.keys(newInfo).forEach((type) => {
       // ignore these
-      if ([
-        'titleChunk',
-        'titleTemplate',
-        'changed',
-        '__dangerouslyDisableSanitizers',
-        '__dangerouslyDisableSanitizersByTagID'
-      ].includes(type)) {
+      if (metaInfoOptionKeys.includes(type)) {
         return
       }
 
@@ -45,7 +40,7 @@ export default function updateClientMetaInfo(options = {}, newInfo) {
         return
       }
 
-      if (['htmlAttrs', 'headAttrs', 'bodyAttrs'].includes(type)) {
+      if (metaInfoAttributeKeys.includes(type)) {
         const tagName = type.substr(0, 4)
         updateAttribute(options, newInfo[type], getTag(tags, tagName))
         return

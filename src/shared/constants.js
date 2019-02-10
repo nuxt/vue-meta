@@ -25,3 +25,23 @@ export const VUE_META_TEMPLATE_KEY_NAME = 'template'
 
 // This is the key name for the content-holding property
 export const VUE_META_CONTENT_KEY = 'content'
+
+export const metaInfoOptionKeys = [
+  'titleChunk',
+  'titleTemplate',
+  'changed',
+  '__dangerouslyDisableSanitizers',
+  '__dangerouslyDisableSanitizersByTagID'
+]
+
+export const metaInfoAttributeKeys = [
+  'htmlAttrs',
+  'headAttrs',
+  'bodyAttrs'
+]
+
+export const tagsWithoutEndTag = ['base', 'meta', 'link']
+
+export const tagsWithInnerContent = ['noscript', 'script', 'style']
+
+export const tagAttributeAsInnerContent = ['innerHTML', 'cssText']

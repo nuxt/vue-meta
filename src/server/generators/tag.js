@@ -1,3 +1,5 @@
+import { tagsWithoutEndTag, tagsWithInnerContent, tagAttributeAsInnerContent } from '../../shared/constants'
+
 /**
  * Generates meta, base, link, style, script, noscript tags for use on the server
  *
@@ -21,7 +23,7 @@ export default function tagGenerator({ attribute, tagIDKeyName } = {}, type, tag
         // build a string containing all attributes of this tag
         const attrs = Object.keys(tag).reduce((attrsStr, attr) => {
           // these attributes are treated as children on the tag
-          if (['innerHTML', 'cssText', 'once'].includes(attr)) {
+          if (tagAttributeAsInnerContent.includes(attr) || attr === 'once') {
             return attrsStr
           }
 
@@ -45,10 +47,10 @@ export default function tagGenerator({ attribute, tagIDKeyName } = {}, type, tag
           : `${attribute}="true"`
 
         // these tags have no end tag
-        const hasEndTag = !['base', 'meta', 'link'].includes(type)
+        const hasEndTag = !tagsWithoutEndTag.includes(type)
 
         // these tag types will have content inserted
-        const hasContent = hasEndTag && ['noscript', 'script', 'style'].includes(type)
+        const hasContent = hasEndTag && tagsWithInnerContent.includes(type)
 
         // the final string for this specific tag
         return !hasContent

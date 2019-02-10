@@ -1,4 +1,5 @@
 import getMetaInfo from '../shared/getMetaInfo'
+import { metaInfoOptionKeys } from '../shared/constants'
 import generateServerInjector from './generateServerInjector'
 
 export default function _inject(options = {}) {
@@ -16,7 +17,7 @@ export default function _inject(options = {}) {
 
     // generate server injectors
     for (const key in metaInfo) {
-      if (!['titleTemplate', 'titleChunk'].includes(key) && metaInfo.hasOwnProperty(key)) {
+      if (!metaInfoOptionKeys.includes(key) && metaInfo.hasOwnProperty(key)) {
         metaInfo[key] = generateServerInjector(options, key, metaInfo[key])
       }
     }
