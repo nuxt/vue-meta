@@ -86,7 +86,7 @@ describe('updaters', () => {
         }
 
         if (testFn && typeof testFn === 'function') {
-          test.only(`${action} a tag`, () => {
+          test(`${action} a tag`, () => {
             expect.hasAssertions()
             testFn()
           })
