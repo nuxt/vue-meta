@@ -122,11 +122,11 @@ export default function getMetaInfo({ keyName, tagIDKeyName, metaTemplateKeyName
 
   // sanitizes potentially dangerous characters
   const escape = info => Object.keys(info).reduce((escaped, key) => {
-    let isDisabled = ref && ref.indexOf(key) > -1
+    let isDisabled = ref && ref.includesOf(key)
     const tagID = info[tagIDKeyName]
 
     if (!isDisabled && tagID) {
-      isDisabled = refByTagID && refByTagID[tagID] && refByTagID[tagID].indexOf(key) > -1
+      isDisabled = refByTagID && refByTagID[tagID] && refByTagID[tagID].includes(key)
     }
 
     const val = info[key]

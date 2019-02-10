@@ -14,7 +14,7 @@ export default function updateAttribute({ attribute } = {}, attrs, tag) {
       const val = attrs[attr] || ''
       tag.setAttribute(attr, val)
 
-      if (vueMetaAttrs.indexOf(attr) === -1) {
+      if (!vueMetaAttrs.includes(attr)) {
         vueMetaAttrs.push(attr)
       }
 

@@ -44,7 +44,7 @@ export default function updateTag({ attribute, tagIDKeyName } = {}, type, tags, 
             } else {
               newElement.appendChild(document.createTextNode(tag.cssText))
             }
-          } else if ([tagIDKeyName, 'body'].indexOf(attr) !== -1) {
+          } else if ([tagIDKeyName, 'body'].includes(attr)) {
             const _attr = `data-${attr}`
             const value = (typeof tag[attr] === 'undefined') ? '' : tag[attr]
             newElement.setAttribute(_attr, value)
