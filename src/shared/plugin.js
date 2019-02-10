@@ -44,6 +44,9 @@ export default function VueMeta(Vue, options = {}) {
   // store an id to keep track of DOM updates
   let batchID = null
 
+  // for which Vue lifecycle hooks should the metaInfo be refreshed
+  const updateOnLifecycleHook = ['activated', 'deactivated', 'beforeMount']
+
   const triggerUpdate = (vm) => {
     // batch potential DOM updates to prevent extraneous re-rendering
     batchID = batchUpdate(batchID, () => vm.$meta().refresh())
@@ -77,7 +80,7 @@ export default function VueMeta(Vue, options = {}) {
           }
         }
 
-        ['activated', 'deactivated', 'beforeMount'].forEach((lifecycleHook) => {
+        updateOnLifecycleHook.forEach((lifecycleHook) => {
           this.$options[lifecycleHook] = this.$options[lifecycleHook] || []
           this.$options[lifecycleHook].push(() => triggerUpdate(this))
         })
