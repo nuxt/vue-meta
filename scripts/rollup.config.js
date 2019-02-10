@@ -4,7 +4,7 @@ import json from 'rollup-plugin-json'
 import buble from 'rollup-plugin-buble'
 import { terser } from 'rollup-plugin-terser'
 
-const pkg = require('./package.json')
+const pkg = require('../package.json')
 
 const banner =  `/**
  * vue-meta v${pkg.version}
@@ -14,7 +14,7 @@ const banner =  `/**
 `.replace(/ {4}/gm, '').trim()
 
 const baseConfig = {
-  input: './src/index.js',
+  input: 'src/index.js',
   output: {
     file: pkg.web,
     format: 'umd',
