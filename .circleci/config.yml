@@ -1,0 +1,38 @@
+version: 2
+jobs:
+  build:
+    docker:
+      - image: circleci/node
+    steps:
+      # Checkout repository
+      - checkout
+
+      # Restore cache
+      - restore_cache:
+          key: yarn-{{ checksum "yarn.lock" }}
+
+      # Install dependencies
+      - run:
+          name: Install Dependencies
+          command: NODE_ENV=dev yarn
+
+      # Keep cache
+      - save_cache:
+          key: yarn-{{ checksum "yarn.lock" }}
+          paths:
+            - "node_modules"
+
+      # Lint
+      - run:
+          name: Lint
+          command: yarn lint
+
+      # Test
+      - run:
+          name: Test
+          command: yarn test
+
+      # Coverage
+      - run:
+          name: Coverage
+          command: yarn codecov
