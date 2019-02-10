@@ -1,4 +1,4 @@
-import commonJs from 'rollup-plugin-commonjs'
+import commonjs from 'rollup-plugin-commonjs'
 import nodeResolve from 'rollup-plugin-node-resolve'
 import json from 'rollup-plugin-json'
 import buble from 'rollup-plugin-buble'
@@ -25,7 +25,7 @@ const baseConfig = {
   plugins: [
     json(),
     nodeResolve(),
-    commonJs(),
+    commonjs(),
     buble(),
   ]
 }
