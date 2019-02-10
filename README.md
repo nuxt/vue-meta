@@ -13,9 +13,9 @@
 </p>
 
 <p align="center">
-<a href="https://github.com/declandewet/vue-meta/releases/latest"><img src="https://img.shields.io/github/release/declandewet/vue-meta.svg" alt="github release"></a> <a href="http://npmjs.org/package/vue-meta"><img src="https://img.shields.io/npm/v/vue-meta.svg" alt="npm version"></a> <a href="https://travis-ci.org/declandewet/vue-meta"><img src="https://badgen.net/circleci/github/nuxt/vue-meta" alt="Build Status"></a> <a href="https://codecov.io/gh/declandewet/vue-meta"><img src="https://codecov.io/gh/declandewet/vue-meta/branch/master/graph/badge.svg" alt="codecov"></a><br>
-<a href="https://david-dm.org/declandewet/vue-meta"><img src="https://david-dm.org/declandewet/vue-meta/status.svg" alt="dependencies Status"></a> <a href="https://david-dm.org/declandewet/vue-meta?type=dev"><img src="https://david-dm.org/declandewet/vue-meta/dev-status.svg" alt="devDependencies Status"></a><br>
-<a href="http://npm-stat.com/charts.html?package=vue-meta"><img src="https://img.shields.io/npm/dm/vue-meta.svg" alt="npm downloads"></a> <a href="https://gitter.im/declandewet/vue-meta"><img src="https://badges.gitter.im/declandewet/vue-meta.svg" alt="Gitter"></a>
+<a href="https://github.com/nuxt/vue-meta/releases/latest"><img src="https://img.shields.io/github/release/nuxt/vue-meta.svg" alt="github release"></a> <a href="http://npmjs.org/package/vue-meta"><img src="https://img.shields.io/npm/v/vue-meta.svg" alt="npm version"></a> <a href="https://travis-ci.org/nuxt/vue-meta"><img src="https://badgen.net/circleci/github/nuxt/vue-meta" alt="Build Status"></a> <a href="https://codecov.io/gh/nuxt/vue-meta"><img src="https://codecov.io/gh/nuxt/vue-meta/branch/master/graph/badge.svg" alt="codecov"></a><br>
+<a href="https://david-dm.org/nuxt/vue-meta"><img src="https://david-dm.org/nuxt/vue-meta/status.svg" alt="dependencies Status"></a> <a href="https://david-dm.org/nuxt/vue-meta?type=dev"><img src="https://david-dm.org/nuxt/vue-meta/dev-status.svg" alt="devDependencies Status"></a><br>
+<a href="http://npm-stat.com/charts.html?package=vue-meta"><img src="https://img.shields.io/npm/dm/vue-meta.svg" alt="npm downloads"></a> <a href="https://gitter.im/nuxt/vue-meta"><img src="https://badges.gitter.im/nuxt/vue-meta.svg" alt="Gitter"></a>
 </p>
 
 ```html
@@ -370,7 +370,7 @@ The value of `title` will be injected into the `%s` placeholder in `titleTemplat
 <title>Foo Bar - Baz</title>
 ```
 
-The property can also be a function (from [v1.2.0](https://github.com/declandewet/vue-meta/releases/tag/v1.2.0)):
+The property can also be a function (from [v1.2.0](https://github.com/nuxt/vue-meta/releases/tag/v1.2.0)):
 
 ```js
 titleTemplate: (titleChunk) => {
@@ -833,13 +833,13 @@ Just make sure that you're using the function form of `metaInfo`:
 }
 ```
 
-Check out the [vuex-async](https://github.com/declandewet/vue-meta/tree/master/examples/vuex-async) example for a far more detailed demonstration if you have doubts.
+Check out the [vuex-async](https://github.com/nuxt/vue-meta/tree/master/examples/vuex-async) example for a far more detailed demonstration if you have doubts.
 
 Credit & Thanks for this feature goes to [Sébastien Chopin](https://github.com/Atinux).
 
 ## Why doesn't `vue-meta` support `jsnext:main`?
 
-Originally, it did - however, it caused [problems](https://github.com/declandewet/vue-meta/issues/25). Essentially, Vue [does not support](https://github.com/vuejs/vue/issues/2880) `jsnext:main`, and does not introspect for the `default` property that is transpiled from the ES2015 source, thus breaking module resolution.
+Originally, it did - however, it caused [problems](https://github.com/nuxt/vue-meta/issues/25). Essentially, Vue [does not support](https://github.com/vuejs/vue/issues/2880) `jsnext:main`, and does not introspect for the `default` property that is transpiled from the ES2015 source, thus breaking module resolution.
 
 Given that `jsnext:main` is a non-standard property that won't stick around for long, and `vue-meta` is bundled into one file with no dynamic module internals as well as the fact that if you're using `vue-meta`, you're 99.9% likely to not be using it conditionally - the decision has been made to drop support for it entirely.
 
