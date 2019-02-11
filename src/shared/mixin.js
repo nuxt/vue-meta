@@ -9,8 +9,10 @@ export default function createMixin(options) {
   const updateOnLifecycleHook = ['activated', 'deactivated', 'beforeMount']
 
   const triggerUpdate = (vm) => {
-    // batch potential DOM updates to prevent extraneous re-rendering
-    batchID = batchUpdate(batchID, () => vm.$meta().refresh())
+    if (vm.$root._vueMetaInitialized) {
+      // batch potential DOM updates to prevent extraneous re-rendering
+      batchID = batchUpdate(batchID, () => vm.$meta().refresh())
+    }
   }
 
   // watch for client side component updates
@@ -45,6 +47,24 @@ export default function createMixin(options) {
           this.$options[lifecycleHook] = this.$options[lifecycleHook] || []
           this.$options[lifecycleHook].push(() => triggerUpdate(this))
         })
+
+        // force an initial refresh on page load and prevent other lifecycleHooks
+        // to triggerUpdate until this initial refresh is finished
+        // this is to make sure that when a page is opened in an inactive tab which
+        // has throttled rAF/timers we still immeditately set the page title
+        if (isUndefined(this.$root._vueMetaInitialized)) {
+          this.$root._vueMetaInitialized = false
+
+          this.$root.$options.mounted = this.$root.$options.mounted || []
+          this.$root.$options.mounted.push(() => {
+            if (!this.$root._vueMetaInitialized) {
+              this.$nextTick(function () {
+                this.$root.$meta().refresh()
+                this.$root._vueMetaInitialized = true
+              })
+            }
+          })
+        }
 
         // do not trigger refresh on the server side
         if (!this.$isServer) {

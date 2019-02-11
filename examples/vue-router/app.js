@@ -11,8 +11,18 @@ const ChildComponent = {
   template: `<h3>You're looking at the <strong>{{ page }}</strong> page</h3>`,
   metaInfo () {
     return {
-      title: this.page
+      title: `${this.page} - ${this.date && this.date.toTimeString()}`
     }
+  },
+  data() {
+    return {
+      date: null
+    };
+  },
+  mounted() {
+    setInterval(() => {
+      this.date = new Date();
+    }, 1000);
   }
 }
 
