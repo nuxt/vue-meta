@@ -141,7 +141,13 @@ const metaInfoData = {
     },
     change: {
       data: [{ src: 'src', async: true, defer: true, [defaultOptions.tagIDKeyName]: 'content2' }],
-      expect: ['<script data-vue-meta="true" src="src" async="true" defer="true" data-vmid="content2"></script>']
+      expect: ['<script data-vue-meta="true" src="src" async="true" defer data-vmid="content2"></script>'],
+      test(side, defaultTest) {
+        if (side === 'client') {
+          // jsdom doesnt generate valid boolean attributes
+          this.expect[0] = this.expect[0].replace('defer', 'defer="true"')
+        }
+      }
     },
     remove: {
       data: [],

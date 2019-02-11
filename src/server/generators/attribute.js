@@ -1,3 +1,4 @@
+import { booleanHtmlAttributes } from '../../shared/constants'
 import { isUndefined } from '../../shared/typeof'
 
 /**
@@ -17,7 +18,7 @@ export default function attributeGenerator({ attribute } = {}, type, data) {
         if (data.hasOwnProperty(attr)) {
           watchedAttrs.push(attr)
 
-          attributeStr += isUndefined(data[attr])
+          attributeStr += isUndefined(data[attr]) || booleanHtmlAttributes.includes(attr)
             ? attr
             : `${attr}="${data[attr]}"`
 
