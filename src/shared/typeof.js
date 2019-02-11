@@ -1,20 +1,16 @@
 
-export function isType(arg, type) {
-  return typeof arg === type
-}
-
 export function isUndefined(arg) {
-  return isType(arg, 'undefined')
+  return typeof arg === 'undefined'
 }
 
 export function isObject(arg) {
-  return isType(arg, 'object')
+  return typeof arg === 'object'
 }
 
 export function isFunction(arg) {
-  return isType(arg, 'function')
+  return typeof arg === 'function'
 }
 
 export function isString(arg) {
-  return isType(arg, 'string')
+  return typeof arg === 'string'
 }
