@@ -8,6 +8,7 @@ export default function _$meta(options = {}) {
    */
   return function $meta() {
     return {
+      inject: () => {},
       refresh: refresh(options).bind(this)
     }
   }
