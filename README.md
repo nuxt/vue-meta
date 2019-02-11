@@ -13,7 +13,7 @@
 </p>
 
 <p align="center">
-<a href="https://github.com/nuxt/vue-meta/releases/latest"><img src="https://img.shields.io/github/release/nuxt/vue-meta.svg" alt="github release"></a> <a href="http://npmjs.org/package/vue-meta"><img src="https://img.shields.io/npm/v/vue-meta.svg" alt="npm version"></a> <a href="https://travis-ci.org/nuxt/vue-meta"><img src="https://badgen.net/circleci/github/nuxt/vue-meta" alt="Build Status"></a> <a href="https://codecov.io/gh/nuxt/vue-meta"><img src="https://codecov.io/gh/nuxt/vue-meta/branch/master/graph/badge.svg" alt="codecov"></a><br>
+<a href="https://github.com/nuxt/vue-meta/releases/latest"><img src="https://img.shields.io/github/release/nuxt/vue-meta.svg" alt="github release"></a> <a href="http://npmjs.org/package/vue-meta"><img src="https://img.shields.io/npm/v/vue-meta.svg" alt="npm version"></a> <a href="https://circleci.com/gh/nuxt/vue-meta/"><img src="https://badgen.net/circleci/github/nuxt/vue-meta" alt="Build Status"></a> <a href="https://codecov.io/gh/nuxt/vue-meta"><img src="https://codecov.io/gh/nuxt/vue-meta/branch/master/graph/badge.svg" alt="codecov"></a><br>
 <a href="https://david-dm.org/nuxt/vue-meta"><img src="https://david-dm.org/nuxt/vue-meta/status.svg" alt="dependencies Status"></a> <a href="https://david-dm.org/nuxt/vue-meta?type=dev"><img src="https://david-dm.org/nuxt/vue-meta/dev-status.svg" alt="devDependencies Status"></a><br>
 <a href="http://npm-stat.com/charts.html?package=vue-meta"><img src="https://img.shields.io/npm/dm/vue-meta.svg" alt="npm downloads"></a> <a href="https://gitter.im/nuxt/vue-meta"><img src="https://badges.gitter.im/nuxt/vue-meta.svg" alt="Gitter"></a>
 </p>
