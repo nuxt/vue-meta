@@ -5,7 +5,7 @@
   "main": "server.js",
   "private": true,
   "scripts": {
-    "dev": "cross-env NODE_ENV=dev babel-node server.js",
+    "dev": "cross-env NODE_ENV=development babel-node server.js",
     "start": "babel-node server.js"
   },
   "repository": {
