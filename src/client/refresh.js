@@ -1,4 +1,5 @@
 import getMetaInfo from '../shared/getMetaInfo'
+import { isFunction } from '../shared/typeof'
 import updateClientMetaInfo from './updateClientMetaInfo'
 
 export default function _refresh(options = {}) {
@@ -18,7 +19,7 @@ export default function _refresh(options = {}) {
     const tags = updateClientMetaInfo(options, metaInfo)
 
     // emit "event" with new info
-    if (tags && typeof metaInfo.changed === 'function') {
+    if (tags && isFunction(metaInfo.changed)) {
       metaInfo.changed.call(this, metaInfo, tags.addedTags, tags.removedTags)
     }
 

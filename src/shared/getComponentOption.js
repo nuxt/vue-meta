@@ -1,5 +1,6 @@
 import deepmerge from 'deepmerge'
 import uniqueId from 'lodash.uniqueid'
+import { isUndefined, isFunction, isObject } from '../shared/typeof'
 import uniqBy from './uniqBy'
 
 /**
@@ -24,15 +25,15 @@ export default function getComponentOption({ component, deep, arrayMerge, keyNam
   }
 
   // only collect option data if it exists
-  if (typeof $options[keyName] !== 'undefined' && $options[keyName] !== null) {
+  if (!isUndefined($options[keyName]) && $options[keyName] !== null) {
     let data = $options[keyName]
 
     // if option is a function, replace it with it's result
-    if (typeof data === 'function') {
+    if (isFunction(data)) {
       data = data.call(component)
     }
 
-    if (typeof data === 'object') {
+    if (isObject(data)) {
       // merge with existing options
       result = deepmerge(result, data, { arrayMerge })
     } else {
@@ -55,7 +56,7 @@ export default function getComponentOption({ component, deep, arrayMerge, keyNam
   if (metaTemplateKeyName && result.hasOwnProperty('meta')) {
     result.meta = Object.keys(result.meta).map((metaKey) => {
       const metaObject = result.meta[metaKey]
-      if (!metaObject.hasOwnProperty(metaTemplateKeyName) || !metaObject.hasOwnProperty(contentKeyName) || typeof metaObject[metaTemplateKeyName] === 'undefined') {
+      if (!metaObject.hasOwnProperty(metaTemplateKeyName) || !metaObject.hasOwnProperty(contentKeyName) || isUndefined(metaObject[metaTemplateKeyName])) {
         return result.meta[metaKey]
       }
 
@@ -63,7 +64,7 @@ export default function getComponentOption({ component, deep, arrayMerge, keyNam
       delete metaObject[metaTemplateKeyName]
 
       if (template) {
-        metaObject.content = typeof template === 'function' ? template(metaObject.content) : template.replace(/%s/g, metaObject.content)
+        metaObject.content = isFunction(template) ? template(metaObject.content) : template.replace(/%s/g, metaObject.content)
       }
 
       return metaObject

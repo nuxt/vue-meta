@@ -1,6 +1,8 @@
+import { isUndefined } from '../shared/typeof'
+
 // fallback to timers if rAF not present
-const stopUpdate = (typeof window !== 'undefined' ? window.cancelAnimationFrame : null) || clearTimeout
-const startUpdate = (typeof window !== 'undefined' ? window.requestAnimationFrame : null) || (cb => setTimeout(cb, 0))
+const stopUpdate = (!isUndefined(window) ? window.cancelAnimationFrame : null) || clearTimeout
+const startUpdate = (!isUndefined(window) ? window.requestAnimationFrame : null) || (cb => setTimeout(cb, 0))
 
 /**
  * Performs a batched update. Uses requestAnimationFrame to prevent

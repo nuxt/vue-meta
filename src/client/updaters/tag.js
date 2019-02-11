@@ -1,3 +1,5 @@
+import { isUndefined } from '../../shared/typeof'
+
 /**
  * Updates meta tags inside <head> and <body> on the client. Borrowed from `react-helmet`:
  * https://github.com/nfl/react-helmet/blob/004d448f8de5f823d10f838b02317521180f34da/src/Helmet.js#L195-L245
@@ -43,10 +45,10 @@ export default function updateTag({ attribute, tagIDKeyName } = {}, type, tags, 
             }
           } else if ([tagIDKeyName, 'body'].includes(attr)) {
             const _attr = `data-${attr}`
-            const value = (typeof tag[attr] === 'undefined') ? '' : tag[attr]
+            const value = isUndefined(tag[attr]) ? '' : tag[attr]
             newElement.setAttribute(_attr, value)
           } else {
-            const value = (typeof tag[attr] === 'undefined') ? '' : tag[attr]
+            const value = isUndefined(tag[attr]) ? '' : tag[attr]
             newElement.setAttribute(attr, value)
           }
         }

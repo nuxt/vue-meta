@@ -1,3 +1,5 @@
+import { isUndefined } from '../../shared/typeof'
+
 /**
  * Generates tag attributes for use on the server.
  *
@@ -15,9 +17,9 @@ export default function attributeGenerator({ attribute } = {}, type, data) {
         if (data.hasOwnProperty(attr)) {
           watchedAttrs.push(attr)
 
-          attributeStr += typeof data[attr] !== 'undefined'
-            ? `${attr}="${data[attr]}"`
-            : attr
+          attributeStr += isUndefined(data[attr])
+            ? attr
+            : `${attr}="${data[attr]}"`
 
           attributeStr += ' '
         }

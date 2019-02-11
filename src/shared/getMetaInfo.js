@@ -1,9 +1,10 @@
 import deepmerge from 'deepmerge'
 import isPlainObject from 'lodash.isplainobject'
+import { isUndefined, isFunction, isString } from '../shared/typeof'
 import isArray from './isArray'
 import getComponentOption from './getComponentOption'
 
-const escapeHTML = str => typeof window === 'undefined'
+const escapeHTML = str => isUndefined(window)
   // server-side escape sequence
   ? String(str)
     .replace(/&/g, '&amp;')
@@ -20,7 +21,7 @@ const escapeHTML = str => typeof window === 'undefined'
     .replace(/'/g, '\u0027')
 
 const applyTemplate = (component, template, chunk) =>
-  typeof template === 'function' ? template.call(component, chunk) : template.replace(/%s/g, chunk)
+  isFunction(template) ? template.call(component, chunk) : template.replace(/%s/g, chunk)
 
 /**
  * Returns the correct meta info for the given component
@@ -137,7 +138,7 @@ export default function getMetaInfo({ keyName, tagIDKeyName, metaTemplateKeyName
     }
 
     if (!isDisabled) {
-      if (typeof val === 'string') {
+      if (isString(val)) {
         escaped[key] = escapeHTML(val)
       } else if (isPlainObject(val)) {
         escaped[key] = escape(val)

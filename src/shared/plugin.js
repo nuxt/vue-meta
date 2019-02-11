@@ -1,4 +1,5 @@
 import batchUpdate from '../client/batchUpdate'
+import { isUndefined, isFunction, isObject } from '../shared/typeof'
 import $meta from './$meta'
 
 import {
@@ -11,7 +12,7 @@ import {
 } from './constants'
 
 // automatic install
-if (typeof window !== 'undefined' && typeof window.Vue !== 'undefined') {
+if (!isUndefined(window) && !isUndefined(window.Vue)) {
   Vue.use(VueMeta)
 }
 
@@ -31,7 +32,7 @@ export default function VueMeta(Vue, options = {}) {
   }
 
   // combine options
-  options = typeof options === 'object' ? options : {}
+  options = isObject('object') ? options : {}
 
   for (const key in defaultOptions) {
     if (!options[key]) {
@@ -59,13 +60,13 @@ export default function VueMeta(Vue, options = {}) {
       // Add a marker to know if it uses metaInfo
       // _vnode is used to know that it's attached to a real component
       // useful if we use some mixin to add some meta tags (like nuxt-i18n)
-      if (typeof this.$options[options.keyName] !== 'undefined' && this.$options[options.keyName] !== null) {
+      if (!isUndefined(this.$options[options.keyName]) && this.$options[options.keyName] !== null) {
         this._hasMetaInfo = true
 
         // coerce function-style metaInfo to a computed prop so we can observe
         // it on creation
-        if (typeof this.$options[options.keyName] === 'function') {
-          if (typeof this.$options.computed === 'undefined') {
+        if (isFunction(this.$options[options.keyName])) {
+          if (isUndefined(this.$options.computed)) {
             this.$options.computed = {}
           }
           this.$options.computed.$metaInfo = this.$options[options.keyName]

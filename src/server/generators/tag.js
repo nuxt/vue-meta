@@ -1,4 +1,5 @@
 import { tagsWithoutEndTag, tagsWithInnerContent, tagAttributeAsInnerContent } from '../../shared/constants'
+import { isUndefined } from '../../shared/typeof'
 
 /**
  * Generates meta, base, link, style, script, noscript tags for use on the server
@@ -33,7 +34,7 @@ export default function tagGenerator({ attribute, tagIDKeyName } = {}, type, tag
             prefix = 'data-'
           }
 
-          return typeof tag[attr] === 'undefined'
+          return isUndefined(tag[attr])
             ? `${attrsStr} ${prefix}${attr}`
             : `${attrsStr} ${prefix}${attr}="${tag[attr]}"`
         }, '')
