@@ -39,6 +39,7 @@ export default function updateTag({ attribute, tagIDKeyName } = {}, type, tags, 
             newElement.innerHTML = tag.innerHTML
           } else if (attr === 'cssText') {
             if (newElement.styleSheet) {
+              /* istanbul ignore next */
               newElement.styleSheet.cssText = tag.cssText
             } else {
               newElement.appendChild(document.createTextNode(tag.cssText))
