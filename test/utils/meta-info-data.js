@@ -117,12 +117,15 @@ const metaInfoData = {
         { src: 'src', async: true, defer: true, body: true }
       ],
       expect: [
-        '<script data-vue-meta="true" src="src" async="true" defer="true" data-vmid="content"></script>',
-        '<script data-vue-meta="true" src="src" async="true" defer="true" data-body="true"></script>'
+        '<script data-vue-meta="true" src="src" async defer data-vmid="content"></script>',
+        '<script data-vue-meta="true" src="src" async defer data-body="true"></script>'
       ],
       test(side, defaultTest) {
         return () => {
           if (side === 'client') {
+            for (const index in this.expect) {
+              this.expect[index] = this.expect[index].replace(/(async|defer)/g, '$1="true"')
+            }
             const tags = defaultTest()
 
             expect(tags.addedTags.script[0].parentNode.tagName).toBe('HEAD')
@@ -139,15 +142,10 @@ const metaInfoData = {
         }
       }
     },
+    // this test only runs for client so we can directly expect wrong boolean attributes
     change: {
       data: [{ src: 'src', async: true, defer: true, [defaultOptions.tagIDKeyName]: 'content2' }],
-      expect: ['<script data-vue-meta="true" src="src" async="true" defer data-vmid="content2"></script>'],
-      test(side, defaultTest) {
-        if (side === 'client') {
-          // jsdom doesnt generate valid boolean attributes
-          this.expect[0] = this.expect[0].replace('defer', 'defer="true"')
-        }
-      }
+      expect: ['<script data-vue-meta="true" src="src" async="true" defer="true" data-vmid="content2"></script>']
     },
     remove: {
       data: [],

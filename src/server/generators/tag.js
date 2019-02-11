@@ -1,4 +1,4 @@
-import { tagsWithoutEndTag, tagsWithInnerContent, tagAttributeAsInnerContent } from '../../shared/constants'
+import { booleanHtmlAttributes, tagsWithoutEndTag, tagsWithInnerContent, tagAttributeAsInnerContent } from '../../shared/constants'
 import { isUndefined } from '../../shared/typeof'
 
 /**
@@ -36,7 +36,7 @@ export default function tagGenerator({ attribute, tagIDKeyName } = {}, type, tag
             prefix = 'data-'
           }
 
-          return isUndefined(tag[attr])
+          return isUndefined(tag[attr]) || booleanHtmlAttributes.includes(attr)
             ? `${attrsStr} ${prefix}${attr}`
             : `${attrsStr} ${prefix}${attr}="${tag[attr]}"`
         }, '')
