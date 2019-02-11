@@ -2,11 +2,12 @@ import batchUpdate from '../client/batchUpdate'
 import $meta from './$meta'
 
 import {
-  VUE_META_KEY_NAME,
-  VUE_META_ATTRIBUTE,
-  VUE_META_SERVER_RENDERED_ATTRIBUTE,
-  VUE_META_TAG_LIST_ID_KEY_NAME,
-  VUE_META_TEMPLATE_KEY_NAME, VUE_META_CONTENT_KEY
+  keyName,
+  attribute,
+  ssrAttribute,
+  tagIDKeyName,
+  metaTemplateKeyName,
+  contentKeyName
 } from './constants'
 
 // automatic install
@@ -21,12 +22,12 @@ if (typeof window !== 'undefined' && typeof window.Vue !== 'undefined') {
 export default function VueMeta(Vue, options = {}) {
   // set some default options
   const defaultOptions = {
-    keyName: VUE_META_KEY_NAME,
-    contentKeyName: VUE_META_CONTENT_KEY,
-    metaTemplateKeyName: VUE_META_TEMPLATE_KEY_NAME,
-    attribute: VUE_META_ATTRIBUTE,
-    ssrAttribute: VUE_META_SERVER_RENDERED_ATTRIBUTE,
-    tagIDKeyName: VUE_META_TAG_LIST_ID_KEY_NAME
+    keyName,
+    contentKeyName,
+    metaTemplateKeyName,
+    attribute,
+    ssrAttribute,
+    tagIDKeyName
   }
 
   // combine options
