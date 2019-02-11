@@ -1,48 +1,7 @@
 import batchUpdate from '../client/batchUpdate'
-import { isUndefined, isFunction, isObject } from '../shared/typeof'
-import $meta from './$meta'
+import { isUndefined, isFunction } from '../shared/typeof'
 
-import {
-  keyName,
-  attribute,
-  ssrAttribute,
-  tagIDKeyName,
-  metaTemplateKeyName,
-  contentKeyName
-} from './constants'
-
-// automatic install
-if (!isUndefined(window) && !isUndefined(window.Vue)) {
-  Vue.use(VueMeta)
-}
-
-/**
- * Plugin install function.
- * @param {Function} Vue - the Vue constructor.
- */
-export default function VueMeta(Vue, options = {}) {
-  // set some default options
-  const defaultOptions = {
-    keyName,
-    contentKeyName,
-    metaTemplateKeyName,
-    attribute,
-    ssrAttribute,
-    tagIDKeyName
-  }
-
-  // combine options
-  options = isObject('object') ? options : {}
-
-  for (const key in defaultOptions) {
-    if (!options[key]) {
-      options[key] = defaultOptions[key]
-    }
-  }
-
-  // bind the $meta method to this component instance
-  Vue.prototype.$meta = $meta(options)
-
+export default function createMixin(options) {
   // store an id to keep track of DOM updates
   let batchID = null
 
@@ -55,7 +14,7 @@ export default function VueMeta(Vue, options = {}) {
   }
 
   // watch for client side component updates
-  Vue.mixin({
+  return {
     beforeCreate() {
       // Add a marker to know if it uses metaInfo
       // _vnode is used to know that it's attached to a real component
@@ -159,5 +118,5 @@ export default function VueMeta(Vue, options = {}) {
         }, 50)
       }
     }/**/
-  })
+  }
 }

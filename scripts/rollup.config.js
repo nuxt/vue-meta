@@ -14,7 +14,7 @@ const banner =  `/**
 `.replace(/ {4}/gm, '').trim()
 
 const baseConfig = {
-  input: 'src/index.js',
+  input: 'src/browser.js',
   output: {
     file: pkg.web,
     format: 'umd',
@@ -44,6 +44,7 @@ export default [{
   ]
 }, {
   ...baseConfig,
+  input: 'src/index.js',
   output: {
     ...baseConfig.output,
     file: pkg.main,

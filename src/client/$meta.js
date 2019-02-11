@@ -1,5 +1,4 @@
-import inject from '../server/inject'
-import refresh from '../client/refresh'
+import refresh from './refresh'
 
 export default function _$meta(options = {}) {
   /**
@@ -9,7 +8,6 @@ export default function _$meta(options = {}) {
    */
   return function $meta() {
     return {
-      inject: inject(options).bind(this),
       refresh: refresh(options).bind(this)
     }
   }
