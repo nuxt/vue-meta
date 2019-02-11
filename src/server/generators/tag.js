@@ -13,7 +13,9 @@ export default function tagGenerator({ attribute, tagIDKeyName } = {}, type, tag
     text({ body = false } = {}) {
       // build a string containing all tags of this type
       return tags.reduce((tagsStr, tag) => {
-        if (Object.keys(tag).length === 0) {
+        const tagKeys = Object.keys(tag)
+
+        if (tagKeys.length === 0) {
           return tagsStr // Bail on empty tag object
         }
 
@@ -22,7 +24,7 @@ export default function tagGenerator({ attribute, tagIDKeyName } = {}, type, tag
         }
 
         // build a string containing all attributes of this tag
-        const attrs = Object.keys(tag).reduce((attrsStr, attr) => {
+        const attrs = tagKeys.reduce((attrsStr, attr) => {
           // these attributes are treated as children on the tag
           if (tagAttributeAsInnerContent.includes(attr) || attr === 'once') {
             return attrsStr

@@ -28,22 +28,22 @@ export default function updateClientMetaInfo(options = {}, newInfo) {
     const addedTags = {}
     const removedTags = {}
 
-    Object.keys(newInfo).forEach((type) => {
+    for (const type in newInfo) {
       // ignore these
       if (metaInfoOptionKeys.includes(type)) {
-        return
+        continue
       }
 
       if (type === 'title') {
         // update the title
         updateTitle(newInfo.title)
-        return
+        continue
       }
 
       if (metaInfoAttributeKeys.includes(type)) {
         const tagName = type.substr(0, 4)
         updateAttribute(options, newInfo[type], getTag(tags, tagName))
-        return
+        continue
       }
 
       const { oldTags, newTags } = updateTag(
@@ -58,7 +58,7 @@ export default function updateClientMetaInfo(options = {}, newInfo) {
         addedTags[type] = newTags
         removedTags[type] = oldTags
       }
-    })
+    }
 
     return { addedTags, removedTags }
   } else {
