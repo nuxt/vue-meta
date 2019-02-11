@@ -20,7 +20,7 @@ const defaultOptions = {
 
 export default function setOptions(options) {
   // combine options
-  options = isObject('object') ? options : {}
+  options = isObject(options) ? options : {}
 
   for (const key in defaultOptions) {
     if (!options[key]) {
