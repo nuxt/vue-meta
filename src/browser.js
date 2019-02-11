@@ -1,6 +1,7 @@
 import { version } from '../package.json'
 import createMixin from './shared/mixin'
 import setOptions from './shared/options'
+import { isUndefined } from './shared/typeof'
 import $meta from './client/$meta'
 
 /**
@@ -16,5 +17,11 @@ function VueMeta(Vue, options = {}) {
 }
 
 VueMeta.version = version
+
+// automatic install
+if (!isUndefined(window) && !isUndefined(window.Vue)) {
+  /* istanbul ignore next */
+  Vue.use(VueMeta)
+}
 
 export default VueMeta

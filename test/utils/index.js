@@ -1,6 +1,7 @@
 import { mount, createLocalVue } from '@vue/test-utils'
 import { renderToString } from '@vue/server-test-utils'
-import VueMetaPlugin from '../../src'
+import VueMetaBrowserPlugin from '../../src/browser'
+import VueMetaServerPlugin from '../../src'
 
 import {
   keyName,
@@ -14,7 +15,8 @@ import {
 export {
   mount,
   renderToString,
-  VueMetaPlugin
+  VueMetaBrowserPlugin,
+  VueMetaServerPlugin
 }
 
 export const defaultOptions = {
@@ -30,8 +32,12 @@ export function getVue() {
   return createLocalVue()
 }
 
-export function loadVueMetaPlugin(options, localVue = getVue()) {
-  localVue.use(VueMetaPlugin, Object.assign({}, defaultOptions, options))
+export function loadVueMetaPlugin(browser, options, localVue = getVue()) {
+  if (browser) {
+    localVue.use(VueMetaBrowserPlugin, Object.assign({}, defaultOptions, options))
+  } else {
+    localVue.use(VueMetaServerPlugin, Object.assign({}, defaultOptions, options))
+  }
 
   return localVue
 }
