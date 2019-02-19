@@ -1,6 +1,8 @@
 import fs from 'fs'
 import path from 'path'
 import webpack from 'webpack'
+import WebpackBar from 'webpackbar'
+import VueLoaderPlugin from 'vue-loader/lib/plugin'
 
 export default {
   devtool: 'inline-source-map',
@@ -28,7 +30,7 @@ export default {
   resolve: {
     alias: {
       'vue': 'vue/dist/vue.js',
-      'vue-meta': path.join(__dirname, '..', 'src')
+      'vue-meta': process.env.NODE_ENV === 'development' ? path.join(__dirname, '..', 'src') : 'vue-meta'
     }
   },
   // Expose __dirname to allow automatically setting basename.
@@ -37,7 +39,8 @@ export default {
     __dirname: true
   },
   plugins: [
-    // new webpack.optimize.CommonsChunkPlugin('shared.js'),
+    new WebpackBar(),
+    new VueLoaderPlugin(),
     new webpack.DefinePlugin({
       'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV || 'development')
     })

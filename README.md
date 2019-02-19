@@ -847,4 +847,6 @@ If this were not the case, you would have to instruct Babel to convert `default`
 
 # Examples
 
-To run the examples; clone this repository & run `npm install` in the root directory, and then run `npm run dev`. Head to http://localhost:8080.
+To run the examples locally; clone this repository and run `cd examples && yarn install` in the root directory, then run `yarn start`. Head to http://localhost:3000 or run with `HOST=0.0.0.0 PORT=8080 yarn start` to change host or port
+
+If you would like to help to develop vue-meta then run `yarn install` both in the root and examples dir and run `yarn dev`

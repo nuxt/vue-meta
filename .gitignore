@@ -32,9 +32,13 @@ jspm_packages
 
 # Optional npm cache directory
 .npm
+package-lock.json
 
 # Optional REPL history
 .node_repl_history
 
 # built code
 lib
+
+# examples yarn lock
+examples/yarn.lock

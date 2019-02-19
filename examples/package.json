@@ -1,0 +1,39 @@
+{
+  "name": "vue-meta-examples",
+  "version": "1.0.0",
+  "description": "Examples for vue-meta",
+  "main": "server.js",
+  "private": true,
+  "scripts": {
+    "dev": "cross-env NODE_ENV=development babel-node server.js",
+    "start": "babel-node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/nuxt/vue-meta.git"
+  },
+  "author": "",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/nuxt/vue-meta/issues"
+  },
+  "homepage": "https://github.com/nuxt/vue-meta#readme",
+  "devDependencies": {
+    "@babel/core": "^7.2.2",
+    "@babel/node": "^7.2.2",
+    "@babel/preset-env": "^7.3.1",
+    "babel-loader": "^8.0.5",
+    "cross-env": "^5.2.0",
+    "express": "^4.16.4",
+    "express-urlrewrite": "^1.2.0",
+    "vue": "^2.6.3",
+    "vue-loader": "^15.6.2",
+    "vue-meta": "^1.5.8",
+    "vue-router": "^3.0.2",
+    "vue-template-compiler": "^2.6.3",
+    "vuex": "^3.1.0",
+    "webpack": "^4.26.1",
+    "webpack-dev-server": "^3.1.10",
+    "webpackbar": "^3.1.5"
+  }
+}

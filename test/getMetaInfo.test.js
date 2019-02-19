@@ -1,35 +1,17 @@
-import Vue from 'vue'
 import _getMetaInfo from '../src/shared/getMetaInfo'
-import {
-  VUE_META_ATTRIBUTE,
-  VUE_META_CONTENT_KEY,
-  VUE_META_KEY_NAME,
-  VUE_META_SERVER_RENDERED_ATTRIBUTE,
-  VUE_META_TAG_LIST_ID_KEY_NAME,
-  VUE_META_TEMPLATE_KEY_NAME
-} from '../src/shared/constants'
+import { defaultOptions, loadVueMetaPlugin } from './utils'
 
-// set some default options
-const defaultOptions = {
-  keyName: VUE_META_KEY_NAME,
-  attribute: VUE_META_ATTRIBUTE,
-  ssrAttribute: VUE_META_SERVER_RENDERED_ATTRIBUTE,
-  metaTemplateKeyName: VUE_META_TEMPLATE_KEY_NAME,
-  contentKeyName: VUE_META_CONTENT_KEY,
-  tagIDKeyName: VUE_META_TAG_LIST_ID_KEY_NAME
-}
-
-const getMetaInfo = _getMetaInfo(defaultOptions)
+const getMetaInfo = component => _getMetaInfo(defaultOptions, component)
 
 describe('getMetaInfo', () => {
-  // const container = document.createElement('div')
-  let component
+  let Vue
 
-  afterEach(() => component.$destroy())
+  beforeAll(() => (Vue = loadVueMetaPlugin()))
 
-  it('returns appropriate defaults when no meta info is found', () => {
-    component = new Vue()
-    expect(getMetaInfo(component)).to.eql({
+  test('returns appropriate defaults when no meta info is found', () => {
+    const component = new Vue()
+
+    expect(getMetaInfo(component)).toEqual({
       title: '',
       titleChunk: '',
       titleTemplate: '%s',
@@ -47,8 +29,8 @@ describe('getMetaInfo', () => {
     })
   })
 
-  it('returns metaInfo when used in component', () => {
-    component = new Vue({
+  test('returns metaInfo when used in component', () => {
+    const component = new Vue({
       metaInfo: {
         title: 'Hello',
         meta: [
@@ -56,7 +38,8 @@ describe('getMetaInfo', () => {
         ]
       }
     })
-    expect(getMetaInfo(component)).to.eql({
+
+    expect(getMetaInfo(component)).toEqual({
       title: 'Hello',
       titleChunk: 'Hello',
       titleTemplate: '%s',
@@ -75,8 +58,37 @@ describe('getMetaInfo', () => {
       __dangerouslyDisableSanitizersByTagID: {}
     })
   })
-  it('removes duplicate metaInfo in same component', () => {
-    component = new Vue({
+
+  test('converts base tag to array', () => {
+    const component = new Vue({
+      metaInfo: {
+        title: 'Hello',
+        base: { href: 'href' }
+      }
+    })
+
+    expect(getMetaInfo(component)).toEqual({
+      title: 'Hello',
+      titleChunk: 'Hello',
+      titleTemplate: '%s',
+      htmlAttrs: {},
+      headAttrs: {},
+      bodyAttrs: {},
+      meta: [],
+      base: [
+        { href: 'href' }
+      ],
+      link: [],
+      style: [],
+      script: [],
+      noscript: [],
+      __dangerouslyDisableSanitizers: [],
+      __dangerouslyDisableSanitizersByTagID: {}
+    })
+  })
+
+  test('removes duplicate metaInfo in same component', () => {
+    const component = new Vue({
       metaInfo: {
         title: 'Hello',
         meta: [
@@ -93,7 +105,8 @@ describe('getMetaInfo', () => {
         ]
       }
     })
-    expect(getMetaInfo(component)).to.eql({
+
+    expect(getMetaInfo(component)).toEqual({
       title: 'Hello',
       titleChunk: 'Hello',
       titleTemplate: '%s',
@@ -117,8 +130,8 @@ describe('getMetaInfo', () => {
     })
   })
 
-  it('properly uses string titleTemplates', () => {
-    component = new Vue({
+  test('properly uses string titleTemplates', () => {
+    const component = new Vue({
       metaInfo: {
         title: 'Hello',
         titleTemplate: '%s World',
@@ -127,7 +140,8 @@ describe('getMetaInfo', () => {
         ]
       }
     })
-    expect(getMetaInfo(component)).to.eql({
+
+    expect(getMetaInfo(component)).toEqual({
       title: 'Hello World',
       titleChunk: 'Hello',
       titleTemplate: '%s World',
@@ -147,10 +161,10 @@ describe('getMetaInfo', () => {
     })
   })
 
-  it('properly uses function titleTemplates', () => {
+  test('properly uses function titleTemplates', () => {
     const titleTemplate = chunk => `${chunk} Function World`
 
-    component = new Vue({
+    const component = new Vue({
       metaInfo: {
         title: 'Hello',
         titleTemplate,
@@ -159,7 +173,8 @@ describe('getMetaInfo', () => {
         ]
       }
     })
-    expect(getMetaInfo(component)).to.eql({
+
+    expect(getMetaInfo(component)).toEqual({
       title: 'Hello Function World',
       titleChunk: 'Hello',
       titleTemplate,
@@ -179,12 +194,12 @@ describe('getMetaInfo', () => {
     })
   })
 
-  it('has the proper `this` binding when using function titleTemplates', () => {
+  test('has the proper `this` binding when using function titleTemplates', () => {
     const titleTemplate = function (chunk) {
       return `${chunk} ${this.helloWorldText}`
     }
 
-    component = new Vue({
+    const component = new Vue({
       metaInfo: {
         title: 'Hello',
         titleTemplate,
@@ -192,13 +207,14 @@ describe('getMetaInfo', () => {
           { charset: 'utf-8' }
         ]
       },
-      data () {
+      data() {
         return {
           helloWorldText: 'Function World'
         }
       }
     })
-    expect(getMetaInfo(component)).to.eql({
+
+    expect(getMetaInfo(component)).toEqual({
       title: 'Hello Function World',
       titleChunk: 'Hello',
       titleTemplate,
@@ -218,8 +234,8 @@ describe('getMetaInfo', () => {
     })
   })
 
-  it('properly uses string meta templates', () => {
-    component = new Vue({
+  test('properly uses string meta templates', () => {
+    const component = new Vue({
       metaInfo: {
         title: 'Hello',
         meta: [
@@ -232,7 +248,8 @@ describe('getMetaInfo', () => {
         ]
       }
     })
-    expect(getMetaInfo(component)).to.eql({
+
+    expect(getMetaInfo(component)).toEqual({
       title: 'Hello',
       titleChunk: 'Hello',
       titleTemplate: '%s',
@@ -256,8 +273,8 @@ describe('getMetaInfo', () => {
     })
   })
 
-  it('properly uses function meta templates', () => {
-    component = new Vue({
+  test('properly uses function meta templates', () => {
+    const component = new Vue({
       metaInfo: {
         title: 'Hello',
         meta: [
@@ -270,7 +287,8 @@ describe('getMetaInfo', () => {
         ]
       }
     })
-    expect(getMetaInfo(component)).to.eql({
+
+    expect(getMetaInfo(component)).toEqual({
       title: 'Hello',
       titleChunk: 'Hello',
       titleTemplate: '%s',
@@ -294,8 +312,8 @@ describe('getMetaInfo', () => {
     })
   })
 
-  it('properly uses content only if template is not defined', () => {
-    component = new Vue({
+  test('properly uses content only if template is not defined', () => {
+    const component = new Vue({
       metaInfo: {
         title: 'Hello',
         meta: [
@@ -307,7 +325,8 @@ describe('getMetaInfo', () => {
         ]
       }
     })
-    expect(getMetaInfo(component)).to.eql({
+
+    expect(getMetaInfo(component)).toEqual({
       title: 'Hello',
       titleChunk: 'Hello',
       titleTemplate: '%s',
@@ -331,8 +350,8 @@ describe('getMetaInfo', () => {
     })
   })
 
-  it('properly uses content only if template is null', () => {
-    component = new Vue({
+  test('properly uses content only if template is null', () => {
+    const component = new Vue({
       metaInfo: {
         title: 'Hello',
         meta: [
@@ -345,7 +364,8 @@ describe('getMetaInfo', () => {
         ]
       }
     })
-    expect(getMetaInfo(component)).to.eql({
+
+    expect(getMetaInfo(component)).toEqual({
       title: 'Hello',
       titleChunk: 'Hello',
       titleTemplate: '%s',
@@ -369,8 +389,8 @@ describe('getMetaInfo', () => {
     })
   })
 
-  it('properly uses content only if template is false', () => {
-    component = new Vue({
+  test('properly uses content only if template is false', () => {
+    const component = new Vue({
       metaInfo: {
         title: 'Hello',
         meta: [
@@ -383,7 +403,8 @@ describe('getMetaInfo', () => {
         ]
       }
     })
-    expect(getMetaInfo(component)).to.eql({
+
+    expect(getMetaInfo(component)).toEqual({
       title: 'Hello',
       titleChunk: 'Hello',
       titleTemplate: '%s',
@@ -407,9 +428,9 @@ describe('getMetaInfo', () => {
     })
   })
 
-  it('properly uses meta templates with one-level-deep nested children content', () => {
+  test('properly uses meta templates with one-level-deep nested children content', () => {
     Vue.component('merge-child', {
-      template: '<div></div>',
+      render: h => h('div'),
       metaInfo: {
         title: 'Hello',
         meta: [
@@ -422,7 +443,7 @@ describe('getMetaInfo', () => {
       }
     })
 
-    component = new Vue({
+    const component = new Vue({
       metaInfo: {
         meta: [
           {
@@ -433,11 +454,11 @@ describe('getMetaInfo', () => {
           }
         ]
       },
-      render: (h) => h('div', null, [h('merge-child')]),
-      el: document.createElement('div')
+      el: document.createElement('div'),
+      render: h => h('div', null, [h('merge-child')])
     })
 
-    expect(getMetaInfo(component)).to.eql({
+    expect(getMetaInfo(component)).toEqual({
       title: 'Hello',
       titleChunk: 'Hello',
       titleTemplate: '%s',
@@ -463,9 +484,9 @@ describe('getMetaInfo', () => {
 
   // TODO: Still failing :( Child template won't be applied if child has no content as well
 
-  it('properly uses meta templates with one-level-deep nested children template', () => {
+  test('properly uses meta templates with one-level-deep nested children template', () => {
     Vue.component('merge-child', {
-      template: '<div></div>',
+      render: h => h('div'),
       metaInfo: {
         title: 'Hello',
         meta: [
@@ -478,7 +499,7 @@ describe('getMetaInfo', () => {
       }
     })
 
-    component = new Vue({
+    const component = new Vue({
       metaInfo: {
         meta: [
           {
@@ -489,11 +510,11 @@ describe('getMetaInfo', () => {
           }
         ]
       },
-      render: (h) => h('div', null, [h('merge-child')]),
-      el: document.createElement('div')
+      el: document.createElement('div'),
+      render: h => h('div', null, [h('merge-child')])
     })
 
-    expect(getMetaInfo(component)).to.eql({
+    expect(getMetaInfo(component)).toEqual({
       title: 'Hello',
       titleChunk: 'Hello',
       titleTemplate: '%s',
@@ -517,9 +538,9 @@ describe('getMetaInfo', () => {
     })
   })
 
-  it('properly uses meta templates with one-level-deep nested children template and content', () => {
+  test('properly uses meta templates with one-level-deep nested children template and content', () => {
     Vue.component('merge-child', {
-      template: '<div></div>',
+      render: h => h('div'),
       metaInfo: {
         title: 'Hello',
         meta: [
@@ -533,7 +554,7 @@ describe('getMetaInfo', () => {
       }
     })
 
-    component = new Vue({
+    const component = new Vue({
       metaInfo: {
         meta: [
           {
@@ -544,11 +565,11 @@ describe('getMetaInfo', () => {
           }
         ]
       },
-      render: (h) => h('div', null, [h('merge-child')]),
-      el: document.createElement('div')
+      el: document.createElement('div'),
+      render: h => h('div', null, [h('merge-child')])
     })
 
-    expect(getMetaInfo(component)).to.eql({
+    expect(getMetaInfo(component)).toEqual({
       title: 'Hello',
       titleChunk: 'Hello',
       titleTemplate: '%s',

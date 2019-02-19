@@ -1,4 +1,3 @@
-import assign from 'object-assign'
 import Vue from 'vue'
 import VueMeta from 'vue-meta'
 import Router from 'vue-router'
@@ -12,8 +11,18 @@ const ChildComponent = {
   template: `<h3>You're looking at the <strong>{{ page }}</strong> page</h3>`,
   metaInfo () {
     return {
-      title: this.page
+      title: `${this.page} - ${this.date && this.date.toTimeString()}`
     }
+  },
+  data() {
+    return {
+      date: null
+    };
+  },
+  mounted() {
+    setInterval(() => {
+      this.date = new Date();
+    }, 1000);
   }
 }
 
@@ -41,6 +50,7 @@ const router = new Router({
 })
 
 const App = {
+  router,
   template: `
     <div id="app">
       <h1>vue-router</h1>
@@ -54,6 +64,6 @@ const App = {
   `
 }
 
-const app = new Vue(assign(App, { router }))
+const app = new Vue(App)
 
 app.$mount('#app')
