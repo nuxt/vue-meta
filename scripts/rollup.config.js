@@ -48,8 +48,7 @@ export default [{
   output: {
     ...baseConfig.output,
     file: pkg.main,
-    format: 'cjs',
-    intro: 'var window'
+    format: 'cjs'
   },
   external: Object.keys(pkg.dependencies)
 }]

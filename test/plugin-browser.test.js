@@ -43,7 +43,10 @@ describe('plugin', () => {
 
   test('updates can be paused and resumed', async () => {
     const _triggerUpdate = jest.requireActual('../src/client/triggerUpdate').default
+    const _batchUpdate = jest.requireActual('../src/client/batchUpdate').default
+
     const triggerUpdateSpy = triggerUpdate.mockImplementation(_triggerUpdate)
+    const batchUpdateSpy = batchUpdate.mockImplementation(_batchUpdate)
 
     const Component = Vue.component('test-component', {
       metaInfo() {
@@ -72,7 +75,7 @@ describe('plugin', () => {
     expect(wrapper.vm.$root._vueMetaInitialized).toBe(false)
     expect(wrapper.vm.$root._vueMetaPaused).toBeFalsy()
     expect(triggerUpdateSpy).toHaveBeenCalledTimes(1)
-    expect(batchUpdate).not.toHaveBeenCalled()
+    expect(batchUpdateSpy).not.toHaveBeenCalled()
     jest.clearAllMocks()
     await vmTick(wrapper.vm)
 
@@ -83,7 +86,7 @@ describe('plugin', () => {
     expect(wrapper.vm.$root._vueMetaInitialized).toBe(true)
     expect(wrapper.vm.$root._vueMetaPaused).toBeFalsy()
     expect(triggerUpdateSpy).toHaveBeenCalledTimes(1)
-    expect(batchUpdate).toHaveBeenCalledTimes(1)
+    expect(batchUpdateSpy).toHaveBeenCalledTimes(1)
     jest.clearAllMocks()
 
     wrapper.vm.$meta().pause()
@@ -94,7 +97,7 @@ describe('plugin', () => {
     expect(wrapper.vm.$root._vueMetaInitialized).toBe(true)
     expect(wrapper.vm.$root._vueMetaPaused).toBe(true)
     expect(triggerUpdateSpy).toHaveBeenCalledTimes(1)
-    expect(batchUpdate).not.toHaveBeenCalled()
+    expect(batchUpdateSpy).not.toHaveBeenCalled()
     jest.clearAllMocks()
 
     const metaInfo = wrapper.vm.$meta().resume()

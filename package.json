@@ -5,7 +5,7 @@
   "author": "Declan de Wet <declandewet@me.com>",
   "bugs": "https://github.com/nuxt/vue-meta/issues",
   "scripts": {
-    "build": "rimraf lib && rollup -c scripts/rollup.config.js",
+    "build": "scripts/build.sh",
     "codecov": "codecov",
     "deploy": "npm version",
     "dev": "cd examples && npm run dev && cd ..",
@@ -28,6 +28,7 @@
     "vue-hooks": "^0.3.2"
   },
   "devDependencies": {
+    "@babel/cli": "^7.2.3",
     "@babel/core": "^7.3.3",
     "@babel/node": "^7.2.2",
     "@babel/preset-env": "^7.3.1",
@@ -67,6 +68,7 @@
   },
   "files": [
     "lib",
+    "es",
     "types/index.d.ts",
     "types/vue.d.ts"
   ],
@@ -88,7 +90,7 @@
   "license": "MIT",
   "main": "lib/vue-meta.common.js",
   "web": "lib/vue-meta.js",
-  "module": "src/index.js",
+  "module": "es/index.js",
   "typings": "types/index.d.ts",
   "repository": {
     "url": "git@github.com/nuxt/vue-meta.git",

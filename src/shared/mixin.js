@@ -1,6 +1,6 @@
 import triggerUpdate from '../client/triggerUpdate'
-import { isUndefined, isFunction } from '../shared/typeof'
-import { ensuredPush } from '../shared/ensure'
+import { isUndefined, isFunction } from './typeof'
+import { ensuredPush } from './ensure'
 
 export default function createMixin(options) {
   // for which Vue lifecycle hooks should the metaInfo be refreshed
@@ -35,10 +35,6 @@ export default function createMixin(options) {
           }
         }
 
-        updateOnLifecycleHook.forEach((lifecycleHook) => {
-          ensuredPush(this.$options, lifecycleHook, () => triggerUpdate(this, lifecycleHook))
-        })
-
         // force an initial refresh on page load and prevent other lifecycleHooks
         // to triggerUpdate until this initial refresh is finished
         // this is to make sure that when a page is opened in an inactive tab which
@@ -49,6 +45,7 @@ export default function createMixin(options) {
           if (!this.$root._vueMetaInitialized) {
             ensuredPush(this.$options, 'mounted', () => {
               if (!this.$root._vueMetaInitialized) {
+                // refresh meta in nextTick so all child components have loaded
                 this.$nextTick(function () {
                   this.$root.$meta().refresh()
                   this.$root._vueMetaInitialized = true
@@ -60,6 +57,11 @@ export default function createMixin(options) {
 
         // do not trigger refresh on the server side
         if (!this.$isServer) {
+          // no need to add this hooks on server side, there we only need the mounted hook above
+          updateOnLifecycleHook.forEach((lifecycleHook) => {
+            ensuredPush(this.$options, lifecycleHook, () => triggerUpdate(this, lifecycleHook))
+          })
+
           // re-render meta data when returning from a child component to parent
           ensuredPush(this.$options, 'destroyed', () => {
             // Wait that element is hidden before refreshing meta tags (to support animations)
@@ -80,54 +82,5 @@ export default function createMixin(options) {
         }
       }
     }
-    /* Not yet removed
-    created() {
-      // if computed $metaInfo exists, watch it for updates & trigger a refresh
-      // when it changes (i.e. automatically handle async actions that affect metaInfo)
-      // credit for this suggestion goes to [Sébastien Chopin](https://github.com/Atinux)
-      if (!this.$isServer && this.$metaInfo) {
-        this.$watch('$metaInfo', () => triggerUpdate(this))
-      }
-
-    },
-    activated() {
-      if (this._hasMetaInfo) {
-        triggerUpdate(this)
-      }
-    },
-    deactivated() {
-      if (this._hasMetaInfo) {
-        triggerUpdate(this)
-      }
-    },
-    beforeMount() {
-      if (this._hasMetaInfo) {
-        triggerUpdate(this)
-      }
-    },
-    destroyed() {
-      // do not trigger refresh on the server side
-      if (this.$isServer) {
-        return
-      }
-
-      // re-render meta data when returning from a child component to parent
-      if (this._hasMetaInfo) {
-        // Wait that element is hidden before refreshing meta tags (to support animations)
-        const interval = setInterval(() => {
-          if (this.$el && this.$el.offsetParent !== null) {
-            return
-          }
-
-          clearInterval(interval)
-
-          if (!this.$parent) {
-            return
-          }
-
-          triggerUpdate(this)
-        }, 50)
-      }
-    }/**/
   }
 }
