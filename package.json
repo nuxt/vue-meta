@@ -22,10 +22,8 @@
   },
   "dependencies": {
     "deepmerge": "^3.2.0",
-    "fast-deep-equal": "^2.0.1",
     "lodash.isplainobject": "^4.0.6",
-    "lodash.uniqueid": "^4.0.1",
-    "vue-hooks": "^0.3.2"
+    "lodash.uniqueid": "^4.0.1"
   },
   "devDependencies": {
     "@babel/cli": "^7.2.3",
