@@ -71,7 +71,7 @@ export default function createMixin(options) {
 
         // do not trigger refresh on the server side
         if (!this.$isServer) {
-          // no need to add this hooks on server side, there we only need the mounted hook above
+          // no need to add this hooks on server side
           updateOnLifecycleHook.forEach((lifecycleHook) => {
             ensuredPush(this.$options, lifecycleHook, () => triggerUpdate(this, lifecycleHook))
           })
