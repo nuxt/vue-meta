@@ -1,4 +1,5 @@
 import refresh from '../client/refresh'
+import { pause, resume } from '../shared/pausing'
 import inject from './inject'
 
 export default function _$meta(options = {}) {
@@ -10,7 +11,9 @@ export default function _$meta(options = {}) {
   return function $meta() {
     return {
       inject: inject(options).bind(this),
-      refresh: refresh(options).bind(this)
+      refresh: refresh(options).bind(this),
+      pause: pause.bind(this),
+      resume: resume.bind(this)
     }
   }
 }

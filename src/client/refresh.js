@@ -17,7 +17,6 @@ export default function _refresh(options = {}) {
     const metaInfo = getMetaInfo(options, this.$root)
 
     const tags = updateClientMetaInfo(options, metaInfo)
-
     // emit "event" with new info
     if (tags && isFunction(metaInfo.changed)) {
       metaInfo.changed.call(this, metaInfo, tags.addedTags, tags.removedTags)

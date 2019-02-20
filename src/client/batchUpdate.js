@@ -15,7 +15,10 @@ const startUpdate = (!isUndefined(window) ? window.requestAnimationFrame : null)
  * @return {Number} id - a new ID
  */
 export default function batchUpdate(id, callback) {
-  stopUpdate(id)
+  if (id) {
+    stopUpdate(id)
+  }
+
   return startUpdate(() => {
     id = null
     callback()

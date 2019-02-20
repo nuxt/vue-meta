@@ -41,3 +41,9 @@ export function loadVueMetaPlugin(browser, options, localVue = getVue()) {
 
   return localVue
 }
+
+export const vmTick = (vm) => {
+  return new Promise((resolve) => {
+    vm.$nextTick(resolve)
+  })
+}

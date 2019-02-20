@@ -1,19 +1,10 @@
-import batchUpdate from '../client/batchUpdate'
+import triggerUpdate from '../client/triggerUpdate'
 import { isUndefined, isFunction } from '../shared/typeof'
+import { ensuredPush } from '../shared/ensure'
 
 export default function createMixin(options) {
-  // store an id to keep track of DOM updates
-  let batchID = null
-
   // for which Vue lifecycle hooks should the metaInfo be refreshed
   const updateOnLifecycleHook = ['activated', 'deactivated', 'beforeMount']
-
-  const triggerUpdate = (vm) => {
-    if (vm.$root._vueMetaInitialized) {
-      // batch potential DOM updates to prevent extraneous re-rendering
-      batchID = batchUpdate(batchID, () => vm.$meta().refresh())
-    }
-  }
 
   // watch for client side component updates
   return {
@@ -36,41 +27,41 @@ export default function createMixin(options) {
             // if computed $metaInfo exists, watch it for updates & trigger a refresh
             // when it changes (i.e. automatically handle async actions that affect metaInfo)
             // credit for this suggestion goes to [Sébastien Chopin](https://github.com/Atinux)
-            this.$options.created = this.$options.created || []
-            this.$options.created.push(() => {
-              this.$watch('$metaInfo', () => triggerUpdate(this))
+            ensuredPush(this.$options, 'created', () => {
+              this.$watch('$metaInfo', function () {
+                triggerUpdate(this, 'watcher')
+              })
             })
           }
         }
 
         updateOnLifecycleHook.forEach((lifecycleHook) => {
-          this.$options[lifecycleHook] = this.$options[lifecycleHook] || []
-          this.$options[lifecycleHook].push(() => triggerUpdate(this))
+          ensuredPush(this.$options, lifecycleHook, () => triggerUpdate(this, lifecycleHook))
         })
 
         // force an initial refresh on page load and prevent other lifecycleHooks
         // to triggerUpdate until this initial refresh is finished
         // this is to make sure that when a page is opened in an inactive tab which
         // has throttled rAF/timers we still immeditately set the page title
-        if (isUndefined(this.$root._vueMetaInitialized)) {
-          this.$root._vueMetaInitialized = false
+        if (isUndefined(this.$root._vueMetaPaused)) {
+          this.$root._vueMetaInitialized = this.$isServer
 
-          this.$root.$options.mounted = this.$root.$options.mounted || []
-          this.$root.$options.mounted.push(() => {
-            if (!this.$root._vueMetaInitialized) {
-              this.$nextTick(function () {
-                this.$root.$meta().refresh()
-                this.$root._vueMetaInitialized = true
-              })
-            }
-          })
+          if (!this.$root._vueMetaInitialized) {
+            ensuredPush(this.$options, 'mounted', () => {
+              if (!this.$root._vueMetaInitialized) {
+                this.$nextTick(function () {
+                  this.$root.$meta().refresh()
+                  this.$root._vueMetaInitialized = true
+                })
+              }
+            })
+          }
         }
 
         // do not trigger refresh on the server side
         if (!this.$isServer) {
           // re-render meta data when returning from a child component to parent
-          this.$options.destroyed = this.$options.destroyed || []
-          this.$options.destroyed.push(() => {
+          ensuredPush(this.$options, 'destroyed', () => {
             // Wait that element is hidden before refreshing meta tags (to support animations)
             const interval = setInterval(() => {
               if (this.$el && this.$el.offsetParent !== null) {
@@ -83,7 +74,7 @@ export default function createMixin(options) {
                 return
               }
 
-              triggerUpdate(this)
+              triggerUpdate(this, 'destroyed')
             }, 50)
           })
         }
