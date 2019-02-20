@@ -39,7 +39,7 @@ export default function createMixin(options) {
         // to triggerUpdate until this initial refresh is finished
         // this is to make sure that when a page is opened in an inactive tab which
         // has throttled rAF/timers we still immeditately set the page title
-        if (isUndefined(this.$root._vueMetaPaused)) {
+        if (isUndefined(this.$root._vueMetaInitialized)) {
           this.$root._vueMetaInitialized = this.$isServer
 
           if (!this.$root._vueMetaInitialized) {
