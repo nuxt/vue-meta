@@ -1,24 +1,56 @@
 {
   "name": "vue-meta",
-  "description": "Manage page meta info in Vue 2.0 server-rendered apps",
   "version": "1.5.8",
-  "author": "Declan de Wet <declandewet@me.com>",
+  "description": "Manage page meta info in Vue 2.0 server-rendered apps",
+  "keywords": [
+    "attribute",
+    "google",
+    "head",
+    "helmet",
+    "info",
+    "meta",
+    "seo",
+    "server",
+    "ssr",
+    "title",
+    "universal",
+    "vue"
+  ],
+  "homepage": "https://github.com/nuxt/vue-meta",
   "bugs": "https://github.com/nuxt/vue-meta/issues",
+  "repository": {
+    "type": "git",
+    "url": "git@github.com/nuxt/vue-meta.git"
+  },
+  "license": "MIT",
+  "author": "Declan de Wet <declandewet@me.com>",
+  "files": [
+    "lib",
+    "es",
+    "types/index.d.ts",
+    "types/vue.d.ts"
+  ],
+  "main": "lib/vue-meta.common.js",
+  "web": "lib/vue-meta.js",
+  "module": "es/index.js",
+  "typings": "types/index.d.ts",
   "scripts": {
-    "build": "scripts/build.sh",
+    "build": "yarn build:other && yarn build:es",
+    "build:es": "rimraf es && babel src --env-name es --out-dir es --ignore 'src/browser.js'",
+    "build:other": "rimraf lib && rollup -c scripts/rollup.config.js",
     "codecov": "codecov",
+    "predeploy": "git checkout master && git pull -r",
     "deploy": "npm version",
+    "postdeploy": "git push origin master --follow-tags && npm run release",
     "dev": "cd examples && npm run dev && cd ..",
     "lint": "eslint src test",
-    "postdeploy": "git push origin master --follow-tags && npm run release",
-    "postversion": "npm run update-cdn && git add . && git commit -m \":ship: CDN update\"",
-    "predeploy": "git checkout master && git pull -r",
     "prerelease": "npm run build",
-    "preversion": "npm run toc",
     "release": "npm publish",
     "test": "jest",
     "toc": "doctoc README.md --title '# Table of Contents'",
-    "update-cdn": "babel-node scripts/update-cdn.js"
+    "update-cdn": "babel-node scripts/update-cdn.js",
+    "preversion": "npm run toc",
+    "postversion": "npm run update-cdn && git add . && git commit -m \":ship: CDN update\""
   },
   "dependencies": {
     "deepmerge": "^3.2.0",
@@ -63,35 +95,5 @@
     "vue-jest": "^3.0.3",
     "vue-server-renderer": "^2.6.6",
     "vue-template-compiler": "^2.6.6"
-  },
-  "files": [
-    "lib",
-    "es",
-    "types/index.d.ts",
-    "types/vue.d.ts"
-  ],
-  "homepage": "https://github.com/nuxt/vue-meta",
-  "keywords": [
-    "attribute",
-    "google",
-    "head",
-    "helmet",
-    "info",
-    "meta",
-    "seo",
-    "server",
-    "ssr",
-    "title",
-    "universal",
-    "vue"
-  ],
-  "license": "MIT",
-  "main": "lib/vue-meta.common.js",
-  "web": "lib/vue-meta.js",
-  "module": "es/index.js",
-  "typings": "types/index.d.ts",
-  "repository": {
-    "url": "git@github.com/nuxt/vue-meta.git",
-    "type": "git"
   }
 }
