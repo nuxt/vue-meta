@@ -43,15 +43,29 @@ export default function createMixin(options) {
           this.$root._vueMetaInitialized = this.$isServer
 
           if (!this.$root._vueMetaInitialized) {
+            const $rootMeta = this.$root.$meta()
+
             ensuredPush(this.$options, 'mounted', () => {
               if (!this.$root._vueMetaInitialized) {
                 // refresh meta in nextTick so all child components have loaded
                 this.$nextTick(function () {
-                  this.$root.$meta().refresh()
+                  $rootMeta.refresh()
                   this.$root._vueMetaInitialized = true
                 })
               }
             })
+
+            // add vue-router navigation guard to prevent multiple updates during navigation
+            // only usefull on the client side
+            if (options.refreshOnceOnNavigation && this.$root.$router) {
+              const $router = this.$root.$router
+              $router.beforeEach((to, from, next) => {
+                $rootMeta.pause()
+                next()
+              })
+
+              $router.afterEach(() => $rootMeta.resume())
+            }
           }
         }
 

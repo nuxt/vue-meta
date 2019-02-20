@@ -1,6 +1,6 @@
 import deepmerge from 'deepmerge'
 import uniqueId from 'lodash.uniqueid'
-import { isUndefined, isFunction, isObject } from '../shared/typeof'
+import { isUndefined, isFunction, isObject } from './typeof'
 import uniqBy from './uniqBy'
 
 /**

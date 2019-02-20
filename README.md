@@ -64,6 +64,7 @@
       - [`__dangerouslyDisableSanitizers` ([String])](#__dangerouslydisablesanitizers-string)
       - [`__dangerouslyDisableSanitizersByTagID` ({[String]})](#__dangerouslydisablesanitizersbytagid-string)
       - [`changed` (Function)](#changed-function)
+      - [`refreshOnceOnNavigation` (Boolean)](#refreshonceonnavigation-boolean)
     - [How `metaInfo` is Resolved](#how-metainfo-is-resolved)
       - [Lists of Tags](#lists-of-tags)
 - [Performance](#performance)
@@ -651,6 +652,11 @@ Will be called when the client `metaInfo` updates/changes. Receives the followin
   }
 }
 ```
+
+#### `refreshOnceOnNavigation` (Boolean)
+
+Default `false`. If set to `true` then vue-meta will pause updating `metaInfo` during page navigation with vue-router and only refresh once when navigation has finished. It does this by adding a global beforeEach and afterEach navigation guard on the $router instance.
+
 
 ### How `metaInfo` is Resolved
 

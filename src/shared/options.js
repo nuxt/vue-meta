@@ -1,4 +1,5 @@
-import { isObject } from '../shared/typeof'
+import { isObject } from './typeof'
+
 import {
   keyName,
   attribute,
