@@ -3,7 +3,9 @@ import VueMeta from 'vue-meta'
 import Router from 'vue-router'
 
 Vue.use(Router)
-Vue.use(VueMeta)
+Vue.use(VueMeta, {
+  refreshOnceOnNavigation: true
+})
 
 const ChildComponent = {
   name: `child-component`,
@@ -28,7 +30,7 @@ const ChildComponent = {
 
 // this wrapper function is not a requirement for vue-router,
 // just a demonstration that render-function style components also work.
-// See https://github.com/declandewet/vue-meta/issues/9 for more info.
+// See https://github.com/nuxt/vue-meta/issues/9 for more info.
 function view (page) {
   return {
     name: `section-${page}`,
