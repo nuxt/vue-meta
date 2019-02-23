@@ -2,15 +2,14 @@ import isArray from './isArray'
 import { isObject } from './typeof'
 
 export function ensureIsArray(arg, key) {
-  if (isObject(arg) && key) {
-    if (!isArray(arg[key])) {
-      arg[key] = []
-    }
-
-    return arg
+  if (!key || !isObject(arg)) {
+    return isArray(arg) ? arg : []
   }
 
-  return isArray(arg) ? arg : []
+  if (!isArray(arg[key])) {
+    arg[key] = []
+  }
+  return arg
 }
 
 export function ensuredPush(object, key, el) {
