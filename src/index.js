@@ -2,6 +2,7 @@ import { version } from '../package.json'
 import createMixin from './shared/mixin'
 import setOptions from './shared/options'
 import $meta from './server/$meta'
+export { hasMetaInfo } from './shared/hasMetaInfo'
 
 /**
  * Plugin install function.
@@ -12,7 +13,7 @@ function VueMeta(Vue, options = {}) {
 
   Vue.prototype.$meta = $meta(options)
 
-  Vue.mixin(createMixin(options))
+  Vue.mixin(createMixin(Vue, options))
 }
 
 VueMeta.version = version

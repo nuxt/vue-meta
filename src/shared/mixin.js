@@ -2,18 +2,35 @@ import triggerUpdate from '../client/triggerUpdate'
 import { isUndefined, isFunction } from './typeof'
 import { ensuredPush } from './ensure'
 
-export default function createMixin(options) {
+export default function createMixin(Vue, options) {
   // for which Vue lifecycle hooks should the metaInfo be refreshed
   const updateOnLifecycleHook = ['activated', 'deactivated', 'beforeMount']
 
   // watch for client side component updates
   return {
     beforeCreate() {
+      Object.defineProperty(this, '_hasMetaInfo', {
+        get() {
+          // Show deprecation warning once when devtools enabled
+          if (Vue.config.devtools && !this.$root._vueMeta.hasMetaInfoDeprecationWarningShown) {
+            console.warn('VueMeta DeprecationWarning: _hasMetaInfo has been deprecated and will be removed in a future version. Please import hasMetaInfo and use hasMetaInfo(vm) instead') // eslint-disable-line no-console
+            this.$root._vueMeta.hasMetaInfoDeprecationWarningShown = true
+          }
+          return !!this._vueMeta
+        }
+      })
+
       // Add a marker to know if it uses metaInfo
       // _vnode is used to know that it's attached to a real component
       // useful if we use some mixin to add some meta tags (like nuxt-i18n)
       if (!isUndefined(this.$options[options.keyName]) && this.$options[options.keyName] !== null) {
-        this._hasMetaInfo = true
+        if (!this.$root._vueMeta) {
+          this.$root._vueMeta = {}
+        }
+
+        if (!this._vueMeta) {
+          this._vueMeta = true
+        }
 
         // coerce function-style metaInfo to a computed prop so we can observe
         // it on creation
@@ -39,18 +56,18 @@ export default function createMixin(options) {
         // to triggerUpdate until this initial refresh is finished
         // this is to make sure that when a page is opened in an inactive tab which
         // has throttled rAF/timers we still immeditately set the page title
-        if (isUndefined(this.$root._vueMetaInitialized)) {
-          this.$root._vueMetaInitialized = this.$isServer
+        if (isUndefined(this.$root._vueMeta.initialized)) {
+          this.$root._vueMeta.initialized = this.$isServer
 
-          if (!this.$root._vueMetaInitialized) {
+          if (!this.$root._vueMeta.initialized) {
             const $rootMeta = this.$root.$meta()
 
             ensuredPush(this.$options, 'mounted', () => {
-              if (!this.$root._vueMetaInitialized) {
+              if (!this.$root._vueMeta.initialized) {
                 // refresh meta in nextTick so all child components have loaded
                 this.$nextTick(function () {
                   $rootMeta.refresh()
-                  this.$root._vueMetaInitialized = true
+                  this.$root._vueMeta.initialized = true
                 })
               }
             })

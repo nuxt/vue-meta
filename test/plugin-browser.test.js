@@ -72,8 +72,8 @@ describe('plugin', () => {
     })
 
     // no batchUpdate on initialization
-    expect(wrapper.vm.$root._vueMetaInitialized).toBe(false)
-    expect(wrapper.vm.$root._vueMetaPaused).toBeFalsy()
+    expect(wrapper.vm.$root._vueMeta.initialized).toBe(false)
+    expect(wrapper.vm.$root._vueMeta.paused).toBeFalsy()
     expect(triggerUpdateSpy).toHaveBeenCalledTimes(1)
     expect(batchUpdateSpy).not.toHaveBeenCalled()
     jest.clearAllMocks()
@@ -83,8 +83,8 @@ describe('plugin', () => {
     wrapper.setProps({ title })
 
     // batchUpdate on normal update
-    expect(wrapper.vm.$root._vueMetaInitialized).toBe(true)
-    expect(wrapper.vm.$root._vueMetaPaused).toBeFalsy()
+    expect(wrapper.vm.$root._vueMeta.initialized).toBe(true)
+    expect(wrapper.vm.$root._vueMeta.paused).toBeFalsy()
     expect(triggerUpdateSpy).toHaveBeenCalledTimes(1)
     expect(batchUpdateSpy).toHaveBeenCalledTimes(1)
     jest.clearAllMocks()
@@ -94,8 +94,8 @@ describe('plugin', () => {
     wrapper.setProps({ title })
 
     // no batchUpdate when paused
-    expect(wrapper.vm.$root._vueMetaInitialized).toBe(true)
-    expect(wrapper.vm.$root._vueMetaPaused).toBe(true)
+    expect(wrapper.vm.$root._vueMeta.initialized).toBe(true)
+    expect(wrapper.vm.$root._vueMeta.paused).toBe(true)
     expect(triggerUpdateSpy).toHaveBeenCalledTimes(1)
     expect(batchUpdateSpy).not.toHaveBeenCalled()
     jest.clearAllMocks()
