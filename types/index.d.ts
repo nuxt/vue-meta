@@ -46,4 +46,5 @@ export interface MetaInfo {
   __dangerouslyDisableSanitizersByTagID?: string[]
 
   changed?: <T extends object>(newInfo: T, addedTags: HTMLElement[], removedTags: HTMLElement[]) => void
+  refreshOnceOnNavigation?: boolean
 }
