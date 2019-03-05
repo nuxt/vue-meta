@@ -8,7 +8,7 @@ export { hasMetaInfo } from './shared/hasMetaInfo'
  * Plugin install function.
  * @param {Function} Vue - the Vue constructor.
  */
-function VueMeta(Vue, options = {}) {
+function install(Vue, options = {}) {
   options = setOptions(options)
 
   Vue.prototype.$meta = $meta(options)
@@ -16,6 +16,7 @@ function VueMeta(Vue, options = {}) {
   Vue.mixin(createMixin(Vue, options))
 }
 
-VueMeta.version = version
-
-export default VueMeta
+export {
+  version,
+  install
+}
