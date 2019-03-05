@@ -100,7 +100,7 @@ describe('plugin', () => {
     expect(batchUpdateSpy).not.toHaveBeenCalled()
     jest.clearAllMocks()
 
-    const metaInfo = wrapper.vm.$meta().resume()
+    const { metaInfo } = wrapper.vm.$meta().resume()
     expect(metaInfo.title).toBe(title)
   })
 })

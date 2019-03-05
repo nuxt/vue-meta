@@ -30,6 +30,6 @@ export default function _refresh(options = {}) {
       metaInfo.changed.call(this, metaInfo, tags.addedTags, tags.removedTags)
     }
 
-    return metaInfo
+    return { vm: this, metaInfo, tags }
   }
 }

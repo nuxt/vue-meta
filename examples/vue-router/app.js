@@ -7,18 +7,26 @@ Vue.use(VueMeta, {
   refreshOnceOnNavigation: true
 })
 
+let metaUpdated = 'no'
 const ChildComponent = {
   name: `child-component`,
   props: ['page'],
-  template: `<h3>You're looking at the <strong>{{ page }}</strong> page</h3>`,
+  template: `<div>
+<h3>You're looking at the <strong>{{ page }}</strong> page</h3>
+<p>Has metaInfo been updated? {{ metaUpdated }}</p>
+</div>`,
   metaInfo () {
     return {
-      title: `${this.page} - ${this.date && this.date.toTimeString()}`
+      title: `${this.page} - ${this.date && this.date.toTimeString()}`,
+      afterNavigation() {
+        metaUpdated = 'yes'
+      }
     }
   },
   data() {
     return {
-      date: null
+      date: null,
+      metaUpdated
     };
   },
   mounted() {

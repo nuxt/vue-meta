@@ -81,7 +81,12 @@ export default function createMixin(Vue, options) {
                 next()
               })
 
-              $router.afterEach(() => $rootMeta.resume())
+              $router.afterEach(() => {
+                const { vm, metaInfo } = $rootMeta.resume()
+                if (metaInfo && metaInfo.afterNavigation && isFunction(metaInfo.afterNavigation)) {
+                  metaInfo.afterNavigation.call(vm, metaInfo)
+                }
+              })
             }
           }
         }

@@ -657,6 +657,24 @@ Will be called when the client `metaInfo` updates/changes. Receives the followin
 
 Default `false`. If set to `true` then vue-meta will pause updating `metaInfo` during page navigation and only refresh once when navigation has finished. It does this by adding a global beforeEach and afterEach navigation guard on the vue-router instance.
 
+#### `afterNavigation` (Function)
+
+Will be called when the client `metaInfo` has changed after navigation occured. Receives the following parameters:
+- `newInfo` (Object) - The new state of the `metaInfo` object.
+
+> :warning: This option only works when `refreshOnceOnNavigation: true`. Please see the [vue-router example](./examples/vue-router)
+
+`this` context is the component instance `afterNavigation` is defined on.
+
+```js
+{
+  metaInfo: {
+    afterNavigation (newInfo) {
+      console.log('Meta info update finished after navigation!')
+    }
+  }
+}
+```
 
 ### How `metaInfo` is Resolved
 

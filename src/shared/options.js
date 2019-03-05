@@ -1,4 +1,4 @@
-import { isObject } from './typeof'
+import { isObject, isFunction } from './typeof'
 
 import {
   keyName,
@@ -27,6 +27,16 @@ export default function setOptions(options) {
     if (!options[key]) {
       options[key] = defaultOptions[key]
     }
+  }
+
+  if (options.afterNavigation && !isFunction(options.afterNavigation)) {
+    console.warn(`afterNavigation should be a function, received ${typeof options.afterNavigation} instead`) // eslint-disable-line no-console
+    options.afterNavigation = void 0
+    return options
+  }
+
+  if (options.afterNavigation && !options.refreshOnceOnNavigation) {
+    options.refreshOnceOnNavigation = true
   }
 
   return options
