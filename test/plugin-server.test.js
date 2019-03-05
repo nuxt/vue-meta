@@ -1,6 +1,4 @@
-import { mount, defaultOptions, VueMetaServerPlugin, loadVueMetaPlugin } from './utils'
-
-const { hasMetaInfo } = VueMetaServerPlugin
+import { mount, defaultOptions, hasMetaInfo, VueMetaServerPlugin, loadVueMetaPlugin } from './utils'
 
 jest.mock('../package.json', () => ({
   version: 'test-version'
