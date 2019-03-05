@@ -1,5 +1,5 @@
 import Vue from 'vue'
-import * as VueMeta from 'vue-meta'
+import VueMeta from 'vue-meta'
 
 Vue.use(VueMeta)
 
