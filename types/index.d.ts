@@ -46,5 +46,6 @@ export interface MetaInfo {
   __dangerouslyDisableSanitizersByTagID?: string[]
 
   changed?: <T extends object>(newInfo: T, addedTags: HTMLElement[], removedTags: HTMLElement[]) => void
+  afterNavigation?: <T extends object>(vm: Vue, newInfo: T) => void
   refreshOnceOnNavigation?: boolean
 }
