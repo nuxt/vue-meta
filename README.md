@@ -65,6 +65,7 @@
       - [`__dangerouslyDisableSanitizersByTagID` ({[String]})](#__dangerouslydisablesanitizersbytagid-string)
       - [`changed` (Function)](#changed-function)
       - [`refreshOnceOnNavigation` (Boolean)](#refreshonceonnavigation-boolean)
+      - [`afterNavigation` (Function)](#afternavigation-function)
     - [How `metaInfo` is Resolved](#how-metainfo-is-resolved)
       - [Lists of Tags](#lists-of-tags)
 - [Performance](#performance)
