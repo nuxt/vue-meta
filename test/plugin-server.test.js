@@ -1,4 +1,4 @@
-import { mount, defaultOptions, hasMetaInfo, VueMetaServerPlugin, loadVueMetaPlugin } from './utils'
+import { mount, defaultOptions, VueMetaServerPlugin, loadVueMetaPlugin } from './utils'
 
 jest.mock('../package.json', () => ({
   version: 'test-version'
@@ -64,7 +64,7 @@ describe('plugin', () => {
 
     const { vm } = mount(Component, { localVue: Vue })
 
-    expect(hasMetaInfo(vm)).toBe(true)
+    expect(VueMetaServerPlugin.hasMetaInfo(vm)).toBe(true)
     expect(warn).not.toHaveBeenCalled()
 
     warn.mockRestore()

@@ -1,7 +1,7 @@
 import { mount, createLocalVue } from '@vue/test-utils'
 import { renderToString } from '@vue/server-test-utils'
 import VueMetaBrowserPlugin from '../../src/browser'
-import VueMetaServerPlugin, { hasMetaInfo } from '../../src'
+import VueMetaServerPlugin from '../../src'
 
 import {
   keyName,
@@ -15,7 +15,6 @@ import {
 export {
   mount,
   renderToString,
-  hasMetaInfo,
   VueMetaBrowserPlugin,
   VueMetaServerPlugin
 }
