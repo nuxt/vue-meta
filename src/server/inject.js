@@ -3,6 +3,14 @@ import { metaInfoOptionKeys } from '../shared/constants'
 import generateServerInjector from './generateServerInjector'
 
 export default function _inject(options = {}) {
+  const escapeSequences = [
+    [/&/g, '&amp;'],
+    [/</g, '&lt;'],
+    [/>/g, '&gt;'],
+    [/"/g, '&quot;'],
+    [/'/g, '&#x27;']
+  ]
+
   /**
    * Converts the state of the meta info object such that each item
    * can be compiled to a tag string on the server
@@ -10,10 +18,9 @@ export default function _inject(options = {}) {
    * @this {Object} - Vue instance - ideally the root component
    * @return {Object} - server meta info with `toString` methods
    */
-
   return function inject() {
     // get meta info with sensible defaults
-    const metaInfo = getMetaInfo(options, this.$root)
+    const metaInfo = getMetaInfo(options, this.$root, escapeSequences)
 
     // generate server injectors
     for (const key in metaInfo) {

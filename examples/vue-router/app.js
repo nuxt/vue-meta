@@ -3,20 +3,30 @@ import VueMeta from 'vue-meta'
 import Router from 'vue-router'
 
 Vue.use(Router)
-Vue.use(VueMeta)
+Vue.use(VueMeta, {
+  refreshOnceOnNavigation: true
+})
 
+let metaUpdated = 'no'
 const ChildComponent = {
   name: `child-component`,
   props: ['page'],
-  template: `<h3>You're looking at the <strong>{{ page }}</strong> page</h3>`,
+  template: `<div>
+<h3>You're looking at the <strong>{{ page }}</strong> page</h3>
+<p>Has metaInfo been updated? {{ metaUpdated }}</p>
+</div>`,
   metaInfo () {
     return {
-      title: `${this.page} - ${this.date && this.date.toTimeString()}`
+      title: `${this.page} - ${this.date && this.date.toTimeString()}`,
+      afterNavigation() {
+        metaUpdated = 'yes'
+      }
     }
   },
   data() {
     return {
-      date: null
+      date: null,
+      metaUpdated
     };
   },
   mounted() {
@@ -28,7 +38,7 @@ const ChildComponent = {
 
 // this wrapper function is not a requirement for vue-router,
 // just a demonstration that render-function style components also work.
-// See https://github.com/declandewet/vue-meta/issues/9 for more info.
+// See https://github.com/nuxt/vue-meta/issues/9 for more info.
 function view (page) {
   return {
     name: `section-${page}`,

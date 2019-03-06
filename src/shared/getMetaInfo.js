@@ -1,24 +1,8 @@
 import deepmerge from 'deepmerge'
 import isPlainObject from 'lodash.isplainobject'
-import { isUndefined, isFunction, isString } from '../shared/typeof'
+import { isFunction, isString } from './typeof'
 import isArray from './isArray'
 import getComponentOption from './getComponentOption'
-
-const escapeHTML = str => isUndefined(window)
-  // server-side escape sequence
-  ? String(str)
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;')
-    .replace(/'/g, '&#x27;')
-  // client-side escape sequence
-  : String(str)
-    .replace(/&/g, '\u0026')
-    .replace(/</g, '\u003c')
-    .replace(/>/g, '\u003e')
-    .replace(/"/g, '\u0022')
-    .replace(/'/g, '\u0027')
 
 const applyTemplate = (component, template, chunk) =>
   isFunction(template) ? template.call(component, chunk) : template.replace(/%s/g, chunk)
@@ -30,7 +14,7 @@ const applyTemplate = (component, template, chunk) =>
  * @param  {Object} component - the Vue instance to get meta info from
  * @return {Object} - returned meta info
  */
-export default function getMetaInfo({ keyName, tagIDKeyName, metaTemplateKeyName, contentKeyName } = {}, component) {
+export default function getMetaInfo({ keyName, tagIDKeyName, metaTemplateKeyName, contentKeyName } = {}, component, escapeSequences = []) {
   // set some sane defaults
   const defaultInfo = {
     title: '',
@@ -139,7 +123,7 @@ export default function getMetaInfo({ keyName, tagIDKeyName, metaTemplateKeyName
 
     if (!isDisabled) {
       if (isString(val)) {
-        escaped[key] = escapeHTML(val)
+        escaped[key] = escapeSequences.reduce((val, [v, r]) => val.replace(v, r), val)
       } else if (isPlainObject(val)) {
         escaped[key] = escape(val)
       } else if (isArray(val)) {

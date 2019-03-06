@@ -22,8 +22,7 @@ module.exports = {
   ],
 
   testPathIgnorePatterns: [
-    'node_modules',
-    'old'
+    'node_modules'
   ],
 
   transformIgnorePatterns: [
@@ -39,9 +38,5 @@ module.exports = {
     'ts',
     'js',
     'json'
-  ],
-
-  reporters: [
-    'default'
-  ].concat(process.env.JEST_JUNIT_OUTPUT ? ['jest-junit'] : [])
+  ]
 }

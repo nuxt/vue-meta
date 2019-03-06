@@ -2,19 +2,22 @@ import { version } from '../package.json'
 import createMixin from './shared/mixin'
 import setOptions from './shared/options'
 import $meta from './server/$meta'
+import { hasMetaInfo } from './shared/hasMetaInfo'
 
 /**
  * Plugin install function.
  * @param {Function} Vue - the Vue constructor.
  */
-function VueMeta(Vue, options = {}) {
+function install(Vue, options = {}) {
   options = setOptions(options)
 
   Vue.prototype.$meta = $meta(options)
 
-  Vue.mixin(createMixin(options))
+  Vue.mixin(createMixin(Vue, options))
 }
 
-VueMeta.version = version
-
-export default VueMeta
+export default {
+  version,
+  install,
+  hasMetaInfo
+}

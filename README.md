@@ -7,12 +7,6 @@
 </h5>
 
 <p align="center">
-  <a href="https://github.com/feross/standard">
-    <img src="https://cdn.rawgit.com/feross/standard/master/badge.svg" alt="Standard - JavaScript Style">
-  </a>
-</p>
-
-<p align="center">
 <a href="https://github.com/nuxt/vue-meta/releases/latest"><img src="https://img.shields.io/github/release/nuxt/vue-meta.svg" alt="github release"></a> <a href="http://npmjs.org/package/vue-meta"><img src="https://img.shields.io/npm/v/vue-meta.svg" alt="npm version"></a> <a href="https://circleci.com/gh/nuxt/vue-meta/"><img src="https://badgen.net/circleci/github/nuxt/vue-meta" alt="Build Status"></a> <a href="https://codecov.io/gh/nuxt/vue-meta"><img src="https://codecov.io/gh/nuxt/vue-meta/branch/master/graph/badge.svg" alt="codecov"></a><br>
 <a href="https://david-dm.org/nuxt/vue-meta"><img src="https://david-dm.org/nuxt/vue-meta/status.svg" alt="dependencies Status"></a> <a href="https://david-dm.org/nuxt/vue-meta?type=dev"><img src="https://david-dm.org/nuxt/vue-meta/dev-status.svg" alt="devDependencies Status"></a><br>
 <a href="http://npm-stat.com/charts.html?package=vue-meta"><img src="https://img.shields.io/npm/dm/vue-meta.svg" alt="npm downloads"></a> <a href="https://gitter.im/nuxt/vue-meta"><img src="https://badges.gitter.im/nuxt/vue-meta.svg" alt="Gitter"></a>
@@ -70,6 +64,8 @@
       - [`__dangerouslyDisableSanitizers` ([String])](#__dangerouslydisablesanitizers-string)
       - [`__dangerouslyDisableSanitizersByTagID` ({[String]})](#__dangerouslydisablesanitizersbytagid-string)
       - [`changed` (Function)](#changed-function)
+      - [`refreshOnceOnNavigation` (Boolean)](#refreshonceonnavigation-boolean)
+      - [`afterNavigation` (Function)](#afternavigation-function)
     - [How `metaInfo` is Resolved](#how-metainfo-is-resolved)
       - [Lists of Tags](#lists-of-tags)
 - [Performance](#performance)
@@ -653,6 +649,29 @@ Will be called when the client `metaInfo` updates/changes. Receives the followin
   metaInfo: {
     changed (newInfo, addedTags, removedTags) {
       console.log('Meta info was updated!')
+    }
+  }
+}
+```
+
+#### `refreshOnceOnNavigation` (Boolean)
+
+Default `false`. If set to `true` then vue-meta will pause updating `metaInfo` during page navigation and only refresh once when navigation has finished. It does this by adding a global beforeEach and afterEach navigation guard on the vue-router instance.
+
+#### `afterNavigation` (Function)
+
+Will be called when the client `metaInfo` has changed after navigation occured. Receives the following parameters:
+- `newInfo` (Object) - The new state of the `metaInfo` object.
+
+> :warning: This option only works when `refreshOnceOnNavigation: true`. Please see the [vue-router example](./examples/vue-router)
+
+`this` context is the component instance `afterNavigation` is defined on.
+
+```js
+{
+  metaInfo: {
+    afterNavigation (newInfo) {
+      console.log('Meta info update finished after navigation!')
     }
   }
 }

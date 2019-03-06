@@ -1,8 +1,8 @@
-import { isUndefined } from '../shared/typeof'
+import { hasGlobalWindow } from '../shared/window'
 
 // fallback to timers if rAF not present
-const stopUpdate = (!isUndefined(window) ? window.cancelAnimationFrame : null) || clearTimeout
-const startUpdate = (!isUndefined(window) ? window.requestAnimationFrame : null) || (cb => setTimeout(cb, 0))
+const stopUpdate = (hasGlobalWindow ? window.cancelAnimationFrame : null) || clearTimeout
+const startUpdate = (hasGlobalWindow ? window.requestAnimationFrame : null) || (cb => setTimeout(cb, 0))
 
 /**
  * Performs a batched update. Uses requestAnimationFrame to prevent
@@ -15,7 +15,10 @@ const startUpdate = (!isUndefined(window) ? window.requestAnimationFrame : null)
  * @return {Number} id - a new ID
  */
 export default function batchUpdate(id, callback) {
-  stopUpdate(id)
+  if (id) {
+    stopUpdate(id)
+  }
+
   return startUpdate(() => {
     id = null
     callback()

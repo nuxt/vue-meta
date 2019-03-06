@@ -39,6 +39,7 @@ package-lock.json
 
 # built code
 lib
+es
 
 # examples yarn lock
 examples/yarn.lock
