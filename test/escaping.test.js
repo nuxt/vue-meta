@@ -19,7 +19,7 @@ describe('escaping', () => {
 
     expect(getMetaInfo(component, [[/&/g, '&amp;']])).toEqual({
       title: 'Hello &amp; Goodbye',
-      titleChunk: 'Hello &amp; Goodbye',
+      titleChunk: 'Hello & Goodbye',
       titleTemplate: '%s',
       htmlAttrs: {},
       headAttrs: {},
