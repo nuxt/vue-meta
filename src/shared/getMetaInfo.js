@@ -48,9 +48,7 @@ export default function getMetaInfo({ keyName, tagIDKeyName, metaTemplateKeyName
     if (index === 0) {
       ensureIsArray(info, disableKey)
     } else if (index === 1) {
-      for (const key in info[disableKey]) {
-        ensureIsArray(info[disableKey], key)
-      }
+      info[disableKey].forEach(key => ensureIsArray(info[disableKey], key))
     }
   }
 
