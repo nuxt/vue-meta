@@ -3,7 +3,7 @@ import createMixin from './shared/mixin'
 import setOptions from './shared/options'
 import { isUndefined } from './shared/typeof'
 import $meta from './client/$meta'
-import { hasMetaInfo } from './shared/hasMetaInfo'
+import hasMetaInfo from './shared/hasMetaInfo'
 
 /**
  * Plugin install function.
