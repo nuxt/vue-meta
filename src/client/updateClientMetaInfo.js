@@ -1,5 +1,6 @@
 import { metaInfoOptionKeys, metaInfoAttributeKeys } from '../shared/constants'
 import { updateAttribute, updateTag, updateTitle } from './updaters'
+import isArray from '../shared/isArray'
 
 const getTag = (tags, tag) => {
   if (!tags[tag]) {
@@ -43,6 +44,11 @@ export default function updateClientMetaInfo(options = {}, newInfo) {
       if (metaInfoAttributeKeys.includes(type)) {
         const tagName = type.substr(0, 4)
         updateAttribute(options, newInfo[type], getTag(tags, tagName))
+        continue
+      }
+
+      // tags should always be an array, ignore if it isnt
+      if (!isArray(newInfo[type])) {
         continue
       }
 
