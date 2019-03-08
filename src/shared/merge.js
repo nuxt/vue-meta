@@ -1,5 +1,6 @@
 import deepmerge from 'deepmerge'
 import applyTemplate from './applyTemplate'
+import { metaInfoAttributeKeys } from './constants'
 
 export function arrayMerge({ component, tagIDKeyName, metaTemplateKeyName, contentKeyName }, target, source) {
   // we concat the arrays without merging objects contained in,
@@ -15,9 +16,11 @@ export function arrayMerge({ component, tagIDKeyName, metaTemplateKeyName, conte
     }
 
     const sourceIndex = source.findIndex(item => item[tagIDKeyName] === targetItem[tagIDKeyName])
+    const sourceItem = source[sourceIndex]
 
     // source doesnt contain any duplicate id's
-    if (sourceIndex === -1) {
+    // or the source item should be ignored
+    if (sourceIndex === -1 || sourceItem[contentKeyName] === false || sourceItem.innerHTML === false) {
       destination.push(targetItem)
       return
     }
@@ -29,7 +32,6 @@ export function arrayMerge({ component, tagIDKeyName, metaTemplateKeyName, conte
       return
     }
 
-    const sourceItem = source[sourceIndex]
     const sourceTemplate = sourceItem[metaTemplateKeyName]
 
     if (!sourceTemplate) {
@@ -45,6 +47,25 @@ export function arrayMerge({ component, tagIDKeyName, metaTemplateKeyName, conte
 }
 
 export function merge(target, source, options = {}) {
+  // remove properties explicitly set to false so child components can
+  // optionally _not_ overwrite the parents content
+  // (for array properties this is checked in arrayMerge)
+  if (source.title === false) {
+    delete source.title
+  }
+
+  for (const attrKey in metaInfoAttributeKeys) {
+    if (!source[attrKey]) {
+      continue
+    }
+
+    for (const key in source[attrKey]) {
+      if (source[attrKey][key] === false) {
+        delete source[attrKey][key]
+      }
+    }
+  }
+
   return deepmerge(target, source, {
     arrayMerge: (t, s) => arrayMerge(options, t, s)
   })
