@@ -1,5 +1,5 @@
 import _generateServerInjector from '../src/server/generateServerInjector'
-import { defaultOptions } from './utils'
+import { defaultOptions } from './utils/constants'
 import metaInfoData from './utils/meta-info-data'
 
 const generateServerInjector = (type, data) => _generateServerInjector(defaultOptions, type, data)

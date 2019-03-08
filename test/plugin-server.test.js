@@ -1,4 +1,5 @@
-import { mount, defaultOptions, VueMetaServerPlugin, loadVueMetaPlugin } from './utils'
+import { mount, VueMetaServerPlugin, loadVueMetaPlugin } from './utils'
+import { defaultOptions } from './utils/constants'
 
 jest.mock('../package.json', () => ({
   version: 'test-version'
@@ -13,6 +14,17 @@ describe('plugin', () => {
   test('is loaded', () => {
     const instance = new Vue()
     expect(instance.$meta).toEqual(expect.any(Function))
+
+    expect(instance.$meta().inject).toEqual(expect.any(Function))
+    expect(instance.$meta().refresh).toEqual(expect.any(Function))
+    expect(instance.$meta().getOptions).toEqual(expect.any(Function))
+
+    expect(instance.$meta().inject()).toBeDefined()
+    expect(instance.$meta().refresh()).toBeDefined()
+
+    const options = instance.$meta().getOptions()
+    expect(options).toBeDefined()
+    expect(options.keyName).toBe(defaultOptions.keyName)
   })
 
   test('component has _hasMetaInfo set to true', () => {

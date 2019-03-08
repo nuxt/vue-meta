@@ -1,4 +1,5 @@
 import getComponentOption from '../src/shared/getComponentOption'
+import inMetaInfoBranch from '../src/shared/inMetaInfoBranch'
 import { mount, getVue, loadVueMetaPlugin } from './utils'
 
 describe('getComponentOption', () => {
@@ -6,20 +7,20 @@ describe('getComponentOption', () => {
 
   beforeAll(() => (Vue = getVue()))
 
-  it('returns an empty object when no matching options are found', () => {
+  test('returns an empty object when no matching options are found', () => {
     const component = new Vue()
     const mergedOption = getComponentOption({ component, keyName: 'noop' })
     expect(mergedOption).toEqual({})
   })
 
-  it('fetches the given option from the given component', () => {
+  test('fetches the given option from the given component', () => {
     const component = new Vue({ someOption: { foo: 'bar' } })
     const mergedOption = getComponentOption({ component, keyName: 'someOption' })
     expect(mergedOption.foo).toBeDefined()
     expect(mergedOption.foo).toEqual('bar')
   })
 
-  it('calls a function option, injecting the component as context', () => {
+  test('calls a function option, injecting the component as context', () => {
     const component = new Vue({
       name: 'Foobar',
       someFunc() {
@@ -32,7 +33,7 @@ describe('getComponentOption', () => {
     expect(mergedOption.opt).toEqual('Foobar')
   })
 
-  it('fetches deeply nested component options and merges them', () => {
+  test('fetches deeply nested component options and merges them', () => {
     const localVue = loadVueMetaPlugin(true, { keyName: 'foo' })
     localVue.component('merge-child', { render: h => h('div'), foo: { bar: 'baz' } })
 
@@ -47,7 +48,8 @@ describe('getComponentOption', () => {
     expect(mergedOption).toEqual({ bar: 'baz', fizz: 'buzz' })
   })
 
-  it('allows for a custom array merge strategy', () => {
+  /* this undocumented functionality has been removed
+  test('allows for a custom array merge strategy', () => {
     const localVue = loadVueMetaPlugin(false, { keyName: 'foo' })
     localVue.component('array-child', {
       render: h => h('div'),
@@ -81,5 +83,45 @@ describe('getComponentOption', () => {
       { name: 'flower', content: 'tulip' },
       { name: 'flower', content: 'rose' }
     ] })
+  }) */
+
+  test('only traverses branches with metaInfo components', () => {
+    const localVue = loadVueMetaPlugin(false, { keyName: 'foo' })
+
+    localVue.component('meta-child', {
+      foo: { bar: 'baz' },
+      render(h) {
+        return h('div', this.$slots.default)
+      }
+    })
+
+    localVue.component('nometa-child', {
+      render(h) {
+        return h('div', this.$slots.default)
+      }
+    })
+
+    const component = localVue.component('parent', {
+      render: h => h('div', null, [
+        h('meta-child', null, [ h('nometa-child') ]),
+        h('nometa-child', null, [ h('meta-child') ]),
+        h('nometa-child')
+      ])
+    })
+
+    const wrapper = mount(component, { localVue })
+
+    const mergedOption = getComponentOption({ component: wrapper.vm, keyName: 'foo' })
+
+    expect(mergedOption).toEqual({ bar: 'baz' })
+    expect(wrapper.vm.$children[0]._vueMeta).toBe(true)
+    expect(wrapper.vm.$children[1]._vueMeta).toBe(false)
+    expect(wrapper.vm.$children[2]._vueMeta).toBeUndefined()
+
+    expect(inMetaInfoBranch(wrapper.vm.$children[0])).toBe(true)
+    expect(inMetaInfoBranch(wrapper.vm.$children[0].$children[0])).toBe(false)
+    expect(inMetaInfoBranch(wrapper.vm.$children[1])).toBe(true)
+    expect(inMetaInfoBranch(wrapper.vm.$children[1].$children[0])).toBe(true)
+    expect(inMetaInfoBranch(wrapper.vm.$children[2])).toBe(false)
   })
 })

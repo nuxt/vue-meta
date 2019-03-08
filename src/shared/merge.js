@@ -18,15 +18,24 @@ export function arrayMerge({ component, tagIDKeyName, metaTemplateKeyName, conte
     const sourceIndex = source.findIndex(item => item[tagIDKeyName] === targetItem[tagIDKeyName])
     const sourceItem = source[sourceIndex]
 
-    // source doesnt contain any duplicate id's
-    // or the source item should be ignored
-    if (sourceIndex === -1 ||
-      (sourceItem.hasOwnProperty(contentKeyName) && sourceItem[contentKeyName] === undefined) ||
-      (sourceItem.hasOwnProperty('innerHTML') && sourceItem.innerHTML === undefined)
-    ) {
+    // source doesnt contain any duplicate vmid's, we can keep targetItem
+    if (sourceIndex === -1) {
       destination.push(targetItem)
       return
     }
+
+    // when sourceItem explictly defines contentKeyName or innerHTML as undefined, its
+    // an indication that we need to skip the default behaviour
+    // So we keep the targetItem and ignore/remove the sourceItem
+    if ((sourceItem.hasOwnProperty(contentKeyName) && sourceItem[contentKeyName] === undefined) ||
+      (sourceItem.hasOwnProperty('innerHTML') && sourceItem.innerHTML === undefined)) {
+      destination.push(targetItem)
+      // remove current index from source array so its not concatenated to destination below
+      source.splice(sourceIndex, 1)
+      return
+    }
+
+    // we now know that targetItem is a duplicate and we should ignore it in favor of sourceItem
 
     // if source specifies null as content then ignore both the target as the source
     if (sourceItem[contentKeyName] === null || sourceItem.innerHTML === null) {
@@ -35,7 +44,6 @@ export function arrayMerge({ component, tagIDKeyName, metaTemplateKeyName, conte
       return
     }
 
-    // we now know that targetItem is a duplicate and we should ignore it in favor of sourceItem
     // now we only need to check if the target has a template to combine it with the source
     const targetTemplate = targetItem[metaTemplateKeyName]
     if (!targetTemplate) {
@@ -64,9 +72,9 @@ export function merge(target, source, options = {}) {
     delete source.title
   }
 
-  for (const attrKey in metaInfoAttributeKeys) {
+  metaInfoAttributeKeys.forEach((attrKey) => {
     if (!source[attrKey]) {
-      continue
+      return
     }
 
     for (const key in source[attrKey]) {
@@ -74,7 +82,7 @@ export function merge(target, source, options = {}) {
         delete source[attrKey][key]
       }
     }
-  }
+  })
 
   return deepmerge(target, source, {
     arrayMerge: (t, s) => arrayMerge(options, t, s)

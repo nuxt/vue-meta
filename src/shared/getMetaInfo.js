@@ -38,10 +38,6 @@ export default function getMetaInfo(options = {}, component, escapeSequences = [
   }
 
   disableOptionKeys.forEach((disableKey, index) => {
-    if (!info[disableKey]) {
-      return
-    }
-
     if (index === 0) {
       ensureIsArray(info, disableKey)
     } else if (index === 1) {
