@@ -36,7 +36,6 @@ export default function getComponentOption(options = {}, result = {}) {
 
     // ignore data if its not an object, then we keep our previous result
     if (!isObject(data)) {
-      console.log(data)
       return result
     }
 
