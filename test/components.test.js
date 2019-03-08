@@ -1,5 +1,6 @@
 import _getMetaInfo from '../src/shared/getMetaInfo'
-import { mount, defaultOptions, loadVueMetaPlugin } from './utils'
+import { mount, loadVueMetaPlugin, vmTick } from './utils'
+import { defaultOptions } from './utils/constants'
 
 import GoodbyeWorld from './fixtures/goodbye-world.vue'
 import HelloWorld from './fixtures/hello-world.vue'
@@ -8,10 +9,31 @@ import Changed from './fixtures/changed.vue'
 
 const getMetaInfo = component => _getMetaInfo(defaultOptions, component)
 
+jest.mock('../src/shared/window', () => ({
+  hasGlobalWindow: false
+}))
+
 describe('client', () => {
   let Vue
+  let html
 
-  beforeAll(() => (Vue = loadVueMetaPlugin()))
+  beforeAll(() => {
+    Vue = loadVueMetaPlugin()
+
+    // force using timers, jest cant mock rAF
+    delete window.requestAnimationFrame
+    delete window.cancelAnimationFrame
+
+    html = document.createElement('html')
+    document._getElementsByTagName = document.getElementsByTagName
+    jest.spyOn(document, 'getElementsByTagName').mockImplementation((tag) => {
+      if (tag === 'html') {
+        return [html]
+      }
+
+      return document._getElementsByTagName(tag)
+    })
+  })
 
   test('meta-info refreshed on component\'s data change', () => {
     const wrapper = mount(HelloWorld, { localVue: Vue })
@@ -78,20 +100,59 @@ describe('client', () => {
     expect(metaInfo.title.text()).toEqual('<title data-vue-meta="true">Hello World</title>')
   })
 
-  test('changed function is called', () => {
+  test('doesnt update when ssr attribute is set', () => {
+    html.setAttribute(defaultOptions.ssrAttribute, 'true')
+    const wrapper = mount(HelloWorld, { localVue: Vue })
+
+    const { tags } = wrapper.vm.$meta().refresh()
+    expect(tags).toBe(false)
+  })
+
+  test('changed function is called', async () => {
     const parentComponent = new Vue({ render: h => h('div') })
     const wrapper = mount(Changed, { localVue: Vue, parentComponent })
+
+    await vmTick(wrapper.vm)
+    expect(wrapper.vm.$root._vueMeta.initialized).toBe(true)
 
     let context
     const changed = jest.fn(function () {
       context = this
     })
-    wrapper.setData({ changed })
-    wrapper.setData({ childVisible: true })
+    wrapper.setData({ changed, childVisible: true })
+    jest.runAllTimers()
 
-    wrapper.vm.$parent.$meta().refresh()
     expect(changed).toHaveBeenCalledTimes(1)
     // TODO: this isnt what the docs say
     expect(context._uid).not.toBe(wrapper.vm._uid)
+  })
+
+  test('afterNavigation function is called', () => {
+    const Vue = loadVueMetaPlugin(false, { refreshOnceOnNavigation: true })
+    const afterNavigation = jest.fn()
+    const component = Vue.component('nav-component', {
+      render: h => h('div'),
+      metaInfo: { afterNavigation }
+    })
+
+    const guards = {}
+    Vue.prototype.$router = {
+      beforeEach(fn) {
+        guards.before = fn
+      },
+      afterEach(fn) {
+        guards.after = fn
+      }
+    }
+    const wrapper = mount(component, { localVue: Vue })
+
+    expect(guards.before).toBeDefined()
+    expect(guards.after).toBeDefined()
+
+    guards.before(null, null, () => {})
+    expect(wrapper.vm.$root._vueMeta.paused).toBe(true)
+
+    guards.after()
+    expect(afterNavigation).toHaveBeenCalled()
   })
 })

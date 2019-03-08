@@ -1,5 +1,5 @@
 import _updateClientMetaInfo from '../src/client/updateClientMetaInfo'
-import { defaultOptions } from './utils'
+import { defaultOptions } from './utils/constants'
 import metaInfoData from './utils/meta-info-data'
 
 const updateClientMetaInfo = (type, data) => _updateClientMetaInfo(defaultOptions, { [type]: data })

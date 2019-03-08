@@ -1,5 +1,6 @@
 import _getMetaInfo from '../src/shared/getMetaInfo'
-import { defaultOptions, loadVueMetaPlugin } from './utils'
+import { loadVueMetaPlugin } from './utils'
+import { defaultOptions } from './utils/constants'
 
 const getMetaInfo = component => _getMetaInfo(defaultOptions, component)
 
@@ -593,6 +594,60 @@ describe('getMetaInfo', () => {
     })
   })
 
+  test('properly uses meta templates with one-level-deep nested children when parent has no template', () => {
+    Vue.component('merge-child', {
+      render: h => h('div'),
+      metaInfo: {
+        title: 'Hello',
+        meta: [
+          {
+            vmid: 'og:title',
+            property: 'og:title',
+            content: 'An important title!',
+            template: chunk => `${chunk} - My page`
+          }
+        ]
+      }
+    })
+
+    const component = new Vue({
+      metaInfo: {
+        meta: [
+          {
+            vmid: 'og:title',
+            property: 'og:title',
+            content: 'Test title'
+          }
+        ]
+      },
+      el: document.createElement('div'),
+      render: h => h('div', null, [h('merge-child')])
+    })
+
+    expect(getMetaInfo(component)).toEqual({
+      title: 'Hello',
+      titleChunk: 'Hello',
+      titleTemplate: '%s',
+      htmlAttrs: {},
+      headAttrs: {},
+      bodyAttrs: {},
+      meta: [
+        {
+          vmid: 'og:title',
+          property: 'og:title',
+          content: 'An important title! - My page'
+        }
+      ],
+      base: [],
+      link: [],
+      style: [],
+      script: [],
+      noscript: [],
+      __dangerouslyDisableSanitizers: [],
+      __dangerouslyDisableSanitizersByTagID: {}
+    })
+  })
+
   test('no errors when metaInfo returns nothing', () => {
     const component = new Vue({
       metaInfo() {},
@@ -623,6 +678,9 @@ describe('getMetaInfo', () => {
       render: h => h('div'),
       metaInfo: {
         title: undefined,
+        bodyAttrs: {
+          class: undefined
+        },
         meta: [
           {
             vmid: 'og:title',
@@ -635,6 +693,9 @@ describe('getMetaInfo', () => {
     const component = new Vue({
       metaInfo: {
         title: 'Hello',
+        bodyAttrs: {
+          class: 'class'
+        },
         meta: [
           {
             vmid: 'og:title',
@@ -652,9 +713,11 @@ describe('getMetaInfo', () => {
       title: 'Hello',
       titleChunk: 'Hello',
       titleTemplate: '%s',
-      htmlAttrs: {},
+      bodyAttrs: {
+        class: 'class'
+      },
       headAttrs: {},
-      bodyAttrs: {},
+      htmlAttrs: {},
       meta: [
         {
           vmid: 'og:title',

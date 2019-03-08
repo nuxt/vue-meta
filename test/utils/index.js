@@ -2,30 +2,13 @@ import { mount, createLocalVue } from '@vue/test-utils'
 import { renderToString } from '@vue/server-test-utils'
 import VueMetaBrowserPlugin from '../../src/browser'
 import VueMetaServerPlugin from '../../src'
-
-import {
-  keyName,
-  attribute,
-  ssrAttribute,
-  tagIDKeyName,
-  metaTemplateKeyName,
-  contentKeyName
-} from '../../src/shared/constants'
+import { defaultOptions } from './constants'
 
 export {
   mount,
   renderToString,
   VueMetaBrowserPlugin,
   VueMetaServerPlugin
-}
-
-export const defaultOptions = {
-  keyName,
-  attribute,
-  ssrAttribute,
-  tagIDKeyName,
-  metaTemplateKeyName,
-  contentKeyName
 }
 
 export function getVue() {

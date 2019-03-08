@@ -114,12 +114,14 @@ export default function createMixin(Vue, options) {
             // Wait that element is hidden before refreshing meta tags (to support animations)
             const interval = setInterval(() => {
               if (this.$el && this.$el.offsetParent !== null) {
+                /* istanbul ignore next line */
                 return
               }
 
               clearInterval(interval)
 
               if (!this.$parent) {
+                /* istanbul ignore next line */
                 return
               }
 

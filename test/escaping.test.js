@@ -1,5 +1,6 @@
 import _getMetaInfo from '../src/shared/getMetaInfo'
-import { defaultOptions, loadVueMetaPlugin } from './utils'
+import { loadVueMetaPlugin } from './utils'
+import { defaultOptions } from './utils/constants'
 
 const getMetaInfo = (component, escapeSequences) => _getMetaInfo(defaultOptions, component, escapeSequences)
 
@@ -11,6 +12,7 @@ describe('escaping', () => {
   test('special chars are escaped unless disabled', () => {
     const component = new Vue({
       metaInfo: {
+        htmlAttrs: { key: 1 },
         title: 'Hello & Goodbye',
         script: [{ innerHTML: 'Hello & Goodbye' }],
         __dangerouslyDisableSanitizers: ['script']
@@ -21,7 +23,9 @@ describe('escaping', () => {
       title: 'Hello &amp; Goodbye',
       titleChunk: 'Hello & Goodbye',
       titleTemplate: '%s',
-      htmlAttrs: {},
+      htmlAttrs: {
+        key: 1
+      },
       headAttrs: {},
       bodyAttrs: {},
       meta: [],
