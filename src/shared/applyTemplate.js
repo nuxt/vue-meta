@@ -15,10 +15,9 @@ export default function applyTemplate({ component, metaTemplateKeyName, contentK
     chunk = headObject[contentKeyName]
   }
 
-  if (isFunction(template)) {
-    headObject[contentKeyName] = template.call(component, chunk)
-  } else {
-    headObject[contentKeyName] = template.replace(/%s/g, chunk)
-  }
+  headObject[contentKeyName] = isFunction(template)
+    ? template.call(component, chunk)
+    : template.replace(/%s/g, chunk)
+
   return true
 }
