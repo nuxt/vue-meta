@@ -617,4 +617,58 @@ describe('getMetaInfo', () => {
       __dangerouslyDisableSanitizersByTagID: {}
     })
   })
+
+  test('child can indicate its content should be ignored', () => {
+    Vue.component('merge-child', {
+      render: h => h('div'),
+      metaInfo: {
+        title: false,
+        meta: [
+          {
+            vmid: 'og:title',
+            content: false
+          }
+        ]
+      }
+    })
+
+    const component = new Vue({
+      metaInfo: {
+        title: 'Hello',
+        meta: [
+          {
+            vmid: 'og:title',
+            property: 'og:title',
+            content: 'Test title',
+            template: chunk => `${chunk} - My page`
+          }
+        ]
+      },
+      el: document.createElement('div'),
+      render: h => h('div', null, [h('merge-child')])
+    })
+
+    expect(getMetaInfo(component)).toEqual({
+      title: 'Hello',
+      titleChunk: 'Hello',
+      titleTemplate: '%s',
+      htmlAttrs: {},
+      headAttrs: {},
+      bodyAttrs: {},
+      meta: [
+        {
+          vmid: 'og:title',
+          property: 'og:title',
+          content: 'Test title - My page'
+        }
+      ],
+      base: [],
+      link: [],
+      style: [],
+      script: [],
+      noscript: [],
+      __dangerouslyDisableSanitizers: [],
+      __dangerouslyDisableSanitizersByTagID: {}
+    })
+  })
 })
