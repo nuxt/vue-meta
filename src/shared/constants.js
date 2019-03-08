@@ -79,6 +79,7 @@ export const tagAttributeAsInnerContent = ['innerHTML', 'cssText']
 // from: https://github.com/kangax/html-minifier/blob/gh-pages/src/htmlminifier.js#L202
 export const booleanHtmlAttributes = [
   'allowfullscreen',
+  'amp',
   'async',
   'autofocus',
   'autoplay',
