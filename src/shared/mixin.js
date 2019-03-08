@@ -1,4 +1,5 @@
 import triggerUpdate from '../client/triggerUpdate'
+import hasMetaInfo from './hasMetaInfo'
 import { isUndefined, isFunction } from './typeof'
 import { ensuredPush } from './ensure'
 
@@ -16,7 +17,7 @@ export default function createMixin(Vue, options) {
             console.warn('VueMeta DeprecationWarning: _hasMetaInfo has been deprecated and will be removed in a future version. Please import hasMetaInfo and use hasMetaInfo(vm) instead') // eslint-disable-line no-console
             this.$root._vueMeta.hasMetaInfoDeprecationWarningShown = true
           }
-          return !!this._vueMeta
+          return hasMetaInfo(this)
         }
       })
 
@@ -28,8 +29,18 @@ export default function createMixin(Vue, options) {
           this.$root._vueMeta = {}
         }
 
+        // to speed up updates we keep track of branches which have a component with vue-meta info defined
+        // if _vueMeta = true it has info, if _vueMeta = false a child has info
         if (!this._vueMeta) {
           this._vueMeta = true
+
+          let p = this.$parent
+          while (p && p !== this.$root) {
+            if (isUndefined(p._vueMeta)) {
+              p._vueMeta = false
+            }
+            p = p.$parent
+          }
         }
 
         // coerce function-style metaInfo to a computed prop so we can observe
@@ -55,7 +66,7 @@ export default function createMixin(Vue, options) {
         // force an initial refresh on page load and prevent other lifecycleHooks
         // to triggerUpdate until this initial refresh is finished
         // this is to make sure that when a page is opened in an inactive tab which
-        // has throttled rAF/timers we still immeditately set the page title
+        // has throttled rAF/timers we still immediately set the page title
         if (isUndefined(this.$root._vueMeta.initialized)) {
           this.$root._vueMeta.initialized = this.$isServer
 
