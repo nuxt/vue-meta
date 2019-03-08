@@ -1,6 +1,6 @@
 import { metaInfoOptionKeys, metaInfoAttributeKeys } from '../shared/constants'
-import { updateAttribute, updateTag, updateTitle } from './updaters'
 import isArray from '../shared/isArray'
+import { updateAttribute, updateTag, updateTitle } from './updaters'
 
 const getTag = (tags, tag) => {
   if (!tags[tag]) {
