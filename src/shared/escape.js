@@ -15,7 +15,7 @@ export default function escape(info, { tagIDKeyName }, escapeSequences = []) {
       continue
     }
 
-    let disableKey = disableOptionKeys[0]
+    let [ disableKey ] = disableOptionKeys
     if (info[disableKey] && info[disableKey].includes(key)) {
       // this info[key] doesnt need to escaped if the option is listed in __dangerouslyDisableSanitizers
       escaped[key] = value
