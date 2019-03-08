@@ -622,11 +622,11 @@ describe('getMetaInfo', () => {
     Vue.component('merge-child', {
       render: h => h('div'),
       metaInfo: {
-        title: false,
+        title: undefined,
         meta: [
           {
             vmid: 'og:title',
-            content: false
+            content: undefined
           }
         ]
       }

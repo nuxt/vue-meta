@@ -20,7 +20,10 @@ export function arrayMerge({ component, tagIDKeyName, metaTemplateKeyName, conte
 
     // source doesnt contain any duplicate id's
     // or the source item should be ignored
-    if (sourceIndex === -1 || sourceItem[contentKeyName] === false || sourceItem.innerHTML === false) {
+    if (sourceIndex === -1 ||
+      (sourceItem.hasOwnProperty(contentKeyName) && sourceItem[contentKeyName] === undefined) ||
+      (sourceItem.hasOwnProperty('innerHTML') && sourceItem.innerHTML === undefined)
+    ) {
       destination.push(targetItem)
       return
     }
@@ -57,7 +60,7 @@ export function merge(target, source, options = {}) {
   // remove properties explicitly set to false so child components can
   // optionally _not_ overwrite the parents content
   // (for array properties this is checked in arrayMerge)
-  if (source.title === false) {
+  if (source.hasOwnProperty('title') && source.title === undefined) {
     delete source.title
   }
 
@@ -67,7 +70,7 @@ export function merge(target, source, options = {}) {
     }
 
     for (const key in source[attrKey]) {
-      if (source[attrKey][key] === false) {
+      if (source[attrKey].hasOwnProperty(key) && source[attrKey][key] === undefined) {
         delete source[attrKey][key]
       }
     }
