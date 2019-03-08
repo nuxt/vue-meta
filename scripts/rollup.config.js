@@ -1,6 +1,7 @@
 import commonjs from 'rollup-plugin-commonjs'
 import nodeResolve from 'rollup-plugin-node-resolve'
 import json from 'rollup-plugin-json'
+import babel from 'rollup-plugin-babel'
 import buble from 'rollup-plugin-buble'
 import { terser } from 'rollup-plugin-terser'
 
@@ -26,7 +27,9 @@ const baseConfig = {
     json(),
     nodeResolve(),
     commonjs(),
-    buble(),
+    /*buble({
+      objectAssign: 'Object.assign'
+    }),*/
   ]
 }
 
@@ -40,6 +43,10 @@ export default [{
   },
   plugins: [
     ...baseConfig.plugins,
+    babel({
+      runtimeHelpers: true,
+      presets: ['@nuxt/babel-preset-app']
+    }),
     terser()
   ]
 }, {
