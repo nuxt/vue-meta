@@ -11,15 +11,9 @@ import getComponentOption from './getComponentOption'
  * @param  {Object} component - the Vue instance to get meta info from
  * @return {Object} - returned meta info
  */
-export default function getMetaInfo({ keyName, tagIDKeyName, metaTemplateKeyName, contentKeyName } = {}, component, escapeSequences = []) {
+export default function getMetaInfo(options = {}, component, escapeSequences = []) {
   // collect & aggregate all metaInfo $options
-  let info = getComponentOption({
-    component,
-    keyName,
-    metaTemplateKeyName,
-    tagIDKeyName,
-    contentKeyName
-  }, defaultInfo)
+  let info = getComponentOption({ ...options, component }, defaultInfo)
 
   // Remove all "template" tags from meta
 
@@ -53,7 +47,7 @@ export default function getMetaInfo({ keyName, tagIDKeyName, metaTemplateKeyName
   }
 
   // begin sanitization
-  info = escape(info, { tagIDKeyName }, escapeSequences)
+  info = escape(info, options, escapeSequences)
 
   return info
 }
