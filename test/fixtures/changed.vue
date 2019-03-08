@@ -11,16 +11,24 @@ export default {
   components: {
     HelloWorld
   },
+  props: {
+    changed: {
+      type: Function
+    }
+  },
   metaInfo() {
     return {
-      changed: this.changed
+      changed: this._changed
     }
   },
   data() {
     return {
       childVisible: false,
-      changed: () => {}
+      _changed: () => {}
     }
+  },
+  mounted() {
+    this._changed = this.changed.bind(this)
   }
 }
 </script>
