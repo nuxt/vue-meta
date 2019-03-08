@@ -1,5 +1,6 @@
 import { booleanHtmlAttributes } from '../../shared/constants'
 import { isUndefined } from '../../shared/typeof'
+import isArray from '../../shared/isArray'
 
 /**
  * Generates tag attributes for use on the server.
@@ -20,7 +21,7 @@ export default function attributeGenerator({ attribute } = {}, type, data) {
 
           attributeStr += isUndefined(data[attr]) || booleanHtmlAttributes.includes(attr)
             ? attr
-            : `${attr}="${data[attr]}"`
+            : `${attr}="${isArray(data[attr]) ? data[attr].join(' ') : data[attr]}"`
 
           attributeStr += ' '
         }

@@ -1,3 +1,5 @@
+import isArray from '../../shared/isArray'
+
 /**
  * Updates the document's html tag attributes
  *
@@ -12,8 +14,9 @@ export default function updateAttribute({ attribute } = {}, attrs, tag) {
   const keepIndexes = []
   for (const attr in attrs) {
     if (attrs.hasOwnProperty(attr)) {
-      const value = attrs[attr] || ''
-      tag.setAttribute(attr, value)
+      const value = isArray(attrs[attr]) ? attrs[attr].join(' ') : attrs[attr]
+
+      tag.setAttribute(attr, value || '')
 
       if (!vueMetaAttrs.includes(attr)) {
         vueMetaAttrs.push(attr)
