@@ -12,6 +12,7 @@ export default function _$meta(options = {}) {
    */
   return function $meta() {
     return {
+      getOptions: () => Object.freeze({ ...options }),
       refresh: _refresh.bind(this),
       inject,
       pause: pause.bind(this),

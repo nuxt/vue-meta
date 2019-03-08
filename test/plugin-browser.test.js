@@ -20,9 +20,14 @@ describe('plugin', () => {
 
     expect(instance.$meta().inject).toEqual(expect.any(Function))
     expect(instance.$meta().refresh).toEqual(expect.any(Function))
+    expect(instance.$meta().getOptions).toEqual(expect.any(Function))
 
     expect(instance.$meta().inject()).toBeUndefined()
     expect(instance.$meta().refresh()).toBeDefined()
+
+    const options = instance.$meta().getOptions()
+    expect(options).toBeDefined()
+    expect(options.keyName).toBe(defaultOptions.keyName)
   })
 
   test('component has _hasMetaInfo set to true', () => {
