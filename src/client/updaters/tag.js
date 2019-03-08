@@ -26,7 +26,7 @@ export default function updateTag({ attribute, tagIDKeyName } = {}, type, tags, 
     })
   }
 
-  if (tags && tags.length) {
+  if (tags.length) {
     tags.forEach((tag) => {
       const newElement = document.createElement(type)
       newElement.setAttribute(attribute, 'true')
