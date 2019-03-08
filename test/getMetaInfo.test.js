@@ -671,4 +671,52 @@ describe('getMetaInfo', () => {
       __dangerouslyDisableSanitizersByTagID: {}
     })
   })
+
+  test('child can indicate to remove parent vmids', () => {
+    Vue.component('merge-child', {
+      render: h => h('div'),
+      metaInfo: {
+        title: 'Hi',
+        meta: [
+          {
+            vmid: 'og:title',
+            content: null
+          }
+        ]
+      }
+    })
+
+    const component = new Vue({
+      metaInfo: {
+        title: 'Hello',
+        meta: [
+          {
+            vmid: 'og:title',
+            property: 'og:title',
+            content: 'Test title',
+            template: chunk => `${chunk} - My page`
+          }
+        ]
+      },
+      el: document.createElement('div'),
+      render: h => h('div', null, [h('merge-child')])
+    })
+
+    expect(getMetaInfo(component)).toEqual({
+      title: 'Hi',
+      titleChunk: 'Hi',
+      titleTemplate: '%s',
+      htmlAttrs: {},
+      headAttrs: {},
+      bodyAttrs: {},
+      meta: [],
+      base: [],
+      link: [],
+      style: [],
+      script: [],
+      noscript: [],
+      __dangerouslyDisableSanitizers: [],
+      __dangerouslyDisableSanitizersByTagID: {}
+    })
+  })
 })

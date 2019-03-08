@@ -25,6 +25,13 @@ export function arrayMerge({ component, tagIDKeyName, metaTemplateKeyName, conte
       return
     }
 
+    // if source specifies null as content then ignore both the target as the source
+    if (sourceItem[contentKeyName] === null || sourceItem.innerHTML === null) {
+      // remove current index from source array so its not concatenated to destination below
+      source.splice(sourceIndex, 1)
+      return
+    }
+
     // we now know that targetItem is a duplicate and we should ignore it in favor of sourceItem
     // now we only need to check if the target has a template to combine it with the source
     const targetTemplate = targetItem[metaTemplateKeyName]
