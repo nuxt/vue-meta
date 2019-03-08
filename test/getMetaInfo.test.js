@@ -117,7 +117,7 @@ describe('getMetaInfo', () => {
         {
           vmid: 'a',
           property: 'a',
-          content: 'b'
+          content: 'a'
         }
       ],
       base: [],
@@ -583,6 +583,31 @@ describe('getMetaInfo', () => {
           content: 'An important title! - My page'
         }
       ],
+      base: [],
+      link: [],
+      style: [],
+      script: [],
+      noscript: [],
+      __dangerouslyDisableSanitizers: [],
+      __dangerouslyDisableSanitizersByTagID: {}
+    })
+  })
+
+  test('no errors when metaInfo returns nothing', () => {
+    const component = new Vue({
+      metaInfo() {},
+      el: document.createElement('div'),
+      render: h => h('div', null, [])
+    })
+
+    expect(getMetaInfo(component)).toEqual({
+      title: '',
+      titleChunk: '',
+      titleTemplate: '%s',
+      htmlAttrs: {},
+      headAttrs: {},
+      bodyAttrs: {},
+      meta: [],
       base: [],
       link: [],
       style: [],

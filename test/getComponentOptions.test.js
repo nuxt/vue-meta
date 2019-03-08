@@ -13,21 +13,23 @@ describe('getComponentOption', () => {
   })
 
   it('fetches the given option from the given component', () => {
-    const component = new Vue({ someOption: 'foo' })
+    const component = new Vue({ someOption: { foo: 'bar' } })
     const mergedOption = getComponentOption({ component, keyName: 'someOption' })
-    expect(mergedOption).toEqual('foo')
+    expect(mergedOption.foo).toBeDefined()
+    expect(mergedOption.foo).toEqual('bar')
   })
 
   it('calls a function option, injecting the component as context', () => {
     const component = new Vue({
       name: 'Foobar',
       someFunc() {
-        return this.$options.name
+        return { opt: this.$options.name }
       }
     })
     const mergedOption = getComponentOption({ component, keyName: 'someFunc' })
     // TODO: Should this be foobar or Foobar
-    expect(mergedOption).toEqual('Foobar')
+    expect(mergedOption.opt).toBeDefined()
+    expect(mergedOption.opt).toEqual('Foobar')
   })
 
   it('fetches deeply nested component options and merges them', () => {
