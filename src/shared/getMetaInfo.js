@@ -33,21 +33,28 @@ export default function getMetaInfo(options = {}, component, escapeSequences = [
     info.base = Object.keys(info.base).length ? [info.base] : []
   }
 
-  for (const index in disableOptionKeys) {
-    const disableKey = disableOptionKeys[index]
+  const escapeOptions = {
+    doEscape: value => escapeSequences.reduce((val, [v, r]) => val.replace(v, r), value)
+  }
+
+  disableOptionKeys.forEach((disableKey, index) => {
     if (!info[disableKey]) {
-      continue
+      return
     }
 
     if (index === 0) {
       ensureIsArray(info, disableKey)
     } else if (index === 1) {
-      info[disableKey].forEach(key => ensureIsArray(info[disableKey], key))
+      for (const key in info[disableKey]) {
+        ensureIsArray(info[disableKey], key)
+      }
     }
-  }
+
+    escapeOptions[disableKey] = info[disableKey]
+  })
 
   // begin sanitization
-  info = escape(info, options, escapeSequences)
+  info = escape(info, options, escapeOptions)
 
   return info
 }
