@@ -35,7 +35,11 @@ export default function escape(info, { tagIDKeyName }, escapeSequences = []) {
     if (isString(value)) {
       escaped[key] = escapeSequences.reduce((val, [v, r]) => val.replace(v, r), value)
     } else if (isArray(value)) {
-      escaped[key] = value.map(v => escape(v, { tagIDKeyName }, escapeSequences))
+      escaped[key] = value.map((v) => {
+        return isObject(v)
+          ? escape(v, { tagIDKeyName }, escapeSequences)
+          : escapeSequences.reduce((val, [v, r]) => val.replace(v, r), v)
+      })
     } else if (isObject(value)) {
       escaped[key] = escape(value, { tagIDKeyName }, escapeSequences)
     } else {

@@ -719,4 +719,44 @@ describe('getMetaInfo', () => {
       __dangerouslyDisableSanitizersByTagID: {}
     })
   })
+
+  test('attribute values can be an array', () => {
+    Vue.component('merge-child', {
+      render: h => h('div'),
+      metaInfo: {
+        bodyAttrs: {
+          class: ['foo']
+        }
+      }
+    })
+
+    const component = new Vue({
+      metaInfo: {
+        bodyAttrs: {
+          class: ['bar']
+        }
+      },
+      el: document.createElement('div'),
+      render: h => h('div', null, [h('merge-child')])
+    })
+
+    expect(getMetaInfo(component)).toEqual({
+      title: '',
+      titleChunk: '',
+      titleTemplate: '%s',
+      htmlAttrs: {},
+      headAttrs: {},
+      bodyAttrs: {
+        class: ['bar', 'foo']
+      },
+      meta: [],
+      base: [],
+      link: [],
+      style: [],
+      script: [],
+      noscript: [],
+      __dangerouslyDisableSanitizers: [],
+      __dangerouslyDisableSanitizersByTagID: {}
+    })
+  })
 })
