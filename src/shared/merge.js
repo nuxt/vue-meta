@@ -25,8 +25,8 @@ export function arrayMerge({ component, tagIDKeyName, metaTemplateKeyName, conte
     }
 
     // when sourceItem explictly defines contentKeyName or innerHTML as undefined, its
-    // an indication that we need to skip the default behaviour
-    // So we keep the targetItem and ignore/remove the sourceItem
+    // an indication that we need to skip the default behaviour or child has preference over parent
+    // which means we keep the targetItem and ignore/remove the sourceItem
     if ((sourceItem.hasOwnProperty(contentKeyName) && sourceItem[contentKeyName] === undefined) ||
       (sourceItem.hasOwnProperty('innerHTML') && sourceItem.innerHTML === undefined)) {
       destination.push(targetItem)

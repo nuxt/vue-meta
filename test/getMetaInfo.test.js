@@ -483,8 +483,6 @@ describe('getMetaInfo', () => {
     })
   })
 
-  // TODO: Still failing :( Child template won't be applied if child has no content as well
-
   test('properly uses meta templates with one-level-deep nested children template', () => {
     Vue.component('merge-child', {
       render: h => h('div'),

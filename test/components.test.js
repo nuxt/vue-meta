@@ -109,22 +109,23 @@ describe('client', () => {
   })
 
   test('changed function is called', async () => {
-    const parentComponent = new Vue({ render: h => h('div') })
-    const wrapper = mount(Changed, { localVue: Vue, parentComponent })
-
-    await vmTick(wrapper.vm)
-    expect(wrapper.vm.$root._vueMeta.initialized).toBe(true)
-
     let context
     const changed = jest.fn(function () {
       context = this
     })
-    wrapper.setData({ changed, childVisible: true })
+
+    const wrapper = mount(Changed, { localVue: Vue, propsData: { changed } })
+
+    await vmTick(wrapper.vm)
+    expect(wrapper.vm.$root._vueMeta.initialized).toBe(true)
+    // TODO: does changed need to run on initialization?
+    expect(changed).toHaveBeenCalledTimes(1)
+
+    wrapper.setData({ childVisible: true })
     jest.runAllTimers()
 
-    expect(changed).toHaveBeenCalledTimes(1)
-    // TODO: this isnt what the docs say
-    expect(context._uid).not.toBe(wrapper.vm._uid)
+    expect(changed).toHaveBeenCalledTimes(2)
+    expect(context._uid).toBe(wrapper.vm._uid)
   })
 
   test('afterNavigation function is called', () => {
@@ -136,15 +137,19 @@ describe('client', () => {
     })
 
     const guards = {}
-    Vue.prototype.$router = {
-      beforeEach(fn) {
-        guards.before = fn
-      },
-      afterEach(fn) {
-        guards.after = fn
+    const wrapper = mount(component, {
+      localVue: Vue,
+      mocks: {
+        $router: {
+          beforeEach(fn) {
+            guards.before = fn
+          },
+          afterEach(fn) {
+            guards.after = fn
+          }
+        }
       }
-    }
-    const wrapper = mount(component, { localVue: Vue })
+    })
 
     expect(guards.before).toBeDefined()
     expect(guards.after).toBeDefined()
