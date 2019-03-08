@@ -1,5 +1,5 @@
 import getComponentOption from '../src/shared/getComponentOption'
-import { getVue } from './utils'
+import { mount, getVue, loadVueMetaPlugin } from './utils'
 
 describe('getComponentOption', () => {
   let Vue
@@ -31,46 +31,53 @@ describe('getComponentOption', () => {
   })
 
   it('fetches deeply nested component options and merges them', () => {
-    Vue.component('merge-child', { render: h => h('div'), foo: { bar: 'baz' } })
+    const localVue = loadVueMetaPlugin(true, { keyName: 'foo' })
+    localVue.component('merge-child', { render: h => h('div'), foo: { bar: 'baz' } })
 
-    const component = new Vue({
+    const component = localVue.component('parent', {
       foo: { fizz: 'buzz' },
-      el: document.createElement('div'),
       render: h => h('div', null, [h('merge-child')])
     })
 
-    const mergedOption = getComponentOption({ component, keyName: 'foo', deep: true })
+    const wrapper = mount(component, { localVue })
+
+    const mergedOption = getComponentOption({ component: wrapper.vm, keyName: 'foo' })
     expect(mergedOption).toEqual({ bar: 'baz', fizz: 'buzz' })
   })
 
   it('allows for a custom array merge strategy', () => {
-    Vue.component('array-child', {
+    const localVue = loadVueMetaPlugin(false, { keyName: 'foo' })
+    localVue.component('array-child', {
       render: h => h('div'),
-      foo: [
-        { name: 'flower', content: 'rose' }
-      ]
+      foo: {
+        meta: [
+          { name: 'flower', content: 'rose' }
+        ]
+      }
     })
 
-    const component = new Vue({
-      foo: [
-        { name: 'flower', content: 'tulip' }
-      ],
-      el: document.createElement('div'),
+    const component = localVue.component('parent', {
+      foo: {
+        meta: [
+          { name: 'flower', content: 'tulip' }
+        ]
+      },
       render: h => h('div', null, [h('array-child')])
     })
 
+    const wrapper = mount(component, { localVue })
+
     const mergedOption = getComponentOption({
-      component,
+      component: wrapper.vm,
       keyName: 'foo',
-      deep: true,
       arrayMerge(target, source) {
         return target.concat(source)
       }
     })
 
-    expect(mergedOption).toEqual([
+    expect(mergedOption).toEqual({ meta: [
       { name: 'flower', content: 'tulip' },
       { name: 'flower', content: 'rose' }
-    ])
+    ] })
   })
 })

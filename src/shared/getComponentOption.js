@@ -1,7 +1,7 @@
-import deepmerge from 'deepmerge'
-import uniqueId from 'lodash.uniqueid'
-import { isUndefined, isFunction, isObject } from './typeof'
-import uniqBy from './uniqBy'
+import { merge } from './merge'
+import applyTemplate from './applyTemplate'
+import inMetaInfoBranch from './inMetaInfoBranch'
+import { isFunction, isObject } from './typeof'
 
 /**
  * Returns the `opts.option` $option value of the given `opts.component`.
@@ -17,15 +17,16 @@ import uniqBy from './uniqBy'
  * @param  {Object} [result={}] - result so far
  * @return {Object} result - final aggregated result
  */
-export default function getComponentOption({ component, deep, arrayMerge, keyName, metaTemplateKeyName, tagIDKeyName, contentKeyName } = {}, result = {}) {
-  const { $options } = component
+export default function getComponentOption(options = {}, result = {}) {
+  const { component, keyName, metaTemplateKeyName, tagIDKeyName } = options
+  const { $options, $children } = component
 
   if (component._inactive) {
     return result
   }
 
   // only collect option data if it exists
-  if (!isUndefined($options[keyName]) && $options[keyName] !== null) {
+  if ($options[keyName]) {
     let data = $options[keyName]
 
     // if option is a function, replace it with it's result
@@ -33,46 +34,46 @@ export default function getComponentOption({ component, deep, arrayMerge, keyNam
       data = data.call(component)
     }
 
-    if (isObject(data)) {
-      // merge with existing options
-      result = deepmerge(result, data, { arrayMerge })
-    } else {
-      result = data
+    // ignore data if its not an object, then we keep our previous result
+    if (!isObject(data)) {
+      console.log(data)
+      return result
     }
+
+    // merge with existing options
+    result = merge(result, data, options)
   }
 
   // collect & aggregate child options if deep = true
-  if (deep && component.$children.length) {
-    component.$children.forEach((childComponent) => {
+  if ($children.length) {
+    $children.forEach((childComponent) => {
+      // check if the childComponent is in a branch
+      // return otherwise so we dont walk all component branches unnecessarily
+      if (!inMetaInfoBranch(childComponent)) {
+        return
+      }
+
       result = getComponentOption({
-        component: childComponent,
-        keyName,
-        deep,
-        arrayMerge
+        ...options,
+        component: childComponent
       }, result)
     })
   }
 
-  if (metaTemplateKeyName && result.hasOwnProperty('meta')) {
-    result.meta = Object.keys(result.meta).map((metaKey) => {
-      const metaObject = result.meta[metaKey]
-      if (!metaObject.hasOwnProperty(metaTemplateKeyName) || !metaObject.hasOwnProperty(contentKeyName) || isUndefined(metaObject[metaTemplateKeyName])) {
-        return result.meta[metaKey]
-      }
+  if (metaTemplateKeyName && result.meta) {
+    // apply templates if needed
+    result.meta.forEach(metaObject => applyTemplate(options, metaObject))
 
-      const template = metaObject[metaTemplateKeyName]
-      delete metaObject[metaTemplateKeyName]
-
-      if (template) {
-        metaObject.content = isFunction(template) ? template(metaObject.content) : template.replace(/%s/g, metaObject.content)
-      }
-
-      return metaObject
+    // remove meta items with duplicate vmid's
+    result.meta = result.meta.filter((metaItem, index, arr) => {
+      return (
+        // keep meta item if it doesnt has a vmid
+        !metaItem.hasOwnProperty(tagIDKeyName) ||
+        // or if it's the first item in the array with this vmid
+        index === arr.findIndex(item => item[tagIDKeyName] === metaItem[tagIDKeyName])
+      )
     })
-    result.meta = uniqBy(
-      result.meta,
-      metaObject => metaObject.hasOwnProperty(tagIDKeyName) ? metaObject[tagIDKeyName] : uniqueId()
-    )
   }
+
   return result
 }
