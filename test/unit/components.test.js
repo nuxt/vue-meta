@@ -1,15 +1,15 @@
-import _getMetaInfo from '../src/shared/getMetaInfo'
-import { mount, loadVueMetaPlugin, vmTick } from './utils'
-import { defaultOptions } from './utils/constants'
+import _getMetaInfo from '../../src/shared/getMetaInfo'
+import { mount, loadVueMetaPlugin, vmTick } from '../utils'
+import { defaultOptions } from '../utils/constants'
 
-import GoodbyeWorld from './fixtures/goodbye-world.vue'
-import HelloWorld from './fixtures/hello-world.vue'
-import KeepAlive from './fixtures/keep-alive.vue'
-import Changed from './fixtures/changed.vue'
+import GoodbyeWorld from '../components/goodbye-world.vue'
+import HelloWorld from '../components/hello-world.vue'
+import KeepAlive from '../components/keep-alive.vue'
+import Changed from '../components/changed.vue'
 
 const getMetaInfo = component => _getMetaInfo(defaultOptions, component)
 
-jest.mock('../src/shared/window', () => ({
+jest.mock('../../src/shared/window', () => ({
   hasGlobalWindow: false
 }))
 

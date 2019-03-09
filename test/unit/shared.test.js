@@ -1,10 +1,10 @@
 /**
  * @jest-environment node
  */
-import { ensureIsArray } from '../src/shared/ensure'
-import setOptions from '../src/shared/options'
-import { hasGlobalWindowFn } from '../src/shared/window'
-import { defaultOptions } from './utils/constants'
+import { ensureIsArray } from '../../src/shared/ensure'
+import setOptions from '../../src/shared/options'
+import { hasGlobalWindowFn } from '../../src/shared/window'
+import { defaultOptions } from '../utils/constants'
 
 const noop = () => {}
 

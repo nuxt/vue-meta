@@ -46,7 +46,9 @@
     "lint": "eslint src test",
     "prerelease": "npm run build",
     "release": "npm publish",
-    "test": "jest",
+    "test": "yarn test:unit && yarn test:e2e",
+    "test:e2e": "jest test/e2e",
+    "test:unit": "jest test/unit",
     "toc": "doctoc README.md --title '# Table of Contents'",
     "update-cdn": "babel-node scripts/update-cdn.js",
     "preversion": "npm run toc",
@@ -59,6 +61,7 @@
     "@babel/cli": "^7.2.3",
     "@babel/core": "^7.3.3",
     "@babel/node": "^7.2.2",
+    "@babel/plugin-syntax-dynamic-import": "^7.2.0",
     "@babel/preset-env": "^7.3.1",
     "@nuxt/babel-preset-app": "^2.4.5",
     "@nuxtjs/eslint-config": "^0.0.1",
@@ -68,6 +71,7 @@
     "babel-eslint": "^10.0.1",
     "babel-jest": "^24.1.0",
     "babel-loader": "^8.0.5",
+    "babel-plugin-dynamic-import-node": "^2.2.0",
     "codecov": "^3.2.0",
     "doctoc": "^1.4.0",
     "eslint": "^5.14.1",
@@ -83,6 +87,8 @@
     "jest-environment-jsdom": "^24.3.1",
     "jest-environment-jsdom-global": "^1.1.1",
     "jsdom": "^13.2.0",
+    "lodash": "^4.17.11",
+    "puppeteer-core": "^1.13.0",
     "rimraf": "^2.6.3",
     "rollup": "^1.2.2",
     "rollup-plugin-babel": "^4.3.2",
@@ -94,7 +100,10 @@
     "update-section": "^0.3.3",
     "vue": "^2.6.6",
     "vue-jest": "^3.0.3",
+    "vue-loader": "^15.7.0",
+    "vue-router": "^3.0.2",
     "vue-server-renderer": "^2.6.6",
-    "vue-template-compiler": "^2.6.6"
+    "vue-template-compiler": "^2.6.6",
+    "webpack": "^4.29.6"
   }
 }

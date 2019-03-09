@@ -15,9 +15,7 @@ const startUpdate = (hasGlobalWindow ? window.requestAnimationFrame : null) || (
  * @return {Number} id - a new ID
  */
 export default function batchUpdate(id, callback) {
-  if (id) {
-    stopUpdate(id)
-  }
+  stopUpdate(id)
 
   return startUpdate(() => {
     id = null

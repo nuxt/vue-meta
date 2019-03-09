@@ -40,6 +40,7 @@ package-lock.json
 # built code
 lib
 es
+.vue-meta
 
 # examples yarn lock
 examples/yarn.lock

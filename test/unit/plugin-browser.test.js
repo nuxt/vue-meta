@@ -1,11 +1,11 @@
-import triggerUpdate from '../src/client/triggerUpdate'
-import batchUpdate from '../src/client/batchUpdate'
-import { mount, vmTick, VueMetaBrowserPlugin, loadVueMetaPlugin } from './utils'
-import { defaultOptions } from './utils/constants'
+import triggerUpdate from '../../src/client/triggerUpdate'
+import batchUpdate from '../../src/client/batchUpdate'
+import { mount, vmTick, VueMetaBrowserPlugin, loadVueMetaPlugin } from '../utils'
+import { defaultOptions } from '../utils/constants'
 
-jest.mock('../src/client/triggerUpdate')
-jest.mock('../src/client/batchUpdate')
-jest.mock('../package.json', () => ({
+jest.mock('../../src/client/triggerUpdate')
+jest.mock('../../src/client/batchUpdate')
+jest.mock('../../package.json', () => ({
   version: 'test-version'
 }))
 
@@ -48,8 +48,8 @@ describe('plugin', () => {
   })
 
   test('updates can be paused and resumed', async () => {
-    const _triggerUpdate = jest.requireActual('../src/client/triggerUpdate').default
-    const _batchUpdate = jest.requireActual('../src/client/batchUpdate').default
+    const _triggerUpdate = jest.requireActual('../../src/client/triggerUpdate').default
+    const _batchUpdate = jest.requireActual('../../src/client/batchUpdate').default
 
     const triggerUpdateSpy = triggerUpdate.mockImplementation(_triggerUpdate)
     const batchUpdateSpy = batchUpdate.mockImplementation(_batchUpdate)

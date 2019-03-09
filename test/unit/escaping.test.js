@@ -1,6 +1,6 @@
-import _getMetaInfo from '../src/shared/getMetaInfo'
-import { loadVueMetaPlugin } from './utils'
-import { defaultOptions } from './utils/constants'
+import _getMetaInfo from '../../src/shared/getMetaInfo'
+import { loadVueMetaPlugin } from '../utils'
+import { defaultOptions } from '../utils/constants'
 
 const getMetaInfo = (component, escapeSequences) => _getMetaInfo(defaultOptions, component, escapeSequences)
 
