@@ -45,6 +45,16 @@ jobs:
           name: Lint
           command: yarn lint
 
+  audit:
+    <<: *defaults
+    steps:
+      - checkout
+      - attach_workspace:
+          at: ~/project
+      - run:
+          name: Security Audit
+          command: yarn audit
+
   test-unit:
     <<: *defaults
     steps:
@@ -72,6 +82,7 @@ workflows:
   commit:
     jobs:
       - setup
-      - lint:    { requires: [setup] }
-      - test-unit:    { requires: [lint] }
-      - test-e2e: { requires: [lint] }
+      - lint:       { requires: [setup] }
+      - audit:      { requires: [setup] }
+      - test-unit:  { requires: [lint] }
+      - test-e2e:   { requires: [lint] }
