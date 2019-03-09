@@ -4,6 +4,7 @@ import json from 'rollup-plugin-json'
 import babel from 'rollup-plugin-babel'
 import buble from 'rollup-plugin-buble'
 import { terser } from 'rollup-plugin-terser'
+import defaultsDeep from 'lodash/defaultsDeep'
 
 const pkg = require('../package.json')
 
@@ -14,48 +15,64 @@ const banner =  `/**
  */
 `.replace(/ {4}/gm, '').trim()
 
-const baseConfig = {
-  input: 'src/browser.js',
-  output: {
-    file: pkg.web,
-    format: 'umd',
-    name: 'VueMeta',
-    sourcemap: false,
-    banner
-  },
-  plugins: [
-    json(),
-    nodeResolve(),
-    commonjs(),
-    /*buble({
-      objectAssign: 'Object.assign'
-    }),*/
-  ]
+function rollupConfig({
+  plugins = [],
+  ...config
+  }) {
+
+  return defaultsDeep({}, config, {
+    input: 'src/browser.js',
+    output: {
+      name: 'VueMeta',
+      format: 'umd',
+      sourcemap: false,
+      banner
+    },
+    plugins: [
+      json(),
+      nodeResolve()
+    ].concat(plugins),
+  })
 }
 
-export default [{
-  ...baseConfig,
-}, {
-  ...baseConfig,
-  output: {
-    ...baseConfig.output,
-    file: pkg.web.replace('.js', '.min.js'),
-  },
-  plugins: [
-    ...baseConfig.plugins,
-    babel({
-      runtimeHelpers: true,
-      presets: ['@nuxt/babel-preset-app']
-    }),
-    terser()
-  ]
-}, {
-  ...baseConfig,
-  input: 'src/index.js',
-  output: {
-    ...baseConfig.output,
-    file: pkg.main,
-    format: 'cjs'
-  },
-  external: Object.keys(pkg.dependencies)
-}]
+const babelConfig = {
+  runtimeHelpers: true,
+  exclude : 'node_modules/**',
+  presets: [['@nuxt/babel-preset-app', {
+    // useBuiltIns: 'usage',
+    // target: { ie: 9 }
+  }]]
+}
+
+export default [
+  rollupConfig({
+    output: {
+      file: pkg.web,
+    },
+    plugins: [
+      babel(babelConfig),
+      commonjs()
+    ]
+  }),
+  rollupConfig({
+    output: {
+      file: pkg.web.replace('.js', '.min.js'),
+    },
+    plugins: [
+      babel(babelConfig),
+      commonjs(),
+      terser()
+    ]
+  }),
+  rollupConfig({
+    input: 'src/index.js',
+    output: {
+      file: pkg.main,
+      format: 'cjs'
+    },
+    plugins: [
+      commonjs()
+    ],
+    external: Object.keys(pkg.dependencies)
+  })
+]
