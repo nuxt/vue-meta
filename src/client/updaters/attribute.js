@@ -1,3 +1,4 @@
+import { booleanHtmlAttributes } from '../../shared/constants'
 import isArray from '../../shared/isArray'
 
 /**
@@ -14,7 +15,9 @@ export default function updateAttribute({ attribute } = {}, attrs, tag) {
   const keepIndexes = []
   for (const attr in attrs) {
     if (attrs.hasOwnProperty(attr)) {
-      const value = isArray(attrs[attr]) ? attrs[attr].join(' ') : attrs[attr]
+      const value = booleanHtmlAttributes.includes(attr)
+        ? ''
+        : isArray(attrs[attr]) ? attrs[attr].join(' ') : attrs[attr]
 
       tag.setAttribute(attr, value || '')
 

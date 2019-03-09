@@ -24,7 +24,7 @@ export default function updateClientMetaInfo(options = {}, newInfo) {
   const htmlTag = getTag(tags, 'html')
 
   // if this is a server render, then dont update
-  if (htmlTag.getAttribute(ssrAttribute)) {
+  if (htmlTag.hasAttribute(ssrAttribute)) {
     // remove the server render attribute so we can update on (next) changes
     htmlTag.removeAttribute(ssrAttribute)
     return false

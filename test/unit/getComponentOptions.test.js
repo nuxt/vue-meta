@@ -1,6 +1,6 @@
-import getComponentOption from '../src/shared/getComponentOption'
-import inMetaInfoBranch from '../src/shared/inMetaInfoBranch'
-import { mount, getVue, loadVueMetaPlugin } from './utils'
+import getComponentOption from '../../src/shared/getComponentOption'
+import inMetaInfoBranch from '../../src/shared/inMetaInfoBranch'
+import { mount, getVue, loadVueMetaPlugin } from '../utils'
 
 describe('getComponentOption', () => {
   let Vue
