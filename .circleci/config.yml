@@ -29,10 +29,10 @@ jobs:
 
       # Test
       - run:
-          name: Test
-          command: yarn test
+          name: Unit Tests
+          command: yarn test:unit --coverage && yarn coverage
 
-      # Coverage
+      # Test
       - run:
-          name: Coverage
-          command: yarn codecov
+          name: E2E Tests
+          command: yarn test:e2e
