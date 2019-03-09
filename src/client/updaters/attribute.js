@@ -1,5 +1,5 @@
 import { booleanHtmlAttributes } from '../../shared/constants'
-import isArray from '../../shared/isArray'
+import { isArray } from '../../shared/is-type'
 
 /**
  * Updates the document's html tag attributes

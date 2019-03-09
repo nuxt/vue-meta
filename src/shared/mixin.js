@@ -1,6 +1,6 @@
 import triggerUpdate from '../client/triggerUpdate'
 import hasMetaInfo from './hasMetaInfo'
-import { isUndefined, isFunction } from './typeof'
+import { isUndefined, isFunction } from './is-type'
 import { ensuredPush } from './ensure'
 
 export default function createMixin(Vue, options) {
