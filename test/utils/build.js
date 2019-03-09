@@ -41,8 +41,8 @@ export async function buildFixture(fixture, config = {}) {
   const webpackStats = await webpackRun(webpackConfig)
 
   // for test debugging
-  webpackStats.errors.map(e => console.error(e)) // eslint-disable-line no-console
-  webpackStats.warnings.map(e => console.warn(e)) // eslint-disable-line no-console
+  webpackStats.errors.forEach(e => console.error(e)) // eslint-disable-line no-console
+  webpackStats.warnings.forEach(e => console.warn(e)) // eslint-disable-line no-console
 
   const vueApp = await import(path.resolve(fixturePath, 'server')).then(m => m.default || m)
 
