@@ -1,4 +1,4 @@
-import { isUndefined } from './typeof'
+import { isUndefined } from './is-type'
 
 export function hasGlobalWindowFn() {
   try {

@@ -1,4 +1,4 @@
-import { isUndefined, isFunction } from './typeof'
+import { isUndefined, isFunction } from './is-type'
 
 export default function applyTemplate({ component, metaTemplateKeyName, contentKeyName }, headObject, template, chunk) {
   if (isUndefined(template)) {

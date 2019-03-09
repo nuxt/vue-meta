@@ -1,6 +1,5 @@
 import { metaInfoOptionKeys, disableOptionKeys } from './constants'
-import isArray from './isArray'
-import { isString, isObject } from './typeof'
+import { isString, isArray, isObject } from './is-type'
 
 // sanitizes potentially dangerous characters
 export default function escape(info, options, escapeOptions) {

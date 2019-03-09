@@ -1,5 +1,5 @@
 import getMetaInfo from '../shared/getMetaInfo'
-import { isFunction } from '../shared/typeof'
+import { isFunction } from '../shared/is-type'
 import updateClientMetaInfo from './updateClientMetaInfo'
 
 export default function _refresh(options = {}) {

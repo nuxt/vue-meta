@@ -1,5 +1,4 @@
-import isArray from './isArray'
-import { isObject } from './typeof'
+import { isArray, isObject } from './is-type'
 
 export function ensureIsArray(arg, key) {
   if (!key || !isObject(arg)) {

@@ -1,7 +1,7 @@
 import { merge } from './merge'
 import applyTemplate from './applyTemplate'
 import inMetaInfoBranch from './inMetaInfoBranch'
-import { isFunction, isObject } from './typeof'
+import { isFunction, isObject } from './is-type'
 
 /**
  * Returns the `opts.option` $option value of the given `opts.component`.

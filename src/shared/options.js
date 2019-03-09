@@ -1,4 +1,4 @@
-import { isObject, isFunction } from './typeof'
+import { isObject, isFunction } from './is-type'
 
 import {
   keyName,
