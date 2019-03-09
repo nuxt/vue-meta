@@ -4,7 +4,7 @@
 import { ensureIsArray } from '../../src/shared/ensure'
 import setOptions from '../../src/shared/options'
 import { hasGlobalWindowFn } from '../../src/shared/window'
-import { defaultOptions } from '../utils/constants'
+import { defaultOptions } from '../../src/shared/constants'
 
 const noop = () => {}
 

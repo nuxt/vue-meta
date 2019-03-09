@@ -1,4 +1,4 @@
-import { defaultOptions } from './constants'
+import { defaultOptions } from '../../src/shared/constants'
 
 const metaInfoData = {
   title: {

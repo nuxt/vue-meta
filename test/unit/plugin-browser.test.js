@@ -1,7 +1,7 @@
 import triggerUpdate from '../../src/client/triggerUpdate'
 import batchUpdate from '../../src/client/batchUpdate'
 import { mount, vmTick, VueMetaBrowserPlugin, loadVueMetaPlugin } from '../utils'
-import { defaultOptions } from '../utils/constants'
+import { defaultOptions } from '../../src/shared/constants'
 
 jest.mock('../../src/client/triggerUpdate')
 jest.mock('../../src/client/batchUpdate')
