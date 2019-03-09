@@ -83,6 +83,7 @@
     "eslint-plugin-standard": "^4.0.0",
     "eslint-plugin-vue": "^5.2.2",
     "esm": "^3.2.14",
+    "is-wsl": "^1.1.0",
     "jest": "^24.3.1",
     "jest-environment-jsdom": "^24.3.1",
     "jest-environment-jsdom-global": "^1.1.1",
