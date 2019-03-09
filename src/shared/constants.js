@@ -44,6 +44,15 @@ export const metaTemplateKeyName = 'template'
 // This is the key name for the content-holding property
 export const contentKeyName = 'content'
 
+export const defaultOptions = {
+  keyName,
+  attribute,
+  ssrAttribute,
+  tagIDKeyName,
+  contentKeyName,
+  metaTemplateKeyName
+}
+
 // List of metaInfo property keys which are configuration options (and dont generate html)
 export const metaInfoOptionKeys = [
   'titleChunk',

@@ -1,23 +1,5 @@
 import { isObject, isFunction } from './is-type'
-
-import {
-  keyName,
-  attribute,
-  ssrAttribute,
-  tagIDKeyName,
-  metaTemplateKeyName,
-  contentKeyName
-} from './constants'
-
-// set some default options
-const defaultOptions = {
-  keyName,
-  contentKeyName,
-  metaTemplateKeyName,
-  attribute,
-  ssrAttribute,
-  tagIDKeyName
-}
+import { defaultOptions } from './constants'
 
 export default function setOptions(options) {
   // combine options

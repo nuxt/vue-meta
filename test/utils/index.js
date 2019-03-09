@@ -1,8 +1,8 @@
 import { mount, createLocalVue } from '@vue/test-utils'
 import { renderToString } from '@vue/server-test-utils'
+import { defaultOptions } from '../../src/shared/constants'
 import VueMetaBrowserPlugin from '../../src/browser'
 import VueMetaServerPlugin from '../../src'
-import { defaultOptions } from './constants'
 
 export {
   mount,

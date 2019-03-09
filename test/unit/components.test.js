@@ -1,6 +1,6 @@
 import _getMetaInfo from '../../src/shared/getMetaInfo'
 import { mount, loadVueMetaPlugin, vmTick } from '../utils'
-import { defaultOptions } from '../utils/constants'
+import { defaultOptions } from '../../src/shared/constants'
 
 import GoodbyeWorld from '../components/goodbye-world.vue'
 import HelloWorld from '../components/hello-world.vue'

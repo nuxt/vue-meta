@@ -1,5 +1,5 @@
 import { mount, VueMetaServerPlugin, loadVueMetaPlugin } from '../utils'
-import { defaultOptions } from '../utils/constants'
+import { defaultOptions } from '../../src/shared/constants'
 
 jest.mock('../../package.json', () => ({
   version: 'test-version'
