@@ -38,7 +38,7 @@
     "build": "yarn build:other && yarn build:es",
     "build:es": "rimraf es && babel src --env-name es --out-dir es --ignore 'src/browser.js'",
     "build:other": "rimraf lib && rollup -c scripts/rollup.config.js",
-    "codecov": "codecov",
+    "coverage": "codecov",
     "predeploy": "git checkout master && git pull -r",
     "deploy": "npm version",
     "postdeploy": "git push origin master --follow-tags && npm run release",
