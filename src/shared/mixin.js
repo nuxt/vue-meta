@@ -5,7 +5,7 @@ import { ensuredPush } from './ensure'
 
 export default function createMixin(Vue, options) {
   // for which Vue lifecycle hooks should the metaInfo be refreshed
-  const updateOnLifecycleHook = ['activated', 'deactivated', 'beforeMount']
+  const updateOnLifecycleHook = ['activated', 'deactivated']
 
   // watch for client side component updates
   return {
