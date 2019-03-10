@@ -6,8 +6,6 @@ import setOptions from '../../src/shared/options'
 import { hasGlobalWindowFn } from '../../src/shared/window'
 import { defaultOptions } from '../../src/shared/constants'
 
-const noop = () => {}
-
 describe('shared', () => {
   test('ensureIsArray ensures var is array', () => {
     let a = { p: 1 }
@@ -37,28 +35,5 @@ describe('shared', () => {
     expect(options.keyName).toBe(keyName)
     expect(options.contentKeyName).toBeDefined()
     expect(options.contentKeyName).toBe(defaultOptions.contentKeyName)
-  })
-
-  test('setOptions warns when afterNavigation not fn', () => {
-    const warn = jest.spyOn(console, 'warn').mockImplementation(noop)
-
-    let options = { afterNavigation: true }
-    options = setOptions(options)
-
-    expect(warn).toHaveBeenCalledTimes(1)
-    expect(options.afterNavigation).toBeUndefined()
-
-    warn.mockRestore()
-  })
-  test('setOptions sets refreshOnceOnNavigation when afterNavigation defined', () => {
-    const warn = jest.spyOn(console, 'warn').mockImplementation(noop)
-
-    let options = { afterNavigation: noop }
-    options = setOptions(options)
-
-    expect(warn).not.toHaveBeenCalled()
-    expect(options.refreshOnceOnNavigation).toBe(true)
-
-    warn.mockRestore()
   })
 })
