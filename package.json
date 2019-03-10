@@ -87,7 +87,7 @@
     "jest": "^24.3.1",
     "jest-environment-jsdom": "^24.3.1",
     "jest-environment-jsdom-global": "^1.1.1",
-    "jsdom": "^13.2.0",
+    "jsdom": "^14.0.0",
     "lodash": "^4.17.11",
     "puppeteer-core": "^1.13.0",
     "rimraf": "^2.6.3",
