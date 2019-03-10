@@ -94,7 +94,7 @@ export default function createMixin(Vue, options) {
           // add the navigation guards if they havent been added yet
           // if metaInfo is defined as a function, this does call the computed fn redundantly
           // but as Vue internally caches the results of computed props it shouldnt hurt performance
-          if (this.$options[options.keyName].afterNavigation) {
+          if (!options.refreshOnceOnNavigation && this.$options[options.keyName].afterNavigation) {
             addNavGuards(this)
           }
 
