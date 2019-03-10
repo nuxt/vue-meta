@@ -1,10 +1,10 @@
 /**
  * @jest-environment node
  */
-import { ensureIsArray } from '../../src/shared/ensure'
 import setOptions from '../../src/shared/options'
-import { hasGlobalWindowFn } from '../../src/shared/window'
 import { defaultOptions } from '../../src/shared/constants'
+import { ensureIsArray } from '../../src/utils/ensure'
+import { hasGlobalWindowFn } from '../../src/utils/window'
 
 describe('shared', () => {
   test('ensureIsArray ensures var is array', () => {

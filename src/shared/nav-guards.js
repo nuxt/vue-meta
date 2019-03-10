@@ -1,4 +1,4 @@
-import { isFunction } from './is-type'
+import { isFunction } from '../utils/is-type'
 
 export function addNavGuards(vm) {
   // return when nav guards already added or no router exists

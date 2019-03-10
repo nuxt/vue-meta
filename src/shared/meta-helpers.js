@@ -1,4 +1,4 @@
-import { isUndefined, isObject } from './is-type'
+import { isUndefined, isObject } from '../utils/is-type'
 
 // Vue $root instance has a _vueMeta object property, otherwise its a boolean true
 export function hasMetaInfo(vm = this) {

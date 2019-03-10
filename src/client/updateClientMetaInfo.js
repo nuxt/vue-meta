@@ -1,5 +1,5 @@
 import { metaInfoOptionKeys, metaInfoAttributeKeys } from '../shared/constants'
-import { isArray } from '../shared/is-type'
+import { isArray } from '../utils/is-type'
 import { updateAttribute, updateTag, updateTitle } from './updaters'
 
 function getTag(tags, tag) {

@@ -1,7 +1,7 @@
 import { version } from '../package.json'
 import createMixin from './shared/mixin'
 import setOptions from './shared/options'
-import { isUndefined } from './shared/is-type'
+import { isUndefined } from './utils/is-type'
 import $meta from './client/$meta'
 import { hasMetaInfo } from './shared/meta-helpers'
 

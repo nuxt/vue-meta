@@ -1,4 +1,4 @@
-import { isUndefined } from '../../shared/is-type'
+import { isUndefined } from '../../utils/is-type'
 
 /**
  * Updates meta tags inside <head> and <body> on the client. Borrowed from `react-helmet`:

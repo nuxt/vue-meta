@@ -1,5 +1,5 @@
 import { booleanHtmlAttributes } from '../../shared/constants'
-import { isUndefined, isArray } from '../../shared/is-type'
+import { isUndefined, isArray } from '../../utils/is-type'
 
 /**
  * Generates tag attributes for use on the server.

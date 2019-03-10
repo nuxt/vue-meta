@@ -9,7 +9,7 @@ import Changed from '../components/changed.vue'
 
 const getMetaInfo = component => _getMetaInfo(defaultOptions, component)
 
-jest.mock('../../src/shared/window', () => ({
+jest.mock('../../src/utils/window', () => ({
   hasGlobalWindow: false
 }))
 
