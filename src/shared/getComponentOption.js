@@ -1,6 +1,6 @@
 import { merge } from './merge'
-import applyTemplate from './applyTemplate'
-import inMetaInfoBranch from './inMetaInfoBranch'
+import { applyTemplate } from './template'
+import { inMetaInfoBranch } from './meta-helpers'
 import { isFunction, isObject } from './is-type'
 
 /**
