@@ -1,13 +1,9 @@
-import fs from 'fs'
+import fs from 'fs-extra'
 import path from 'path'
-import { promisify } from 'util'
 import { template } from 'lodash'
 import webpack from 'webpack'
 import VueLoaderPlugin from 'vue-loader/lib/plugin'
 import { createRenderer } from 'vue-server-renderer'
-
-const readFile = promisify(fs.readFile)
-const writeFile = promisify(fs.writeFile)
 
 const renderer = createRenderer()
 
@@ -38,6 +34,10 @@ export async function buildFixture(fixture, config = {}) {
   }
 
   const webpackConfig = createWebpackConfig(config)
+  // remove old files
+  await fs.remove(webpackConfig.output.path)
+
+  // run webpack
   const webpackStats = await webpackRun(webpackConfig)
 
   // for test debugging
@@ -46,7 +46,7 @@ export async function buildFixture(fixture, config = {}) {
 
   const vueApp = await import(path.resolve(fixturePath, 'server')).then(m => m.default || m)
 
-  const templateFile = await readFile(path.resolve(fixturePath, '..', 'app.template.html'), { encoding: 'utf8' })
+  const templateFile = await fs.readFile(path.resolve(fixturePath, '..', 'app.template.html'), { encoding: 'utf8' })
   const compiled = template(templateFile, { interpolate: /{{([\s\S]+?)}}/g })
 
   const webpackAssets = webpackStats.assets.reduce((s, asset) => `${s}<script src="./${asset.name}"${asset.name.includes('chunk') ? '' : ' defer'}></script>\n`, '')
@@ -57,7 +57,7 @@ export async function buildFixture(fixture, config = {}) {
   const appFile = path.resolve(webpackStats.outputPath, 'index.html')
   const html = compiled({ app, webpackAssets, ...metaInfo })
 
-  await writeFile(appFile, html)
+  await fs.writeFile(appFile, html)
 
   return {
     url: `file://${appFile}`,
