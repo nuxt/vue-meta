@@ -1,7 +1,8 @@
 import triggerUpdate from '../client/triggerUpdate'
-import hasMetaInfo from './hasMetaInfo'
+import { hasMetaInfo } from './meta-helpers'
 import { isUndefined, isFunction } from './is-type'
 import { ensuredPush } from './ensure'
+import { addNavGuards } from './nav-guards'
 
 export default function createMixin(Vue, options) {
   // for which Vue lifecycle hooks should the metaInfo be refreshed
@@ -14,7 +15,7 @@ export default function createMixin(Vue, options) {
         get() {
           // Show deprecation warning once when devtools enabled
           if (Vue.config.devtools && !this.$root._vueMeta.hasMetaInfoDeprecationWarningShown) {
-            console.warn('VueMeta DeprecationWarning: _hasMetaInfo has been deprecated and will be removed in a future version. Please import hasMetaInfo and use hasMetaInfo(vm) instead') // eslint-disable-line no-console
+            console.warn('VueMeta DeprecationWarning: _hasMetaInfo has been deprecated and will be removed in a future version. Please use hasMetaInfo(vm) instead') // eslint-disable-line no-console
             this.$root._vueMeta.hasMetaInfoDeprecationWarningShown = true
           }
           return hasMetaInfo(this)
@@ -71,39 +72,32 @@ export default function createMixin(Vue, options) {
           this.$root._vueMeta.initialized = this.$isServer
 
           if (!this.$root._vueMeta.initialized) {
-            const $rootMeta = this.$root.$meta()
-
             ensuredPush(this.$options, 'mounted', () => {
               if (!this.$root._vueMeta.initialized) {
                 // refresh meta in nextTick so all child components have loaded
                 this.$nextTick(function () {
-                  $rootMeta.refresh()
+                  this.$root.$meta().refresh()
                   this.$root._vueMeta.initialized = true
                 })
               }
             })
 
-            // add vue-router navigation guard to prevent multiple updates during navigation
-            // only usefull on the client side
-            if (options.refreshOnceOnNavigation && this.$root.$router) {
-              const $router = this.$root.$router
-              $router.beforeEach((to, from, next) => {
-                $rootMeta.pause()
-                next()
-              })
-
-              $router.afterEach(() => {
-                const { vm, metaInfo } = $rootMeta.resume()
-                if (metaInfo && metaInfo.afterNavigation && isFunction(metaInfo.afterNavigation)) {
-                  metaInfo.afterNavigation.call(vm, metaInfo)
-                }
-              })
+            // add the navigation guards if they havent been added yet
+            if (options.refreshOnceOnNavigation) {
+              addNavGuards(this)
             }
           }
         }
 
         // do not trigger refresh on the server side
         if (!this.$isServer) {
+          // add the navigation guards if they havent been added yet
+          // if metaInfo is defined as a function, this does call the computed fn redundantly
+          // but as Vue internally caches the results of computed props it shouldnt hurt performance
+          if (this.$options[options.keyName].afterNavigation) {
+            addNavGuards(this)
+          }
+
           // no need to add this hooks on server side
           updateOnLifecycleHook.forEach((lifecycleHook) => {
             ensuredPush(this.$options, lifecycleHook, () => triggerUpdate(this, lifecycleHook))
