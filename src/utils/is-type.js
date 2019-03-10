@@ -1,12 +1,10 @@
 /**
  * checks if passed argument is an array
- * @param  {any}  arr - the object to check
- * @return {Boolean} - true if `arr` is an array
+ * @param  {any}  arg - the object to check
+ * @return {Boolean} - true if `arg` is an array
  */
-export function isArray(arr) {
-  return Array.isArray
-    ? Array.isArray(arr)
-    : Object.prototype.toString.call(arr) === '[object Array]'
+export function isArray(arg) {
+  return Array.isArray(arg)
 }
 
 export function isUndefined(arg) {
