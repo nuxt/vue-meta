@@ -1,4 +1,4 @@
-import applyTemplate from './applyTemplate'
+import { applyTemplate } from './template'
 import { defaultInfo, disableOptionKeys } from './constants'
 import { ensureIsArray } from './ensure'
 import { escape } from './escaping'
