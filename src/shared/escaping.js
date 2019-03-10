@@ -1,8 +1,24 @@
 import { metaInfoOptionKeys, disableOptionKeys } from './constants'
 import { isString, isArray, isObject } from './is-type'
 
+export const serverSequences = [
+  [/&/g, '&amp;'],
+  [/</g, '&lt;'],
+  [/>/g, '&gt;'],
+  [/"/g, '&quot;'],
+  [/'/g, '&#x27;']
+]
+
+export const clientSequences = [
+  [/&/g, '\u0026'],
+  [/</g, '\u003c'],
+  [/>/g, '\u003e'],
+  [/"/g, '\u0022'],
+  [/'/g, '\u0027']
+]
+
 // sanitizes potentially dangerous characters
-export default function escape(info, options, escapeOptions) {
+export function escape(info, options, escapeOptions) {
   const { tagIDKeyName } = options
   const { doEscape = v => v } = escapeOptions
   const escaped = {}

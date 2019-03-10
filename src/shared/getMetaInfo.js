@@ -1,7 +1,7 @@
 import applyTemplate from './applyTemplate'
 import { defaultInfo, disableOptionKeys } from './constants'
 import { ensureIsArray } from './ensure'
-import escape from './escape'
+import { escape } from './escaping'
 import getComponentOption from './getComponentOption'
 
 /**
