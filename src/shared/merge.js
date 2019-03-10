@@ -1,5 +1,5 @@
 import deepmerge from 'deepmerge'
-import applyTemplate from './applyTemplate'
+import { applyTemplate } from './template'
 import { metaInfoAttributeKeys } from './constants'
 
 export function arrayMerge({ component, tagIDKeyName, metaTemplateKeyName, contentKeyName }, target, source) {
