@@ -1,5 +1,5 @@
-import fs from 'fs-extra'
 import path from 'path'
+import fs from 'fs-extra'
 import { template } from 'lodash'
 import webpack from 'webpack'
 import VueLoaderPlugin from 'vue-loader/lib/plugin'
