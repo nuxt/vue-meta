@@ -1,6 +1,6 @@
 import { isUndefined, isFunction } from './is-type'
 
-export default function applyTemplate({ component, metaTemplateKeyName, contentKeyName }, headObject, template, chunk) {
+export function applyTemplate({ component, metaTemplateKeyName, contentKeyName }, headObject, template, chunk) {
   if (isUndefined(template)) {
     template = headObject[metaTemplateKeyName]
     delete headObject[metaTemplateKeyName]
