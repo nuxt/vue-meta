@@ -1,4 +1,4 @@
-import { hasGlobalWindow } from '../shared/window'
+import { hasGlobalWindow } from '../utils/window'
 
 // fallback to timers if rAF not present
 const stopUpdate = (hasGlobalWindow ? window.cancelAnimationFrame : null) || clearTimeout

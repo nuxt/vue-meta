@@ -1,5 +1,5 @@
 import getMetaInfo from '../shared/getMetaInfo'
-import { isFunction } from '../shared/is-type'
+import { isFunction } from '../utils/is-type'
 import { clientSequences } from '../shared/escaping'
 import updateClientMetaInfo from './updateClientMetaInfo'
 

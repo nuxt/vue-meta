@@ -1,5 +1,5 @@
+import { isString, isArray, isObject } from '../utils/is-type'
 import { metaInfoOptionKeys, disableOptionKeys } from './constants'
-import { isString, isArray, isObject } from './is-type'
 
 export const serverSequences = [
   [/&/g, '&amp;'],

@@ -1,7 +1,7 @@
+import { isFunction, isObject } from '../utils/is-type'
 import { merge } from './merge'
 import { applyTemplate } from './template'
 import { inMetaInfoBranch } from './meta-helpers'
-import { isFunction, isObject } from './is-type'
 
 /**
  * Returns the `opts.option` $option value of the given `opts.component`.

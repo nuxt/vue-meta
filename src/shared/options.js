@@ -1,4 +1,4 @@
-import { isObject } from './is-type'
+import { isObject } from '../utils/is-type'
 import { defaultOptions } from './constants'
 
 export default function setOptions(options) {

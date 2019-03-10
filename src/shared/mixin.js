@@ -1,7 +1,7 @@
 import triggerUpdate from '../client/triggerUpdate'
+import { isUndefined, isFunction } from '../utils/is-type'
+import { ensuredPush } from '../utils/ensure'
 import { hasMetaInfo } from './meta-helpers'
-import { isUndefined, isFunction } from './is-type'
-import { ensuredPush } from './ensure'
 import { addNavGuards } from './nav-guards'
 
 export default function createMixin(Vue, options) {
