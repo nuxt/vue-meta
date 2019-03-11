@@ -1,7 +1,8 @@
 import commonjs from 'rollup-plugin-commonjs'
 import nodeResolve from 'rollup-plugin-node-resolve'
 import json from 'rollup-plugin-json'
-import babel from 'rollup-plugin-babel'
+import buble from 'rollup-plugin-buble'
+import replace from 'rollup-plugin-replace'
 import { terser } from 'rollup-plugin-terser'
 import defaultsDeep from 'lodash/defaultsDeep'
 
@@ -19,6 +20,21 @@ function rollupConfig({
   ...config
   }) {
 
+  const replaceConfig = {
+    exclude: 'node_modules/**',
+    delimiters: ['', ''],
+    values: {
+      // replaceConfig needs to have some values
+      'const polyfill = process.env.NODE_ENV === \'test\'': 'const polyfill = false',
+    }
+  }
+
+  if (!config.output.format || config.output.format === 'umd') {
+    replaceConfig.values = {
+      'const polyfill = process.env.NODE_ENV === \'test\'': 'const polyfill = true',
+    }
+  }
+
   return defaultsDeep({}, config, {
     input: 'src/browser.js',
     output: {
@@ -29,18 +45,10 @@ function rollupConfig({
     },
     plugins: [
       json(),
-      nodeResolve()
+      nodeResolve(),
+      replace(replaceConfig)
     ].concat(plugins),
   })
-}
-
-const babelConfig = {
-  runtimeHelpers: true,
-  exclude : 'node_modules/**',
-  presets: [['@nuxt/babel-preset-app', {
-    // useBuiltIns: 'usage',
-    // target: { ie: 9 }
-  }]]
 }
 
 export default [
@@ -49,8 +57,8 @@ export default [
       file: pkg.web,
     },
     plugins: [
-      babel(babelConfig),
-      commonjs()
+      commonjs(),
+      buble()
     ]
   }),
   rollupConfig({
@@ -58,8 +66,8 @@ export default [
       file: pkg.web.replace('.js', '.min.js'),
     },
     plugins: [
-      babel(babelConfig),
       commonjs(),
+      buble(),
       terser()
     ]
   }),
