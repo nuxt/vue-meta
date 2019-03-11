@@ -51,10 +51,9 @@
     "docs": "vuepress dev --host 0.0.0.0 --port 3000 docs",
     "docs:build": "vuepress build docs",
     "lint": "eslint src test",
-    "predeploy": "git checkout master && git pull -r",
-    "deploy": "yarn version",
-    "postdeploy": "git push origin master --follow-tags && yarn release",
-    "release": "yarn lint && yarn test && yarn build && yarn publish",
+    "prerelease": "git checkout master && git pull -r",
+    "release": "yarn lint && yarn test && yarn build && standard-version",
+    "postrelease": "git push origin master --follow-tags && yarn publish",
     "test": "jest"
   },
   "dependencies": {
@@ -97,6 +96,7 @@
     "rollup-plugin-json": "^3.1.0",
     "rollup-plugin-node-resolve": "^4.0.0",
     "rollup-plugin-terser": "^4.0.4",
+    "standard-version": "^5.0.1",
     "update-section": "^0.3.3",
     "vue": "^2.6.8",
     "vue-jest": "^3.0.4",
