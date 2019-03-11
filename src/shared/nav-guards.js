@@ -3,6 +3,7 @@ import { isFunction } from '../utils/is-type'
 export function addNavGuards(vm) {
   // return when nav guards already added or no router exists
   if (vm.$root._vueMeta.navGuards || !vm.$root.$router) {
+    /* istanbul ignore next */
     return
   }
 
