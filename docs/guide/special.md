@@ -14,7 +14,7 @@ With content value we mean the following value of a `metaInfo` property:
 - the value of `[contentKeyName]` or `innerHTML` keys for `collection` types as [`meta`](/api/#meta)
 :::
 
-The following might be a bit-far-fetched, but its just an example
+The following might be a bit far-fetched, but its just an example
 ```js
 // parent
 metaInfo: {
