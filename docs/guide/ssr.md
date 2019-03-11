@@ -4,7 +4,7 @@ If you have an isomorphic/universal web application, you'll likely want to rende
 
 ## Add `vue-meta` to the context
 
-You'll need to expose the results of the `$meta` method that `vue-meta` adds to the Vue instance to the bundle render context before you can begin injecting your meta information. You'll need to do this in your server entry file:
+You'll need to expose the results of the `$meta` method that `vue-meta` adds to the Vue instance to the bundle render context before you can begin injecting your metadata. You'll need to do this in your server entry file:
 
 **server-entry.js:**
 ```js

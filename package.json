@@ -1,13 +1,14 @@
 {
   "name": "vue-meta",
   "version": "1.5.8",
-  "description": "Manage page meta info in Vue 2.0 server-rendered apps",
+  "description": "Manage page metadata in Vue.js components with ssr support",
   "keywords": [
     "attribute",
     "google",
     "head",
     "helmet",
     "info",
+    "metadata",
     "meta",
     "seo",
     "server",

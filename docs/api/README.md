@@ -69,8 +69,8 @@ Could be used by third-party libraries who wish to interact with `vue-meta`
 ### $meta().refresh
 - returns [`metaInfo`](/api/#metaInfo-properties)
 
-Updates the current meta info with new meta info.
-Useful when updating meta info as the result of an asynchronous action that resolves after the initial render takes place.
+Updates the current metadata with new metadata.
+Useful when updating metadata as the result of an asynchronous action that resolves after the initial render takes place.
 
 ### $meta().inject
 - returns [`metaInfo`](/api/#metaInfo-properties)
@@ -437,7 +437,7 @@ The callback receives the following arguments:
 {
   metaInfo: {
     changed (newInfo, addedTags, removedTags) {
-      console.log('Meta info was updated!')
+      console.log('Metadata was updated!')
     }
   }
 }
