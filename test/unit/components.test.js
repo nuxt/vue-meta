@@ -128,8 +128,41 @@ describe('client', () => {
     expect(context._uid).toBe(wrapper.vm._uid)
   })
 
-  test('afterNavigation function is called', () => {
+  test('afterNavigation function is called with refreshOnce: true', () => {
     const Vue = loadVueMetaPlugin(false, { refreshOnceOnNavigation: true })
+    const afterNavigation = jest.fn()
+    const component = Vue.component('nav-component', {
+      render: h => h('div'),
+      metaInfo: { afterNavigation }
+    })
+
+    const guards = {}
+    const wrapper = mount(component, {
+      localVue: Vue,
+      mocks: {
+        $router: {
+          beforeEach(fn) {
+            guards.before = fn
+          },
+          afterEach(fn) {
+            guards.after = fn
+          }
+        }
+      }
+    })
+
+    expect(guards.before).toBeDefined()
+    expect(guards.after).toBeDefined()
+
+    guards.before(null, null, () => {})
+    expect(wrapper.vm.$root._vueMeta.paused).toBe(true)
+
+    guards.after()
+    expect(afterNavigation).toHaveBeenCalled()
+  })
+
+  test('afterNavigation function is called with refreshOnce: false', () => {
+    const Vue = loadVueMetaPlugin(false, { refreshOnceOnNavigation: false })
     const afterNavigation = jest.fn()
     const component = Vue.component('nav-component', {
       render: h => h('div'),
