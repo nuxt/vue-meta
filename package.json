@@ -24,11 +24,14 @@
     "url": "git@github.com/nuxt/vue-meta.git"
   },
   "license": "MIT",
-  "contributors": [{
-    "name": "Declan de Wet (@declandewet)"
-  }, {
-    "name": "Sebastien Chopin (@Atinux)"
-  }],
+  "contributors": [
+    {
+      "name": "Declan de Wet (@declandewet)"
+    },
+    {
+      "name": "Sebastien Chopin (@Atinux)"
+    }
+  ],
   "files": [
     "lib",
     "es",
@@ -53,11 +56,7 @@
     "lint": "eslint src test",
     "prerelease": "npm run build",
     "release": "npm publish",
-    "test": "jest",
-    "toc": "doctoc README.md --title '# Table of Contents'",
-    "update-cdn": "babel-node scripts/update-cdn.js",
-    "preversion": "npm run toc",
-    "postversion": "npm run update-cdn && git add . && git commit -m \":ship: CDN update\""
+    "test": "jest"
   },
   "dependencies": {
     "deepmerge": "^3.2.0",
@@ -80,7 +79,6 @@
     "babel-jest": "^24.1.0",
     "babel-loader": "^8.0.5",
     "codecov": "^3.2.0",
-    "doctoc": "^1.4.0",
     "eslint": "^5.14.1",
     "eslint-config-standard": "^12.0.0",
     "eslint-plugin-import": "^2.16.0",
