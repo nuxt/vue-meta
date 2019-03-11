@@ -1,5 +1,6 @@
 import { metaInfoOptionKeys, metaInfoAttributeKeys } from '../shared/constants'
 import { isArray } from '../utils/is-type'
+import { includes } from '../utils/array'
 import { updateAttribute, updateTag, updateTitle } from './updaters'
 
 function getTag(tags, tag) {
@@ -36,7 +37,7 @@ export default function updateClientMetaInfo(options = {}, newInfo) {
 
   for (const type in newInfo) {
     // ignore these
-    if (metaInfoOptionKeys.includes(type)) {
+    if (includes(metaInfoOptionKeys, type)) {
       continue
     }
 
@@ -46,7 +47,7 @@ export default function updateClientMetaInfo(options = {}, newInfo) {
       continue
     }
 
-    if (metaInfoAttributeKeys.includes(type)) {
+    if (includes(metaInfoAttributeKeys, type)) {
       const tagName = type.substr(0, 4)
       updateAttribute(options, newInfo[type], getTag(tags, tagName))
       continue

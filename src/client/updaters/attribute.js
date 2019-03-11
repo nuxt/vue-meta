@@ -1,4 +1,5 @@
 import { booleanHtmlAttributes } from '../../shared/constants'
+import { toArray, includes } from '../../utils/array'
 import { isArray } from '../../utils/is-type'
 
 /**
@@ -10,18 +11,18 @@ import { isArray } from '../../utils/is-type'
 export default function updateAttribute({ attribute } = {}, attrs, tag) {
   const vueMetaAttrString = tag.getAttribute(attribute)
   const vueMetaAttrs = vueMetaAttrString ? vueMetaAttrString.split(',') : []
-  const toRemove = Array.from(vueMetaAttrs)
+  const toRemove = toArray(vueMetaAttrs)
 
   const keepIndexes = []
   for (const attr in attrs) {
     if (attrs.hasOwnProperty(attr)) {
-      const value = booleanHtmlAttributes.includes(attr)
+      const value = includes(booleanHtmlAttributes, attr)
         ? ''
         : isArray(attrs[attr]) ? attrs[attr].join(' ') : attrs[attr]
 
       tag.setAttribute(attr, value || '')
 
-      if (!vueMetaAttrs.includes(attr)) {
+      if (!includes(vueMetaAttrs, attr)) {
         vueMetaAttrs.push(attr)
       }
 
@@ -31,7 +32,7 @@ export default function updateAttribute({ attribute } = {}, attrs, tag) {
   }
 
   const removedAttributesCount = toRemove
-    .filter((el, index) => !keepIndexes.includes(index))
+    .filter((el, index) => !includes(keepIndexes, index))
     .reduce((acc, attr) => {
       tag.removeAttribute(attr)
       return acc + 1
