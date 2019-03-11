@@ -97,7 +97,6 @@
     "rollup-plugin-node-resolve": "^4.0.0",
     "rollup-plugin-terser": "^4.0.4",
     "standard-version": "^5.0.1",
-    "update-section": "^0.3.3",
     "vue": "^2.6.8",
     "vue-jest": "^3.0.4",
     "vue-loader": "^15.7.0",
