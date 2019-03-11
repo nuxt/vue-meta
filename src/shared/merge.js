@@ -1,4 +1,5 @@
 import deepmerge from 'deepmerge'
+import { findIndex } from '../utils/array'
 import { applyTemplate } from './template'
 import { metaInfoAttributeKeys } from './constants'
 
@@ -15,7 +16,7 @@ export function arrayMerge({ component, tagIDKeyName, metaTemplateKeyName, conte
       return
     }
 
-    const sourceIndex = source.findIndex(item => item[tagIDKeyName] === targetItem[tagIDKeyName])
+    const sourceIndex = findIndex(source, item => item[tagIDKeyName] === targetItem[tagIDKeyName])
     const sourceItem = source[sourceIndex]
 
     // source doesnt contain any duplicate vmid's, we can keep targetItem

@@ -13,7 +13,7 @@ import getComponentOption from './getComponentOption'
  */
 export default function getMetaInfo(options = {}, component, escapeSequences = []) {
   // collect & aggregate all metaInfo $options
-  let info = getComponentOption({ ...options, component }, defaultInfo)
+  let info = getComponentOption(options, component, defaultInfo)
 
   // Remove all "template" tags from meta
 
