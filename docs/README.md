@@ -7,8 +7,8 @@ We would like your help with this! Please visit the [Vue Meta v3.0 rfc](https://
 :::
 
 # Introduction
-Vue Meta is a [Vue.js](https://vuejs.org) plugin that allows you to manage your app's metadata, much like [`react-helmet`](https://github.com/nfl/react-helmet) does for React. However, instead of setting your data as props passed to a proprietary component, you simply export it as part of your component's data using the `metaInfo` property.
+`vue-meta` is a [Vue.js](https://vuejs.org) plugin that allows you to manage your app's metadata, much like [`react-helmet`](https://github.com/nfl/react-helmet) does for React. However, instead of setting your data as props passed to a proprietary component, you simply export it as part of your component's data using the `metaInfo` property.
 
-These properties, when set on a deeply nested component, will cleverly overwrite their parent components' `metaInfo`, thereby enabling custom info for each top-level view as well as coupling meta info directly to deeply nested subcomponents for more maintainable code.
+These properties, when set on a deeply nested component, will cleverly overwrite their parent components' `metaInfo`, thereby enabling custom info for each top-level view as well as coupling meta info directly to deeply nested sub components for more maintainable code.
 
 [Get started](/guide) or play with the [examples](https://github.com/nuxt/vue-meta/tree/master/examples)

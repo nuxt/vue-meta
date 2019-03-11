@@ -3,7 +3,7 @@
 ## Reactive variables in template functions
 
 Both [title](/api/#titletemplate) as [meta](/api/#content-templates) support using template function.
-Due to how Vue.js determines reactivity it is not possible to use reactive variables directly in template function
+Due to how Vue determines reactivity it is not possible to use reactive variables directly in template function
 
 ```js
 {

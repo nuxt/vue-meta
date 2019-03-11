@@ -9,7 +9,7 @@ For the latest version in the v1.x branch you can use:<br/>
 
 Or you can replace `1` with the full version number you wish to use.
 
-If you include vue-meta after vue it will install automatically
+If you include vue-meta after Vue it will install automatically
 
 **Uncompressed:**
 ```html

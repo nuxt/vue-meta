@@ -1,6 +1,6 @@
 # Server Side Rendering
 
-If you have an isomorphic/universal webapp, you'll likely want to render your metadata on the server side as well. Here's how.
+If you have an isomorphic/universal web application, you'll likely want to render your metadata on the server side as well. Here's how.
 
 ## Add `vue-meta` to the context
 

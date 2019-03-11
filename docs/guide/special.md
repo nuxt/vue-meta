@@ -14,7 +14,7 @@ With content value we mean the following value of a `metaInfo` property:
 - the value of `[contentKeyName]` or `innerHTML` keys for `collection` types as [`meta`](/api/#meta)
 :::
 
-The following might be a bit-farfetched, but its just an example
+The following might be a bit-far-fetched, but its just an example
 ```js
 // parent
 metaInfo: {
@@ -99,10 +99,10 @@ methods: {
 
 ## Boolean attributes
 
-`vue-meta` maintains a [list](https://github.com/nuxt/vue-meta/blob/master/src/shared/constants.js) of attributes which are boolean attributes according to the HTML specs (and some extra). Whatever value you will pass to these attributes, they will be rendered as a boolean attribute.<sup>*</sup>
+`vue-meta` maintains a [list](https://github.com/nuxt/vue-meta/blob/master/src/shared/constants.js) of attributes which are Boolean attributes according to the HTML specs (and some extra). Whatever value you will pass to these attributes, they will be rendered as a Boolean attribute.<sup>*</sup>
 
 <sup>*</sup><small>Except for the special values `undefined` and `null`, see above</small>
 
 :::tip Note
-Prior to `v2.0` any attribute key with `undefined` as value was rendered as boolean attribute. This has been removed as packagers often remove object properties with an `undefined` value as given `a = {}` then `a.a === undefined`
+Prior to `v2.0` any attribute key with `undefined` as value was rendered as Boolean attribute. This has been removed as bundlers often remove object properties with an `undefined` value as given `a = {}` then `a.a === undefined`
 :::

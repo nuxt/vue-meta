@@ -22,7 +22,7 @@ The name of the attribute vue-meta arguments on elements to know which it should
 - type `string`
 - default `data-vue-meta-server-rendered`
 
-The name of the attribute that is aded to the `html` tag to inform `vue-meta` that the server has already generated the meta tags for the initial render
+The name of the attribute that is added to the `html` tag to inform `vue-meta` that the server has already generated the meta tags for the initial render
 
 See [How to prevent update on page load](/faq/prevent-initial)
 
@@ -30,7 +30,7 @@ See [How to prevent update on page load](/faq/prevent-initial)
 - type `string`
 - default `vmid`
 
-The property that tells vue-meta to overwrite (instead of append) an item in a tag list.
+The property that tells `vue-meta` to overwrite (instead of append) an item in a tag list.
 For example, if you have two `meta` tag list items that both have `vmid` of 'description',
 then vue-meta will overwrite the shallowest one with the deepest one.
 
@@ -50,7 +50,7 @@ The key name for possible meta templates
 - type `boolean`
 - default `false`
 
-When `true` then vue-meta will pause updates once page navigation starts and resumes updates when navigation finishes (resuming also triggers an update).
+When `true` then `vue-meta` will pause updates once page navigation starts and resumes updates when navigation finishes (resuming also triggers an update).
 This could both be a performance improvement as a possible fix for 'flickering' when you are e.g. replacing stylesheets
 
 ## Plugin methods
@@ -100,7 +100,7 @@ Resumes metadata updates after they have been paused. If `refresh` is `true` it 
 ## metaInfo properties
 
 ::: tip Note
-The documentation below uses `metaInfo` in the examples, please note that this keyName is [configurable](/api/#keyname) and could be different in your case
+The documentation below uses `metaInfo` as `keyName` in the examples, please note that this is [configurable](/api/#keyname) and could be different in your case
 :::
 
 ### title
@@ -391,10 +391,10 @@ By default, `vue-meta` sanitizes HTML entities in _every_ property. You can disa
 - type `object`
 
 ::: warning
-By disabling sanitization, you are opening potential vectors for attacks such as SQL injection & Cross-Site Scripting (XSS). Be very careful to not compromise your application.
+By disabling sanitation, you are opening potential vectors for attacks such as SQL injection & Cross-Site Scripting (XSS). Be very careful to not compromise your application.
 :::
 
-Provides same functionality as `__dangerouslyDisableSanitizers` but you can specify which property for which `tagIDKeyName` sanitation should be disabled. It expects an object with the vmid's as key and an array with property keys as value:
+Provides same functionality as `__dangerouslyDisableSanitizers` but you can specify which property for which `tagIDKeyName` sanitation should be disabled. It expects an object with the vmid as key and an array with property keys as value:
 
 ```js
 {
@@ -446,7 +446,7 @@ The callback receives the following arguments:
 ### afterNavigation
 - type `Function`
 
-A callback function which is called when `vue-meta` has updated the metadata after navigation occured.
+A callback function which is called when `vue-meta` has updated the metadata after navigation occurred.
 This can be used to track page views with the updated document title etc.
 
 Adding a `afterNavigation` callback behaves the same as when [refreshOnceOnNavigation](/api/#refreshonceonnavigation) is `true`
