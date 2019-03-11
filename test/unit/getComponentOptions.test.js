@@ -9,13 +9,13 @@ describe('getComponentOption', () => {
 
   test('returns an empty object when no matching options are found', () => {
     const component = new Vue()
-    const mergedOption = getComponentOption({ component, keyName: 'noop' })
+    const mergedOption = getComponentOption({ keyName: 'noop' }, component)
     expect(mergedOption).toEqual({})
   })
 
   test('fetches the given option from the given component', () => {
     const component = new Vue({ someOption: { foo: 'bar' } })
-    const mergedOption = getComponentOption({ component, keyName: 'someOption' })
+    const mergedOption = getComponentOption({ keyName: 'someOption' }, component)
     expect(mergedOption.foo).toBeDefined()
     expect(mergedOption.foo).toEqual('bar')
   })
@@ -27,7 +27,7 @@ describe('getComponentOption', () => {
         return { opt: this.$options.name }
       }
     })
-    const mergedOption = getComponentOption({ component, keyName: 'someFunc' })
+    const mergedOption = getComponentOption({ keyName: 'someFunc' }, component)
     // TODO: Should this be foobar or Foobar
     expect(mergedOption.opt).toBeDefined()
     expect(mergedOption.opt).toEqual('Foobar')
@@ -44,7 +44,7 @@ describe('getComponentOption', () => {
 
     const wrapper = mount(component, { localVue })
 
-    const mergedOption = getComponentOption({ component: wrapper.vm, keyName: 'foo' })
+    const mergedOption = getComponentOption({ keyName: 'foo' }, wrapper.vm)
     expect(mergedOption).toEqual({ bar: 'baz', fizz: 'buzz' })
   })
 
@@ -111,7 +111,7 @@ describe('getComponentOption', () => {
 
     const wrapper = mount(component, { localVue })
 
-    const mergedOption = getComponentOption({ component: wrapper.vm, keyName: 'foo' })
+    const mergedOption = getComponentOption({ keyName: 'foo' }, wrapper.vm)
 
     expect(mergedOption).toEqual({ bar: 'baz' })
     expect(wrapper.vm.$children[0]._vueMeta).toBe(true)
