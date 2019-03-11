@@ -1,5 +1,6 @@
 import fs from 'fs'
 import path from 'path'
+import consola from 'consola'
 import express from 'express'
 import rewrite from 'express-urlrewrite'
 import webpack from 'webpack'
@@ -16,7 +17,7 @@ app.use(webpackDevMiddleware(webpack(WebpackConfig), {
   }
 }))
 
-fs.readdirSync(__dirname).forEach(file => {
+fs.readdirSync(__dirname).forEach((file) => {
   if (fs.statSync(path.join(__dirname, file)).isDirectory()) {
     app.use(rewrite('/' + file + '/*', '/' + file + '/index.html'))
   }
@@ -28,5 +29,5 @@ const host = process.env.HOST || 'localhost'
 const port = process.env.PORT || 3000
 
 module.exports = app.listen(port, host, () => {
-  console.log(`Server listening on http://${host}:${port}, Ctrl+C to stop`)
+  consola.info(`Server listening on http://${host}:${port}, Ctrl+C to stop`)
 })
