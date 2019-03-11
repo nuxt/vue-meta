@@ -23,7 +23,11 @@
     "url": "git@github.com/nuxt/vue-meta.git"
   },
   "license": "MIT",
-  "author": "Declan de Wet <declandewet@me.com>",
+  "contributors": [{
+    "name": "Declan de Wet (@declandewet)"
+  }, {
+    "name": "Sebastien Chopin (@Atinux)"
+  }],
   "files": [
     "lib",
     "es",
