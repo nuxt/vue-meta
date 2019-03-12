@@ -1,4 +1,5 @@
-import { isUndefined } from '../../shared/typeof'
+import { isUndefined } from '../../utils/is-type'
+import { toArray, includes } from '../../utils/array'
 
 /**
  * Updates meta tags inside <head> and <body> on the client. Borrowed from `react-helmet`:
@@ -9,8 +10,9 @@ import { isUndefined } from '../../shared/typeof'
  * @return {Object} - a representation of what tags changed
  */
 export default function updateTag({ attribute, tagIDKeyName } = {}, type, tags, headTag, bodyTag) {
-  const oldHeadTags = Array.from(headTag.querySelectorAll(`${type}[${attribute}]`))
-  const oldBodyTags = Array.from(bodyTag.querySelectorAll(`${type}[${attribute}][data-body="true"]`))
+  const oldHeadTags = toArray(headTag.querySelectorAll(`${type}[${attribute}]`))
+  const oldBodyTags = toArray(bodyTag.querySelectorAll(`${type}[${attribute}][data-body="true"]`))
+  const dataAttributes = [tagIDKeyName, 'body']
   const newTags = []
 
   if (tags.length > 1) {
@@ -20,13 +22,13 @@ export default function updateTag({ attribute, tagIDKeyName } = {}, type, tags, 
     const found = []
     tags = tags.filter((x) => {
       const k = JSON.stringify(x)
-      const res = !found.includes(k)
+      const res = !includes(found, k)
       found.push(k)
       return res
     })
   }
 
-  if (tags && tags.length) {
+  if (tags.length) {
     tags.forEach((tag) => {
       const newElement = document.createElement(type)
       newElement.setAttribute(attribute, 'true')
@@ -44,13 +46,12 @@ export default function updateTag({ attribute, tagIDKeyName } = {}, type, tags, 
             } else {
               newElement.appendChild(document.createTextNode(tag.cssText))
             }
-          } else if ([tagIDKeyName, 'body'].includes(attr)) {
-            const _attr = `data-${attr}`
+          } else {
+            const _attr = includes(dataAttributes, attr)
+              ? `data-${attr}`
+              : attr
             const value = isUndefined(tag[attr]) ? '' : tag[attr]
             newElement.setAttribute(_attr, value)
-          } else {
-            const value = isUndefined(tag[attr]) ? '' : tag[attr]
-            newElement.setAttribute(attr, value)
           }
         }
       }

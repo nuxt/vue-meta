@@ -1,5 +1,5 @@
 module.exports = {
-  testEnvironment: 'node',
+  testEnvironment: 'jest-environment-jsdom-global',
 
   expand: true,
 

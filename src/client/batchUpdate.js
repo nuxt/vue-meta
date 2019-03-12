@@ -1,4 +1,4 @@
-import { hasGlobalWindow } from '../shared/window'
+import { hasGlobalWindow } from '../utils/window'
 
 // fallback to timers if rAF not present
 const stopUpdate = (hasGlobalWindow ? window.cancelAnimationFrame : null) || clearTimeout
@@ -15,9 +15,7 @@ const startUpdate = (hasGlobalWindow ? window.requestAnimationFrame : null) || (
  * @return {Number} id - a new ID
  */
 export default function batchUpdate(id, callback) {
-  if (id) {
-    stopUpdate(id)
-  }
+  stopUpdate(id)
 
   return startUpdate(() => {
     id = null

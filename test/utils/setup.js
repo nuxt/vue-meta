@@ -1,5 +1,2 @@
-import jsdom from 'jsdom-global'
-
-jsdom()
-
 jest.useFakeTimers()
+jest.setTimeout(15000)

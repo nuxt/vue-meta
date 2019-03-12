@@ -1,25 +1,7 @@
-import { isObject, isFunction } from './typeof'
+import { isObject } from '../utils/is-type'
+import { defaultOptions } from './constants'
 
-import {
-  keyName,
-  attribute,
-  ssrAttribute,
-  tagIDKeyName,
-  metaTemplateKeyName,
-  contentKeyName
-} from './constants'
-
-// set some default options
-const defaultOptions = {
-  keyName,
-  contentKeyName,
-  metaTemplateKeyName,
-  attribute,
-  ssrAttribute,
-  tagIDKeyName
-}
-
-export default function setOptions(options) {
+export function setOptions(options) {
   // combine options
   options = isObject(options) ? options : {}
 
@@ -29,15 +11,13 @@ export default function setOptions(options) {
     }
   }
 
-  if (options.afterNavigation && !isFunction(options.afterNavigation)) {
-    console.warn(`afterNavigation should be a function, received ${typeof options.afterNavigation} instead`) // eslint-disable-line no-console
-    options.afterNavigation = void 0
-    return options
-  }
-
-  if (options.afterNavigation && !options.refreshOnceOnNavigation) {
-    options.refreshOnceOnNavigation = true
-  }
-
   return options
+}
+
+export function getOptions(options) {
+  const optionsCopy = {}
+  for (const key in options) {
+    optionsCopy[key] = options[key]
+  }
+  return optionsCopy
 }

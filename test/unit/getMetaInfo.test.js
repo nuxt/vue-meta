@@ -1,5 +1,6 @@
-import _getMetaInfo from '../src/shared/getMetaInfo'
-import { defaultOptions, loadVueMetaPlugin } from './utils'
+import _getMetaInfo from '../../src/shared/getMetaInfo'
+import { loadVueMetaPlugin } from '../utils'
+import { defaultOptions } from '../../src/shared/constants'
 
 const getMetaInfo = component => _getMetaInfo(defaultOptions, component)
 
@@ -117,7 +118,7 @@ describe('getMetaInfo', () => {
         {
           vmid: 'a',
           property: 'a',
-          content: 'b'
+          content: 'a'
         }
       ],
       base: [],
@@ -482,8 +483,6 @@ describe('getMetaInfo', () => {
     })
   })
 
-  // TODO: Still failing :( Child template won't be applied if child has no content as well
-
   test('properly uses meta templates with one-level-deep nested children template', () => {
     Vue.component('merge-child', {
       render: h => h('div'),
@@ -583,6 +582,235 @@ describe('getMetaInfo', () => {
           content: 'An important title! - My page'
         }
       ],
+      base: [],
+      link: [],
+      style: [],
+      script: [],
+      noscript: [],
+      __dangerouslyDisableSanitizers: [],
+      __dangerouslyDisableSanitizersByTagID: {}
+    })
+  })
+
+  test('properly uses meta templates with one-level-deep nested children when parent has no template', () => {
+    Vue.component('merge-child', {
+      render: h => h('div'),
+      metaInfo: {
+        title: 'Hello',
+        meta: [
+          {
+            vmid: 'og:title',
+            property: 'og:title',
+            content: 'An important title!',
+            template: chunk => `${chunk} - My page`
+          }
+        ]
+      }
+    })
+
+    const component = new Vue({
+      metaInfo: {
+        meta: [
+          {
+            vmid: 'og:title',
+            property: 'og:title',
+            content: 'Test title'
+          }
+        ]
+      },
+      el: document.createElement('div'),
+      render: h => h('div', null, [h('merge-child')])
+    })
+
+    expect(getMetaInfo(component)).toEqual({
+      title: 'Hello',
+      titleChunk: 'Hello',
+      titleTemplate: '%s',
+      htmlAttrs: {},
+      headAttrs: {},
+      bodyAttrs: {},
+      meta: [
+        {
+          vmid: 'og:title',
+          property: 'og:title',
+          content: 'An important title! - My page'
+        }
+      ],
+      base: [],
+      link: [],
+      style: [],
+      script: [],
+      noscript: [],
+      __dangerouslyDisableSanitizers: [],
+      __dangerouslyDisableSanitizersByTagID: {}
+    })
+  })
+
+  test('no errors when metaInfo returns nothing', () => {
+    const component = new Vue({
+      metaInfo() {},
+      el: document.createElement('div'),
+      render: h => h('div', null, [])
+    })
+
+    expect(getMetaInfo(component)).toEqual({
+      title: '',
+      titleChunk: '',
+      titleTemplate: '%s',
+      htmlAttrs: {},
+      headAttrs: {},
+      bodyAttrs: {},
+      meta: [],
+      base: [],
+      link: [],
+      style: [],
+      script: [],
+      noscript: [],
+      __dangerouslyDisableSanitizers: [],
+      __dangerouslyDisableSanitizersByTagID: {}
+    })
+  })
+
+  test('child can indicate its content should be ignored', () => {
+    Vue.component('merge-child', {
+      render: h => h('div'),
+      metaInfo: {
+        title: undefined,
+        bodyAttrs: {
+          class: undefined
+        },
+        meta: [
+          {
+            vmid: 'og:title',
+            content: undefined
+          }
+        ]
+      }
+    })
+
+    const component = new Vue({
+      metaInfo: {
+        title: 'Hello',
+        bodyAttrs: {
+          class: 'class'
+        },
+        meta: [
+          {
+            vmid: 'og:title',
+            property: 'og:title',
+            content: 'Test title',
+            template: chunk => `${chunk} - My page`
+          }
+        ]
+      },
+      el: document.createElement('div'),
+      render: h => h('div', null, [h('merge-child')])
+    })
+
+    expect(getMetaInfo(component)).toEqual({
+      title: 'Hello',
+      titleChunk: 'Hello',
+      titleTemplate: '%s',
+      bodyAttrs: {
+        class: 'class'
+      },
+      headAttrs: {},
+      htmlAttrs: {},
+      meta: [
+        {
+          vmid: 'og:title',
+          property: 'og:title',
+          content: 'Test title - My page'
+        }
+      ],
+      base: [],
+      link: [],
+      style: [],
+      script: [],
+      noscript: [],
+      __dangerouslyDisableSanitizers: [],
+      __dangerouslyDisableSanitizersByTagID: {}
+    })
+  })
+
+  test('child can indicate to remove parent vmids', () => {
+    Vue.component('merge-child', {
+      render: h => h('div'),
+      metaInfo: {
+        title: 'Hi',
+        meta: [
+          {
+            vmid: 'og:title',
+            content: null
+          }
+        ]
+      }
+    })
+
+    const component = new Vue({
+      metaInfo: {
+        title: 'Hello',
+        meta: [
+          {
+            vmid: 'og:title',
+            property: 'og:title',
+            content: 'Test title',
+            template: chunk => `${chunk} - My page`
+          }
+        ]
+      },
+      el: document.createElement('div'),
+      render: h => h('div', null, [h('merge-child')])
+    })
+
+    expect(getMetaInfo(component)).toEqual({
+      title: 'Hi',
+      titleChunk: 'Hi',
+      titleTemplate: '%s',
+      htmlAttrs: {},
+      headAttrs: {},
+      bodyAttrs: {},
+      meta: [],
+      base: [],
+      link: [],
+      style: [],
+      script: [],
+      noscript: [],
+      __dangerouslyDisableSanitizers: [],
+      __dangerouslyDisableSanitizersByTagID: {}
+    })
+  })
+
+  test('attribute values can be an array', () => {
+    Vue.component('merge-child', {
+      render: h => h('div'),
+      metaInfo: {
+        bodyAttrs: {
+          class: ['foo']
+        }
+      }
+    })
+
+    const component = new Vue({
+      metaInfo: {
+        bodyAttrs: {
+          class: ['bar']
+        }
+      },
+      el: document.createElement('div'),
+      render: h => h('div', null, [h('merge-child')])
+    })
+
+    expect(getMetaInfo(component)).toEqual({
+      title: '',
+      titleChunk: '',
+      titleTemplate: '%s',
+      htmlAttrs: {},
+      headAttrs: {},
+      bodyAttrs: {
+        class: ['bar', 'foo']
+      },
+      meta: [],
       base: [],
       link: [],
       style: [],

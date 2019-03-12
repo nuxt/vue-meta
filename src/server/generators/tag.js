@@ -1,5 +1,5 @@
 import { booleanHtmlAttributes, tagsWithoutEndTag, tagsWithInnerContent, tagAttributeAsInnerContent } from '../../shared/constants'
-import { isUndefined } from '../../shared/typeof'
+import { isUndefined } from '../../utils/is-type'
 
 /**
  * Generates meta, base, link, style, script, noscript tags for use on the server

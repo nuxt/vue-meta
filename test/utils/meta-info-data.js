@@ -1,4 +1,4 @@
-import { defaultOptions } from './'
+import { defaultOptions } from '../../src/shared/constants'
 
 const metaInfoData = {
   title: {
@@ -196,12 +196,12 @@ const metaInfoData = {
   },
   bodyAttrs: {
     add: {
-      data: { foo: 'bar' },
-      expect: ['<body foo="bar" data-vue-meta="foo">']
+      data: { foo: 'bar', fizz: ['fuzz', 'fozz'] },
+      expect: ['<body foo="bar" fizz="fuzz fozz" data-vue-meta="fizz,foo">']
     },
     change: {
       data: { foo: 'baz' },
-      expect: ['<body foo="baz" data-vue-meta="foo">']
+      expect: ['<body foo="baz" data-vue-meta="fizz,foo">']
     },
     remove: {
       data: {},

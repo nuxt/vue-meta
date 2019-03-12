@@ -1,0 +1,17 @@
+<!doctype html>
+<html data-vue-meta-server-rendered {{ htmlAttrs.text() }}>
+  <head {{ headAttrs.text() }}>
+    {{ meta.text() }}
+    {{ title.text() }}
+    {{ link.text() }}
+    {{ style.text() }}
+    {{ webpackAssets }}
+    {{ script.text() }}
+    {{ noscript.text() }}
+  </head>
+  <body {{ bodyAttrs.text() }}>
+    {{ app }}
+    {{ script.text({ body: true }) }}
+    {{ noscript.text({ body: true }) }}
+  </body>
+</html>

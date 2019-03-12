@@ -1,8 +1,15 @@
 version: 2
+
+defaults: &defaults
+  working_directory: ~/project
+  docker:
+    - image: circleci/node:latest
+  environment:
+    NODE_ENV: test
+
 jobs:
-  build:
-    docker:
-      - image: circleci/node
+  setup:
+    <<: *defaults
     steps:
       # Checkout repository
       - checkout
@@ -22,17 +29,60 @@ jobs:
           paths:
             - "node_modules"
 
-      # Lint
+      # Persist workspace
+      - persist_to_workspace:
+          root: ~/project
+          paths:
+            - node_modules
+
+  lint:
+    <<: *defaults
+    steps:
+      - checkout
+      - attach_workspace:
+          at: ~/project
       - run:
           name: Lint
           command: yarn lint
 
-      # Test
+  audit:
+    <<: *defaults
+    steps:
+      - checkout
+      - attach_workspace:
+          at: ~/project
       - run:
-          name: Test
-          command: yarn test
+          name: Security Audit
+          command: yarn audit
 
-      # Coverage
+  test-unit:
+    <<: *defaults
+    steps:
+      - checkout
+      - attach_workspace:
+          at: ~/project
       - run:
-          name: Coverage
-          command: yarn codecov
+          name: Unit Tests
+          command: yarn test:unit --coverage && yarn coverage
+
+  test-e2e:
+    docker:
+        - image: circleci/node:latest-browsers
+    steps:
+      - checkout
+      - attach_workspace:
+          at: ~/project
+      - run:
+          name: E2E Tests
+          command: yarn test:e2e
+
+workflows:
+  version: 2
+
+  commit:
+    jobs:
+      - setup
+      - lint:       { requires: [setup] }
+      - audit:      { requires: [setup] }
+      - test-unit:  { requires: [lint] }
+      - test-e2e:   { requires: [lint] }

@@ -1,8 +1,8 @@
 import { version } from '../package.json'
 import createMixin from './shared/mixin'
-import setOptions from './shared/options'
+import { setOptions } from './shared/options'
 import $meta from './server/$meta'
-import { hasMetaInfo } from './shared/hasMetaInfo'
+import { hasMetaInfo } from './shared/meta-helpers'
 
 /**
  * Plugin install function.

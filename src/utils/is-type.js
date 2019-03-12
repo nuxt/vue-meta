@@ -1,3 +1,12 @@
+/**
+ * checks if passed argument is an array
+ * @param  {any}  arg - the object to check
+ * @return {Boolean} - true if `arg` is an array
+ */
+export function isArray(arg) {
+  return Array.isArray(arg)
+}
+
 export function isUndefined(arg) {
   return typeof arg === 'undefined'
 }

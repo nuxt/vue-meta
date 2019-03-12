@@ -2,6 +2,24 @@
  * These are constant variables used throughout the application.
  */
 
+// set some sane defaults
+export const defaultInfo = {
+  title: '',
+  titleChunk: '',
+  titleTemplate: '%s',
+  htmlAttrs: {},
+  bodyAttrs: {},
+  headAttrs: {},
+  base: [],
+  link: [],
+  meta: [],
+  style: [],
+  script: [],
+  noscript: [],
+  __dangerouslyDisableSanitizers: [],
+  __dangerouslyDisableSanitizersByTagID: {}
+}
+
 // This is the name of the component option that contains all the information that
 // gets converted to the various meta tags & attributes for the page.
 export const keyName = 'metaInfo'
@@ -26,11 +44,26 @@ export const metaTemplateKeyName = 'template'
 // This is the key name for the content-holding property
 export const contentKeyName = 'content'
 
+export const defaultOptions = {
+  keyName,
+  attribute,
+  ssrAttribute,
+  tagIDKeyName,
+  contentKeyName,
+  metaTemplateKeyName
+}
+
 // List of metaInfo property keys which are configuration options (and dont generate html)
 export const metaInfoOptionKeys = [
   'titleChunk',
   'titleTemplate',
   'changed',
+  '__dangerouslyDisableSanitizers',
+  '__dangerouslyDisableSanitizersByTagID'
+]
+
+// The metaInfo property keys which are used to disable escaping
+export const disableOptionKeys = [
   '__dangerouslyDisableSanitizers',
   '__dangerouslyDisableSanitizersByTagID'
 ]
@@ -55,6 +88,7 @@ export const tagAttributeAsInnerContent = ['innerHTML', 'cssText']
 // from: https://github.com/kangax/html-minifier/blob/gh-pages/src/htmlminifier.js#L202
 export const booleanHtmlAttributes = [
   'allowfullscreen',
+  'amp',
   'async',
   'autofocus',
   'autoplay',

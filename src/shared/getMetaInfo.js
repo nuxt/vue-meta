@@ -1,11 +1,8 @@
-import deepmerge from 'deepmerge'
-import isPlainObject from 'lodash.isplainobject'
-import { isFunction, isString } from './typeof'
-import isArray from './isArray'
+import { ensureIsArray } from '../utils/ensure'
+import { applyTemplate } from './template'
+import { defaultInfo, disableOptionKeys } from './constants'
+import { escape } from './escaping'
 import getComponentOption from './getComponentOption'
-
-const applyTemplate = (component, template, chunk) =>
-  isFunction(template) ? template.call(component, chunk) : template.replace(/%s/g, chunk)
 
 /**
  * Returns the correct meta info for the given component
@@ -14,75 +11,9 @@ const applyTemplate = (component, template, chunk) =>
  * @param  {Object} component - the Vue instance to get meta info from
  * @return {Object} - returned meta info
  */
-export default function getMetaInfo({ keyName, tagIDKeyName, metaTemplateKeyName, contentKeyName } = {}, component, escapeSequences = []) {
-  // set some sane defaults
-  const defaultInfo = {
-    title: '',
-    titleChunk: '',
-    titleTemplate: '%s',
-    htmlAttrs: {},
-    bodyAttrs: {},
-    headAttrs: {},
-    meta: [],
-    base: [],
-    link: [],
-    style: [],
-    script: [],
-    noscript: [],
-    __dangerouslyDisableSanitizers: [],
-    __dangerouslyDisableSanitizersByTagID: {}
-  }
-
+export default function getMetaInfo(options = {}, component, escapeSequences = []) {
   // collect & aggregate all metaInfo $options
-  let info = getComponentOption({
-    deep: true,
-    component,
-    keyName,
-    metaTemplateKeyName,
-    tagIDKeyName,
-    contentKeyName,
-    arrayMerge(target, source) {
-      // we concat the arrays without merging objects contained in,
-      // but we check for a `vmid` property on each object in the array
-      // using an O(1) lookup associative array exploit
-      // note the use of "for in" - we are looping through arrays here, not
-      // plain objects
-      const destination = []
-
-      for (const targetIndex in target) {
-        const targetItem = target[targetIndex]
-        let shared = false
-
-        for (const sourceIndex in source) {
-          const sourceItem = source[sourceIndex]
-
-          if (targetItem[tagIDKeyName] && targetItem[tagIDKeyName] === sourceItem[tagIDKeyName]) {
-            const targetTemplate = targetItem[metaTemplateKeyName]
-            const sourceTemplate = sourceItem[metaTemplateKeyName]
-
-            if (targetTemplate && !sourceTemplate) {
-              sourceItem[contentKeyName] = applyTemplate(component, targetTemplate, sourceItem[contentKeyName])
-            }
-
-            // If template defined in child but content in parent
-            if (targetTemplate && sourceTemplate && !sourceItem[contentKeyName]) {
-              sourceItem[contentKeyName] = applyTemplate(component, sourceTemplate, targetItem[contentKeyName])
-              delete sourceItem[metaTemplateKeyName]
-            }
-
-            shared = true
-            break
-          }
-        }
-
-        if (!shared) {
-          destination.push(targetItem)
-        }
-      }
-
-      return destination.concat(source)
-    }
-  })
+  let info = getComponentOption(options, component, defaultInfo)
 
   // Remove all "template" tags from meta
 
@@ -92,8 +23,8 @@ export default function getMetaInfo({ keyName, tagIDKeyName, metaTemplateKeyName
   }
 
   // replace title with populated template
-  if (info.titleTemplate) {
-    info.title = applyTemplate(component, info.titleTemplate, info.titleChunk || '')
+  if (info.titleTemplate && info.titleTemplate !== '%s') {
+    applyTemplate({ component, contentKeyName: 'title' }, info, info.titleTemplate, info.titleChunk || '')
   }
 
   // convert base tag to an array so it can be handled the same way
@@ -102,47 +33,24 @@ export default function getMetaInfo({ keyName, tagIDKeyName, metaTemplateKeyName
     info.base = Object.keys(info.base).length ? [info.base] : []
   }
 
-  const ref = info.__dangerouslyDisableSanitizers
-  const refByTagID = info.__dangerouslyDisableSanitizersByTagID
+  const escapeOptions = {
+    doEscape: value => escapeSequences.reduce((val, [v, r]) => val.replace(v, r), value)
+  }
 
-  // sanitizes potentially dangerous characters
-  const escape = info => Object.keys(info).reduce((escaped, key) => {
-    let isDisabled = ref && ref.includes(key)
-    const tagID = info[tagIDKeyName]
-
-    if (!isDisabled && tagID) {
-      isDisabled = refByTagID && refByTagID[tagID] && refByTagID[tagID].includes(key)
-    }
-
-    const val = info[key]
-    escaped[key] = val
-
-    if (key === '__dangerouslyDisableSanitizers' || key === '__dangerouslyDisableSanitizersByTagID') {
-      return escaped
-    }
-
-    if (!isDisabled) {
-      if (isString(val)) {
-        escaped[key] = escapeSequences.reduce((val, [v, r]) => val.replace(v, r), val)
-      } else if (isPlainObject(val)) {
-        escaped[key] = escape(val)
-      } else if (isArray(val)) {
-        escaped[key] = val.map(escape)
-      } else {
-        escaped[key] = val
+  disableOptionKeys.forEach((disableKey, index) => {
+    if (index === 0) {
+      ensureIsArray(info, disableKey)
+    } else if (index === 1) {
+      for (const key in info[disableKey]) {
+        ensureIsArray(info[disableKey], key)
       }
-    } else {
-      escaped[key] = val
     }
 
-    return escaped
-  }, {})
-
-  // merge with defaults
-  info = deepmerge(defaultInfo, info)
+    escapeOptions[disableKey] = info[disableKey]
+  })
 
   // begin sanitization
-  info = escape(info)
+  info = escape(info, options, escapeOptions)
 
   return info
 }

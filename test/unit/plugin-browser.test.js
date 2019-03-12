@@ -1,10 +1,11 @@
-import triggerUpdate from '../src/client/triggerUpdate'
-import batchUpdate from '../src/client/batchUpdate'
-import { mount, defaultOptions, vmTick, VueMetaBrowserPlugin, loadVueMetaPlugin } from './utils'
+import triggerUpdate from '../../src/client/triggerUpdate'
+import batchUpdate from '../../src/client/batchUpdate'
+import { mount, vmTick, VueMetaBrowserPlugin, loadVueMetaPlugin } from '../utils'
+import { defaultOptions } from '../../src/shared/constants'
 
-jest.mock('../src/client/triggerUpdate')
-jest.mock('../src/client/batchUpdate')
-jest.mock('../package.json', () => ({
+jest.mock('../../src/client/triggerUpdate')
+jest.mock('../../src/client/batchUpdate')
+jest.mock('../../package.json', () => ({
   version: 'test-version'
 }))
 
@@ -20,9 +21,14 @@ describe('plugin', () => {
 
     expect(instance.$meta().inject).toEqual(expect.any(Function))
     expect(instance.$meta().refresh).toEqual(expect.any(Function))
+    expect(instance.$meta().getOptions).toEqual(expect.any(Function))
 
     expect(instance.$meta().inject()).toBeUndefined()
     expect(instance.$meta().refresh()).toBeDefined()
+
+    const options = instance.$meta().getOptions()
+    expect(options).toBeDefined()
+    expect(options.keyName).toBe(defaultOptions.keyName)
   })
 
   test('component has _hasMetaInfo set to true', () => {
@@ -42,8 +48,8 @@ describe('plugin', () => {
   })
 
   test('updates can be paused and resumed', async () => {
-    const _triggerUpdate = jest.requireActual('../src/client/triggerUpdate').default
-    const _batchUpdate = jest.requireActual('../src/client/batchUpdate').default
+    const _triggerUpdate = jest.requireActual('../../src/client/triggerUpdate').default
+    const _batchUpdate = jest.requireActual('../../src/client/batchUpdate').default
 
     const triggerUpdateSpy = triggerUpdate.mockImplementation(_triggerUpdate)
     const batchUpdateSpy = batchUpdate.mockImplementation(_batchUpdate)
