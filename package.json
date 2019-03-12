@@ -46,6 +46,7 @@
     "build": "yarn build:other && yarn build:es",
     "build:es": "rimraf es && babel src --env-name es --out-dir es",
     "build:other": "rimraf lib && rollup -c scripts/rollup.config.js",
+    "coverage": "codecov",
     "dev": "cd examples && yarn dev && cd ..",
     "docs": "vuepress dev --host 0.0.0.0 --port 3000 docs",
     "docs:build": "vuepress build docs",
