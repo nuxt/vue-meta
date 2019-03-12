@@ -7,14 +7,16 @@ import VueLoaderPlugin from 'vue-loader/lib/plugin'
 export default {
   devtool: 'inline-source-map',
   mode: 'development',
-  entry: fs.readdirSync(__dirname).reduce((entries, dir) => {
-    const fullDir = path.join(__dirname, dir)
-    const entry = path.join(fullDir, 'app.js')
-    if (fs.statSync(fullDir).isDirectory() && fs.existsSync(entry)) {
-      entries[dir] = entry
-    }
-    return entries
-  }, {}),
+  entry: fs.readdirSync(__dirname)
+    .filter(entry => entry !== 'ssr')
+    .reduce((entries, dir) => {
+      const fullDir = path.join(__dirname, dir)
+      const entry = path.join(fullDir, 'app.js')
+      if (fs.statSync(fullDir).isDirectory() && fs.existsSync(entry)) {
+        entries[dir] = entry
+      }
+      return entries
+    }, {}),
   output: {
     path: path.join(__dirname, '__build__'),
     filename: '[name].js',

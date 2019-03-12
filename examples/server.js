@@ -17,11 +17,13 @@ app.use(webpackDevMiddleware(webpack(WebpackConfig), {
   }
 }))
 
-fs.readdirSync(__dirname).forEach((file) => {
-  if (fs.statSync(path.join(__dirname, file)).isDirectory()) {
-    app.use(rewrite('/' + file + '/*', '/' + file + '/index.html'))
-  }
-})
+fs.readdirSync(__dirname)
+  .filter(file => file !== 'ssr')
+  .forEach((file) => {
+    if (fs.statSync(path.join(__dirname, file)).isDirectory()) {
+      app.use(rewrite('/' + file + '/*', '/' + file + '/index.html'))
+    }
+  })
 
 app.use(express.static(__dirname))
 
