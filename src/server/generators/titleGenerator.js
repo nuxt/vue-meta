@@ -11,7 +11,7 @@ export default function _titleGenerator (options = {}) {
   return function titleGenerator (type, data) {
     return {
       text () {
-        return data ? `<${type} ${attribute}="true">${data}</${type}>` : ''
+        return String(data) ? `<${type} ${attribute}="true">${data}</${type}>` : ''
       }
     }
   }
