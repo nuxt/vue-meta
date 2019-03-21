@@ -7,14 +7,6 @@ defaults: &defaults
   environment:
     NODE_ENV: test
 
-e2e_browsers: &e2e_browsers
-  working_directory: ~/project
-  docker:
-    - image: circleci/node:latest-browsers
-  environment:
-    NODE_ENV: test
-
-
 jobs:
   setup:
     <<: *defaults
@@ -89,7 +81,9 @@ jobs:
             - test/fixtures
 
   test-e2e-firefox:
-    <<: *e2e_browsers
+    <<: *defaults
+    docker:
+      - image: circleci/node:latest-browsers
     steps:
       - checkout
       - attach_workspace:
@@ -101,7 +95,9 @@ jobs:
             BROWSER_STRING: firefox/headless
 
   test-e2e-chrome:
-    <<: *e2e_browsers
+    <<: *defaults
+    docker:
+      - image: circleci/node:latest-browsers
     steps:
       - checkout
       - attach_workspace:
@@ -113,7 +109,9 @@ jobs:
             BROWSER_STRING: chrome/selenium
 
   test-e2e-ie:
-    <<: *e2e_browsers
+    <<: *defaults
+    docker:
+      - image: circleci/node:latest-browsers
     steps:
       - checkout
       - attach_workspace:
@@ -125,7 +123,9 @@ jobs:
             BROWSER_STRING: browserstack/local/ie:9
 
   test-e2e-edge:
-    <<: *e2e_browsers
+    <<: *defaults
+    docker:
+      - image: circleci/node:latest-browsers
     steps:
       - checkout
       - attach_workspace:
@@ -137,7 +137,9 @@ jobs:
             BROWSER_STRING: browserstack/local/edge:15
 
   test-e2e-safari:
-    <<: *e2e_browsers
+    <<: *defaults
+    docker:
+      - image: circleci/node:latest-browsers
     steps:
       - checkout
       - attach_workspace:
@@ -159,7 +161,4 @@ workflows:
       - test-unit:        { requires: [lint] }
       - test-e2e-ssr:     { requires: [lint] }
       - test-e2e-firefox: { requires: [test-e2e-ssr] }
-      - test-e2e-chrome:  { requires: [test-e2e-ssr] }
       - test-e2e-ie:      { requires: [test-e2e-ssr] }
-      - test-e2e-edge:    { requires: [test-e2e-ssr] }
-      - test-e2e-safari:  { requires: [test-e2e-ssr] }
