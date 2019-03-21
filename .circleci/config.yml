@@ -123,6 +123,8 @@ jobs:
           command: yarn test:e2e-browser
           environment:
             BROWSER_STRING: browserstack/local/ie:9
+            BROWSERSTACK_KEY: $BROWSERSTACK_KEY
+            BROWSERSTACK_USER: $BROWSERSTACK_USER
 
   test-e2e-edge:
     <<: *e2e_browsers
