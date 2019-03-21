@@ -98,7 +98,7 @@ jobs:
           name: E2E Tests
           command: yarn test:e2e-browser
           environment:
-            BROWSER_STRING: firefox
+            BROWSER_STRING: firefox/headless
 
   test-e2e-chrome:
     <<: *e2e_browsers
@@ -110,7 +110,7 @@ jobs:
           name: E2E Tests
           command: yarn test:e2e-browser
           environment:
-            BROWSER_STRING: chrome
+            BROWSER_STRING: chrome/selenium
 
   test-e2e-ie:
     <<: *e2e_browsers
