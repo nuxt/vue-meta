@@ -7,6 +7,14 @@ defaults: &defaults
   environment:
     NODE_ENV: test
 
+e2e_browsers: &e2e_browsers
+  working_directory: ~/project
+  docker:
+    - image: circleci/node:latest-browsers
+  environment:
+    NODE_ENV: test
+
+
 jobs:
   setup:
     <<: *defaults
@@ -65,24 +73,87 @@ jobs:
           name: Unit Tests
           command: yarn test:unit --coverage && yarn coverage
 
-  test-e2e:
-    docker:
-        - image: circleci/node:latest-browsers
+  test-e2e-ssr:
+    <<: *defaults
     steps:
       - checkout
       - attach_workspace:
           at: ~/project
       - run:
           name: E2E Tests
-          command: yarn test:e2e
+          command: yarn test:e2e-ssr
 
+  test-e2e-firefox:
+    <<: *e2e_browsers
+    steps:
+      - checkout
+      - attach_workspace:
+          at: ~/project
+      - run:
+          name: E2E Tests
+          command: yarn test:e2e-ssr
+          environment:
+            BROWSER_STRING: firefox
+
+  test-e2e-chrome:
+    <<: *e2e_browsers
+    steps:
+      - checkout
+      - attach_workspace:
+          at: ~/project
+      - run:
+          name: E2E Tests
+          command: yarn test:e2e-ssr
+          environment:
+            BROWSER_STRING: chrome
+
+  test-e2e-ie:
+    <<: *e2e_browsers
+    steps:
+      - checkout
+      - attach_workspace:
+          at: ~/project
+      - run:
+          name: E2E Tests
+          command: yarn test:e2e-ssr
+          environment:
+            BROWSER_STRING: browserstack/local/ie:9
+
+  test-e2e-edge:
+    <<: *e2e_browsers
+    steps:
+      - checkout
+      - attach_workspace:
+          at: ~/project
+      - run:
+          name: E2E Tests
+          command: yarn test:e2e-ssr
+          environment:
+            BROWSER_STRING: browserstack/local/edge:15
+
+  test-e2e-safari:
+    <<: *e2e_browsers
+    steps:
+      - checkout
+      - attach_workspace:
+          at: ~/project
+      - run:
+          name: E2E Tests
+          command: yarn test:e2e-ssr
+          environment:
+            BROWSER_STRING: browserstack/local/os x=snow leopard/safari:5.1
+            
 workflows:
   version: 2
 
   commit:
     jobs:
       - setup
-      - lint:       { requires: [setup] }
-      - audit:      { requires: [setup] }
-      - test-unit:  { requires: [lint] }
-      - test-e2e:   { requires: [lint] }
+      - lint:           { requires: [setup] }
+      - audit:          { requires: [setup] }
+      - test-unit:      { requires: [lint] }
+      - test-e2e-ssr:   { requires: [lint] }
+      - test-e2e-chrome { requires: [test-e2e-ssr] }
+      - test-e2e-ie     { requires: [test-e2e-ssr] }
+      - test-e2e-edge   { requires: [test-e2e-ssr] }
+      - test-e2e-safari { requires: [test-e2e-ssr] }

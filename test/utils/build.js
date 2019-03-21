@@ -38,6 +38,7 @@ export async function buildFixture(fixture, config = {}) {
   await fs.remove(webpackConfig.output.path)
 
   // run webpack
+  process.env.NODE_ENV = 'test'
   const webpackStats = await webpackRun(webpackConfig)
 
   // for test debugging
@@ -73,6 +74,7 @@ export function createWebpackConfig(config = {}) {
 
   return {
     mode: 'development',
+    devtool: 'none',
     output: {
       path: path.join(path.dirname(config.entry), publicPath),
       filename: '[name].js',
@@ -81,7 +83,22 @@ export function createWebpackConfig(config = {}) {
     },
     module: {
       rules: [
-        { test: /\.js$/, exclude: /node_modules/, use: 'babel-loader' },
+        {
+          test: /\.js$/,
+          exclude: /node_modules/,
+          use: {
+            loader: 'babel-loader',
+            options: {
+              presets: [
+                ['@babel/preset-env', {
+                  useBuiltIns: 'usage',
+                  corejs: 'core-js@2',
+                  targets: { ie: 9, safari: '5.1' }
+                }]
+              ]
+            }
+          }
+        },
         { test: /\.vue$/, use: 'vue-loader' }
       ]
     },
@@ -102,7 +119,13 @@ export function createWebpackConfig(config = {}) {
       }
     },
     plugins: [
-      new VueLoaderPlugin()
+      new VueLoaderPlugin(),
+      new webpack.DefinePlugin({
+        'process.env': {
+          // make sure our simple polyfills are enabled
+          'NODE_ENV': '"test"'
+        }
+      })
     ],
     resolve: {
       alias: {

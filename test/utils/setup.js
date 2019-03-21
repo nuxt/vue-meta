@@ -1,2 +1,2 @@
 jest.useFakeTimers()
-jest.setTimeout(15000)
+jest.setTimeout(30000)
