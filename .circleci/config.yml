@@ -82,6 +82,11 @@ jobs:
       - run:
           name: E2E Tests
           command: yarn test:e2e-ssr
+      # Persist workspace
+      - persist_to_workspace:
+          root: ~/project
+          paths:
+            - test/fixtures
 
   test-e2e-firefox:
     <<: *e2e_browsers
