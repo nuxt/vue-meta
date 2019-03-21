@@ -1,9 +1,9 @@
 import Vue from 'vue'
 import Router from 'vue-router'
+import Home from './views/home.vue'
 
 Vue.use(Router)
 
-const Home = () => import('./views/home.vue')
 const Post = () => import('./views/about.vue')
 
 export default function createRouter() {

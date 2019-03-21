@@ -8,13 +8,17 @@
 
 <script>
 export default {
-  metaInfo: {
-    meta: [
-      { vmid: 'charset', charset: 'utf-8' }
-    ]
+  metaInfo() {
+    return {
+      meta: [
+        { vmid: 'charset', charset: 'utf-8' }
+      ],
+      afterNavigation: () => {
+        this.$emit('routeChanged')
+      }
+    }
   },
   mounted() {
-    this.$router.afterEach((to, from) => this.$emit('routeChanged', to, from))
     window.$vueMeta = this
   }
 }
