@@ -139,8 +139,9 @@ workflows:
     jobs:
       - has-commits
       - setup:            { requires: [has-commits] }
-      - release:          { requires: [setup] }
+      - release:
           nightly: true
+          requires: [setup]
 
   commitNOT:
     jobs:
