@@ -130,27 +130,24 @@ jobs:
           environment:
             BROWSER_STRING: << parameters.browserString >>
 
-common_workflow_jobs: &common_workflow_jobs
-  - lint:             { requires: [setup] }
-  - audit:            { requires: [setup] }
-  - test-unit:        { requires: [lint] }
-  - test-e2e-ssr:     { requires: [lint] }
-  - test-e2e-browser:
-      name:           test-e2e-firefox
-      browserString:  firefox/headless
-      requires:       [test-e2e-ssr]
-  - test-e2e-browser:
-      name:           test-e2e-chrome
-      browserString:  chrome/selenium
-      requires:       [test-e2e-ssr]
-
 workflows:
   version : 2
 
   commit:
     jobs:
       - setup
-      <<: *common_workflow_jobs
+      - lint:             { requires: [setup] }
+      - audit:            { requires: [setup] }
+      - test-unit:        { requires: [lint] }
+      - test-e2e-ssr:     { requires: [lint] }
+      - test-e2e-browser:
+          name:           test-e2e-firefox
+          browserString:  firefox/headless
+          requires:       [test-e2e-ssr]
+      - test-e2e-browser:
+          name:           test-e2e-chrome
+          browserString:  chrome/selenium
+          requires:       [test-e2e-ssr]
       - test-e2e-browser:
           name:           test-e2e-ie
           browserString:  browserstack/local/windows 7/ie:9
@@ -174,7 +171,18 @@ workflows:
     jobs:
       - has-commits
       - setup:            { requires: [has-commits] }
-      <<: *common_workflow_jobs
+      - lint:             { requires: [setup] }
+      - audit:            { requires: [setup] }
+      - test-unit:        { requires: [lint] }
+      - test-e2e-ssr:     { requires: [lint] }
+      - test-e2e-browser:
+          name:           test-e2e-firefox
+          browserString:  firefox/headless
+          requires:       [test-e2e-ssr]
+      - test-e2e-browser:
+          name:           test-e2e-chrome
+          browserString:  chrome/selenium
+          requires:       [test-e2e-ssr]
       - test-e2e-browser:
           name:           test-e2e-ie
           browserString:  browserstack/local/windows 7/ie:9
