@@ -172,6 +172,7 @@ workflows:
           requires:       [test-e2e-ssr]
           <<: *release_branches_only
       - release:
+          name: manual release
           requires: [setup, lint, audit, test-unit, test-e2e-ssr, test-e2e-firefox, test-e2e-chrome, test-e2e-ie, test-e2e-edge, test-e2e-safari]
           <<: *release_branches_only
     triggers:
