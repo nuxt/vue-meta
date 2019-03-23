@@ -34,7 +34,7 @@ jobs:
       - run:
           name: Have there been new commits
           command: |
-            [ $(git log --since=23.hours --pretty=oneline | wc -l) -eq 0 ]
+            [ $(git log --since=23.hours --pretty=oneline | wc -l) -gt 0 ]
 
   setup:
     executor: node
