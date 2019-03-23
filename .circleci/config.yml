@@ -109,7 +109,7 @@ workflows:
           requires:       [test-e2e-ssr]
       - test-e2e-browser:
           name:           test-e2e-ie
-          browserString:  browserstack/local/ie:9
+          browserString:  browserstack/local/windows 7/ie:9
           requires:       [test-e2e-ssr]
           filters:
             branches:     { ignore: /^pull\/.*/ }
