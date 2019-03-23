@@ -100,14 +100,17 @@ workflows:
       - test-unit:        { requires: [lint] }
       - test-e2e-ssr:     { requires: [lint] }
       - test-e2e-browser:
+          name: test-e2e-firefox
           browserString: firefox/headless
           requires:
             - test-e2e-ssr
       - test-e2e-browser:
+          name: test-e2e-chrome
           browserString: chrome/selenium
           requires:
             - test-e2e-ssr
       - test-e2e-browser:
+          name: test-e2e-ie
           browserString: browserstack/local/ie:9
           requires:
             - test-e2e-ssr
@@ -115,6 +118,7 @@ workflows:
             branches:
               ignore: /^pull\/.*/
       - test-e2e-browser:
+          name: test-e2e-edge
           browserString: browserstack/local/edge:15
           requires:
             - test-e2e-ssr
@@ -122,6 +126,7 @@ workflows:
             branches:
               ignore: /^pull\/.*/
       - test-e2e-browser:
+          name: test-e2e-safari
           browserString: browserstack/local/os x=snow leopard/safari:5.1
           requires:
             - test-e2e-ssr
