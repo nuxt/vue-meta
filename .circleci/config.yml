@@ -137,14 +137,6 @@ workflows:
 
   commit:
     jobs:
-      - has-commits
-      - setup:            { requires: [has-commits] }
-      - release:
-          nightly: true
-          requires: [setup]
-
-  commitNOT:
-    jobs:
       - setup
       - lint:             { requires: [setup] }
       - audit:            { requires: [setup] }
@@ -177,10 +169,6 @@ workflows:
           name: manual release
           requires: [setup, lint, audit, test-unit, test-e2e-ssr, test-e2e-firefox, test-e2e-chrome, test-e2e-ie, test-e2e-edge, test-e2e-safari]
           <<: *release_branches_only
-    triggers:
-      - schedule:
-          cron: "0 0 * * *"
-          <<: *release_branches_only
 
   nightly:
     jobs:
@@ -212,6 +200,7 @@ workflows:
           requires:       [test-e2e-ssr]
       - release:
           nightly: true
+          name: nightly release
           requires: [setup, lint, audit, test-unit, test-e2e-ssr, test-e2e-firefox, test-e2e-chrome, test-e2e-ie, test-e2e-edge, test-e2e-safari]
     triggers:
       - schedule:
