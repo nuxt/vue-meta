@@ -18,8 +18,49 @@ commands:
       - checkout
       - attach_workspace:
           at: ~/project
+  release:
+    parameters:
+      nightly:
+        type: boolean
+        default: false
+    executor: node
+    steps:
+      - attach-project
+      - run:
+          name: release
+          command: |
+            ONLY_ON="[release]"
+            NIGHTLY="<<# parameters.nightly >>1<</ parameters.nightly >>"
+            COMMIT_MSG=${COMMIT_MSG:-`git --no-pager log --pretty=full -n1 $CIRCLE_SHA1`}
+            if [ "$NIGHTLY" = "1" ] || [[ "$COMMIT_MSG" == *"$ONLY_ON"* ]]; then
+              echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" >> ~/.npmrc
+              echo "//registry.yarnpkg.com/:_authToken=$NPM_TOKEN" >> ~/.npmrc
+              RELEASE_TYPE=${CIRCLE_BRANCH/master/edge}
+              if [ "$RELEASE_TYPE" = "next" ]; then release="--release major"; fi
+              yarn standard-version --skip.changelog true --skip.tag true --skip.commit true $release
+              node -r esm ./scripts/package
+              yarn build
+              npm publish --dry-run -q --tag $RELEASE_TYPE
+            else
+              echo "Release phase was skipped."
+            fi
+
+release_branches_only: &release_branches_only
+  filters:
+    branches:
+      only:
+        - master
+        - next
 
 jobs:
+  has-commits:
+    executor: node
+    steps:
+      - checkout
+      - run:
+          name: Have there been new commits
+          command: [ $(git log --since=23.hours --pretty=oneline | wc -l) -eq 0 ] && exit 1
+
   setup:
     executor: node
     steps:
@@ -89,41 +130,68 @@ jobs:
           environment:
             BROWSER_STRING: << parameters.browserString >>
 
+common_workflow_jobs: &common_workflow_jobs
+  - lint:             { requires: [setup] }
+  - audit:            { requires: [setup] }
+  - test-unit:        { requires: [lint] }
+  - test-e2e-ssr:     { requires: [lint] }
+  - test-e2e-browser:
+      name:           test-e2e-firefox
+      browserString:  firefox/headless
+      requires:       [test-e2e-ssr]
+  - test-e2e-browser:
+      name:           test-e2e-chrome
+      browserString:  chrome/selenium
+      requires:       [test-e2e-ssr]
+
 workflows:
   version : 2
 
   commit:
     jobs:
       - setup
-      - lint:             { requires: [setup] }
-      - audit:            { requires: [setup] }
-      - test-unit:        { requires: [lint] }
-      - test-e2e-ssr:     { requires: [lint] }
-      - test-e2e-browser:
-          name:           test-e2e-firefox
-          browserString:  firefox/headless
-          requires:       [test-e2e-ssr]
-      - test-e2e-browser:
-          name:           test-e2e-chrome
-          browserString:  chrome/selenium
-          requires:       [test-e2e-ssr]
+      <<: *common_workflow_jobs
       - test-e2e-browser:
           name:           test-e2e-ie
           browserString:  browserstack/local/windows 7/ie:9
           requires:       [test-e2e-ssr]
-          filters:
-            branches:     { ignore: /^pull\/.*/ }
+          <<: *release_branches_only
       - test-e2e-browser:
           name:           test-e2e-edge
           browserString:  browserstack/local/edge:15
           requires:       [test-e2e-ssr]
-          filters:
-            branches:     { ignore: /^pull\/.*/ }
+          <<: *release_branches_only
       - test-e2e-browser:
           name:           test-e2e-safari
           browserString:  browserstack/local/os x=snow leopard/safari:5.1
           requires:       [test-e2e-ssr]
-          filters:
-            branches:     { ignore: /^pull\/.*/ }
-                
+          <<: *release_branches_only
+      - release:
+          requires: [setup, lint, audit, test-unit, test-e2e-ssr, test-e2e-firefox, test-e2e-chrome, test-e2e-ie, test-e2e-edge, test-e2e-safari]
+          <<: *release_branches_only
+
+  nightly:
+    jobs:
+      - has-commits
+      - setup:            { requires: [has-commits] }
+      <<: *common_workflow_jobs
+      - test-e2e-browser:
+          name:           test-e2e-ie
+          browserString:  browserstack/local/windows 7/ie:9
+          requires:       [test-e2e-ssr]
+      - test-e2e-browser:
+          name:           test-e2e-edge
+          browserString:  browserstack/local/edge:15
+          requires:       [test-e2e-ssr]
+      - test-e2e-browser:
+          name:           test-e2e-safari
+          browserString:  browserstack/local/os x=snow leopard/safari:5.1
+          requires:       [test-e2e-ssr]
+      - release:
+          nightly: true
+          requires: [setup, lint, audit, test-unit, test-e2e-ssr, test-e2e-firefox, test-e2e-chrome, test-e2e-ie, test-e2e-edge, test-e2e-safari]
+    triggers:
+      - schedule:
+          cron: "0 0 * * *"
+          <<: *release_branches_only
 

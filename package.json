@@ -111,6 +111,7 @@
     "rollup-plugin-replace": "^2.2.0",
     "rollup-plugin-terser": "^4.0.4",
     "selenium-webdriver": "^4.0.0-alpha.1",
+    "sort-package-json": "^1.21.0",
     "standard-version": "^5.0.2",
     "tib": "^0.5.1",
     "typescript": "^3.4.4",

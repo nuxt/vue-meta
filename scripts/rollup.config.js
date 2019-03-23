@@ -9,11 +9,12 @@ import defaultsDeep from 'lodash/defaultsDeep'
 const pkg = require('../package.json')
 
 const banner =  `/**
- * vue-meta v${pkg.version}
- * (c) ${new Date().getFullYear()} Declan de Wet & Sébastien Chopin (@Atinux)
+ * ${pkg.name} v${pkg.version} (c) ${new Date().getFullYear()}
+ * - Declan de Wet
+ * - Sébastien Chopin (@Atinux)
  * @license MIT
  */
-`.replace(/ {4}/gm, '').trim()
+`
 
 function rollupConfig({
   plugins = [],

@@ -1,0 +1,21 @@
+#!/usr/bin/env node
+
+import consola from 'consola'
+
+import Package from './package.js'
+
+async function main() {
+  // Read package at current directory
+  const rootPackage = new Package()
+  
+  await rootPackage.suffixAndVersion()
+  // await rootPackage.build()
+  // rootPackage.syncLinkedDependencies()
+  // rootPackage.autoFix()
+  rootPackage.writePackage()
+}
+
+main().catch((error) => {
+  consola.error(error)
+  process.exit(1)
+})
