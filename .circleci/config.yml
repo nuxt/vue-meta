@@ -1,157 +1,96 @@
-version: 2
+version: 2.1
 
-defaults: &defaults
-  working_directory: ~/project
-  docker:
-    - image: circleci/node:latest
-  environment:
-    NODE_ENV: test
+executors:
+  node:
+    parameters:
+      browsers:
+        type: boolean
+        default: false
+    docker:
+      - image: circleci/node:latest<<# browsers >>-browsers<</ browsers >>
+    working_directory: ~/project
+    environment:
+      NODE_ENV: test
+
+commands: 
+  attach-project:
+    steps:
+      - checkout
+      - attach_workspace:
+          at: ~/project
 
 jobs:
   setup:
-    <<: *defaults
+    executor: node
     steps:
-      # Checkout repository
       - checkout
-
-      # Restore cache
       - restore_cache:
           key: yarn-{{ checksum "yarn.lock" }}
-
-      # Install dependencies
       - run:
           name: Install Dependencies
           command: NODE_ENV=dev yarn
-
-      # Keep cache
       - save_cache:
           key: yarn-{{ checksum "yarn.lock" }}
           paths:
             - "node_modules"
-
-      # Persist workspace
       - persist_to_workspace:
           root: ~/project
           paths:
             - node_modules
 
   lint:
-    <<: *defaults
+    executor: node
     steps:
-      - checkout
-      - attach_workspace:
-          at: ~/project
+      - attach-project
       - run:
           name: Lint
           command: yarn lint
 
   audit:
-    <<: *defaults
+    executor: node
     steps:
-      - checkout
-      - attach_workspace:
-          at: ~/project
+      - attach-project
       - run:
           name: Security Audit
           command: yarn audit
 
   test-unit:
-    <<: *defaults
+    executor: node
     steps:
-      - checkout
-      - attach_workspace:
-          at: ~/project
+      - attach-project
       - run:
           name: Unit Tests
           command: yarn test:unit --coverage && yarn coverage
 
   test-e2e-ssr:
-    <<: *defaults
+    executor: node
     steps:
-      - checkout
-      - attach_workspace:
-          at: ~/project
+      - attach-project
       - run:
-          name: E2E Tests
+          name: E2E SSR Tests
           command: yarn test:e2e-ssr
-      # Persist workspace
       - persist_to_workspace:
           root: ~/project
           paths:
             - test/fixtures
 
-  test-e2e-firefox:
-    <<: *defaults
-    docker:
-      - image: circleci/node:latest-browsers
+  test-e2e-browser:
+    parameters:
+      browserString:
+        type: string
+    executor:
+      name: node
+      browsers: true
     steps:
-      - checkout
-      - attach_workspace:
-          at: ~/project
+      - attach-project
       - run:
-          name: E2E Tests
+          name: E2E Browser Tests
           command: yarn test:e2e-browser
           environment:
-            BROWSER_STRING: firefox/headless
+            BROWSER_STRING: << parameters.browserString >>
 
-  test-e2e-chrome:
-    <<: *defaults
-    docker:
-      - image: circleci/node:latest-browsers
-    steps:
-      - checkout
-      - attach_workspace:
-          at: ~/project
-      - run:
-          name: E2E Tests
-          command: yarn test:e2e-browser
-          environment:
-            BROWSER_STRING: chrome/selenium
-
-  test-e2e-ie:
-    <<: *defaults
-    docker:
-      - image: circleci/node:latest-browsers
-    steps:
-      - checkout
-      - attach_workspace:
-          at: ~/project
-      - run:
-          name: E2E Tests
-          command: yarn test:e2e-browser
-          environment:
-            BROWSER_STRING: browserstack/local/ie:9
-
-  test-e2e-edge:
-    <<: *defaults
-    docker:
-      - image: circleci/node:latest-browsers
-    steps:
-      - checkout
-      - attach_workspace:
-          at: ~/project
-      - run:
-          name: E2E Tests
-          command: yarn test:e2e-browser
-          environment:
-            BROWSER_STRING: browserstack/local/edge:15
-
-  test-e2e-safari:
-    <<: *defaults
-    docker:
-      - image: circleci/node:latest-browsers
-    steps:
-      - checkout
-      - attach_workspace:
-          at: ~/project
-      - run:
-          name: E2E Tests
-          command: yarn test:e2e-browser
-          environment:
-            BROWSER_STRING: browserstack/local/os x=snow leopard/safari:5.1
-            
 workflows:
-  version: 2
+  version : 2
 
   commit:
     jobs:
@@ -160,5 +99,34 @@ workflows:
       - audit:            { requires: [setup] }
       - test-unit:        { requires: [lint] }
       - test-e2e-ssr:     { requires: [lint] }
-      - test-e2e-firefox: { requires: [test-e2e-ssr] }
-      - test-e2e-ie:      { requires: [test-e2e-ssr] }
+      - test-e2e-browser:
+          browserString: firefox/headless
+          requires:
+            - test-e2e-ssr
+      - test-e2e-browser:
+          browserString: chrome/selenium
+          requires:
+            - test-e2e-ssr
+      - test-e2e-browser:
+          browserString: browserstack/local/ie:9
+          requires:
+            - test-e2e-ssr
+          filter:
+            brances:
+              ignore: /^pull\/.*/
+      - test-e2e-browser:
+          browserString: browserstack/local/edge:15
+          requires:
+            - test-e2e-ssr
+          filter:
+            brances:
+              ignore: /^pull\/.*/
+      - test-e2e-browser:
+          browserString: browserstack/local/os x=snow leopard/safari:5.1
+          requires:
+            - test-e2e-ssr
+          filter:
+            brances:
+              ignore: /^pull\/.*/
+                
+
