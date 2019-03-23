@@ -18,32 +18,6 @@ commands:
       - checkout
       - attach_workspace:
           at: ~/project
-  release:
-    parameters:
-      nightly:
-        type: boolean
-        default: false
-    executor: node
-    steps:
-      - attach-project
-      - run:
-          name: release
-          command: |
-            ONLY_ON="[release]"
-            NIGHTLY="<<# parameters.nightly >>1<</ parameters.nightly >>"
-            COMMIT_MSG=${COMMIT_MSG:-`git --no-pager log --pretty=full -n1 $CIRCLE_SHA1`}
-            if [ "$NIGHTLY" = "1" ] || [[ "$COMMIT_MSG" == *"$ONLY_ON"* ]]; then
-              echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" >> ~/.npmrc
-              echo "//registry.yarnpkg.com/:_authToken=$NPM_TOKEN" >> ~/.npmrc
-              RELEASE_TYPE=${CIRCLE_BRANCH/master/edge}
-              if [ "$RELEASE_TYPE" = "next" ]; then release="--release major"; fi
-              yarn standard-version --skip.changelog true --skip.tag true --skip.commit true $release
-              node -r esm ./scripts/package
-              yarn build
-              npm publish --dry-run -q --tag $RELEASE_TYPE
-            else
-              echo "Release phase was skipped."
-            fi
 
 release_branches_only: &release_branches_only
   filters:
@@ -130,6 +104,33 @@ jobs:
           command: yarn test:e2e-browser
           environment:
             BROWSER_STRING: << parameters.browserString >>
+
+  release:
+    parameters:
+      nightly:
+        type: boolean
+        default: false
+    executor: node
+    steps:
+      - attach-project
+      - run:
+          name: release
+          command: |
+            ONLY_ON="[release]"
+            NIGHTLY="<<# parameters.nightly >>1<</ parameters.nightly >>"
+            COMMIT_MSG=${COMMIT_MSG:-`git --no-pager log --pretty=full -n1 $CIRCLE_SHA1`}
+            if [ "$NIGHTLY" = "1" ] || [[ "$COMMIT_MSG" == *"$ONLY_ON"* ]]; then
+              echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" >> ~/.npmrc
+              echo "//registry.yarnpkg.com/:_authToken=$NPM_TOKEN" >> ~/.npmrc
+              RELEASE_TYPE=${CIRCLE_BRANCH/master/edge}
+              if [ "$RELEASE_TYPE" = "next" ]; then release="--release major"; fi
+              yarn standard-version --skip.changelog true --skip.tag true --skip.commit true $release
+              node -r esm ./scripts/package
+              yarn build
+              npm publish --dry-run -q --tag $RELEASE_TYPE
+            else
+              echo "Release phase was skipped."
+            fi
 
 workflows:
   version : 2
