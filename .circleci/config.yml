@@ -136,6 +136,7 @@ workflows:
   version : 2
 
   commit:
+    jobs:
       - has-commits
       - setup:            { requires: [has-commits] }
       - release:          { requires: [setup] }
