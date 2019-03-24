@@ -48,3 +48,5 @@ examples/yarn.lock
 
 # env vars
 .env*
+
+types/test/*.js

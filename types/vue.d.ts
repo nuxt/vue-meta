@@ -3,7 +3,13 @@
  */
 
 import Vue, { ComponentOptions } from "vue";
-import { MetaInfo } from './index';
+import { MetaInfo, $meta } from './vue-meta';
+
+declare module "vue/types/vue" {
+  interface Vue {
+    $meta(): $meta
+  }
+}
 
 declare module "vue/types/options" {
   interface ComponentOptions<V extends Vue> {
@@ -11,8 +17,3 @@ declare module "vue/types/options" {
   }
 }
 
-declare module "vue/types/vue" {
-  interface Vue {
-    $meta(): MetaInfo
-  }
-}
