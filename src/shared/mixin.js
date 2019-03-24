@@ -47,7 +47,7 @@ export default function createMixin(Vue, options) {
         // coerce function-style metaInfo to a computed prop so we can observe
         // it on creation
         if (isFunction(this.$options[options.keyName])) {
-          if (isUndefined(this.$options.computed)) {
+          if (!this.$options.computed) {
             this.$options.computed = {}
           }
           this.$options.computed.$metaInfo = this.$options[options.keyName]
@@ -82,7 +82,7 @@ export default function createMixin(Vue, options) {
               }
             })
 
-            // add the navigation guards if they havent been added yet
+            // add the navigation guards if requested
             if (options.refreshOnceOnNavigation) {
               addNavGuards(this)
             }
@@ -94,7 +94,10 @@ export default function createMixin(Vue, options) {
           // add the navigation guards if they havent been added yet
           // if metaInfo is defined as a function, this does call the computed fn redundantly
           // but as Vue internally caches the results of computed props it shouldnt hurt performance
-          if (!options.refreshOnceOnNavigation && this.$options[options.keyName].afterNavigation) {
+          if (!options.refreshOnceOnNavigation && (
+            (this.$options[options.keyName] && this.$options[options.keyName].afterNavigation) ||
+            (this.$options.computed && this.$options.computed.$metaInfo && (this.$options.computed.$metaInfo() || {}).afterNavigation)
+          )) {
             addNavGuards(this)
           }
 

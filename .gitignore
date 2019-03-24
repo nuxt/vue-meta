@@ -1,6 +1,7 @@
 # Logs
 logs
 *.log
+*.err
 npm-debug.log*
 
 # Runtime data
@@ -44,3 +45,6 @@ es
 
 # examples yarn lock
 examples/yarn.lock
+
+# env vars
+.env*
