@@ -19,6 +19,9 @@ const BarMetaInfo: MetaInfo = {
   __dangerouslyDisableSanitizersByTagID: {
     ldjson: ['innerHTML']
   },
+  script: [{
+    src: '', crossorigin: '', async: true
+  }],
   changed(newdata: MetaInfo, newTags: HTMLElement[], oldTags: HTMLElement[]) {
   },
   afterNavigation(data: MetaInfo) {

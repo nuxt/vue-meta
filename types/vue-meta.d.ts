@@ -48,20 +48,45 @@ export interface MetaInfo {
   meta?: {
     vmid?: string,
     charset?: string,
+    'http-equiv'?: string,
     content?: string,
-    'http-equiv'?: 'content-security-policy' | 'refresh',
     name?: string,
-      [key: string]: any
+    [key: string]: any
   }[]
 
-  link?: { rel: string, href: string, [key: string]: any }[]
-  style?: { cssText: string, type: string, [key: string]: any }[]
-  script?: { innerHTML?: string, src?: string, type: string, [key: string]: any }[]
-  noscript?: { innerHTML: string, [key: string]: any }[]
+  link?: {
+    vmid?: string,
+    rel: string,
+    href: string,
+    [key: string]: any
+  }[]
+
+  style?: {
+    vmid?: string,
+    cssText: string,
+    type: string,
+    [key: string]: any
+  }[]
+
+  script?: {
+    vmid?: string,
+    innerHTML?: string,
+    src?: string,
+    type?: string,
+    async?: boolean,
+    defer?: boolean,
+    [key: string]: any
+  }[]
+
+  noscript?: {
+    vmid?: string,
+    innerHTML: string,
+    [key: string]: any
+  }[]
 
   __dangerouslyDisableSanitizers?: string[]
   __dangerouslyDisableSanitizersByTagID?: {
-    [vmid: string]: string[]
+    [key: string]: string[]
   }
 
   changed?: <T extends MetaInfo>(newInfo: T, addedTags: elements, removedTags: elements) => void
