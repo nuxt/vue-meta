@@ -6,6 +6,7 @@ module.exports = {
       description: 'Metadata manager for Vue.js'
     },
   },
+  ga: 'UA-88662854-1',
   serviceWorker: true,
   themeConfig: {
     repo: 'nuxt/vue-meta',
