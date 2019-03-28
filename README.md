@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="./docs/.vuepress/public/logo.png" alt="vue-meta" />
+  <img src="./docs/.vuepress/public/vue-meta.png" alt="vue-meta" />
 </p>
 
 <h5 align="center">

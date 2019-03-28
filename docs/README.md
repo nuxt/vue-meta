@@ -1,4 +1,4 @@
-<img src="logo.png" alt="vue-meta"/>
+<img src="vue-meta.png" alt="vue-meta"/>
 
 ::: tip We need your help
 We are working on defining the RFC for Vue Meta v3.0. It will be a ground-breaking release built from the ground up.
