@@ -7,7 +7,6 @@ module.exports = {
     },
   },
   serviceWorker: true,
-  theme: 'vue',
   themeConfig: {
     repo: 'nuxt/vue-meta',
     docsDir: 'docs',
