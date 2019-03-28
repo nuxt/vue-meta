@@ -1,5 +1,5 @@
-import Vue, { ComponentOptions } from 'vue';
-import VueMeta, { $meta as _meta, VueMetaOptions, MetaInfo, MetaInfoSSR } from '../index';
+import Vue, { ComponentOptions } from 'vue'
+import VueMeta, { VueMetaPlugin, VueMetaOptions, MetaInfo, MetaInfoSSR } from '../index'
 
 Vue.use(VueMeta, {
   keyName: 'head'
@@ -39,7 +39,7 @@ const Bar: ComponentOptions<Vue> = {
 }
 
 const app: Vue = new Vue(Foo)
-const $meta: _meta = app.$meta()
+const $meta: VueMetaPlugin = app.$meta()
 
 // getOptions
 const options: VueMetaOptions = $meta.getOptions()

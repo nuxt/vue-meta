@@ -1,7 +1,7 @@
-import './vue';
-import Vue, { ComponentOptions, PluginFunction, PluginObject } from 'vue';
+import './vue'
+import Vue, { ComponentOptions, PluginFunction, PluginObject } from 'vue'
 
-type Component = ComponentOptions<Vue> | typeof Vue;
+type Component = ComponentOptions<Vue> | typeof Vue
 type elements = HTMLElement[]
 
 export interface VueMetaOptions {
@@ -18,7 +18,7 @@ export declare class VueMeta {
   static hasMetaInfo(vm: Component): boolean
 }
 
-interface refreshed {
+interface Refreshed {
   vm: Component,
   metaInfo: MetaInfo,
   tags: {
@@ -27,13 +27,13 @@ interface refreshed {
   }
 }
 
-export interface $meta {
+export interface VueMetaPlugin {
   getOptions(): VueMetaOptions
-  refresh(): refreshed
+  refresh(): Refreshed
   inject(): MetaInfoSSR
-  pause(refresh: true): () => refreshed
+  pause(refresh: true): () => Refreshed
   pause(refresh?: boolean): () => void
-  resume(refresh: true): refreshed
+  resume(refresh: true): Refreshed
   resume(refresh?: boolean): void
 }
 
@@ -93,26 +93,26 @@ export interface MetaInfo {
   afterNavigation?: <T extends MetaInfo>(newInfo: T) => void
 }
 
-interface toText {
+interface ToText {
   text(): string
 }
 
-interface toBodyTextOption {
+interface ToBodyTextOption {
   body: boolean
 }
-interface toBodyText {
-  text(options?: toBodyTextOption): string
+interface ToBodyText {
+  text(options?: ToBodyTextOption): string
 }
 
 export interface MetaInfoSSR {
-  title?: toText
-  htmlAttrs?: toText
-  headAttrs?: toText
-  bodyAttrs?: toText
-  base?: toText
-  meta?: toText
-  link?: toText
-  style?: toText
-  script?: toBodyText
-  noscript?: toBodyText
+  title?: ToText
+  htmlAttrs?: ToText
+  headAttrs?: ToText
+  bodyAttrs?: ToText
+  base?: ToText
+  meta?: ToText
+  link?: ToText
+  style?: ToText
+  script?: ToBodyText
+  noscript?: ToBodyText
 }

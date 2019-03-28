@@ -1,11 +1,11 @@
-import './vue';
-import { VueMeta } from './vue-meta';
+import './vue'
+import { VueMeta } from './vue-meta'
 
-export default VueMeta;
+export default VueMeta
 
 export {
   VueMetaOptions,
-  $meta,
+  VueMetaPlugin,
   MetaInfo,
   MetaInfoSSR
 } from './vue-meta'

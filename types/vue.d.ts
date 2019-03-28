@@ -2,16 +2,16 @@
  * Augment the typings of Vue.js
  */
 
-import Vue, { ComponentOptions } from "vue";
-import { MetaInfo, $meta } from './vue-meta';
+import Vue, { ComponentOptions } from 'vue'
+import { MetaInfo, VueMetaPlugin } from './vue-meta'
 
-declare module "vue/types/vue" {
+declare module 'vue/types/vue' {
   interface Vue {
-    $meta(): $meta
+    $meta(): VueMetaPlugin
   }
 }
 
-declare module "vue/types/options" {
+declare module 'vue/types/options' {
   interface ComponentOptions<V extends Vue> {
     metaInfo?: MetaInfo | (() => MetaInfo)
   }
