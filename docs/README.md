@@ -1,9 +1,9 @@
 <img src="vue-meta.png" alt="vue-meta"/>
 
 ::: tip We need your help
-We are working on defining the RFC for Vue Meta v3.0. It will be a ground-breaking release built from the ground up.
+We are working on defining the RFC for Vue Meta v2.0. It will be a ground-breaking release built from the ground up.
 
-We would like your help with this! Please visit the [Vue Meta v3.0 rfc](https://github.com/nuxt/rfcs/issues/19) and let us know your thoughts.
+We would like your help with this! Please visit the [Vue Meta v2.0 rfc](https://github.com/nuxt/rfcs/issues/19) and let us know your thoughts.
 :::
 
 # Introduction
