@@ -11,6 +11,14 @@ Vue.component('foo', {
 })
 
 new Vue({
+  data() {
+    return { showFoo: false }
+  },
+  methods: {
+    show() {
+      this.showFoo = !this.showFoo
+    }
+  },
   template: `
     <div id="app">
       <h1>Kept alive foo</h1>
@@ -20,14 +28,6 @@ new Vue({
       </keep-alive>
     </div>
   `,
-  data () {
-    return { showFoo: false }
-  },
-  methods: {
-    show () {
-      this.showFoo = !this.showFoo
-    }
-  },
   metaInfo: () => ({
     title: 'Keep-alive'
   })

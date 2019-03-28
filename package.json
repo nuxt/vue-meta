@@ -1,13 +1,14 @@
 {
   "name": "vue-meta",
   "version": "1.5.8",
-  "description": "Manage page meta info in Vue 2.0 server-rendered apps",
+  "description": "Manage page metadata in Vue.js components with ssr support",
   "keywords": [
     "attribute",
     "google",
     "head",
     "helmet",
     "info",
+    "metadata",
     "meta",
     "seo",
     "server",
@@ -23,7 +24,14 @@
     "url": "git@github.com/nuxt/vue-meta.git"
   },
   "license": "MIT",
-  "author": "Declan de Wet <declandewet@me.com>",
+  "contributors": [
+    {
+      "name": "Declan de Wet (@declandewet)"
+    },
+    {
+      "name": "Sebastien Chopin (@Atinux)"
+    }
+  ],
   "files": [
     "lib",
     "es",
@@ -39,13 +47,13 @@
     "build:es": "rimraf es && babel src --env-name es --out-dir es",
     "build:other": "rimraf lib && rollup -c scripts/rollup.config.js",
     "coverage": "codecov",
-    "predeploy": "git checkout master && git pull -r",
-    "deploy": "npm version",
-    "postdeploy": "git push origin master --follow-tags && npm run release",
-    "dev": "cd examples && npm run dev && cd ..",
+    "dev": "cd examples && yarn dev && cd ..",
+    "docs": "vuepress dev --host 0.0.0.0 --port 3000 docs",
+    "docs:build": "vuepress build docs",
     "lint": "eslint src test",
-    "prerelease": "npm run build",
-    "release": "npm publish",
+    "prerelease": "git checkout master && git pull -r",
+    "release": "yarn lint && yarn test && yarn build && standard-version",
+    "postrelease": "git push origin master --follow-tags && yarn publish",
     "test": "yarn test:unit && yarn test:e2e-ssr && yarn test:e2e-browser",
     "test:e2e-ssr": "jest test/e2e/ssr",
     "test:e2e-browser": "jest test/e2e/browser",
@@ -53,6 +61,9 @@
   },
   "dependencies": {
     "deepmerge": "^3.2.0"
+  },
+  "resolutions": {
+    "webpack-dev-middleware": "3.6.0"
   },
   "devDependencies": {
     "@babel/cli": "^7.2.3",

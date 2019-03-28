@@ -1,6 +1,9 @@
 MIT License
 
-Copyright (c) 2016-2018 Declan de Wet & Sébastien Chopin
+Copyright (c) 2016-2019
+- Declan de Wet
+- Sébastien Chopin
+- All the amazing contributors (https://github.com/nuxt/vue-meta/graphs/contributors)
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
