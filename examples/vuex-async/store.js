@@ -35,33 +35,33 @@ export default new Vuex.Store({
 
   // GETTERS
   getters: {
-    isLoading (state) {
+    isLoading(state) {
       return state.isLoading
     },
-    post (state) {
+    post(state) {
       return state.post
     },
-    publishedPosts (state) {
-      return state.posts.filter((post) => post.published)
+    publishedPosts(state) {
+      return state.posts.filter(post => post.published)
     },
-    publishedPostsCount (state, getters) {
+    publishedPostsCount(state, getters) {
       return getters.publishedPosts.length
     }
   },
 
   // MUTATIONS
   mutations: {
-    loadingState (state, { isLoading }) {
+    loadingState(state, { isLoading }) {
       state.isLoading = isLoading
     },
-    getPost (state, { slug }) {
-      state.post = state.posts.find((post) => post.slug === slug)
+    getPost(state, { slug }) {
+      state.post = state.posts.find(post => post.slug === slug)
     }
   },
 
   // ACTIONS
   actions: {
-    getPost ({ commit }, payload) {
+    getPost({ commit }, payload) {
       commit('loadingState', { isLoading: true })
       setTimeout(() => {
         commit('getPost', payload)

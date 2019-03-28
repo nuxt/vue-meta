@@ -15,7 +15,7 @@ const ChildComponent = {
 <h3>You're looking at the <strong>{{ page }}</strong> page</h3>
 <p>Has metaInfo been updated? {{ metaUpdated }}</p>
 </div>`,
-  metaInfo () {
+  metaInfo() {
     return {
       title: `${this.page} - ${this.date && this.date.toTimeString()}`,
       afterNavigation() {
@@ -27,22 +27,22 @@ const ChildComponent = {
     return {
       date: null,
       metaUpdated
-    };
+    }
   },
   mounted() {
     setInterval(() => {
-      this.date = new Date();
-    }, 1000);
+      this.date = new Date()
+    }, 1000)
   }
 }
 
 // this wrapper function is not a requirement for vue-router,
 // just a demonstration that render-function style components also work.
 // See https://github.com/nuxt/vue-meta/issues/9 for more info.
-function view (page) {
+function view(page) {
   return {
     name: `section-${page}`,
-    render (h) {
+    render(h) {
       return h(ChildComponent, {
         props: { page }
       })
