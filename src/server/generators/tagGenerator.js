@@ -43,10 +43,10 @@ export default function _tagGenerator (options = {}) {
             : `${attribute}="true" `
 
           // these tags have no end tag
-          const hasEndTag = !['base', 'meta', 'link'].includes(type)
+          const hasEndTag = ['base', 'meta', 'link'].indexOf(type) === -1
 
           // these tag types will have content inserted
-          const hasContent = hasEndTag && ['noscript', 'script', 'style'].includes(type)
+          const hasContent = hasEndTag && ['noscript', 'script', 'style'].indexOf(type) > -1
 
           // the final string for this specific tag
           return !hasContent
