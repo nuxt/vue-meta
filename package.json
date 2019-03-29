@@ -114,7 +114,7 @@
     "selenium-webdriver": "^4.0.0-alpha.1",
     "standard-version": "^5.0.2",
     "tib": "^0.4.0",
-    "typescript": "^3.3.4000",
+    "typescript": "^3.4.1",
     "vue": "^2.6.10",
     "vue-jest": "^3.0.4",
     "vue-loader": "^15.7.0",
