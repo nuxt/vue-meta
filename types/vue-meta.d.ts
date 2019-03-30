@@ -91,6 +91,7 @@ export interface StyleProperty extends MetaDataProperty {
 export interface ScriptPropertyBase extends MetaDataProperty {
   type?: string,
   charset?: string,
+  body?: boolean,
   async?: boolean,
   defer?: boolean,
   crossOrigin?: string,
