@@ -93,6 +93,8 @@ export interface MetaInfo {
   afterNavigation?: <T extends MetaInfo>(newInfo: T) => void
 }
 
+export type MetaInfoComputed = () => MetaInfo
+
 interface ToText {
   text(): string
 }

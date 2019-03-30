@@ -3,7 +3,7 @@
  */
 
 import Vue, { ComponentOptions } from 'vue'
-import { MetaInfo, VueMetaPlugin } from './vue-meta'
+import { MetaInfo, MetaInfoComputed, VueMetaPlugin } from './vue-meta'
 
 declare module 'vue/types/vue' {
   interface Vue {
@@ -13,7 +13,6 @@ declare module 'vue/types/vue' {
 
 declare module 'vue/types/options' {
   interface ComponentOptions<V extends Vue> {
-    metaInfo?: MetaInfo | (() => MetaInfo)
+    metaInfo?: MetaInfo | MetaInfoComputed
   }
 }
-
