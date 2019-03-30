@@ -48,7 +48,7 @@ export interface MetaInfo {
   meta?: {
     vmid?: string,
     charset?: string,
-    'http-equiv'?: string,
+    httpEquiv?: string,
     content?: string,
     name?: string,
     [key: string]: any
