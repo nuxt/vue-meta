@@ -37,52 +37,96 @@ export interface VueMetaPlugin {
   resume(refresh?: boolean): void
 }
 
+export interface AttributeProperty {
+  [key: string]: string | string[]
+}
+
+export interface MetaDataProperty {
+  vmid?: string,
+  [key: string]: any
+}
+
+export interface MetaPropertyCharset extends MetaDataProperty {
+  charset: string,
+}
+
+export interface MetaPropertyEquiv extends MetaDataProperty {
+  httpEquiv: string,
+  name: string,
+  template?: (chunk: string) => string
+}
+
+export interface MetaPropertyName extends MetaDataProperty {
+  name: string,
+  content: string,
+  template?: (chunk: string) => string
+}
+
+// non-w3c interface
+export interface MetaPropertyProperty extends MetaDataProperty {
+  property: string,
+  content: string,
+  template?: (chunk: string) => string
+}
+
+export interface LinkProperty extends MetaDataProperty {
+  rel: string,
+  crossOrigin?: string | null,
+  href?: string,
+  hreflang?: string,
+  media?: string,
+  nonce?: string,
+  referrerPolicy?: string,
+  rev?: string,
+  type?: string,
+}
+
+export interface StyleProperty extends MetaDataProperty {
+  cssText: string,
+  media?: string,
+  nonce?: string,
+  type?: string,
+}
+
+export interface ScriptPropertyBase extends MetaDataProperty {
+  type?: string,
+  charset?: string,
+  async?: boolean,
+  defer?: boolean,
+  crossOrigin?: string,
+  nonce?: string
+}
+
+export interface ScriptPropertyText extends ScriptPropertyBase {
+  innerHTML: string,
+}
+
+export interface ScriptPropertySrc extends ScriptPropertyBase {
+  src: string,
+}
+
+export interface NoScriptProperty extends MetaDataProperty {
+  innerHTML: string,
+}
+
 export interface MetaInfo {
   title?: string
   titleTemplate?: string | ((titleChunk: string) => string)
-  htmlAttrs?: { [key: string]: string | string[] }
-  headAttrs?: { [key: string]: string | string[] }
-  bodyAttrs?: { [key: string]: string | string[] }
-  base?: { target: string, href: string }
 
-  meta?: {
-    vmid?: string,
-    charset?: string,
-    httpEquiv?: string,
-    content?: string,
-    name?: string,
-    [key: string]: any
-  }[]
+  htmlAttrs?: AttributeProperty
+  headAttrs?: AttributeProperty
+  bodyAttrs?: AttributeProperty
 
-  link?: {
-    vmid?: string,
-    rel: string,
-    href: string,
-    [key: string]: any
-  }[]
+  base?: {
+    target: string,
+    href: string
+  }
 
-  style?: {
-    vmid?: string,
-    cssText: string,
-    type: string,
-    [key: string]: any
-  }[]
-
-  script?: {
-    vmid?: string,
-    innerHTML?: string,
-    src?: string,
-    type?: string,
-    async?: boolean,
-    defer?: boolean,
-    [key: string]: any
-  }[]
-
-  noscript?: {
-    vmid?: string,
-    innerHTML: string,
-    [key: string]: any
-  }[]
+  meta?: (MetaPropertyCharset | MetaPropertyEquiv | MetaPropertyName | MetaPropertyProperty)[]
+  link?: LinkProperty[]
+  style?: StyleProperty[]
+  script?: (ScriptPropertyText | ScriptPropertySrc)[]
+  noscript?: NoScriptProperty[]
 
   __dangerouslyDisableSanitizers?: string[]
   __dangerouslyDisableSanitizersByTagID?: {

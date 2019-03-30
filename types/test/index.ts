@@ -22,6 +22,15 @@ const BarMetaInfo: MetaInfo = {
   script: [{
     src: '', crossorigin: '', async: true
   }],
+  meta: [
+    { charset: 'utf-8' },
+    {
+      'property': 'og:title',
+      'content': 'Test title',
+      'template': chunk => `${chunk} - My page`, //or as string template: '%s - My page',
+      'vmid': 'og:title'
+    }
+  ],
   changed(newdata: MetaInfo, newTags: HTMLElement[], oldTags: HTMLElement[]) {
   },
   afterNavigation(data: MetaInfo) {
