@@ -124,9 +124,17 @@ jobs:
               echo "//registry.yarnpkg.com/:_authToken=$NPM_TOKEN" >> ~/.npmrc
               RELEASE_TYPE=${CIRCLE_BRANCH/master/edge}
               if [ "$RELEASE_TYPE" = "next" ]; then release="--release major"; fi
+              # Set next package version
               yarn standard-version --skip.changelog true --skip.tag true --skip.commit true $release
-              node -r esm ./scripts/package
+              # Retrieve next package version
+              CURVER=`jq -r .version package.json | sed 's/-.*//'`
+              # Create custom prerelease version string
+              PREVER="$(($(date +%s) / 60)).$(git rev-parse --short HEAD)"
+              # Set version string to include custom prerelease
+              echo "$(jq '.version = "'$CURVER'-'$PREVER'"' package.json)" > package.json
+              # Build
               yarn build
+              # Publish
               npm publish --dry-run -q --tag $RELEASE_TYPE
             else
               echo "Release phase was skipped."
