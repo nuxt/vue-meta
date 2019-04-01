@@ -214,4 +214,3 @@ workflows:
       - schedule:
           cron: "0 0 * * *"
           <<: *release_branches_only
-
