@@ -27,14 +27,21 @@ module.exports = {
           link: 'https://github.com/nuxt/vue-meta/releases'
         }],
         sidebar: [
-          '/installation.md',
           '/',
+          {
+            title: 'Getting started',
+            collapsable: false,
+            children: [
+              '/guide/',
+              '/guide/preparing',
+              '/guide/ssr',
+              '/guide/frameworks'
+            ]
+          },
           {
             title: 'Usage',
             collapsable: false,
             children: [
-              '/guide/',
-              '/guide/ssr',
               '/guide/metainfo',
               '/guide/special',
               '/guide/caveats',
@@ -50,19 +57,7 @@ module.exports = {
               '/faq/component-props.md',
               '/faq/async-action.md',
             ]
-          },
-          /*{
-            title: 'Advanced',
-            collapsable: false,
-            children: [
-              '/guide/advanced/navigation-guards.md',
-              '/guide/advanced/meta.md',
-              '/guide/advanced/transitions.md',
-              '/guide/advanced/data-fetching.md',
-              '/guide/advanced/scroll-behavior.md',
-              '/guide/advanced/lazy-loading.md'
-            ]
-          }*/
+          }
         ]
       },
     }
