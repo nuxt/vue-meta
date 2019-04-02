@@ -35,8 +35,7 @@
   "files": [
     "lib",
     "es",
-    "types/index.d.ts",
-    "types/vue.d.ts"
+    "types/*.d.ts"
   ],
   "main": "lib/vue-meta.common.js",
   "web": "lib/vue-meta.js",
