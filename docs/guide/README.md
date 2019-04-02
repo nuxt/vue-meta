@@ -1,36 +1,48 @@
-# Preparing the plugin
-:::tip Note
-This step is optional if you don't need SSR and `Vue` is available as a global variable. `vue-meta` will install itself in this case.
+# Installation
+
+:::tip Using a framework?
+
+Are you using a framework like Nuxt.js, Gridsome or another one which uses vue-meta? Then `vue-meta` should already be installed and you can skip to [Usage](/guide/metainfo.html) or consult the [documentation](/guide/frameworks.html) of your framework for more details.
 :::
 
-In order to use this plugin, you first need to pass it to `Vue.use` - if you're not rendering on the server-side, your entry file will suffice. If you are rendering on the server, then place it in a file that runs both on the server and on the client before your root instance is mounted. If you're using [`vue-router`](https://github.com/vuejs/vue-router), then your main `router.js` file is a good place:
+## Download / CDN
 
-**router.js:**
+[https://unpkg.com/vue-meta/lib/vue-meta.js](https://unpkg.com/vue-meta/lib/vue-meta.js)
+
+For the latest version in the v1.x branch you can use:<br/>
+[https://unpkg.com/vue-meta@1/lib/vue-meta.js](https://unpkg.com/vue-meta@1/lib/vue-meta.js)
+
+Or you can replace `1` with the full version number you wish to use.
+
+If you include vue-meta after Vue it will install automatically
+
+**Uncompressed:**
+```html
+<script src="https://unpkg.com/vue-meta/lib/vue-meta.js"></script>
+```
+
+**Minified:**
+```html
+<script src="https://unpkg.com/vue-meta/lib/vue-meta.min.js"></script>
+```
+
+## Package manager
+**Yarn**
+```sh
+$ yarn add vue-meta
+```
+
+**npm**
+```sh
+$ npm install vue-meta --save
+```
+
+### Install
+You need to explicitly install vue-meta when using a package manager
+
 ```js
 import Vue from 'vue'
-import Router from 'vue-router'
-import Meta from 'vue-meta'
+import VueMeta from 'vue-meta'
 
-Vue.use(Router)
-Vue.use(Meta)
-
-export default new Router({
-  ...
-})
+Vue.use(VueMeta)
 ```
-
-## Options
-
-`vue-meta` allows a few custom options:
-
-```js
-Vue.use(Meta, {
-  keyName: 'metaInfo',
-  attribute: 'data-vue-meta',
-  ssrAttribute: 'data-vue-meta-server-rendered',
-  tagIDKeyName: 'vmid',
-  refreshOnceOnNavigation: true
-})
-```
-
-See the [API](/api/#plugin-options) for a description of the available plugin options

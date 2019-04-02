@@ -3,7 +3,7 @@
 ## Reactive variables in template functions
 
 Both [title](/api/#titletemplate) as [meta](/api/#content-templates) support using template function.
-Due to how Vue determines reactivity it is not possible to use reactive variables directly in template function
+Due to how Vue determines reactivity it is not possible to use reactive variables directly in template functions
 
 ```js
 {
@@ -20,7 +20,7 @@ Due to how Vue determines reactivity it is not possible to use reactive variable
 }
 ```
 
-You need to assign the reactive variable to a local variable for this to work:
+You need to assign the reactive variable to a local variable first for this to work:
 
 ```js
 {
