@@ -34,7 +34,7 @@ $ yarn add vue-meta
 
 **npm**
 ```sh
-$ npm install vue-meta --save
+$ npm i vue-meta
 ```
 
 ### Install
