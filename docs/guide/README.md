@@ -16,7 +16,7 @@ Or you can replace `1` with the full version number you wish to use.
 
 If you include vue-meta after Vue it will install automatically
 
-**Uncompressed:**
+**Unminified (suggested only for dev):**
 ```html
 <script src="https://unpkg.com/vue-meta/lib/vue-meta.js"></script>
 ```
