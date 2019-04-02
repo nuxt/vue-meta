@@ -2,7 +2,7 @@
 
 :::tip Using a framework?
 
-Are you using a framework like Nuxt.js, Gridsome or another one which uses vue-meta? Then `vue-meta` should already be installed and you can skip to [Usage](/guide/metainfo.html) or consult the [documentation](/guide/frameworks.html) of your framework for more details.
+Are you using a framework like Nuxt.js, Gridsome or another one which uses vue-meta? Then `vue-meta` should already be installed and you can skip to [Usage](/guide/metainfo.html) or consult the [documentation](/guide/frameworks.html) of your framework for more information.
 :::
 
 ## Download / CDN
@@ -38,7 +38,13 @@ $ npm i vue-meta
 ```
 
 ### Install
-You need to explicitly install vue-meta when using a package manager
+
+:::warning Using a framework?
+
+If you use a framework like Nuxt.js or Gridsome this step is most likely **not** required. Consult the [documentation](/guide/frameworks.html) of your framework for more information
+:::
+
+If you add `vue-meta` with a package manager, you will need to install the `vue-meta` plugin manually:
 
 ```js
 import Vue from 'vue'
