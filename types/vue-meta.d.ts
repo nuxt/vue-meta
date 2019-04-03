@@ -1,5 +1,5 @@
 import './vue'
-import Vue, { ComponentOptions, PluginFunction, PluginObject } from 'vue'
+import Vue, { ComponentOptions, PluginFunction } from 'vue'
 
 type Component = ComponentOptions<Vue> | typeof Vue
 type elements = HTMLElement[]
