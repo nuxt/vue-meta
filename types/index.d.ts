@@ -32,7 +32,7 @@ export interface MetaInfo {
     vmid?: string,
     charset?: string,
     content?: string,
-    'http-equiv'?: 'content-security-policy' | 'refresh',
+    'http-equiv'?: string,
     name?: string,
       [key: string]: any
   }[]
