@@ -1,3 +1,5 @@
+> :ribbon: The first release candidate for v2.0 has been [released](./releases). Click [here](https://github.com/nuxt/vue-meta/tree/1.x) if you are looking for the old v1 readme
+
 <p align="center">
   <img src="./docs/.vuepress/public/vue-meta.png" alt="vue-meta" />
 </p>
