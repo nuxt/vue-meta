@@ -1,0 +1,46 @@
+{
+  "name": "vue-meta-examples",
+  "version": "1.0.0",
+  "description": "Examples for vue-meta",
+  "main": "server.js",
+  "private": true,
+  "scripts": {
+    "dev": "cross-env NODE_ENV=development babel-node server.js",
+    "start": "babel-node server.js",
+    "ssr": "babel-node ssr"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/nuxt/vue-meta.git"
+  },
+  "author": "",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/nuxt/vue-meta/issues"
+  },
+  "homepage": "https://github.com/nuxt/vue-meta#readme",
+  "devDependencies": {
+    "@babel/core": "^7.3.3",
+    "@babel/node": "^7.2.2",
+    "@babel/plugin-syntax-dynamic-import": "^7.2.0",
+    "@babel/preset-env": "^7.3.1",
+    "babel-loader": "^8.0.5",
+    "babel-plugin-dynamic-import-node": "^2.2.0",
+    "consola": "^2.5.6",
+    "cross-env": "^5.2.0",
+    "express": "^4.16.4",
+    "express-urlrewrite": "^1.2.0",
+    "fs-extra": "^7.0.1",
+    "lodash": "^4.17.11",
+    "vue": "^2.6.6",
+    "vue-loader": "^15.6.4",
+    "vue-meta": "^1.5.8",
+    "vue-router": "^3.0.2",
+    "vue-server-renderer": "^2.6.8",
+    "vue-template-compiler": "^2.6.6",
+    "vuex": "^3.1.0",
+    "webpack": "^4.29.5",
+    "webpack-dev-server": "^3.2.0",
+    "webpackbar": "^3.1.5"
+  }
+}

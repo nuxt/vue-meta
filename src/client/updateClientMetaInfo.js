@@ -1,64 +1,76 @@
-import updateTitle from './updaters/updateTitle'
-import updateTagAttributes from './updaters/updateTagAttributes'
-import updateTags from './updaters/updateTags'
+import { metaInfoOptionKeys, metaInfoAttributeKeys } from '../shared/constants'
+import { isArray } from '../utils/is-type'
+import { includes } from '../utils/array'
+import { updateAttribute, updateTag, updateTitle } from './updaters'
 
-export default function _updateClientMetaInfo (options = {}) {
+function getTag(tags, tag) {
+  if (!tags[tag]) {
+    tags[tag] = document.getElementsByTagName(tag)[0]
+  }
+
+  return tags[tag]
+}
+
+/**
+ * Performs client-side updates when new meta info is received
+ *
+ * @param  {Object} newInfo - the meta info to update to
+ */
+export default function updateClientMetaInfo(options = {}, newInfo) {
   const { ssrAttribute } = options
 
-  /**
-   * Performs client-side updates when new meta info is received
-   *
-   * @param  {Object} newInfo - the meta info to update to
-   */
-  return function updateClientMetaInfo (newInfo) {
-    const htmlTag = document.getElementsByTagName('html')[0]
-    // if this is not a server render, then update
-    if (htmlTag.getAttribute(ssrAttribute) === null) {
-      // initialize tracked changes
-      const addedTags = {}
-      const removedTags = {}
+  // only cache tags for current update
+  const tags = {}
 
-      Object.keys(newInfo).forEach((key) => {
-        switch (key) {
-          // update the title
-          case 'title':
-            updateTitle(options)(newInfo.title)
-            break
-          // update attributes
-          case 'htmlAttrs':
-            updateTagAttributes(options)(newInfo[key], htmlTag)
-            break
-          case 'bodyAttrs':
-            updateTagAttributes(options)(newInfo[key], document.getElementsByTagName('body')[0])
-            break
-          case 'headAttrs':
-            updateTagAttributes(options)(newInfo[key], document.getElementsByTagName('head')[0])
-            break
-          // ignore these
-          case 'titleChunk':
-          case 'titleTemplate':
-          case 'changed':
-          case '__dangerouslyDisableSanitizers':
-            break
-          // catch-all update tags
-          default:
-            const headTag = document.getElementsByTagName('head')[0]
-            const bodyTag = document.getElementsByTagName('body')[0]
-            const { oldTags, newTags } = updateTags(options)(key, newInfo[key], headTag, bodyTag)
-            if (newTags.length) {
-              addedTags[key] = newTags
-              removedTags[key] = oldTags
-            }
-        }
-      })
+  const htmlTag = getTag(tags, 'html')
 
-      // emit "event" with new info
-      if (typeof newInfo.changed === 'function') {
-        newInfo.changed.call(this, newInfo, addedTags, removedTags)
-      }
-    } else {
-      // remove the server render attribute so we can update on changes
-      htmlTag.removeAttribute(ssrAttribute)
+  // if this is a server render, then dont update
+  if (htmlTag.hasAttribute(ssrAttribute)) {
+    // remove the server render attribute so we can update on (next) changes
+    htmlTag.removeAttribute(ssrAttribute)
+    return false
+  }
+
+  // initialize tracked changes
+  const addedTags = {}
+  const removedTags = {}
+
+  for (const type in newInfo) {
+    // ignore these
+    if (includes(metaInfoOptionKeys, type)) {
+      continue
+    }
+
+    if (type === 'title') {
+      // update the title
+      updateTitle(newInfo.title)
+      continue
+    }
+
+    if (includes(metaInfoAttributeKeys, type)) {
+      const tagName = type.substr(0, 4)
+      updateAttribute(options, newInfo[type], getTag(tags, tagName))
+      continue
+    }
+
+    // tags should always be an array, ignore if it isnt
+    if (!isArray(newInfo[type])) {
+      continue
+    }
+
+    const { oldTags, newTags } = updateTag(
+      options,
+      type,
+      newInfo[type],
+      getTag(tags, 'head'),
+      getTag(tags, 'body')
+    )
+
+    if (newTags.length) {
+      addedTags[type] = newTags
+      removedTags[type] = oldTags
     }
   }
+
+  return { addedTags, removedTags }
 }

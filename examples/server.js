@@ -1,5 +1,6 @@
 import fs from 'fs'
 import path from 'path'
+import consola from 'consola'
 import express from 'express'
 import rewrite from 'express-urlrewrite'
 import webpack from 'webpack'
@@ -16,15 +17,19 @@ app.use(webpackDevMiddleware(webpack(WebpackConfig), {
   }
 }))
 
-fs.readdirSync(__dirname).forEach(file => {
-  if (fs.statSync(path.join(__dirname, file)).isDirectory()) {
-    app.use(rewrite('/' + file + '/*', '/' + file + '/index.html'))
-  }
-})
+fs.readdirSync(__dirname)
+  .filter(file => file !== 'ssr')
+  .forEach((file) => {
+    if (fs.statSync(path.join(__dirname, file)).isDirectory()) {
+      app.use(rewrite('/' + file + '/*', '/' + file + '/index.html'))
+    }
+  })
 
 app.use(express.static(__dirname))
 
-const port = process.env.PORT || 8080
-module.exports = app.listen(port, () => {
-  console.log(`Server listening on http://localhost:${port}, Ctrl+C to stop`)
+const host = process.env.HOST || 'localhost'
+const port = process.env.PORT || 3000
+
+module.exports = app.listen(port, host, () => {
+  consola.info(`Server listening on http://${host}:${port}, Ctrl+C to stop`)
 })

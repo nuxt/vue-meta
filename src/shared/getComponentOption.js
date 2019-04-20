@@ -1,6 +1,8 @@
-import deepmerge from 'deepmerge'
-import uniqBy from './uniqBy'
-import uniqueId from 'lodash.uniqueid'
+import { isFunction, isObject } from '../utils/is-type'
+import { findIndex } from '../utils/array'
+import { merge } from './merge'
+import { applyTemplate } from './template'
+import { inMetaInfoBranch } from './meta-helpers'
 
 /**
  * Returns the `opts.option` $option value of the given `opts.component`.
@@ -10,66 +12,65 @@ import uniqueId from 'lodash.uniqueid'
  *
  * @param  {Object} opts - options
  * @param  {Object} opts.component - Vue component to fetch option data from
- * @param  {String} opts.option - what option to look for
  * @param  {Boolean} opts.deep - look for data in child components as well?
  * @param  {Function} opts.arrayMerge - how should arrays be merged?
+ * @param  {String} opts.keyName - the name of the option to look for
  * @param  {Object} [result={}] - result so far
  * @return {Object} result - final aggregated result
  */
-export default function getComponentOption (opts, result = {}) {
-  const { component, option, deep, arrayMerge, metaTemplateKeyName, tagIDKeyName, contentKeyName } = opts
-  const { $options } = component
+export default function getComponentOption(options = {}, component, result = {}) {
+  const { keyName, metaTemplateKeyName, tagIDKeyName } = options
+  const { $options, $children } = component
 
-  if (component._inactive) return result
+  if (component._inactive) {
+    return result
+  }
 
   // only collect option data if it exists
-  if (typeof $options[option] !== 'undefined' && $options[option] !== null) {
-    let data = $options[option]
+  if ($options[keyName]) {
+    let data = $options[keyName]
 
     // if option is a function, replace it with it's result
-    if (typeof data === 'function') {
+    if (isFunction(data)) {
       data = data.call(component)
     }
 
-    if (typeof data === 'object') {
-      // merge with existing options
-      result = deepmerge(result, data, { arrayMerge })
-    } else {
-      result = data
+    // ignore data if its not an object, then we keep our previous result
+    if (!isObject(data)) {
+      return result
     }
+
+    // merge with existing options
+    result = merge(result, data, options)
   }
 
   // collect & aggregate child options if deep = true
-  if (deep && component.$children.length) {
-    component.$children.forEach((childComponent) => {
-      result = getComponentOption({
-        component: childComponent,
-        option,
-        deep,
-        arrayMerge
-      }, result)
-    })
-  }
-  if (metaTemplateKeyName && result.hasOwnProperty('meta')) {
-    result.meta = Object.keys(result.meta).map(metaKey => {
-      const metaObject = result.meta[metaKey]
-      if (!metaObject.hasOwnProperty(metaTemplateKeyName) || !metaObject.hasOwnProperty(contentKeyName) || typeof metaObject[metaTemplateKeyName] === 'undefined') {
-        return result.meta[metaKey]
+  if ($children.length) {
+    $children.forEach((childComponent) => {
+      // check if the childComponent is in a branch
+      // return otherwise so we dont walk all component branches unnecessarily
+      if (!inMetaInfoBranch(childComponent)) {
+        return
       }
 
-      const template = metaObject[metaTemplateKeyName]
-      delete metaObject[metaTemplateKeyName]
-
-      if (template) {
-        metaObject.content = typeof template === 'function' ? template(metaObject.content) : template.replace(/%s/g, metaObject.content)
-      }
-
-      return metaObject
+      result = getComponentOption(options, childComponent, result)
     })
-    result.meta = uniqBy(
-      result.meta,
-      metaObject => metaObject.hasOwnProperty(tagIDKeyName) ? metaObject[tagIDKeyName] : uniqueId()
-    )
   }
+
+  if (metaTemplateKeyName && result.meta) {
+    // apply templates if needed
+    result.meta.forEach(metaObject => applyTemplate(options, metaObject))
+
+    // remove meta items with duplicate vmid's
+    result.meta = result.meta.filter((metaItem, index, arr) => {
+      return (
+        // keep meta item if it doesnt has a vmid
+        !metaItem.hasOwnProperty(tagIDKeyName) ||
+        // or if it's the first item in the array with this vmid
+        index === findIndex(arr, item => item[tagIDKeyName] === metaItem[tagIDKeyName])
+      )
+    })
+  }
+
   return result
 }
