@@ -52,7 +52,6 @@
     "lint": "eslint src test",
     "prerelease": "git checkout master && git pull -r",
     "release": "yarn lint && yarn test && yarn build && standard-version",
-    "postrelease": "git push origin master --follow-tags && yarn publish",
     "test": "yarn test:unit && yarn test:e2e-ssr && yarn test:e2e-browser",
     "test:e2e-ssr": "jest test/e2e/ssr",
     "test:e2e-browser": "jest test/e2e/browser",
