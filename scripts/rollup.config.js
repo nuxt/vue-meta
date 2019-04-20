@@ -10,10 +10,13 @@ const pkg = require('../package.json')
 
 const banner =  `/**
  * vue-meta v${pkg.version}
- * (c) ${new Date().getFullYear()} Declan de Wet & Sébastien Chopin (@Atinux)
+ * (c) ${new Date().getFullYear()}
+ * - Declan de Wet
+ * - Sébastien Chopin (@Atinux)
+ * - All the amazing contributors
  * @license MIT
  */
-`.replace(/ {4}/gm, '').trim()
+`
 
 function rollupConfig({
   plugins = [],

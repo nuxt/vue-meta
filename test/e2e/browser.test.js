@@ -4,7 +4,7 @@
 import fs from 'fs'
 import path from 'path'
 import env from 'node-env-file'
-import { browser as startBrowser } from 'tib'
+import { createBrowser } from 'tib'
 
 const browserString = process.env.BROWSER_STRING || 'puppeteer/core'
 
@@ -21,7 +21,7 @@ describe(browserString, () => {
       }
     }
 
-    browser = await startBrowser(browserString, {
+    browser = await createBrowser(browserString, {
       BrowserStackLocal: { folder },
       extendPage(page) {
         return {
