@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+# [2.0.0-rc.1](https://github.com/nuxt/vue-meta/compare/v2.0.0-rc.0...v2.0.0-rc.1) (2019-04-23)
+
+
+### Bug Fixes
+
+* move addNavGuards check to mounted hook ([e80643b](https://github.com/nuxt/vue-meta/commit/e80643b)), closes [#348](https://github.com/nuxt/vue-meta/issues/348)
+* use timers instead of requestAnimationFrame ([c040de7](https://github.com/nuxt/vue-meta/commit/c040de7)), closes [#313](https://github.com/nuxt/vue-meta/issues/313)
+
+
+
 # [2.0.0-rc.0](https://github.com/nuxt/vue-meta/compare/v1.6.0...v2.0.0-rc.0) (2019-04-20)
 
 
