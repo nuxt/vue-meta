@@ -97,7 +97,7 @@
     "jest": "^24.7.1",
     "jest-environment-jsdom": "^24.7.1",
     "jest-environment-jsdom-global": "^1.2.0",
-    "jsdom": "^14.0.0",
+    "jsdom": "^14.1.0",
     "lodash": "^4.17.11",
     "node-env-file": "^0.1.8",
     "puppeteer-core": "^1.14.0",
