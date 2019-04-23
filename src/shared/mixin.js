@@ -1,4 +1,4 @@
-import triggerUpdate from '../client/triggerUpdate'
+import { triggerUpdate } from '../client/update'
 import { isUndefined, isFunction } from '../utils/is-type'
 import { ensuredPush } from '../utils/ensure'
 import { hasMetaInfo } from './meta-helpers'

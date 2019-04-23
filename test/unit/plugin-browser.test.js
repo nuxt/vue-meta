@@ -1,10 +1,8 @@
-import triggerUpdate from '../../src/client/triggerUpdate'
-import batchUpdate from '../../src/client/batchUpdate'
+import { triggerUpdate, batchUpdate } from '../../src/client/update'
 import { mount, vmTick, VueMetaBrowserPlugin, loadVueMetaPlugin } from '../utils'
 import { defaultOptions } from '../../src/shared/constants'
 
-jest.mock('../../src/client/triggerUpdate')
-jest.mock('../../src/client/batchUpdate')
+jest.mock('../../src/client/update')
 jest.mock('../../package.json', () => ({
   version: 'test-version'
 }))
@@ -48,11 +46,16 @@ describe('plugin', () => {
   })
 
   test('updates can be paused and resumed', async () => {
-    const _triggerUpdate = jest.requireActual('../../src/client/triggerUpdate').default
-    const _batchUpdate = jest.requireActual('../../src/client/batchUpdate').default
-
-    const triggerUpdateSpy = triggerUpdate.mockImplementation(_triggerUpdate)
+    const { batchUpdate: _batchUpdate } = jest.requireActual('../../src/client/update')
     const batchUpdateSpy = batchUpdate.mockImplementation(_batchUpdate)
+    // because triggerUpdate & batchUpdate reside in the same file we cant mock them both,
+    // so just recreate the triggerUpdate fn by copying its implementation
+    const triggerUpdateSpy = triggerUpdate.mockImplementation((vm, hookName) => {
+      if (vm.$root._vueMeta.initialized && !vm.$root._vueMeta.paused) {
+        // batch potential DOM updates to prevent extraneous re-rendering
+        batchUpdateSpy(() => vm.$meta().refresh())
+      }
+    })
 
     const Component = Vue.component('test-component', {
       metaInfo() {
@@ -108,5 +111,53 @@ describe('plugin', () => {
 
     const { metaInfo } = wrapper.vm.$meta().resume()
     expect(metaInfo.title).toBe(title)
+  })
+
+  test('updates are batched', async () => {
+    jest.useFakeTimers()
+
+    const { batchUpdate: _batchUpdate } = jest.requireActual('../../src/client/update')
+    const batchUpdateSpy = batchUpdate.mockImplementation(_batchUpdate)
+    const refreshSpy = jest.fn()
+    // because triggerUpdate & batchUpdate reside in the same file we cant mock them both,
+    // so just recreate the triggerUpdate fn by copying its implementation
+    triggerUpdate.mockImplementation((vm, hookName) => {
+      if (vm.$root._vueMeta.initialized && !vm.$root._vueMeta.paused) {
+        // batch potential DOM updates to prevent extraneous re-rendering
+        batchUpdateSpy(refreshSpy)
+      }
+    })
+
+    const Component = Vue.component('test-component', {
+      metaInfo() {
+        return {
+          title: this.title
+        }
+      },
+      props: {
+        title: {
+          type: String,
+          default: ''
+        }
+      },
+      template: '<div>Test</div>'
+    })
+
+    let title = 'first title'
+    const wrapper = mount(Component, {
+      localVue: Vue,
+      propsData: {
+        title
+      }
+    })
+    await vmTick(wrapper.vm)
+    jest.clearAllMocks()
+
+    title = 'second title'
+    wrapper.setProps({ title })
+    jest.advanceTimersByTime(2)
+    expect(refreshSpy).not.toHaveBeenCalled()
+    jest.advanceTimersByTime(10)
+    expect(refreshSpy).toHaveBeenCalled()
   })
 })
