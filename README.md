@@ -51,7 +51,7 @@ These properties, when set on a deeply nested component, will cleverly overwrite
 
 Please find the documention on https://vue-meta.nuxtjs.org
 
-> :globe_with_meridians: Please help us translate the documentation into your language
+> :globe_with_meridians: Please help us translate the documentation into your language, see [here](#how-to-translate-documentation) for more information
 
 ## Examples
 
@@ -100,12 +100,28 @@ Vue.use(VueMeta, {
 })
 ```
 
-## Higher level frameworks using vue-meta
+## Frameworks using vue-meta
 If you wish to create your app even more quickly, take a look at the following frameworks which use vue-meta
 
 - [Nuxt.js](https://github.com/nuxt/nuxt.js) - The Vue.js Meta framework
 - [Gridsome](https://github.com/gridsome/gridsome) - The Vue.js JAMstack framework
 
-# License
+## How to translate documentation
+
+Thanks for your interest in translating the documentation. As our docs are based on VuePress, we recommend to have a look at their docs about [internationalization](https://vuepress.vuejs.org/guide/i18n.html#site-level-i18n-config) as well
+
+Here are the steps you will need to take:
+- Clone this repository
+- Create a new branch
+- Browse to `/docs/`
+- Create a folder with the language code you will add a translation for (eg `/zh/`)
+- Copy all `*.md` files and the folders `api`, `faq`, and `guide` to that folder
+- Translate the copied files in your language folder
+- Edit `.vuepress/config.yml` and add a config section for your locale in both `locales` as `themeConfig.locales`
+- Test your translation by running the docs dev server with `yarn docs`
+- Create a pull request with your changes
+- Receive eternal gratefulness from your fellow language speakers :heart:
+
+## License
 
 [MIT](./LICENSE.md)
