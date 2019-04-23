@@ -93,7 +93,7 @@
     "esm": "^3.2.22",
     "fs-extra": "^7.0.1",
     "geckodriver": "^1.16.2",
-    "is-wsl": "^1.1.0",
+    "is-wsl": "^2.0.0",
     "jest": "^24.7.1",
     "jest-environment-jsdom": "^24.7.1",
     "jest-environment-jsdom-global": "^1.2.0",
