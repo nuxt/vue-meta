@@ -128,7 +128,7 @@ describe('client', () => {
     expect(context._uid).toBe(wrapper.vm._uid)
   })
 
-  test('afterNavigation function is called with refreshOnce: true', () => {
+  test('afterNavigation function is called with refreshOnce: true', async () => {
     const Vue = loadVueMetaPlugin(false, { refreshOnceOnNavigation: true })
     const afterNavigation = jest.fn()
     const component = Vue.component('nav-component', {
@@ -151,6 +151,8 @@ describe('client', () => {
       }
     })
 
+    await vmTick(wrapper.vm)
+
     expect(guards.before).toBeDefined()
     expect(guards.after).toBeDefined()
 
@@ -161,7 +163,7 @@ describe('client', () => {
     expect(afterNavigation).toHaveBeenCalled()
   })
 
-  test('afterNavigation function is called with refreshOnce: false', () => {
+  test('afterNavigation function is called with refreshOnce: false', async () => {
     const Vue = loadVueMetaPlugin(false, { refreshOnceOnNavigation: false })
     const afterNavigation = jest.fn()
     const component = Vue.component('nav-component', {
@@ -183,6 +185,8 @@ describe('client', () => {
         }
       }
     })
+
+    await vmTick(wrapper.vm)
 
     expect(guards.before).toBeDefined()
     expect(guards.after).toBeDefined()

@@ -76,8 +76,14 @@ export default function createMixin(Vue, options) {
               if (!this.$root._vueMeta.initialized) {
                 // refresh meta in nextTick so all child components have loaded
                 this.$nextTick(function () {
-                  this.$root.$meta().refresh()
+                  const { metaInfo } = this.$root.$meta().refresh()
                   this.$root._vueMeta.initialized = true
+
+                  // add the navigation guards if they havent been added yet
+                  // they are needed for the afterNavigation callback
+                  if (!options.refreshOnceOnNavigation && metaInfo.afterNavigation) {
+                    addNavGuards(this)
+                  }
                 })
               }
             })
@@ -91,16 +97,6 @@ export default function createMixin(Vue, options) {
 
         // do not trigger refresh on the server side
         if (!this.$isServer) {
-          // add the navigation guards if they havent been added yet
-          // if metaInfo is defined as a function, this does call the computed fn redundantly
-          // but as Vue internally caches the results of computed props it shouldnt hurt performance
-          if (!options.refreshOnceOnNavigation && (
-            (this.$options[options.keyName] && this.$options[options.keyName].afterNavigation) ||
-            (this.$options.computed && this.$options.computed.$metaInfo && (this.$options.computed.$metaInfo() || {}).afterNavigation)
-          )) {
-            addNavGuards(this)
-          }
-
           // no need to add this hooks on server side
           updateOnLifecycleHook.forEach((lifecycleHook) => {
             ensuredPush(this.$options, lifecycleHook, () => triggerUpdate(this, lifecycleHook))
