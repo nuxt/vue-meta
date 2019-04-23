@@ -7,6 +7,7 @@ exemptLabels:
   - "WIP"
   - "pending"
   - "discussion"
+  - "target: v3"
 markComment: >
   Thanks for your contribution to vue-meta!
   This issue has been automatically marked as stale because it has not had
