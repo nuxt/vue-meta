@@ -5,7 +5,7 @@
 </p>
 
 <h5 align="center">
-  Manage page metadata in Vue.js components with SSR support
+  Manage page head metadata in Vue.js components with SSR support.
 </h5>
 
 <p align="center">
