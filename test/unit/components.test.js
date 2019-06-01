@@ -97,7 +97,7 @@ describe('client', () => {
     const wrapper = mount(HelloWorld, { localVue: Vue })
 
     const metaInfo = wrapper.vm.$meta().inject()
-    expect(metaInfo.title.text()).toEqual('<title data-vue-meta="ssr">Hello World</title>')
+    expect(metaInfo.title.text()).toEqual('<title>Hello World</title>')
   })
 
   test('doesnt update when ssr attribute is set', () => {

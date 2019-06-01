@@ -4,7 +4,7 @@ const metaInfoData = {
   title: {
     add: {
       data: 'Hello World',
-      expect: ['<title data-vue-meta="test">Hello World</title>'],
+      expect: ['<title>Hello World</title>'],
       test(side, defaultTest) {
         if (side === 'client') {
           // client side vue-meta uses document.title and doesnt change the html
