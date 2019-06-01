@@ -2,7 +2,7 @@ import _generateServerInjector from '../../src/server/generateServerInjector'
 import { defaultOptions } from '../../src/shared/constants'
 import metaInfoData from '../utils/meta-info-data'
 
-const generateServerInjector = (type, data) => _generateServerInjector(defaultOptions, type, data)
+const generateServerInjector = (type, data) => _generateServerInjector('test', defaultOptions, type, data)
 
 describe('generators', () => {
   Object.keys(metaInfoData).forEach((type) => {

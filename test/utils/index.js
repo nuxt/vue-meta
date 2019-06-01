@@ -1,4 +1,4 @@
-import { mount, createLocalVue } from '@vue/test-utils'
+import { mount, createLocalVue, createWrapper } from '@vue/test-utils'
 import { renderToString } from '@vue/server-test-utils'
 import { defaultOptions } from '../../src/shared/constants'
 import VueMetaBrowserPlugin from '../../src/browser'
@@ -6,6 +6,7 @@ import VueMetaServerPlugin from '../../src'
 
 export {
   mount,
+  createWrapper,
   renderToString,
   VueMetaBrowserPlugin,
   VueMetaServerPlugin

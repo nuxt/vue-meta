@@ -2,7 +2,7 @@ import _updateClientMetaInfo from '../../src/client/updateClientMetaInfo'
 import { defaultOptions } from '../../src/shared/constants'
 import metaInfoData from '../utils/meta-info-data'
 
-const updateClientMetaInfo = (type, data) => _updateClientMetaInfo(defaultOptions, { [type]: data })
+const updateClientMetaInfo = (type, data) => _updateClientMetaInfo('test', defaultOptions, { [type]: data })
 
 describe('updaters', () => {
   let html
