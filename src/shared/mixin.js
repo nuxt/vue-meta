@@ -4,6 +4,8 @@ import { ensuredPush } from '../utils/ensure'
 import { hasMetaInfo } from './meta-helpers'
 import { addNavGuards } from './nav-guards'
 
+let appId = 1
+
 export default function createMixin(Vue, options) {
   // for which Vue lifecycle hooks should the metaInfo be refreshed
   const updateOnLifecycleHook = ['activated', 'deactivated', 'beforeMount']
@@ -27,7 +29,8 @@ export default function createMixin(Vue, options) {
       // useful if we use some mixin to add some meta tags (like nuxt-i18n)
       if (!isUndefined(this.$options[options.keyName]) && this.$options[options.keyName] !== null) {
         if (!this.$root._vueMeta) {
-          this.$root._vueMeta = {}
+          this.$root._vueMeta = { appId }
+          appId++
         }
 
         // to speed up updates we keep track of branches which have a component with vue-meta info defined
@@ -72,6 +75,14 @@ export default function createMixin(Vue, options) {
           this.$root._vueMeta.initialized = this.$isServer
 
           if (!this.$root._vueMeta.initialized) {
+            ensuredPush(this.$options, 'beforeMount', () => {
+              // if this Vue-app was server rendered, set the appId to 'ssr'
+              // only having one SSR app is supported
+              if (this.$root.$el && this.$root.$el.hasAttribute('data-server-rendered')) {
+                this.$root._vueMeta.appId = 'ssr'
+              }
+            })
+
             ensuredPush(this.$options, 'mounted', () => {
               if (!this.$root._vueMeta.initialized) {
                 // refresh meta in nextTick so all child components have loaded

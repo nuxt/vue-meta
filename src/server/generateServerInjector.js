@@ -11,7 +11,7 @@ import { titleGenerator, attributeGenerator, tagGenerator } from './generators'
 
 export default function generateServerInjector(appId, options, type, data) {
   if (type === 'title') {
-    return titleGenerator(options, type, data)
+    return titleGenerator(appId, options, type, data)
   }
 
   if (metaInfoAttributeKeys.includes(type)) {
