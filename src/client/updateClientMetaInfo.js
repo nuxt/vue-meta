@@ -16,7 +16,7 @@ function getTag(tags, tag) {
  *
  * @param  {Object} newInfo - the meta info to update to
  */
-export default function updateClientMetaInfo(options = {}, newInfo) {
+export default function updateClientMetaInfo(appId, options = {}, newInfo) {
   const { ssrAttribute } = options
 
   // only cache tags for current update
@@ -59,6 +59,7 @@ export default function updateClientMetaInfo(options = {}, newInfo) {
     }
 
     const { oldTags, newTags } = updateTag(
+      appId,
       options,
       type,
       newInfo[type],

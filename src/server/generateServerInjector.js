@@ -9,7 +9,7 @@ import { titleGenerator, attributeGenerator, tagGenerator } from './generators'
  * @return {Object} - the new injector
  */
 
-export default function generateServerInjector(options, type, data) {
+export default function generateServerInjector(appId, options, type, data) {
   if (type === 'title') {
     return titleGenerator(options, type, data)
   }
@@ -18,5 +18,5 @@ export default function generateServerInjector(options, type, data) {
     return attributeGenerator(options, type, data)
   }
 
-  return tagGenerator(options, type, data)
+  return tagGenerator(appId, options, type, data)
 }
