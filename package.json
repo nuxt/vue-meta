@@ -70,7 +70,7 @@
     "@babel/node": "^7.4.5",
     "@babel/plugin-syntax-dynamic-import": "^7.2.0",
     "@babel/preset-env": "^7.4.5",
-    "@nuxt/babel-preset-app": "^2.8.0",
+    "@nuxt/babel-preset-app": "^2.8.1",
     "@nuxtjs/eslint-config": "^0.0.1",
     "@vue/server-test-utils": "^1.0.0-beta.29",
     "@vue/test-utils": "^1.0.0-beta.29",
@@ -102,7 +102,7 @@
     "node-env-file": "^0.1.8",
     "puppeteer-core": "^1.17.0",
     "rimraf": "^2.6.3",
-    "rollup": "^1.13.0",
+    "rollup": "^1.14.2",
     "rollup-plugin-buble": "^0.19.6",
     "rollup-plugin-commonjs": "^10.0.0",
     "rollup-plugin-json": "^4.0.0",
@@ -121,6 +121,6 @@
     "vue-template-compiler": "^2.6.10",
     "vuepress": "^0.14.11",
     "vuepress-theme-vue": "^1.1.0",
-    "webpack": "^4.32.2"
+    "webpack": "^4.33.0"
   }
 }
