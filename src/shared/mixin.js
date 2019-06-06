@@ -77,18 +77,35 @@ export default function createMixin(Vue, options) {
           if (!this.$root._vueMeta.initialized) {
             ensuredPush(this.$options, 'beforeMount', () => {
               // if this Vue-app was server rendered, set the appId to 'ssr'
-              // only having one SSR app is supported
+              // only one SSR app per page is supported
               if (this.$root.$el && this.$root.$el.hasAttribute('data-server-rendered')) {
                 this.$root._vueMeta.appId = 'ssr'
               }
             })
 
+            // we use the mounted hook here as on page load
             ensuredPush(this.$options, 'mounted', () => {
               if (!this.$root._vueMeta.initialized) {
+                // used in triggerUpdate to check if a change was triggered
+                // during initialization
+                this.$root._vueMeta.initializing = true
+
                 // refresh meta in nextTick so all child components have loaded
                 this.$nextTick(function () {
-                  const { metaInfo } = this.$root.$meta().refresh()
+                  const { tags, metaInfo } = this.$root.$meta().refresh()
+
+                  // After ssr hydration (identifier by tags === false) check
+                  // if initialized was set to null in triggerUpdate. That'd mean
+                  // that during initilazation changes where triggered which need
+                  // to be applied OR a metaInfo watcher was triggered before the
+                  // current hook was called
+                  // (during initialization all changes are blocked)
+                  if (tags === false && this.$root._vueMeta.initialized === null) {
+                    this.$nextTick(() => triggerUpdate(this, 'initializing'))
+                  }
+
                   this.$root._vueMeta.initialized = true
+                  delete this.$root._vueMeta.initializing
 
                   // add the navigation guards if they havent been added yet
                   // they are needed for the afterNavigation callback

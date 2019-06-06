@@ -199,4 +199,80 @@ describe('client', () => {
     guards.after()
     expect(afterNavigation).toHaveBeenCalled()
   })
+
+  test('changes before hydration initialization trigger an update', async () => {
+    html.setAttribute(defaultOptions.ssrAttribute, 'true')
+
+    // this component uses a computed prop to simulate a non-synchronous
+    // metaInfo update like you would have with a Vuex mutation
+    const component = Vue.component('test-component', {
+      data() {
+        return {
+          hiddenTheme: 'light'
+        }
+      },
+      computed: {
+        theme() {
+          return this.hiddenTheme
+        }
+      },
+      beforeMount() {
+        this.hiddenTheme = 'dark'
+      },
+      render: h => h('div'),
+      metaInfo() {
+        return {
+          htmlAttrs: {
+            theme: this.theme
+          }
+        }
+      }
+    })
+
+    const wrapper = mount(component, { localVue: Vue })
+    expect(html.getAttribute('theme')).not.toBe('dark')
+
+    await vmTick(wrapper.vm)
+    jest.runAllTimers()
+
+    expect(html.getAttribute('theme')).toBe('dark')
+    html.removeAttribute('theme')
+  })
+
+  test('changes during hydration initialization trigger an update', async () => {
+    html.setAttribute(defaultOptions.ssrAttribute, 'true')
+
+    const component = Vue.component('test-component', {
+      data() {
+        return {
+          hiddenTheme: 'light'
+        }
+      },
+      computed: {
+        theme() {
+          return this.hiddenTheme
+        }
+      },
+      mounted() {
+        this.hiddenTheme = 'dark'
+      },
+      render: h => h('div'),
+      metaInfo() {
+        return {
+          htmlAttrs: {
+            theme: this.theme
+          }
+        }
+      }
+    })
+
+    const wrapper = mount(component, { localVue: Vue })
+    expect(html.getAttribute('theme')).not.toBe('dark')
+
+    await vmTick(wrapper.vm)
+    jest.runAllTimers()
+
+    expect(html.getAttribute('theme')).toBe('dark')
+    html.removeAttribute('theme')
+  })
 })
