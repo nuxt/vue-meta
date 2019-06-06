@@ -1,5 +1,12 @@
 # Server Side Rendering
 
+```
+Latest version of Nuxt.js has already included Vuex-Meta by default.
+```
+[Official Document](https://nuxtjs.org/api/pages-head/)
+
+<hr>
+
 If you have an isomorphic/universal web application, you'll likely want to render your metadata on the server side as well. Here's how.
 
 ## Add `vue-meta` to the context
