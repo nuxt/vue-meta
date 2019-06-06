@@ -8,7 +8,7 @@ import { isUndefined } from '../../utils/is-type'
  * @param  {(Array<Object>|Object)} tags - an array of tag objects or a single object in case of base
  * @return {Object} - the tag generator
  */
-export default function tagGenerator({ attribute, tagIDKeyName } = {}, type, tags) {
+export default function tagGenerator(appId, { attribute, tagIDKeyName } = {}, type, tags) {
   return {
     text({ body = false } = {}) {
       // build a string containing all tags of this type
@@ -47,7 +47,7 @@ export default function tagGenerator({ attribute, tagIDKeyName } = {}, type, tag
         // generate tag exactly without any other redundant attribute
         const observeTag = tag.once
           ? ''
-          : `${attribute}="true"`
+          : `${attribute}="${appId}"`
 
         // these tags have no end tag
         const hasEndTag = !tagsWithoutEndTag.includes(type)

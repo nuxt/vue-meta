@@ -18,7 +18,7 @@ export default function _inject(options = {}) {
     // generate server injectors
     for (const key in metaInfo) {
       if (!metaInfoOptionKeys.includes(key) && metaInfo.hasOwnProperty(key)) {
-        metaInfo[key] = generateServerInjector(options, key, metaInfo[key])
+        metaInfo[key] = generateServerInjector('ssr', options, key, metaInfo[key])
       }
     }
 

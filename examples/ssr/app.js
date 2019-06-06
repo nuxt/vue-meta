@@ -1,5 +1,4 @@
 import Vue from 'vue'
-// import VueMeta from 'vue-meta'
 
 export default async function createApp() {
   // the dynamic import is for this example only

@@ -4,7 +4,7 @@ const metaInfoData = {
   title: {
     add: {
       data: 'Hello World',
-      expect: ['<title data-vue-meta="true">Hello World</title>'],
+      expect: ['<title>Hello World</title>'],
       test(side, defaultTest) {
         if (side === 'client') {
           // client side vue-meta uses document.title and doesnt change the html
@@ -26,11 +26,11 @@ const metaInfoData = {
   base: {
     add: {
       data: [{ href: 'href' }],
-      expect: ['<base data-vue-meta="true" href="href">']
+      expect: ['<base data-vue-meta="test" href="href">']
     },
     change: {
       data: [{ href: 'href2' }],
-      expect: ['<base data-vue-meta="true" href="href2">']
+      expect: ['<base data-vue-meta="test" href="href2">']
     },
     remove: {
       data: [],
@@ -41,8 +41,8 @@ const metaInfoData = {
     add: {
       data: [{ charset: 'utf-8' }, { property: 'a', content: 'a' }],
       expect: [
-        '<meta data-vue-meta="true" charset="utf-8">',
-        '<meta data-vue-meta="true" property="a" content="a">'
+        '<meta data-vue-meta="test" charset="utf-8">',
+        '<meta data-vue-meta="test" property="a" content="a">'
       ]
     },
     change: {
@@ -51,8 +51,8 @@ const metaInfoData = {
         { property: 'a', content: 'b' }
       ],
       expect: [
-        '<meta data-vue-meta="true" charset="utf-16">',
-        '<meta data-vue-meta="true" property="a" content="b">'
+        '<meta data-vue-meta="test" charset="utf-16">',
+        '<meta data-vue-meta="test" property="a" content="b">'
       ]
     },
     // make sure elements that already exists are not unnecessarily updated
@@ -62,8 +62,8 @@ const metaInfoData = {
         { property: 'a', content: 'c' }
       ],
       expect: [
-        '<meta data-vue-meta="true" charset="utf-16">',
-        '<meta data-vue-meta="true" property="a" content="c">'
+        '<meta data-vue-meta="test" charset="utf-16">',
+        '<meta data-vue-meta="test" property="a" content="c">'
       ],
       test(side, defaultTest) {
         if (side === 'client') {
@@ -85,11 +85,11 @@ const metaInfoData = {
   link: {
     add: {
       data: [{ rel: 'stylesheet', href: 'href' }],
-      expect: ['<link data-vue-meta="true" rel="stylesheet" href="href">']
+      expect: ['<link data-vue-meta="test" rel="stylesheet" href="href">']
     },
     change: {
       data: [{ rel: 'stylesheet', href: 'href', media: 'screen' }],
-      expect: ['<link data-vue-meta="true" rel="stylesheet" href="href" media="screen">']
+      expect: ['<link data-vue-meta="test" rel="stylesheet" href="href" media="screen">']
     },
     remove: {
       data: [],
@@ -99,11 +99,11 @@ const metaInfoData = {
   style: {
     add: {
       data: [{ type: 'text/css', cssText: '.foo { color: red; }' }],
-      expect: ['<style data-vue-meta="true" type="text/css">.foo { color: red; }</style>']
+      expect: ['<style data-vue-meta="test" type="text/css">.foo { color: red; }</style>']
     },
     change: {
       data: [{ type: 'text/css', cssText: '.foo { color: blue; }' }],
-      expect: ['<style data-vue-meta="true" type="text/css">.foo { color: blue; }</style>']
+      expect: ['<style data-vue-meta="test" type="text/css">.foo { color: blue; }</style>']
     },
     remove: {
       data: [],
@@ -117,8 +117,8 @@ const metaInfoData = {
         { src: 'src', async: true, defer: true, body: true }
       ],
       expect: [
-        '<script data-vue-meta="true" src="src" async defer data-vmid="content"></script>',
-        '<script data-vue-meta="true" src="src" async defer data-body="true"></script>'
+        '<script data-vue-meta="test" src="src" async defer data-vmid="content"></script>',
+        '<script data-vue-meta="test" src="src" async defer data-body="true"></script>'
       ],
       test(side, defaultTest) {
         return () => {
@@ -145,7 +145,7 @@ const metaInfoData = {
     // this test only runs for client so we can directly expect wrong boolean attributes
     change: {
       data: [{ src: 'src', async: true, defer: true, [defaultOptions.tagIDKeyName]: 'content2' }],
-      expect: ['<script data-vue-meta="true" src="src" async="true" defer="true" data-vmid="content2"></script>']
+      expect: ['<script data-vue-meta="test" src="src" async="true" defer="true" data-vmid="content2"></script>']
     },
     remove: {
       data: [],
@@ -155,11 +155,11 @@ const metaInfoData = {
   noscript: {
     add: {
       data: [{ innerHTML: '<p>noscript</p>' }],
-      expect: ['<noscript data-vue-meta="true"><p>noscript</p></noscript>']
+      expect: ['<noscript data-vue-meta="test"><p>noscript</p></noscript>']
     },
     change: {
       data: [{ innerHTML: '<p>noscript, no really</p>' }],
-      expect: ['<noscript data-vue-meta="true"><p>noscript, no really</p></noscript>']
+      expect: ['<noscript data-vue-meta="test"><p>noscript, no really</p></noscript>']
     },
     remove: {
       data: [],
