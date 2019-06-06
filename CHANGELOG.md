@@ -1,6 +1,20 @@
-# Change Log
+# Changelog
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
+
+## [2.0.0-rc.2](https://github.com/nuxt/vue-meta/compare/v2.0.0-rc.1...v2.0.0-rc.2) (2019-06-06)
+
+
+### Bug Fixes
+
+* detect and apply changes triggered before or during initialization ([#377](https://github.com/nuxt/vue-meta/issues/377)) ([34c6ad9](https://github.com/nuxt/vue-meta/commit/34c6ad9))
+
+
+### Features
+
+* add basic support for multiple apps on one page ([#373](https://github.com/nuxt/vue-meta/issues/373)) ([024e7c5](https://github.com/nuxt/vue-meta/commit/024e7c5))
+
+
 
 # [2.0.0-rc.1](https://github.com/nuxt/vue-meta/compare/v2.0.0-rc.0...v2.0.0-rc.1) (2019-04-23)
 
