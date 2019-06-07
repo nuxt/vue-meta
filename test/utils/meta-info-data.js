@@ -124,7 +124,7 @@ const metaInfoData = {
         return () => {
           if (side === 'client') {
             for (const index in this.expect) {
-              this.expect[index] = this.expect[index].replace(/(async|defer)/g, '$1="true"')
+              this.expect[index] = this.expect[index].replace(/(async|defer)/g, '$1=""')
             }
             const tags = defaultTest()
 
@@ -145,7 +145,7 @@ const metaInfoData = {
     // this test only runs for client so we can directly expect wrong boolean attributes
     change: {
       data: [{ src: 'src', async: true, defer: true, [defaultOptions.tagIDKeyName]: 'content2' }],
-      expect: ['<script data-vue-meta="test" src="src" async="true" defer="true" data-vmid="content2"></script>']
+      expect: ['<script data-vue-meta="test" src="src" async="" defer="" data-vmid="content2"></script>']
     },
     remove: {
       data: [],

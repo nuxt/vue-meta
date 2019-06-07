@@ -1,3 +1,4 @@
+import { booleanHtmlAttributes } from '../../shared/constants'
 import { isUndefined } from '../../utils/is-type'
 import { toArray, includes } from '../../utils/array'
 
@@ -51,7 +52,7 @@ export default function updateTag(appId, { attribute, tagIDKeyName } = {}, type,
             const _attr = includes(dataAttributes, attr)
               ? `data-${attr}`
               : attr
-            const value = isUndefined(tag[attr]) ? '' : tag[attr]
+            const value = isUndefined(tag[attr]) || booleanHtmlAttributes.includes(attr) ? '' : tag[attr]
             newElement.setAttribute(_attr, value)
           }
         }
