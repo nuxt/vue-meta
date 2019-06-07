@@ -62,7 +62,7 @@ export interface MetaPropertyName extends MetaDataProperty {
   template?: (chunk: string) => string
 }
 
-export interface MetaPropertySchemaOrg extends MetaDataProperty {
+export interface MetaPropertyMicrodata extends MetaDataProperty {
   itemprop: string,
   content: string,
   template?: (chunk: string) => string
@@ -129,7 +129,7 @@ export interface MetaInfo {
     href: string
   }
 
-  meta?: (MetaPropertyCharset | MetaPropertyEquiv | MetaPropertyName | MetaPropertySchemaOrg | MetaPropertyProperty)[]
+  meta?: (MetaPropertyCharset | MetaPropertyEquiv | MetaPropertyName | MetaPropertyMicrodata | MetaPropertyProperty)[]
   link?: LinkProperty[]
   style?: StyleProperty[]
   script?: (ScriptPropertyText | ScriptPropertySrc)[]
