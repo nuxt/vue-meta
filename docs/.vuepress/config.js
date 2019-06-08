@@ -11,7 +11,7 @@ module.exports = {
     '/': {
       lang: 'en-US',
       title: 'Vue Meta',
-      description: 'Metadata manager for Vue.js'
+      description: 'HTML Metadata manager for Vue.js'
     },
   },
   themeConfig: {
