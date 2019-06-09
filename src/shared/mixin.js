@@ -75,16 +75,14 @@ export default function createMixin(Vue, options) {
           this.$root._vueMeta.initialized = this.$isServer
 
           if (!this.$root._vueMeta.initialized) {
-            ensuredPush(this.$options, 'beforeMount', () => {
+            // we use the mounted hook here as on page load
+            ensuredPush(this.$options, 'mounted', () => {
               // if this Vue-app was server rendered, set the appId to 'ssr'
               // only one SSR app per page is supported
               if (this.$root.$el && this.$root.$el.hasAttribute('data-server-rendered')) {
                 this.$root._vueMeta.appId = 'ssr'
               }
-            })
 
-            // we use the mounted hook here as on page load
-            ensuredPush(this.$options, 'mounted', () => {
               if (!this.$root._vueMeta.initialized) {
                 // used in triggerUpdate to check if a change was triggered
                 // during initialization
