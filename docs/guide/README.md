@@ -18,12 +18,12 @@ If you include vue-meta after Vue it will install automatically
 
 **Unminified (suggested only for dev):**
 ```html
-<script src="https://unpkg.com/vue-meta/lib/vue-meta.js"></script>
+<script src="https://unpkg.com/vue-meta@2.0.0/dist/vue-meta.js"></script>
 ```
 
 **Minified:**
 ```html
-<script src="https://unpkg.com/vue-meta/lib/vue-meta.min.js"></script>
+<script src="https://unpkg.com/vue-meta@2.0.0/dist/vue-meta.min.js"></script>
 ```
 
 ## Package manager
