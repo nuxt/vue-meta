@@ -9,6 +9,12 @@ import { hasMetaInfo } from './shared/meta-helpers'
  * @param {Function} Vue - the Vue constructor.
  */
 function install(Vue, options = {}) {
+  if (Vue.__vuemeta_installed) {
+    return
+  }
+
+  Vue.__vuemeta_installed = true
+
   options = setOptions(options)
 
   Vue.prototype.$meta = $meta(options)
