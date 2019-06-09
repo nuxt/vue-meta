@@ -2,6 +2,27 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.0.0](https://github.com/nuxt/vue-meta/compare/v2.0.0-rc.2...v2.0.0) (2019-06-09)
+
+
+### Bug Fixes
+
+* set ssr appId in mounted hook ([2dd1697](https://github.com/nuxt/vue-meta/commit/2dd1697))
+* use empty string value for boolean attributes on client side (fixes [#381](https://github.com/nuxt/vue-meta/issues/381)) ([eb4980c](https://github.com/nuxt/vue-meta/commit/eb4980c))
+
+
+### Features
+
+* **ts:** add microdata meta tag type ([#382](https://github.com/nuxt/vue-meta/issues/382)) ([11c8138](https://github.com/nuxt/vue-meta/commit/11c8138))
+
+
+### Tests
+
+* add type tests to circleci ([c6180af](https://github.com/nuxt/vue-meta/commit/c6180af))
+* fix ssr hydration tests ([fc57998](https://github.com/nuxt/vue-meta/commit/fc57998))
+
+
+
 ## [2.0.0-rc.2](https://github.com/nuxt/vue-meta/compare/v2.0.0-rc.1...v2.0.0-rc.2) (2019-06-06)
 
 
