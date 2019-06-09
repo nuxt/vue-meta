@@ -2,6 +2,21 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [2.0.1](https://github.com/nuxt/vue-meta/compare/v2.0.0...v2.0.1) (2019-06-09)
+
+
+### Bug Fixes
+
+* allow _hasMetaInfo to be configurable ([8b7b991](https://github.com/nuxt/vue-meta/commit/8b7b991))
+* prevent vue-meta plugin to be installed twice ([094fd9d](https://github.com/nuxt/vue-meta/commit/094fd9d))
+
+
+### Tests
+
+* prevent plugin install twice ([8ab63b4](https://github.com/nuxt/vue-meta/commit/8ab63b4))
+
+
+
 ## [2.0.0](https://github.com/nuxt/vue-meta/compare/v2.0.0-rc.2...v2.0.0) (2019-06-09)
 
 
