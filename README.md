@@ -71,18 +71,18 @@ $ npm install vue-meta --save
 
 Use the download links below - if you want a previous version, check the instructions at https://unpkg.com.
 
-Latest version: https://unpkg.com/vue-meta/lib/vue-meta.min.js
+Latest version: https://unpkg.com/vue-meta/dist/vue-meta.min.js
 
-Latest v1.x version: https://unpkg.com/vue-meta@1/lib/vue-meta.min.js
+Latest v1.x version: https://unpkg.com/vue-meta@1/dist/vue-meta.min.js
 
 **Uncompressed:**
 ```html
-<script src="https://unpkg.com/vue-meta/lib/vue-meta.js"></script>
+<script src="https://unpkg.com/vue-meta/dist/vue-meta.js"></script>
 ```
 
 **Minified:**
 ```html
-<script src="https://unpkg.com/vue-meta/lib/vue-meta.min.js"></script>
+<script src="https://unpkg.com/vue-meta/dist/vue-meta.min.js"></script>
 ```
 
 ## Quick Usage

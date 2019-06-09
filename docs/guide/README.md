@@ -7,10 +7,10 @@ Are you using a framework like Nuxt.js, Gridsome or another one which uses vue-m
 
 ## Download / CDN
 
-[https://unpkg.com/vue-meta/lib/vue-meta.js](https://unpkg.com/vue-meta/lib/vue-meta.js)
+[https://unpkg.com/vue-meta/dist/vue-meta.js](https://unpkg.com/vue-meta/dist/vue-meta.js)
 
 For the latest version in the v1.x branch you can use:<br/>
-[https://unpkg.com/vue-meta@1/lib/vue-meta.js](https://unpkg.com/vue-meta@1/lib/vue-meta.js)
+[https://unpkg.com/vue-meta@1/dist/vue-meta.js](https://unpkg.com/vue-meta@1/dist/vue-meta.js)
 
 Or you can replace `1` with the full version number you wish to use.
 
@@ -18,12 +18,12 @@ If you include vue-meta after Vue it will install automatically
 
 **Unminified (suggested only for dev):**
 ```html
-<script src="https://unpkg.com/vue-meta@2.0.0/dist/vue-meta.js"></script>
+<script src="https://unpkg.com/vue-meta/dist/vue-meta.js"></script>
 ```
 
 **Minified:**
 ```html
-<script src="https://unpkg.com/vue-meta@2.0.0/dist/vue-meta.min.js"></script>
+<script src="https://unpkg.com/vue-meta/dist/vue-meta.min.js"></script>
 ```
 
 ## Package manager
