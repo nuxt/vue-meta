@@ -1,5 +1,5 @@
 import _getMetaInfo from '../../src/shared/getMetaInfo'
-import { mount, loadVueMetaPlugin, vmTick } from '../utils'
+import { mount, createWrapper, loadVueMetaPlugin, vmTick } from '../utils'
 import { defaultOptions } from '../../src/shared/constants'
 
 import GoodbyeWorld from '../components/goodbye-world.vue'
@@ -102,12 +102,26 @@ describe('client', () => {
 
   test('doesnt update when ssr attribute is set', () => {
     html.setAttribute(defaultOptions.ssrAttribute, 'true')
-    const wrapper = mount(HelloWorld, { localVue: Vue })
+
+    const el = document.createElement('div')
+    el.setAttribute('id', 'app')
+    el.setAttribute('data-server-rendered', true)
+    document.body.appendChild(el)
+
+    const Component = Vue.extend({
+      metaInfo: { title: 'Test' },
+      render(h) {
+        return h('div', null, 'Test')
+      }
+    })
+
+    const vm = new Component().$mount(el)
+    const wrapper = createWrapper(vm, { attachToDocument: true })
 
     const { tags } = wrapper.vm.$meta().refresh()
-    // TODO: fix this test, not sure how to create a wrapper with a attri
-    // bute data-server-rendered="true"
-    expect(tags).not.toBe(false)
+    expect(tags).toBe(false)
+
+    wrapper.destroy()
   })
 
   test('changed function is called', async () => {
@@ -203,9 +217,14 @@ describe('client', () => {
   test('changes before hydration initialization trigger an update', async () => {
     html.setAttribute(defaultOptions.ssrAttribute, 'true')
 
+    const el = document.createElement('div')
+    el.setAttribute('id', 'app')
+    el.setAttribute('data-server-rendered', true)
+    document.body.appendChild(el)
+
     // this component uses a computed prop to simulate a non-synchronous
     // metaInfo update like you would have with a Vuex mutation
-    const component = Vue.component('test-component', {
+    const Component = Vue.extend({
       data() {
         return {
           hiddenTheme: 'light'
@@ -229,7 +248,8 @@ describe('client', () => {
       }
     })
 
-    const wrapper = mount(component, { localVue: Vue })
+    const vm = new Component().$mount(el)
+    const wrapper = createWrapper(vm, { attachToDocument: true })
     expect(html.getAttribute('theme')).not.toBe('dark')
 
     await vmTick(wrapper.vm)
@@ -237,12 +257,19 @@ describe('client', () => {
 
     expect(html.getAttribute('theme')).toBe('dark')
     html.removeAttribute('theme')
+
+    wrapper.destroy()
   })
 
   test('changes during hydration initialization trigger an update', async () => {
     html.setAttribute(defaultOptions.ssrAttribute, 'true')
 
-    const component = Vue.component('test-component', {
+    const el = document.createElement('div')
+    el.setAttribute('id', 'app')
+    el.setAttribute('data-server-rendered', true)
+    document.body.appendChild(el)
+
+    const Component = Vue.extend({
       data() {
         return {
           hiddenTheme: 'light'
@@ -266,7 +293,8 @@ describe('client', () => {
       }
     })
 
-    const wrapper = mount(component, { localVue: Vue })
+    const vm = new Component().$mount(el)
+    const wrapper = createWrapper(vm, { attachToDocument: true })
     expect(html.getAttribute('theme')).not.toBe('dark')
 
     await vmTick(wrapper.vm)
@@ -274,5 +302,7 @@ describe('client', () => {
 
     expect(html.getAttribute('theme')).toBe('dark')
     html.removeAttribute('theme')
+
+    wrapper.destroy()
   })
 })
