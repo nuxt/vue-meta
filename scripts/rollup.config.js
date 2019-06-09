@@ -55,6 +55,7 @@ function rollupConfig({
 }
 
 export default [
+  // umd web build
   rollupConfig({
     output: {
       file: pkg.web,
@@ -64,6 +65,7 @@ export default [
       buble()
     ]
   }),
+  // minimized umd web build
   rollupConfig({
     output: {
       file: pkg.web.replace('.js', '.min.js'),
@@ -74,6 +76,7 @@ export default [
       terser()
     ]
   }),
+  // common js build
   rollupConfig({
     input: 'src/index.js',
     output: {
@@ -82,6 +85,36 @@ export default [
     },
     plugins: [
       commonjs()
+    ],
+    external: Object.keys(pkg.dependencies)
+  }),
+  // esm build
+  rollupConfig({
+    input: 'src/index.js',
+    output: {
+      file: pkg.web.replace('.js', '.esm.js'),
+      format: 'es'
+    },
+    external: Object.keys(pkg.dependencies)
+  }),
+  // browser esm build
+  rollupConfig({
+    input: 'src/browser.js',
+    output: {
+      file: pkg.web.replace('.js', '.esm.browser.js'),
+      format: 'es'
+    },
+    external: Object.keys(pkg.dependencies)
+  }),
+  // minimized browser esm build
+  rollupConfig({
+    input: 'src/browser.js',
+    output: {
+      file: pkg.web.replace('.js', '.esm.browser.min.js'),
+      format: 'es'
+    },
+    plugins: [
+      terser()
     ],
     external: Object.keys(pkg.dependencies)
   })
