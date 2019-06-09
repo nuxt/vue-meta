@@ -1,5 +1,3 @@
-> :ribbon: UPDATED! The third (and probably final) release candidate for v2.0 has been [released](https://github.com/nuxt/vue-meta/releases). Click [here](https://github.com/nuxt/vue-meta/tree/1.x) if you are looking for the old v1 readme
-
 <p align="center">
   <img src="./docs/.vuepress/public/vue-meta.png" alt="vue-meta" />
 </p>
@@ -121,6 +119,10 @@ Here are the steps you will need to take:
 - Test your translation by running the docs dev server with `yarn docs`
 - Create a pull request with your changes
 - Receive eternal gratefulness from your fellow language speakers :heart:
+
+## Old versions
+
+Click [here](https://github.com/nuxt/vue-meta/tree/1.x) if you are looking for the old v1 readme
 
 ## License
 
