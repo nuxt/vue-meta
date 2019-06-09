@@ -14,6 +14,7 @@ export default function createMixin(Vue, options) {
   return {
     beforeCreate() {
       Object.defineProperty(this, '_hasMetaInfo', {
+        configurable: true,
         get() {
           // Show deprecation warning once when devtools enabled
           if (Vue.config.devtools && !this.$root._vueMeta.hasMetaInfoDeprecationWarningShown) {
