@@ -36,18 +36,15 @@
     }
   ],
   "files": [
-    "lib",
-    "es",
+    "dist",
     "types/*.d.ts"
   ],
-  "main": "lib/vue-meta.common.js",
-  "web": "lib/vue-meta.js",
-  "module": "es/index.js",
+  "main": "dist/vue-meta.common.js",
+  "web": "dist/vue-meta.js",
+  "module": "dist/vue-meta.esm.js",
   "typings": "types/index.d.ts",
   "scripts": {
-    "build": "yarn build:other && yarn build:es",
-    "build:es": "rimraf es && babel src --env-name es --out-dir es",
-    "build:other": "rimraf lib && rollup -c scripts/rollup.config.js",
+    "build": "rimraf dist && rollup -c scripts/rollup.config.js",
     "coverage": "codecov",
     "dev": "cd examples && yarn dev && cd ..",
     "docs": "vuepress dev --host 0.0.0.0 --port 3000 docs",
@@ -63,9 +60,6 @@
   },
   "dependencies": {
     "deepmerge": "^3.2.0"
-  },
-  "resolutions": {
-    "webpack-dev-middleware": "3.6.0"
   },
   "devDependencies": {
     "@babel/cli": "^7.4.4",
