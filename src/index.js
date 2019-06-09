@@ -12,7 +12,6 @@ function install(Vue, options = {}) {
   if (Vue.__vuemeta_installed) {
     return
   }
-
   Vue.__vuemeta_installed = true
 
   options = setOptions(options)

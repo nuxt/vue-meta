@@ -63,6 +63,18 @@ describe('plugin', () => {
     expect(VueMetaServerPlugin.version).toBe('test-version')
   })
 
+  test('plugin isnt be installed twice', () => {
+    expect(Vue.__vuemeta_installed).toBe(true)
+
+    Vue.prototype.$meta = undefined
+    Vue.use({ ...VueMetaServerPlugin })
+
+    expect(Vue.prototype.$meta).toBeUndefined()
+
+    // reset Vue
+    Vue = loadVueMetaPlugin(true)
+  })
+
   test('prints deprecation warning once when using _hasMetaInfo', () => {
     const warn = jest.spyOn(console, 'warn').mockImplementation(() => {})
 

@@ -65,6 +65,18 @@ describe('plugin', () => {
     expect(VueMetaBrowserPlugin.version).toBe('test-version')
   })
 
+  test('plugin isnt be installed twice', () => {
+    expect(Vue.__vuemeta_installed).toBe(true)
+
+    Vue.prototype.$meta = undefined
+    Vue.use({ ...VueMetaBrowserPlugin })
+
+    expect(Vue.prototype.$meta).toBeUndefined()
+
+    // reset Vue
+    Vue = loadVueMetaPlugin(true)
+  })
+
   test('updates can be paused and resumed', async () => {
     const { batchUpdate: _batchUpdate } = jest.requireActual('../../src/client/update')
     const batchUpdateSpy = batchUpdate.mockImplementation(_batchUpdate)
