@@ -9,7 +9,7 @@ Vue.use(VueMeta, {
 
 let metaUpdated = 'no'
 const ChildComponent = {
-  name: `child-component`,
+  name: 'child-component',
   props: ['page'],
   template: `<div>
 <h3>You're looking at the <strong>{{ page }}</strong> page</h3>

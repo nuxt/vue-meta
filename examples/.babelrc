@@ -1,4 +1,14 @@
 {
-  "presets": [["@babel/preset-env", { targets: { node: "current" } }]],
-  "plugins": ["dynamic-import-node"]
+  "presets": [
+    ["@babel/preset-env", {
+      useBuiltIns: 'usage',
+      corejs: 3,
+      targets: {
+        ie: 9
+      }
+    }]
+  ],
+  "plugins": [
+    "dynamic-import-node"
+  ]
 }

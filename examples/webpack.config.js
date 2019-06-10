@@ -4,6 +4,8 @@ import webpack from 'webpack'
 import WebpackBar from 'webpackbar'
 import VueLoaderPlugin from 'vue-loader/lib/plugin'
 
+const srcDir = path.join(__dirname, '..', 'src')
+
 export default {
   devtool: 'inline-source-map',
   mode: 'development',
@@ -32,7 +34,7 @@ export default {
   resolve: {
     alias: {
       'vue': 'vue/dist/vue.js',
-      'vue-meta': process.env.NODE_ENV === 'development' ? path.join(__dirname, '..', 'src') : 'vue-meta'
+      'vue-meta': process.env.NODE_ENV === 'development' ? srcDir : 'vue-meta'
     }
   },
   // Expose __dirname to allow automatically setting basename.

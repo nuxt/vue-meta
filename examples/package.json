@@ -27,6 +27,7 @@
     "babel-loader": "^8.0.6",
     "babel-plugin-dynamic-import-node": "^2.2.0",
     "consola": "^2.7.1",
+    "core-js": "3",
     "cross-env": "^5.2.0",
     "express": "^4.17.1",
     "express-urlrewrite": "^1.2.0",
@@ -34,13 +35,13 @@
     "lodash": "^4.17.11",
     "vue": "^2.6.10",
     "vue-loader": "^15.7.0",
-    "vue-meta": "^1.6.0",
+    "vue-meta": "^2.0.1",
     "vue-router": "^3.0.6",
     "vue-server-renderer": "^2.6.10",
     "vue-template-compiler": "^2.6.10",
     "vuex": "^3.1.1",
-    "webpack": "^4.32.2",
-    "webpack-dev-server": "^3.5.0",
+    "webpack": "^4.33.0",
+    "webpack-dev-server": "^3.7.1",
     "webpackbar": "^3.2.0"
   }
 }

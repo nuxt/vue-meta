@@ -1,3 +1,4 @@
+import 'core-js/es/promise'
 import Vue from 'vue'
 import Vuex from 'vuex'
 
