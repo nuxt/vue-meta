@@ -13,7 +13,7 @@ const banner =  `/**
  * (c) ${new Date().getFullYear()}
  * - Declan de Wet
  * - Sébastien Chopin (@Atinux)
- * - All the amazing contributors
+  * - All the amazing contributors
  * @license MIT
  */
 `
@@ -32,7 +32,8 @@ function rollupConfig({
     }
   }
 
-  if (!config.output.format || config.output.format === 'umd') {
+  // keep simple polyfills when buble plugin is used for build
+  if (plugins && plugins.some(p => p.name === 'buble')) {
     replaceConfig.values = {
       'const polyfill = process.env.NODE_ENV === \'test\'': 'const polyfill = true',
     }
@@ -49,6 +50,7 @@ function rollupConfig({
     plugins: [
       json(),
       nodeResolve(),
+      commonjs(),
       replace(replaceConfig)
     ].concat(plugins),
   })
@@ -56,58 +58,59 @@ function rollupConfig({
 
 export default [
   // umd web build
-  rollupConfig({
+  {
     output: {
       file: pkg.web,
     },
     plugins: [
-      commonjs(),
       buble()
     ]
-  }),
+  },
   // minimized umd web build
-  rollupConfig({
+  {
     output: {
       file: pkg.web.replace('.js', '.min.js'),
     },
     plugins: [
-      commonjs(),
       buble(),
       terser()
     ]
-  }),
+  },
   // common js build
-  rollupConfig({
+  {
     input: 'src/index.js',
     output: {
       file: pkg.main,
       format: 'cjs'
     },
     plugins: [
-      commonjs()
+      buble()
     ],
     external: Object.keys(pkg.dependencies)
-  }),
+  },
   // esm build
-  rollupConfig({
+  {
     input: 'src/index.js',
     output: {
       file: pkg.web.replace('.js', '.esm.js'),
       format: 'es'
     },
+    plugins: [
+      buble()
+    ],
     external: Object.keys(pkg.dependencies)
-  }),
+  },
   // browser esm build
-  rollupConfig({
+  {
     input: 'src/browser.js',
     output: {
       file: pkg.web.replace('.js', '.esm.browser.js'),
       format: 'es'
     },
     external: Object.keys(pkg.dependencies)
-  }),
+  },
   // minimized browser esm build
-  rollupConfig({
+  {
     input: 'src/browser.js',
     output: {
       file: pkg.web.replace('.js', '.esm.browser.min.js'),
@@ -117,5 +120,5 @@ export default [
       terser()
     ],
     external: Object.keys(pkg.dependencies)
-  })
-]
+  }
+].map(rollupConfig)
