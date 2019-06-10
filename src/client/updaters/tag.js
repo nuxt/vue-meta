@@ -52,7 +52,7 @@ export default function updateTag(appId, { attribute, tagIDKeyName } = {}, type,
             const _attr = includes(dataAttributes, attr)
               ? `data-${attr}`
               : attr
-            const value = isUndefined(tag[attr]) || booleanHtmlAttributes.includes(attr) ? '' : tag[attr]
+            const value = isUndefined(tag[attr]) || includes(booleanHtmlAttributes, attr) ? '' : tag[attr]
             newElement.setAttribute(_attr, value)
           }
         }
