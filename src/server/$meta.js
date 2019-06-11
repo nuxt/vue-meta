@@ -1,4 +1,3 @@
-import { showWarningNotSupported } from '../shared/constants'
 import { getOptions } from '../shared/options'
 import { pause, resume } from '../shared/pausing'
 import refresh from '../client/refresh'
@@ -14,16 +13,6 @@ export default function _$meta(options = {}) {
    * @return {Object} - injector
    */
   return function $meta() {
-    if (!this.$root._vueMeta) {
-      return {
-        getOptions: showWarningNotSupported,
-        refresh: showWarningNotSupported,
-        inject: showWarningNotSupported,
-        pause: showWarningNotSupported,
-        resume: showWarningNotSupported
-      }
-    }
-
     return {
       getOptions: () => getOptions(options),
       refresh: _refresh.bind(this),
