@@ -1,0 +1,17 @@
+{
+  "name": "@vue-meta/webpack-loader",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "peerDependencies": {
+    "vue-template-compiler": "^2.6.10"
+  },
+  "devDependencies": {
+    "jest": "^24.8.0",
+    "jsdom": "^15.1.1",
+    "memory-fs": "^0.4.1",
+    "vue": "^2.6.10",
+    "vue-template-compiler": "^2.6.10",
+    "webpack": "^4.33.0"
+  }
+}
