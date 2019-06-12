@@ -1,0 +1,3 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`charset 1`] = `"<meta charset=\\"utf-8\\" data-server-rendered=\\"true\\">"`;

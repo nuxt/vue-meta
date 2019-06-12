@@ -1,0 +1,16 @@
+{
+  "name": "vue-app",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "scripts": {
+    "test": "jest"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.4.5",
+    "@babel/preset-env": "^7.4.5",
+    "@vue/server-test-utils": "^1.0.0-beta.29",
+    "babel-jest": "^24.8.0",
+    "jest": "^24.8.0"
+  }
+}

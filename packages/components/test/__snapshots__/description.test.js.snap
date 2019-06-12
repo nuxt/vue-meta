@@ -1,0 +1,17 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`description 1`] = `"<meta name=\\"description\\" content=\\"test\\" data-server-rendered=\\"true\\">"`;
+
+exports[`description:html 1`] = `"<meta name=\\"description\\" content=\\"test\\" data-server-rendered=\\"true\\">"`;
+
+exports[`description:og 1`] = `"<meta name=\\"og:description\\" content=\\"test\\" data-server-rendered=\\"true\\">"`;
+
+exports[`description:twitter 1`] = `"<meta name=\\"twitter:description\\" content=\\"test\\" data-server-rendered=\\"true\\">"`;
+
+exports[`description:website 1`] = `"<meta itemprop=\\"description\\" content=\\"test\\" data-server-rendered=\\"true\\">"`;
+
+exports[`og-description 1`] = `"<meta name=\\"og:description\\" content=\\"test\\" data-server-rendered=\\"true\\">"`;
+
+exports[`twitter-description 1`] = `"<meta name=\\"twitter:description\\" content=\\"test\\" data-server-rendered=\\"true\\">"`;
+
+exports[`website-description 1`] = `"<meta itemprop=\\"description\\" content=\\"test\\" data-server-rendered=\\"true\\">"`;
