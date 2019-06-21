@@ -40,7 +40,6 @@ package-lock.json
 
 # built code
 lib
-dist
 es
 .vue-meta
 
