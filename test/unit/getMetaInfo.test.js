@@ -821,7 +821,7 @@ describe('getMetaInfo', () => {
     })
   })
 
-  test.only('prints warning for boolean attributes with value undefined', () => {
+  test('prints warning for boolean attributes with value undefined', () => {
     const warn = jest.spyOn(console, 'warn').mockImplementation(() => {})
 
     const component = new Vue({
