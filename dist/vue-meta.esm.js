@@ -1,5 +1,5 @@
 /**
- * vue-meta v2.0.3
+ * vue-meta v2.0.4
  * (c) 2019
  * - Declan de Wet
  * - Sébastien Chopin (@Atinux)
@@ -9,7 +9,7 @@
 
 import deepmerge from 'deepmerge';
 
-var version = "2.0.3";
+var version = "2.0.4";
 
 // store an id to keep track of DOM updates
 var batchId = null;
@@ -293,7 +293,7 @@ function createMixin(Vue, options) {
 
 // set some sane defaults
 var defaultInfo = {
-  title: '',
+  title: undefined,
   titleChunk: '',
   titleTemplate: '%s',
   htmlAttrs: {},
@@ -497,7 +497,7 @@ function applyTemplate(ref, headObject, template, chunk) {
 function findIndex(array, predicate) {
   var arguments$1 = arguments;
 
-  if (!Array.prototype.findIndex) {
+  if ( !Array.prototype.findIndex) {
     // idx needs to be a Number, for..in returns string
     for (var idx = 0; idx < array.length; idx++) {
       if (predicate.call(arguments$1[2], array[idx], idx, array)) {
@@ -510,14 +510,14 @@ function findIndex(array, predicate) {
 }
 
 function toArray(arg) {
-  if (!Array.from) {
+  if ( !Array.from) {
     return Array.prototype.slice.call(arg)
   }
   return Array.from(arg)
 }
 
 function includes(array, value) {
-  if (!Array.prototype.includes) {
+  if ( !Array.prototype.includes) {
     for (var idx in array) {
       if (array[idx] === value) {
         return true
@@ -680,6 +680,10 @@ function merge(target, source, options) {
 
     for (var key in source[attrKey]) {
       if (source[attrKey].hasOwnProperty(key) && source[attrKey][key] === undefined) {
+        if (booleanHtmlAttributes.includes(key)) {
+          // eslint-disable-next-line no-console
+          console.warn('VueMeta: Please note that since v2 the value undefined is not used to indicate boolean attributes anymore, see migration guide for details');
+        }
         delete source[attrKey][key];
       }
     }
@@ -878,7 +882,9 @@ function updateAttribute(ref, attrs, tag) {
  * @param  {String} title - the new title of the document
  */
 function updateTitle(title) {
-  if ( title === void 0 ) title = document.title;
+  if (title === undefined) {
+    return
+  }
 
   document.title = title;
 }

@@ -1,5 +1,5 @@
 /**
- * vue-meta v2.0.3
+ * vue-meta v2.0.4
  * (c) 2019
  * - Declan de Wet
  * - Sébastien Chopin (@Atinux)
@@ -9,7 +9,7 @@
 
 import deepmerge from 'deepmerge';
 
-var version = "2.0.3";
+var version = "2.0.4";
 
 // store an id to keep track of DOM updates
 let batchId = null;
@@ -280,7 +280,7 @@ function createMixin(Vue, options) {
 
 // set some sane defaults
 const defaultInfo = {
-  title: '',
+  title: undefined,
   titleChunk: '',
   titleTemplate: '%s',
   htmlAttrs: {},
@@ -614,6 +614,10 @@ function merge(target, source, options = {}) {
 
     for (const key in source[attrKey]) {
       if (source[attrKey].hasOwnProperty(key) && source[attrKey][key] === undefined) {
+        if (booleanHtmlAttributes.includes(key)) {
+          // eslint-disable-next-line no-console
+          console.warn('VueMeta: Please note that since v2 the value undefined is not used to indicate boolean attributes anymore, see migration guide for details');
+        }
         delete source[attrKey][key];
       }
     }
@@ -794,7 +798,11 @@ function updateAttribute({ attribute } = {}, attrs, tag) {
  *
  * @param  {String} title - the new title of the document
  */
-function updateTitle(title = document.title) {
+function updateTitle(title) {
+  if (title === undefined) {
+    return
+  }
+
   document.title = title;
 }
 
