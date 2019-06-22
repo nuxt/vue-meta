@@ -820,4 +820,36 @@ describe('getMetaInfo', () => {
       __dangerouslyDisableSanitizersByTagID: {}
     })
   })
+
+  test.only('prints warning for boolean attributes with value undefined', () => {
+    const warn = jest.spyOn(console, 'warn').mockImplementation(() => {})
+
+    const component = new Vue({
+      metaInfo: {
+        htmlAttrs: {
+          amp: undefined
+        }
+      }
+    })
+
+    expect(getMetaInfo(component)).toEqual({
+      title: undefined,
+      titleChunk: '',
+      titleTemplate: '%s',
+      htmlAttrs: {},
+      headAttrs: {},
+      bodyAttrs: {},
+      meta: [],
+      base: [],
+      link: [],
+      style: [],
+      script: [],
+      noscript: [],
+      __dangerouslyDisableSanitizers: [],
+      __dangerouslyDisableSanitizersByTagID: {}
+    })
+
+    expect(warn).toHaveBeenCalledTimes(1)
+    expect(warn).toHaveBeenCalledWith(expect.stringMatching('the value undefined'))
+  })
 })

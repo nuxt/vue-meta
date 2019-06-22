@@ -1,7 +1,7 @@
 import deepmerge from 'deepmerge'
 import { findIndex } from '../utils/array'
 import { applyTemplate } from './template'
-import { metaInfoAttributeKeys } from './constants'
+import { metaInfoAttributeKeys, booleanHtmlAttributes } from './constants'
 
 export function arrayMerge({ component, tagIDKeyName, metaTemplateKeyName, contentKeyName }, target, source) {
   // we concat the arrays without merging objects contained in,
@@ -80,6 +80,10 @@ export function merge(target, source, options = {}) {
 
     for (const key in source[attrKey]) {
       if (source[attrKey].hasOwnProperty(key) && source[attrKey][key] === undefined) {
+        if (booleanHtmlAttributes.includes(key)) {
+          // eslint-disable-next-line no-console
+          console.warn('VueMeta: Please note that since v2 the value undefined is not used to indicate boolean attributes anymore, see migration guide for details')
+        }
         delete source[attrKey][key]
       }
     }
