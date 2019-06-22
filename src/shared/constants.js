@@ -4,7 +4,7 @@
 
 // set some sane defaults
 export const defaultInfo = {
-  title: '',
+  title: undefined,
   titleChunk: '',
   titleTemplate: '%s',
   htmlAttrs: {},

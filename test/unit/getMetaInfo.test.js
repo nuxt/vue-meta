@@ -13,7 +13,7 @@ describe('getMetaInfo', () => {
     const component = new Vue()
 
     expect(getMetaInfo(component)).toEqual({
-      title: '',
+      title: undefined,
       titleChunk: '',
       titleTemplate: '%s',
       htmlAttrs: {},
@@ -654,7 +654,7 @@ describe('getMetaInfo', () => {
     })
 
     expect(getMetaInfo(component)).toEqual({
-      title: '',
+      title: undefined,
       titleChunk: '',
       titleTemplate: '%s',
       htmlAttrs: {},
@@ -802,7 +802,7 @@ describe('getMetaInfo', () => {
     })
 
     expect(getMetaInfo(component)).toEqual({
-      title: '',
+      title: undefined,
       titleChunk: '',
       titleTemplate: '%s',
       htmlAttrs: {},

@@ -90,7 +90,7 @@ describe('client', () => {
 
     jest.runAllTimers()
     metaInfo = getMetaInfo(wrapper.vm.$parent)
-    expect(metaInfo.title).toEqual('')
+    expect(metaInfo.title).toEqual(undefined)
   })
 
   test('meta-info can be rendered with inject', () => {
