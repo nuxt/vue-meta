@@ -79,7 +79,7 @@ export default function createMixin(Vue, options) {
             ensuredPush(this.$options, 'beforeMount', () => {
               // if this Vue-app was server rendered, set the appId to 'ssr'
               // only one SSR app per page is supported
-              if (this.$root.$el && this.$root.$el.hasAttribute('data-server-rendered')) {
+              if (this.$root.$el && this.$root.$el.hasAttribute && this.$root.$el.hasAttribute('data-server-rendered')) {
                 this.$root._vueMeta.appId = 'ssr'
               }
             })
