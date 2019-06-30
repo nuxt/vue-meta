@@ -1,7 +1,7 @@
 # Server Side Rendering
 
 ```
-Latest version of Nuxt.js has already included Vue-Meta by default.
+Information: Nuxt.js includes vue-meta by default.
 ```
 [Official Document](https://nuxtjs.org/api/pages-head/)
 
