@@ -113,12 +113,12 @@ const metaInfoData = {
   script: {
     add: {
       data: [
-        { src: 'src', async: true, defer: true, [defaultOptions.tagIDKeyName]: 'content' },
-        { src: 'src', async: true, defer: true, body: true }
+        { src: 'src', async: false, defer: true, [defaultOptions.tagIDKeyName]: 'content' },
+        { src: 'src', async: false, defer: true, body: true }
       ],
       expect: [
-        '<script data-vue-meta="test" src="src" async defer data-vmid="content"></script>',
-        '<script data-vue-meta="test" src="src" async defer data-body="true"></script>'
+        '<script data-vue-meta="test" src="src" defer data-vmid="content"></script>',
+        '<script data-vue-meta="test" src="src" defer data-body="true"></script>'
       ],
       test(side, defaultTest) {
         return () => {

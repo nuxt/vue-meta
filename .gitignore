@@ -42,6 +42,7 @@ package-lock.json
 lib
 es
 .vue-meta
+.nuxt
 
 # examples yarn lock
 examples/yarn.lock

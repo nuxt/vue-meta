@@ -36,7 +36,12 @@ export default function tagGenerator(appId, { attribute, tagIDKeyName } = {}, ty
             prefix = 'data-'
           }
 
-          return isUndefined(tag[attr]) || booleanHtmlAttributes.includes(attr)
+          const isBooleanAttr = booleanHtmlAttributes.includes(attr)
+          if (isBooleanAttr && !tag[attr]) {
+            return attrsStr
+          }
+
+          return isBooleanAttr
             ? `${attrsStr} ${prefix}${attr}`
             : `${attrsStr} ${prefix}${attr}="${tag[attr]}"`
         }, '')
