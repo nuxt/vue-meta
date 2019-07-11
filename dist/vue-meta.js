@@ -1,5 +1,5 @@
 /**
- * vue-meta v2.0.4
+ * vue-meta v2.0.5
  * (c) 2019
  * - Declan de Wet
  * - Sébastien Chopin (@Atinux)
@@ -13,12 +13,12 @@
   (global = global || self, global.VueMeta = factory());
 }(this, function () { 'use strict';
 
-  var version = "2.0.4";
+  var version = "2.0.5";
 
   // store an id to keep track of DOM updates
   var batchId = null;
 
-  function triggerUpdate(vm, hookName) {
+  function triggerUpdate (vm, hookName) {
     // if an update was triggered during initialization or when an update was triggered by the
     // metaInfo watcher, set initialized to null
     // then we keep falsy value but know we need to run a triggerUpdate after initialization
@@ -39,7 +39,7 @@
    * @param  {Function} callback - the update to perform
    * @return {Number} id - a new ID
    */
-  function batchUpdate(callback, timeout) {
+  function batchUpdate (callback, timeout) {
     if ( timeout === void 0 ) timeout = 10;
 
     clearTimeout(batchId);
@@ -56,27 +56,27 @@
    * @param  {any}  arg - the object to check
    * @return {Boolean} - true if `arg` is an array
    */
-  function isArray(arg) {
+  function isArray (arg) {
     return Array.isArray(arg)
   }
 
-  function isUndefined(arg) {
+  function isUndefined (arg) {
     return typeof arg === 'undefined'
   }
 
-  function isObject(arg) {
+  function isObject (arg) {
     return typeof arg === 'object'
   }
 
-  function isFunction(arg) {
+  function isFunction (arg) {
     return typeof arg === 'function'
   }
 
-  function isString(arg) {
+  function isString (arg) {
     return typeof arg === 'string'
   }
 
-  function ensureIsArray(arg, key) {
+  function ensureIsArray (arg, key) {
     if (!key || !isObject(arg)) {
       return isArray(arg) ? arg : []
     }
@@ -87,27 +87,27 @@
     return arg
   }
 
-  function ensuredPush(object, key, el) {
+  function ensuredPush (object, key, el) {
     ensureIsArray(object, key);
 
     object[key].push(el);
   }
 
   // Vue $root instance has a _vueMeta object property, otherwise its a boolean true
-  function hasMetaInfo(vm) {
+  function hasMetaInfo (vm) {
     if ( vm === void 0 ) vm = this;
 
     return vm && (vm._vueMeta === true || isObject(vm._vueMeta))
   }
 
   // a component is in a metaInfo branch when itself has meta info or one of its (grand-)children has
-  function inMetaInfoBranch(vm) {
+  function inMetaInfoBranch (vm) {
     if ( vm === void 0 ) vm = this;
 
     return vm && !isUndefined(vm._vueMeta)
   }
 
-  function addNavGuards(vm) {
+  function addNavGuards (vm) {
     // return when nav guards already added or no router exists
     if (vm.$root._vueMeta.navGuards || !vm.$root.$router) {
       /* istanbul ignore next */
@@ -135,18 +135,18 @@
 
   var appId = 1;
 
-  function createMixin(Vue, options) {
+  function createMixin (Vue, options) {
     // for which Vue lifecycle hooks should the metaInfo be refreshed
     var updateOnLifecycleHook = ['activated', 'deactivated', 'beforeMount'];
 
     // watch for client side component updates
     return {
-      beforeCreate: function beforeCreate() {
+      beforeCreate: function beforeCreate () {
         var this$1 = this;
 
         Object.defineProperty(this, '_hasMetaInfo', {
           configurable: true,
-          get: function get() {
+          get: function get () {
             // Show deprecation warning once when devtools enabled
             if (Vue.config.devtools && !this.$root._vueMeta.hasMetaInfoDeprecationWarningShown) {
               console.warn('VueMeta DeprecationWarning: _hasMetaInfo has been deprecated and will be removed in a future version. Please use hasMetaInfo(vm) instead'); // eslint-disable-line no-console
@@ -210,7 +210,7 @@
               ensuredPush(this.$options, 'beforeMount', function () {
                 // if this Vue-app was server rendered, set the appId to 'ssr'
                 // only one SSR app per page is supported
-                if (this$1.$root.$el && this$1.$root.$el.hasAttribute('data-server-rendered')) {
+                if (this$1.$root.$el && this$1.$root.$el.hasAttribute && this$1.$root.$el.hasAttribute('data-server-rendered')) {
                   this$1.$root._vueMeta.appId = 'ssr';
                 }
               });
@@ -417,7 +417,7 @@
   // eslint-disable-next-line no-console
   var showWarningNotSupported = function () { return console.warn('This vue app/component has no vue-meta configuration'); };
 
-  function setOptions(options) {
+  function setOptions (options) {
     // combine options
     options = isObject(options) ? options : {};
 
@@ -430,7 +430,7 @@
     return options
   }
 
-  function getOptions(options) {
+  function getOptions (options) {
     var optionsCopy = {};
     for (var key in options) {
       optionsCopy[key] = options[key];
@@ -438,7 +438,7 @@
     return optionsCopy
   }
 
-  function pause(refresh) {
+  function pause (refresh) {
     if ( refresh === void 0 ) refresh = true;
 
     this.$root._vueMeta.paused = true;
@@ -446,7 +446,7 @@
     return function () { return resume(refresh); }
   }
 
-  function resume(refresh) {
+  function resume (refresh) {
     if ( refresh === void 0 ) refresh = true;
 
     this.$root._vueMeta.paused = false;
@@ -456,7 +456,7 @@
     }
   }
 
-  function applyTemplate(ref, headObject, template, chunk) {
+  function applyTemplate (ref, headObject, template, chunk) {
     var component = ref.component;
     var metaTemplateKeyName = ref.metaTemplateKeyName;
     var contentKeyName = ref.contentKeyName;
@@ -491,7 +491,7 @@
    * files in server/ still use normal js function
    */
 
-  function findIndex(array, predicate) {
+  function findIndex (array, predicate) {
     var arguments$1 = arguments;
 
     if ( !Array.prototype.findIndex) {
@@ -506,14 +506,14 @@
     return array.findIndex(predicate, arguments[2])
   }
 
-  function toArray(arg) {
+  function toArray (arg) {
     if ( !Array.from) {
       return Array.prototype.slice.call(arg)
     }
     return Array.from(arg)
   }
 
-  function includes(array, value) {
+  function includes (array, value) {
     if ( !Array.prototype.includes) {
       for (var idx in array) {
         if (array[idx] === value) {
@@ -528,14 +528,14 @@
 
   var clientSequences = [
     [/&/g, '\u0026'],
-    [/</g, '\u003c'],
-    [/>/g, '\u003e'],
+    [/</g, '\u003C'],
+    [/>/g, '\u003E'],
     [/"/g, '\u0022'],
     [/'/g, '\u0027']
   ];
 
   // sanitizes potentially dangerous characters
-  function escape(info, options, escapeOptions) {
+  function escape (info, options, escapeOptions) {
     var tagIDKeyName = options.tagIDKeyName;
     var doEscape = escapeOptions.doEscape; if ( doEscape === void 0 ) doEscape = function (v) { return v; };
     var escaped = {};
@@ -585,130 +585,117 @@
     return escaped
   }
 
-  var commonjsGlobal = typeof globalThis !== 'undefined' ? globalThis : typeof window !== 'undefined' ? window : typeof global !== 'undefined' ? global : typeof self !== 'undefined' ? self : {};
+  var isMergeableObject = function isMergeableObject(value) {
+  	return isNonNullObject(value)
+  		&& !isSpecial(value)
+  };
 
-  function createCommonjsModule(fn, module) {
-  	return module = { exports: {} }, fn(module, module.exports), module.exports;
+  function isNonNullObject(value) {
+  	return !!value && typeof value === 'object'
   }
 
-  var umd = createCommonjsModule(function (module, exports) {
-  (function (global, factory) {
-  	 module.exports = factory() ;
-  }(commonjsGlobal, function () {
-  	var isMergeableObject = function isMergeableObject(value) {
-  		return isNonNullObject(value)
-  			&& !isSpecial(value)
-  	};
+  function isSpecial(value) {
+  	var stringValue = Object.prototype.toString.call(value);
 
-  	function isNonNullObject(value) {
-  		return !!value && typeof value === 'object'
+  	return stringValue === '[object RegExp]'
+  		|| stringValue === '[object Date]'
+  		|| isReactElement(value)
+  }
+
+  // see https://github.com/facebook/react/blob/b5ac963fb791d1298e7f396236383bc955f916c1/src/isomorphic/classic/element/ReactElement.js#L21-L25
+  var canUseSymbol = typeof Symbol === 'function' && Symbol.for;
+  var REACT_ELEMENT_TYPE = canUseSymbol ? Symbol.for('react.element') : 0xeac7;
+
+  function isReactElement(value) {
+  	return value.$$typeof === REACT_ELEMENT_TYPE
+  }
+
+  function emptyTarget(val) {
+  	return Array.isArray(val) ? [] : {}
+  }
+
+  function cloneUnlessOtherwiseSpecified(value, options) {
+  	return (options.clone !== false && options.isMergeableObject(value))
+  		? deepmerge(emptyTarget(value), value, options)
+  		: value
+  }
+
+  function defaultArrayMerge(target, source, options) {
+  	return target.concat(source).map(function(element) {
+  		return cloneUnlessOtherwiseSpecified(element, options)
+  	})
+  }
+
+  function getMergeFunction(key, options) {
+  	if (!options.customMerge) {
+  		return deepmerge
   	}
+  	var customMerge = options.customMerge(key);
+  	return typeof customMerge === 'function' ? customMerge : deepmerge
+  }
 
-  	function isSpecial(value) {
-  		var stringValue = Object.prototype.toString.call(value);
-
-  		return stringValue === '[object RegExp]'
-  			|| stringValue === '[object Date]'
-  			|| isReactElement(value)
-  	}
-
-  	// see https://github.com/facebook/react/blob/b5ac963fb791d1298e7f396236383bc955f916c1/src/isomorphic/classic/element/ReactElement.js#L21-L25
-  	var canUseSymbol = typeof Symbol === 'function' && Symbol.for;
-  	var REACT_ELEMENT_TYPE = canUseSymbol ? Symbol.for('react.element') : 0xeac7;
-
-  	function isReactElement(value) {
-  		return value.$$typeof === REACT_ELEMENT_TYPE
-  	}
-
-  	function emptyTarget(val) {
-  		return Array.isArray(val) ? [] : {}
-  	}
-
-  	function cloneUnlessOtherwiseSpecified(value, options) {
-  		return (options.clone !== false && options.isMergeableObject(value))
-  			? deepmerge(emptyTarget(value), value, options)
-  			: value
-  	}
-
-  	function defaultArrayMerge(target, source, options) {
-  		return target.concat(source).map(function(element) {
-  			return cloneUnlessOtherwiseSpecified(element, options)
+  function getEnumerableOwnPropertySymbols(target) {
+  	return Object.getOwnPropertySymbols
+  		? Object.getOwnPropertySymbols(target).filter(function(symbol) {
+  			return target.propertyIsEnumerable(symbol)
   		})
-  	}
+  		: []
+  }
 
-  	function getMergeFunction(key, options) {
-  		if (!options.customMerge) {
-  			return deepmerge
-  		}
-  		var customMerge = options.customMerge(key);
-  		return typeof customMerge === 'function' ? customMerge : deepmerge
-  	}
+  function getKeys(target) {
+  	return Object.keys(target).concat(getEnumerableOwnPropertySymbols(target))
+  }
 
-  	function getEnumerableOwnPropertySymbols(target) {
-  		return Object.getOwnPropertySymbols
-  			? Object.getOwnPropertySymbols(target).filter(function(symbol) {
-  				return target.propertyIsEnumerable(symbol)
-  			})
-  			: []
-  	}
-
-  	function getKeys(target) {
-  		return Object.keys(target).concat(getEnumerableOwnPropertySymbols(target))
-  	}
-
-  	function mergeObject(target, source, options) {
-  		var destination = {};
-  		if (options.isMergeableObject(target)) {
-  			getKeys(target).forEach(function(key) {
-  				destination[key] = cloneUnlessOtherwiseSpecified(target[key], options);
-  			});
-  		}
-  		getKeys(source).forEach(function(key) {
-  			if (!options.isMergeableObject(source[key]) || !target[key]) {
-  				destination[key] = cloneUnlessOtherwiseSpecified(source[key], options);
-  			} else {
-  				destination[key] = getMergeFunction(key, options)(target[key], source[key], options);
-  			}
+  function mergeObject(target, source, options) {
+  	var destination = {};
+  	if (options.isMergeableObject(target)) {
+  		getKeys(target).forEach(function(key) {
+  			destination[key] = cloneUnlessOtherwiseSpecified(target[key], options);
   		});
-  		return destination
   	}
-
-  	function deepmerge(target, source, options) {
-  		options = options || {};
-  		options.arrayMerge = options.arrayMerge || defaultArrayMerge;
-  		options.isMergeableObject = options.isMergeableObject || isMergeableObject;
-
-  		var sourceIsArray = Array.isArray(source);
-  		var targetIsArray = Array.isArray(target);
-  		var sourceAndTargetTypesMatch = sourceIsArray === targetIsArray;
-
-  		if (!sourceAndTargetTypesMatch) {
-  			return cloneUnlessOtherwiseSpecified(source, options)
-  		} else if (sourceIsArray) {
-  			return options.arrayMerge(target, source, options)
+  	getKeys(source).forEach(function(key) {
+  		if (!options.isMergeableObject(source[key]) || !target[key]) {
+  			destination[key] = cloneUnlessOtherwiseSpecified(source[key], options);
   		} else {
-  			return mergeObject(target, source, options)
+  			destination[key] = getMergeFunction(key, options)(target[key], source[key], options);
   		}
+  	});
+  	return destination
+  }
+
+  function deepmerge(target, source, options) {
+  	options = options || {};
+  	options.arrayMerge = options.arrayMerge || defaultArrayMerge;
+  	options.isMergeableObject = options.isMergeableObject || isMergeableObject;
+
+  	var sourceIsArray = Array.isArray(source);
+  	var targetIsArray = Array.isArray(target);
+  	var sourceAndTargetTypesMatch = sourceIsArray === targetIsArray;
+
+  	if (!sourceAndTargetTypesMatch) {
+  		return cloneUnlessOtherwiseSpecified(source, options)
+  	} else if (sourceIsArray) {
+  		return options.arrayMerge(target, source, options)
+  	} else {
+  		return mergeObject(target, source, options)
+  	}
+  }
+
+  deepmerge.all = function deepmergeAll(array, options) {
+  	if (!Array.isArray(array)) {
+  		throw new Error('first argument should be an array')
   	}
 
-  	deepmerge.all = function deepmergeAll(array, options) {
-  		if (!Array.isArray(array)) {
-  			throw new Error('first argument should be an array')
-  		}
+  	return array.reduce(function(prev, next) {
+  		return deepmerge(prev, next, options)
+  	}, {})
+  };
 
-  		return array.reduce(function(prev, next) {
-  			return deepmerge(prev, next, options)
-  		}, {})
-  	};
+  var deepmerge_1 = deepmerge;
 
-  	var deepmerge_1 = deepmerge;
+  var cjs = deepmerge_1;
 
-  	return deepmerge_1;
-
-  }));
-  });
-
-  function arrayMerge(ref, target, source) {
+  function arrayMerge (ref, target, source) {
     var component = ref.component;
     var tagIDKeyName = ref.tagIDKeyName;
     var metaTemplateKeyName = ref.metaTemplateKeyName;
@@ -775,7 +762,7 @@
     return destination.concat(source)
   }
 
-  function merge(target, source, options) {
+  function merge (target, source, options) {
     if ( options === void 0 ) options = {};
 
     // remove properties explicitly set to false so child components can
@@ -801,7 +788,7 @@
       }
     });
 
-    return umd(target, source, {
+    return cjs(target, source, {
       arrayMerge: function (t, s) { return arrayMerge(options, t, s); }
     })
   }
@@ -820,7 +807,7 @@
    * @param  {Object} [result={}] - result so far
    * @return {Object} result - final aggregated result
    */
-  function getComponentOption(options, component, result) {
+  function getComponentOption (options, component, result) {
     if ( options === void 0 ) options = {};
     if ( result === void 0 ) result = {};
 
@@ -890,7 +877,7 @@
    * @param  {Object} component - the Vue instance to get meta info from
    * @return {Object} - returned meta info
    */
-  function getMetaInfo(options, component, escapeSequences) {
+  function getMetaInfo (options, component, escapeSequences) {
     if ( options === void 0 ) options = {};
     if ( escapeSequences === void 0 ) escapeSequences = [];
 
@@ -948,7 +935,7 @@
    * @param  {Object} attrs - the new document html attributes
    * @param  {HTMLElement} tag - the HTMLElement tag to update with new attrs
    */
-  function updateAttribute(ref, attrs, tag) {
+  function updateAttribute (ref, attrs, tag) {
     if ( ref === void 0 ) ref = {};
     var attribute = ref.attribute;
 
@@ -993,7 +980,7 @@
    *
    * @param  {String} title - the new title of the document
    */
-  function updateTitle(title) {
+  function updateTitle (title) {
     if (title === undefined) {
       return
     }
@@ -1009,7 +996,7 @@
    * @param  {(Array<Object>|Object)} tags - an array of tag objects or a single object in case of base
    * @return {Object} - a representation of what tags changed
    */
-  function updateTag(appId, ref, type, tags, headTag, bodyTag) {
+  function updateTag (appId, ref, type, tags, headTag, bodyTag) {
     if ( ref === void 0 ) ref = {};
     var attribute = ref.attribute;
     var tagIDKeyName = ref.tagIDKeyName;
@@ -1055,7 +1042,13 @@
               var _attr = includes(dataAttributes, attr)
                 ? ("data-" + attr)
                 : attr;
-              var value = isUndefined(tag[attr]) || includes(booleanHtmlAttributes, attr) ? '' : tag[attr];
+
+              var isBooleanAttribute = includes(booleanHtmlAttributes, attr);
+              if (isBooleanAttribute && !tag[attr]) {
+                continue
+              }
+
+              var value = isBooleanAttribute ? '' : tag[attr];
               newElement.setAttribute(_attr, value);
             }
           }
@@ -1089,7 +1082,7 @@
     return { oldTags: oldTags, newTags: newTags }
   }
 
-  function getTag(tags, tag) {
+  function getTag (tags, tag) {
     if (!tags[tag]) {
       tags[tag] = document.getElementsByTagName(tag)[0];
     }
@@ -1102,7 +1095,7 @@
    *
    * @param  {Object} newInfo - the meta info to update to
    */
-  function updateClientMetaInfo(appId, options, newInfo) {
+  function updateClientMetaInfo (appId, options, newInfo) {
     if ( options === void 0 ) options = {};
 
     var ssrAttribute = options.ssrAttribute;
@@ -1166,7 +1159,7 @@
     return { addedTags: addedTags, removedTags: removedTags }
   }
 
-  function _refresh(options) {
+  function _refresh (options) {
     if ( options === void 0 ) options = {};
 
     /**
@@ -1179,7 +1172,7 @@
      *
      * @return {Object} - new meta info
      */
-    return function refresh() {
+    return function refresh () {
       var metaInfo = getMetaInfo(options, this.$root, clientSequences);
 
       var appId = this.$root._vueMeta.appId;
@@ -1193,7 +1186,7 @@
     }
   }
 
-  function _$meta(options) {
+  function _$meta (options) {
     if ( options === void 0 ) options = {};
 
     var _refresh$1 = _refresh(options);
@@ -1204,7 +1197,7 @@
      * @this {Object} - the Vue instance (a root component)
      * @return {Object} - injector
      */
-    return function $meta() {
+    return function $meta () {
       if (!this.$root._vueMeta) {
         return {
           getOptions: showWarningNotSupported,
@@ -1229,7 +1222,7 @@
    * Plugin install function.
    * @param {Function} Vue - the Vue constructor.
    */
-  function install(Vue, options) {
+  function install (Vue, options) {
     if ( options === void 0 ) options = {};
 
     if (Vue.__vuemeta_installed) {

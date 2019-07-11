@@ -1,5 +1,5 @@
 /**
- * vue-meta v2.0.4
+ * vue-meta v2.0.5
  * (c) 2019
  * - Declan de Wet
  * - Sébastien Chopin (@Atinux)
@@ -9,12 +9,12 @@
 
 import deepmerge from 'deepmerge';
 
-var version = "2.0.4";
+var version = "2.0.5";
 
 // store an id to keep track of DOM updates
 let batchId = null;
 
-function triggerUpdate(vm, hookName) {
+function triggerUpdate (vm, hookName) {
   // if an update was triggered during initialization or when an update was triggered by the
   // metaInfo watcher, set initialized to null
   // then we keep falsy value but know we need to run a triggerUpdate after initialization
@@ -35,7 +35,7 @@ function triggerUpdate(vm, hookName) {
  * @param  {Function} callback - the update to perform
  * @return {Number} id - a new ID
  */
-function batchUpdate(callback, timeout = 10) {
+function batchUpdate (callback, timeout = 10) {
   clearTimeout(batchId);
 
   batchId = setTimeout(() => {
@@ -50,27 +50,27 @@ function batchUpdate(callback, timeout = 10) {
  * @param  {any}  arg - the object to check
  * @return {Boolean} - true if `arg` is an array
  */
-function isArray(arg) {
+function isArray (arg) {
   return Array.isArray(arg)
 }
 
-function isUndefined(arg) {
+function isUndefined (arg) {
   return typeof arg === 'undefined'
 }
 
-function isObject(arg) {
+function isObject (arg) {
   return typeof arg === 'object'
 }
 
-function isFunction(arg) {
+function isFunction (arg) {
   return typeof arg === 'function'
 }
 
-function isString(arg) {
+function isString (arg) {
   return typeof arg === 'string'
 }
 
-function ensureIsArray(arg, key) {
+function ensureIsArray (arg, key) {
   if (!key || !isObject(arg)) {
     return isArray(arg) ? arg : []
   }
@@ -81,23 +81,23 @@ function ensureIsArray(arg, key) {
   return arg
 }
 
-function ensuredPush(object, key, el) {
+function ensuredPush (object, key, el) {
   ensureIsArray(object, key);
 
   object[key].push(el);
 }
 
 // Vue $root instance has a _vueMeta object property, otherwise its a boolean true
-function hasMetaInfo(vm = this) {
+function hasMetaInfo (vm = this) {
   return vm && (vm._vueMeta === true || isObject(vm._vueMeta))
 }
 
 // a component is in a metaInfo branch when itself has meta info or one of its (grand-)children has
-function inMetaInfoBranch(vm = this) {
+function inMetaInfoBranch (vm = this) {
   return vm && !isUndefined(vm._vueMeta)
 }
 
-function addNavGuards(vm) {
+function addNavGuards (vm) {
   // return when nav guards already added or no router exists
   if (vm.$root._vueMeta.navGuards || !vm.$root.$router) {
     /* istanbul ignore next */
@@ -124,16 +124,16 @@ function addNavGuards(vm) {
 
 let appId = 1;
 
-function createMixin(Vue, options) {
+function createMixin (Vue, options) {
   // for which Vue lifecycle hooks should the metaInfo be refreshed
   const updateOnLifecycleHook = ['activated', 'deactivated', 'beforeMount'];
 
   // watch for client side component updates
   return {
-    beforeCreate() {
+    beforeCreate () {
       Object.defineProperty(this, '_hasMetaInfo', {
         configurable: true,
-        get() {
+        get () {
           // Show deprecation warning once when devtools enabled
           if (Vue.config.devtools && !this.$root._vueMeta.hasMetaInfoDeprecationWarningShown) {
             console.warn('VueMeta DeprecationWarning: _hasMetaInfo has been deprecated and will be removed in a future version. Please use hasMetaInfo(vm) instead'); // eslint-disable-line no-console
@@ -197,7 +197,7 @@ function createMixin(Vue, options) {
             ensuredPush(this.$options, 'beforeMount', () => {
               // if this Vue-app was server rendered, set the appId to 'ssr'
               // only one SSR app per page is supported
-              if (this.$root.$el && this.$root.$el.hasAttribute('data-server-rendered')) {
+              if (this.$root.$el && this.$root.$el.hasAttribute && this.$root.$el.hasAttribute('data-server-rendered')) {
                 this.$root._vueMeta.appId = 'ssr';
               }
             });
@@ -400,7 +400,7 @@ const booleanHtmlAttributes = [
 // eslint-disable-next-line no-console
 const showWarningNotSupported = () => console.warn('This vue app/component has no vue-meta configuration');
 
-function setOptions(options) {
+function setOptions (options) {
   // combine options
   options = isObject(options) ? options : {};
 
@@ -413,7 +413,7 @@ function setOptions(options) {
   return options
 }
 
-function getOptions(options) {
+function getOptions (options) {
   const optionsCopy = {};
   for (const key in options) {
     optionsCopy[key] = options[key];
@@ -421,13 +421,13 @@ function getOptions(options) {
   return optionsCopy
 }
 
-function pause(refresh = true) {
+function pause (refresh = true) {
   this.$root._vueMeta.paused = true;
 
   return () => resume(refresh)
 }
 
-function resume(refresh = true) {
+function resume (refresh = true) {
   this.$root._vueMeta.paused = false;
 
   if (refresh) {
@@ -435,7 +435,7 @@ function resume(refresh = true) {
   }
 }
 
-function applyTemplate({ component, metaTemplateKeyName, contentKeyName }, headObject, template, chunk) {
+function applyTemplate ({ component, metaTemplateKeyName, contentKeyName }, headObject, template, chunk) {
   if (isUndefined(template)) {
     template = headObject[metaTemplateKeyName];
     delete headObject[metaTemplateKeyName];
@@ -466,28 +466,28 @@ function applyTemplate({ component, metaTemplateKeyName, contentKeyName }, headO
  * files in server/ still use normal js function
  */
 
-function findIndex(array, predicate) {
+function findIndex (array, predicate) {
   return array.findIndex(predicate, arguments[2])
 }
 
-function toArray(arg) {
+function toArray (arg) {
   return Array.from(arg)
 }
 
-function includes(array, value) {
+function includes (array, value) {
   return array.includes(value)
 }
 
 const clientSequences = [
   [/&/g, '\u0026'],
-  [/</g, '\u003c'],
-  [/>/g, '\u003e'],
+  [/</g, '\u003C'],
+  [/>/g, '\u003E'],
   [/"/g, '\u0022'],
   [/'/g, '\u0027']
 ];
 
 // sanitizes potentially dangerous characters
-function escape(info, options, escapeOptions) {
+function escape (info, options, escapeOptions) {
   const { tagIDKeyName } = options;
   const { doEscape = v => v } = escapeOptions;
   const escaped = {};
@@ -537,7 +537,7 @@ function escape(info, options, escapeOptions) {
   return escaped
 }
 
-function arrayMerge({ component, tagIDKeyName, metaTemplateKeyName, contentKeyName }, target, source) {
+function arrayMerge ({ component, tagIDKeyName, metaTemplateKeyName, contentKeyName }, target, source) {
   // we concat the arrays without merging objects contained in,
   // but we check for a `vmid` property on each object in the array
   // using an O(1) lookup associative array exploit
@@ -599,7 +599,7 @@ function arrayMerge({ component, tagIDKeyName, metaTemplateKeyName, contentKeyNa
   return destination.concat(source)
 }
 
-function merge(target, source, options = {}) {
+function merge (target, source, options = {}) {
   // remove properties explicitly set to false so child components can
   // optionally _not_ overwrite the parents content
   // (for array properties this is checked in arrayMerge)
@@ -642,7 +642,7 @@ function merge(target, source, options = {}) {
  * @param  {Object} [result={}] - result so far
  * @return {Object} result - final aggregated result
  */
-function getComponentOption(options = {}, component, result = {}) {
+function getComponentOption (options = {}, component, result = {}) {
   const { keyName, metaTemplateKeyName, tagIDKeyName } = options;
   const { $options, $children } = component;
 
@@ -706,7 +706,7 @@ function getComponentOption(options = {}, component, result = {}) {
  * @param  {Object} component - the Vue instance to get meta info from
  * @return {Object} - returned meta info
  */
-function getMetaInfo(options = {}, component, escapeSequences = []) {
+function getMetaInfo (options = {}, component, escapeSequences = []) {
   // collect & aggregate all metaInfo $options
   let info = getComponentOption(options, component, defaultInfo);
 
@@ -756,7 +756,7 @@ function getMetaInfo(options = {}, component, escapeSequences = []) {
  * @param  {Object} attrs - the new document html attributes
  * @param  {HTMLElement} tag - the HTMLElement tag to update with new attrs
  */
-function updateAttribute({ attribute } = {}, attrs, tag) {
+function updateAttribute ({ attribute } = {}, attrs, tag) {
   const vueMetaAttrString = tag.getAttribute(attribute);
   const vueMetaAttrs = vueMetaAttrString ? vueMetaAttrString.split(',') : [];
   const toRemove = toArray(vueMetaAttrs);
@@ -798,7 +798,7 @@ function updateAttribute({ attribute } = {}, attrs, tag) {
  *
  * @param  {String} title - the new title of the document
  */
-function updateTitle(title) {
+function updateTitle (title) {
   if (title === undefined) {
     return
   }
@@ -814,7 +814,7 @@ function updateTitle(title) {
  * @param  {(Array<Object>|Object)} tags - an array of tag objects or a single object in case of base
  * @return {Object} - a representation of what tags changed
  */
-function updateTag(appId, { attribute, tagIDKeyName } = {}, type, tags, headTag, bodyTag) {
+function updateTag (appId, { attribute, tagIDKeyName } = {}, type, tags, headTag, bodyTag) {
   const oldHeadTags = toArray(headTag.querySelectorAll(`${type}[${attribute}="${appId}"], ${type}[data-${tagIDKeyName}]`));
   const oldBodyTags = toArray(bodyTag.querySelectorAll(`${type}[${attribute}="${appId}"][data-body="true"], ${type}[data-${tagIDKeyName}][data-body="true"]`));
   const dataAttributes = [tagIDKeyName, 'body'];
@@ -856,7 +856,13 @@ function updateTag(appId, { attribute, tagIDKeyName } = {}, type, tags, headTag,
             const _attr = includes(dataAttributes, attr)
               ? `data-${attr}`
               : attr;
-            const value = isUndefined(tag[attr]) || includes(booleanHtmlAttributes, attr) ? '' : tag[attr];
+
+            const isBooleanAttribute = includes(booleanHtmlAttributes, attr);
+            if (isBooleanAttribute && !tag[attr]) {
+              continue
+            }
+
+            const value = isBooleanAttribute ? '' : tag[attr];
             newElement.setAttribute(_attr, value);
           }
         }
@@ -890,7 +896,7 @@ function updateTag(appId, { attribute, tagIDKeyName } = {}, type, tags, headTag,
   return { oldTags, newTags }
 }
 
-function getTag(tags, tag) {
+function getTag (tags, tag) {
   if (!tags[tag]) {
     tags[tag] = document.getElementsByTagName(tag)[0];
   }
@@ -903,7 +909,7 @@ function getTag(tags, tag) {
  *
  * @param  {Object} newInfo - the meta info to update to
  */
-function updateClientMetaInfo(appId, options = {}, newInfo) {
+function updateClientMetaInfo (appId, options = {}, newInfo) {
   const { ssrAttribute } = options;
 
   // only cache tags for current update
@@ -963,7 +969,7 @@ function updateClientMetaInfo(appId, options = {}, newInfo) {
   return { addedTags, removedTags }
 }
 
-function _refresh(options = {}) {
+function _refresh (options = {}) {
   /**
    * When called, will update the current meta info with new meta info.
    * Useful when updating meta info as the result of an asynchronous
@@ -974,7 +980,7 @@ function _refresh(options = {}) {
    *
    * @return {Object} - new meta info
    */
-  return function refresh() {
+  return function refresh () {
     const metaInfo = getMetaInfo(options, this.$root, clientSequences);
 
     const appId = this.$root._vueMeta.appId;
@@ -988,7 +994,7 @@ function _refresh(options = {}) {
   }
 }
 
-function _$meta(options = {}) {
+function _$meta (options = {}) {
   const _refresh$1 = _refresh(options);
   const inject = () => {};
 
@@ -997,7 +1003,7 @@ function _$meta(options = {}) {
    * @this {Object} - the Vue instance (a root component)
    * @return {Object} - injector
    */
-  return function $meta() {
+  return function $meta () {
     if (!this.$root._vueMeta) {
       return {
         getOptions: showWarningNotSupported,
@@ -1022,7 +1028,7 @@ function _$meta(options = {}) {
  * Plugin install function.
  * @param {Function} Vue - the Vue constructor.
  */
-function install(Vue, options = {}) {
+function install (Vue, options = {}) {
   if (Vue.__vuemeta_installed) {
     return
   }

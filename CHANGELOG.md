@@ -2,6 +2,23 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [2.0.5](https://github.com/nuxt/vue-meta/compare/v2.0.3...v2.0.5) (2019-07-11)
+
+
+### Bug Fixes
+
+* add warning for v1 boolean attribute syntax ([bfeab17](https://github.com/nuxt/vue-meta/commit/bfeab17))
+* dont change title when value is undefined (fix [#396](https://github.com/nuxt/vue-meta/issues/396)) ([90f9710](https://github.com/nuxt/vue-meta/commit/90f9710))
+* ensure hasAttribute exists on $root.$el ([f1511ac](https://github.com/nuxt/vue-meta/commit/f1511ac))
+* only show boolean attrs with truthy value ([1d9072a](https://github.com/nuxt/vue-meta/commit/1d9072a))
+
+
+### Tests
+
+* enable all getMetaInfo tests again ([24d7fee](https://github.com/nuxt/vue-meta/commit/24d7fee))
+
+
+
 ### [2.0.4](https://github.com/nuxt/vue-meta/compare/v2.0.3...v2.0.4) (2019-06-22)
 
 
