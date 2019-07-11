@@ -6,7 +6,7 @@ Vue.use(Router)
 
 const Post = () => import('./views/about.vue')
 
-export default function createRouter() {
+export default function createRouter () {
   return new Router({
     mode: 'hash',
     base: '/',

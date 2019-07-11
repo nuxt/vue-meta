@@ -1,5 +1,4 @@
 import { booleanHtmlAttributes } from '../../shared/constants'
-import { isUndefined } from '../../utils/is-type'
 import { toArray, includes } from '../../utils/array'
 
 /**
@@ -10,7 +9,7 @@ import { toArray, includes } from '../../utils/array'
  * @param  {(Array<Object>|Object)} tags - an array of tag objects or a single object in case of base
  * @return {Object} - a representation of what tags changed
  */
-export default function updateTag(appId, { attribute, tagIDKeyName } = {}, type, tags, headTag, bodyTag) {
+export default function updateTag (appId, { attribute, tagIDKeyName } = {}, type, tags, headTag, bodyTag) {
   const oldHeadTags = toArray(headTag.querySelectorAll(`${type}[${attribute}="${appId}"], ${type}[data-${tagIDKeyName}]`))
   const oldBodyTags = toArray(bodyTag.querySelectorAll(`${type}[${attribute}="${appId}"][data-body="true"], ${type}[data-${tagIDKeyName}][data-body="true"]`))
   const dataAttributes = [tagIDKeyName, 'body']

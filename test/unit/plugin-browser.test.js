@@ -90,7 +90,7 @@ describe('plugin', () => {
     })
 
     const Component = Vue.component('test-component', {
-      metaInfo() {
+      metaInfo () {
         return {
           title: this.title
         }
@@ -161,7 +161,7 @@ describe('plugin', () => {
     })
 
     const Component = Vue.component('test-component', {
-      metaInfo() {
+      metaInfo () {
         return {
           title: this.title
         }

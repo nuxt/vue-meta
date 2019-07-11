@@ -3,7 +3,7 @@ import { findIndex } from '../utils/array'
 import { applyTemplate } from './template'
 import { metaInfoAttributeKeys, booleanHtmlAttributes } from './constants'
 
-export function arrayMerge({ component, tagIDKeyName, metaTemplateKeyName, contentKeyName }, target, source) {
+export function arrayMerge ({ component, tagIDKeyName, metaTemplateKeyName, contentKeyName }, target, source) {
   // we concat the arrays without merging objects contained in,
   // but we check for a `vmid` property on each object in the array
   // using an O(1) lookup associative array exploit
@@ -65,7 +65,7 @@ export function arrayMerge({ component, tagIDKeyName, metaTemplateKeyName, conte
   return destination.concat(source)
 }
 
-export function merge(target, source, options = {}) {
+export function merge (target, source, options = {}) {
   // remove properties explicitly set to false so child components can
   // optionally _not_ overwrite the parents content
   // (for array properties this is checked in arrayMerge)

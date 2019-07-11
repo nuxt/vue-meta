@@ -3,7 +3,7 @@ import { pause, resume } from '../shared/pausing'
 import refresh from '../client/refresh'
 import inject from './inject'
 
-export default function _$meta(options = {}) {
+export default function _$meta (options = {}) {
   const _refresh = refresh(options)
   const _inject = inject(options)
 
@@ -12,7 +12,7 @@ export default function _$meta(options = {}) {
    * @this {Object} - the Vue instance (a root component)
    * @return {Object} - injector
    */
-  return function $meta() {
+  return function $meta () {
     return {
       getOptions: () => getOptions(options),
       refresh: _refresh.bind(this),

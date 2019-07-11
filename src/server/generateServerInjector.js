@@ -9,7 +9,7 @@ import { titleGenerator, attributeGenerator, tagGenerator } from './generators'
  * @return {Object} - the new injector
  */
 
-export default function generateServerInjector(appId, options, type, data) {
+export default function generateServerInjector (appId, options, type, data) {
   if (type === 'title') {
     return titleGenerator(appId, options, type, data)
   }

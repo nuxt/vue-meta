@@ -1,6 +1,6 @@
 import { isUndefined } from './is-type'
 
-export function hasGlobalWindowFn() {
+export function hasGlobalWindowFn () {
   try {
     return !isUndefined(window)
   } catch (e) {

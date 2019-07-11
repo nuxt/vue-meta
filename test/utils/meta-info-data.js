@@ -5,7 +5,7 @@ const metaInfoData = {
     add: {
       data: 'Hello World',
       expect: ['<title>Hello World</title>'],
-      test(side, defaultTest) {
+      test (side, defaultTest) {
         if (side === 'client') {
           // client side vue-meta uses document.title and doesnt change the html
           return () => {
@@ -65,7 +65,7 @@ const metaInfoData = {
         '<meta data-vue-meta="test" charset="utf-16">',
         '<meta data-vue-meta="test" property="a" content="c">'
       ],
-      test(side, defaultTest) {
+      test (side, defaultTest) {
         if (side === 'client') {
           return () => {
             const tags = defaultTest()
@@ -120,7 +120,7 @@ const metaInfoData = {
         '<script data-vue-meta="test" src="src" defer data-vmid="content"></script>',
         '<script data-vue-meta="test" src="src" defer data-body="true"></script>'
       ],
-      test(side, defaultTest) {
+      test (side, defaultTest) {
         return () => {
           if (side === 'client') {
             for (const index in this.expect) {

@@ -1,10 +1,10 @@
-export function pause(refresh = true) {
+export function pause (refresh = true) {
   this.$root._vueMeta.paused = true
 
   return () => resume(refresh)
 }
 
-export function resume(refresh = true) {
+export function resume (refresh = true) {
   this.$root._vueMeta.paused = false
 
   if (refresh) {

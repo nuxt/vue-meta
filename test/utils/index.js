@@ -13,11 +13,11 @@ export {
   VueMetaServerPlugin
 }
 
-export function getVue() {
+export function getVue () {
   return createLocalVue()
 }
 
-export function loadVueMetaPlugin(browser, options, localVue = getVue()) {
+export function loadVueMetaPlugin (browser, options, localVue = getVue()) {
   if (browser) {
     localVue.use(VueMetaBrowserPlugin, Object.assign({}, defaultOptions, options))
   } else {

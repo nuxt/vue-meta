@@ -3,7 +3,7 @@ import { isArray } from '../utils/is-type'
 import { includes } from '../utils/array'
 import { updateAttribute, updateTag, updateTitle } from './updaters'
 
-function getTag(tags, tag) {
+function getTag (tags, tag) {
   if (!tags[tag]) {
     tags[tag] = document.getElementsByTagName(tag)[0]
   }
@@ -16,7 +16,7 @@ function getTag(tags, tag) {
  *
  * @param  {Object} newInfo - the meta info to update to
  */
-export default function updateClientMetaInfo(appId, options = {}, newInfo) {
+export default function updateClientMetaInfo (appId, options = {}, newInfo) {
   const { ssrAttribute } = options
 
   // only cache tags for current update

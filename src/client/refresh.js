@@ -3,7 +3,7 @@ import { isFunction } from '../utils/is-type'
 import { clientSequences } from '../shared/escaping'
 import updateClientMetaInfo from './updateClientMetaInfo'
 
-export default function _refresh(options = {}) {
+export default function _refresh (options = {}) {
   /**
    * When called, will update the current meta info with new meta info.
    * Useful when updating meta info as the result of an asynchronous
@@ -14,7 +14,7 @@ export default function _refresh(options = {}) {
    *
    * @return {Object} - new meta info
    */
-  return function refresh() {
+  return function refresh () {
     const metaInfo = getMetaInfo(options, this.$root, clientSequences)
 
     const appId = this.$root._vueMeta.appId

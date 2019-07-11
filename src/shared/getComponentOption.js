@@ -18,7 +18,7 @@ import { inMetaInfoBranch } from './meta-helpers'
  * @param  {Object} [result={}] - result so far
  * @return {Object} result - final aggregated result
  */
-export default function getComponentOption(options = {}, component, result = {}) {
+export default function getComponentOption (options = {}, component, result = {}) {
   const { keyName, metaTemplateKeyName, tagIDKeyName } = options
   const { $options, $children } = component
 

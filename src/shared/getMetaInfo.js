@@ -11,7 +11,7 @@ import getComponentOption from './getComponentOption'
  * @param  {Object} component - the Vue instance to get meta info from
  * @return {Object} - returned meta info
  */
-export default function getMetaInfo(options = {}, component, escapeSequences = []) {
+export default function getMetaInfo (options = {}, component, escapeSequences = []) {
   // collect & aggregate all metaInfo $options
   let info = getComponentOption(options, component, defaultInfo)
 

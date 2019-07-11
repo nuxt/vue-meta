@@ -110,7 +110,7 @@ describe('client', () => {
 
     const Component = Vue.extend({
       metaInfo: { title: 'Test' },
-      render(h) {
+      render (h) {
         return h('div', null, 'Test')
       }
     })
@@ -157,10 +157,10 @@ describe('client', () => {
       localVue: Vue,
       mocks: {
         $router: {
-          beforeEach(fn) {
+          beforeEach (fn) {
             guards.before = fn
           },
-          afterEach(fn) {
+          afterEach (fn) {
             guards.after = fn
           }
         }
@@ -192,10 +192,10 @@ describe('client', () => {
       localVue: Vue,
       mocks: {
         $router: {
-          beforeEach(fn) {
+          beforeEach (fn) {
             guards.before = fn
           },
-          afterEach(fn) {
+          afterEach (fn) {
             guards.after = fn
           }
         }
@@ -225,21 +225,21 @@ describe('client', () => {
     // this component uses a computed prop to simulate a non-synchronous
     // metaInfo update like you would have with a Vuex mutation
     const Component = Vue.extend({
-      data() {
+      data () {
         return {
           hiddenTheme: 'light'
         }
       },
       computed: {
-        theme() {
+        theme () {
           return this.hiddenTheme
         }
       },
-      beforeMount() {
+      beforeMount () {
         this.hiddenTheme = 'dark'
       },
       render: h => h('div'),
-      metaInfo() {
+      metaInfo () {
         return {
           htmlAttrs: {
             theme: this.theme
@@ -270,21 +270,21 @@ describe('client', () => {
     document.body.appendChild(el)
 
     const Component = Vue.extend({
-      data() {
+      data () {
         return {
           hiddenTheme: 'light'
         }
       },
       computed: {
-        theme() {
+        theme () {
           return this.hiddenTheme
         }
       },
-      mounted() {
+      mounted () {
         this.hiddenTheme = 'dark'
       },
       render: h => h('div'),
-      metaInfo() {
+      metaInfo () {
         return {
           htmlAttrs: {
             theme: this.theme

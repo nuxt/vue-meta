@@ -1,5 +1,4 @@
 import { booleanHtmlAttributes, tagsWithoutEndTag, tagsWithInnerContent, tagAttributeAsInnerContent } from '../../shared/constants'
-import { isUndefined } from '../../utils/is-type'
 
 /**
  * Generates meta, base, link, style, script, noscript tags for use on the server
@@ -8,9 +7,9 @@ import { isUndefined } from '../../utils/is-type'
  * @param  {(Array<Object>|Object)} tags - an array of tag objects or a single object in case of base
  * @return {Object} - the tag generator
  */
-export default function tagGenerator(appId, { attribute, tagIDKeyName } = {}, type, tags) {
+export default function tagGenerator (appId, { attribute, tagIDKeyName } = {}, type, tags) {
   return {
-    text({ body = false } = {}) {
+    text ({ body = false } = {}) {
       // build a string containing all tags of this type
       return tags.reduce((tagsStr, tag) => {
         const tagKeys = Object.keys(tag)

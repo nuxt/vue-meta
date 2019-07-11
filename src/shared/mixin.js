@@ -6,16 +6,16 @@ import { addNavGuards } from './nav-guards'
 
 let appId = 1
 
-export default function createMixin(Vue, options) {
+export default function createMixin (Vue, options) {
   // for which Vue lifecycle hooks should the metaInfo be refreshed
   const updateOnLifecycleHook = ['activated', 'deactivated', 'beforeMount']
 
   // watch for client side component updates
   return {
-    beforeCreate() {
+    beforeCreate () {
       Object.defineProperty(this, '_hasMetaInfo', {
         configurable: true,
-        get() {
+        get () {
           // Show deprecation warning once when devtools enabled
           if (Vue.config.devtools && !this.$root._vueMeta.hasMetaInfoDeprecationWarningShown) {
             console.warn('VueMeta DeprecationWarning: _hasMetaInfo has been deprecated and will be removed in a future version. Please use hasMetaInfo(vm) instead') // eslint-disable-line no-console

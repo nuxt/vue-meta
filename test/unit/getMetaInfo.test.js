@@ -208,7 +208,7 @@ describe('getMetaInfo', () => {
           { charset: 'utf-8' }
         ]
       },
-      data() {
+      data () {
         return {
           helloWorldText: 'Function World'
         }
@@ -648,7 +648,7 @@ describe('getMetaInfo', () => {
 
   test('no errors when metaInfo returns nothing', () => {
     const component = new Vue({
-      metaInfo() {},
+      metaInfo () {},
       el: document.createElement('div'),
       render: h => h('div', null, [])
     })

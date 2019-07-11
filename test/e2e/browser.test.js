@@ -23,9 +23,9 @@ describe(browserString, () => {
 
     browser = await createBrowser(browserString, {
       BrowserStackLocal: { folder },
-      extendPage(page) {
+      extendPage (page) {
         return {
-          async navigate(path) {
+          async navigate (path) {
             // IMPORTANT: use (arrow) function with block'ed body
             // see: https://github.com/tunnckoCoreLabs/parse-function/issues/179
             await page.runAsyncScript((path) => {
@@ -49,7 +49,7 @@ describe(browserString, () => {
               })
             }, path)
           },
-          routeData() {
+          routeData () {
             return page.runScript(() => ({
               path: window.$vueMeta.$route.path,
               query: window.$vueMeta.$route.query
