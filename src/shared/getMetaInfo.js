@@ -34,7 +34,7 @@ export default function getMetaInfo(options = {}, component, escapeSequences = [
   }
 
   const escapeOptions = {
-    doEscape: value => escapeSequences.reduce((val, [v, r]) => val.replace(v, r), value)
+    doEscape: value => escapeSequences.reduce((val = '', [v, r]) => val.replace(v, r), value)
   }
 
   disableOptionKeys.forEach((disableKey, index) => {
