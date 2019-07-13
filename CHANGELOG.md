@@ -1,6 +1,107 @@
-# Change Log
+# Changelog
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
+
+### [2.0.5](https://github.com/nuxt/vue-meta/compare/v2.0.3...v2.0.5) (2019-07-11)
+
+
+### Bug Fixes
+
+* add warning for v1 boolean attribute syntax ([bfeab17](https://github.com/nuxt/vue-meta/commit/bfeab17))
+* dont change title when value is undefined (fix [#396](https://github.com/nuxt/vue-meta/issues/396)) ([90f9710](https://github.com/nuxt/vue-meta/commit/90f9710))
+* ensure hasAttribute exists on $root.$el ([f1511ac](https://github.com/nuxt/vue-meta/commit/f1511ac))
+* only show boolean attrs with truthy value ([1d9072a](https://github.com/nuxt/vue-meta/commit/1d9072a))
+
+
+### Tests
+
+* enable all getMetaInfo tests again ([24d7fee](https://github.com/nuxt/vue-meta/commit/24d7fee))
+
+
+
+### [2.0.4](https://github.com/nuxt/vue-meta/compare/v2.0.3...v2.0.4) (2019-06-22)
+
+
+### Bug Fixes
+
+* add warning for v1 boolean attribute syntax ([bfeab17](https://github.com/nuxt/vue-meta/commit/bfeab17))
+* dont change title when value is undefined (fix [#396](https://github.com/nuxt/vue-meta/issues/396)) ([90f9710](https://github.com/nuxt/vue-meta/commit/90f9710))
+
+
+### Tests
+
+* enable all getMetaInfo tests again ([24d7fee](https://github.com/nuxt/vue-meta/commit/24d7fee))
+
+
+
+### [2.0.3](https://github.com/nuxt/vue-meta/compare/v2.0.2...v2.0.3) (2019-06-11)
+
+
+### Bug Fixes
+
+* $meta can be called server side before app is initiated ([ecd725d](https://github.com/nuxt/vue-meta/commit/ecd725d))
+
+
+
+### [2.0.2](https://github.com/nuxt/vue-meta/compare/v2.0.1...v2.0.2) (2019-06-10)
+
+
+### Bug Fixes
+
+* correctly transpile builds ([6751d24](https://github.com/nuxt/vue-meta/commit/6751d24))
+* use simple polyfilled includes method ([623970d](https://github.com/nuxt/vue-meta/commit/623970d))
+
+
+
+### [2.0.1](https://github.com/nuxt/vue-meta/compare/v2.0.0...v2.0.1) (2019-06-09)
+
+
+### Bug Fixes
+
+* allow _hasMetaInfo to be configurable ([8b7b991](https://github.com/nuxt/vue-meta/commit/8b7b991))
+* prevent vue-meta plugin to be installed twice ([094fd9d](https://github.com/nuxt/vue-meta/commit/094fd9d))
+
+
+### Tests
+
+* prevent plugin install twice ([8ab63b4](https://github.com/nuxt/vue-meta/commit/8ab63b4))
+
+
+
+## [2.0.0](https://github.com/nuxt/vue-meta/compare/v2.0.0-rc.2...v2.0.0) (2019-06-09)
+
+
+### Bug Fixes
+
+* set ssr appId in mounted hook ([2dd1697](https://github.com/nuxt/vue-meta/commit/2dd1697))
+* use empty string value for boolean attributes on client side (fixes [#381](https://github.com/nuxt/vue-meta/issues/381)) ([eb4980c](https://github.com/nuxt/vue-meta/commit/eb4980c))
+
+
+### Features
+
+* **ts:** add microdata meta tag type ([#382](https://github.com/nuxt/vue-meta/issues/382)) ([11c8138](https://github.com/nuxt/vue-meta/commit/11c8138))
+
+
+### Tests
+
+* add type tests to circleci ([c6180af](https://github.com/nuxt/vue-meta/commit/c6180af))
+* fix ssr hydration tests ([fc57998](https://github.com/nuxt/vue-meta/commit/fc57998))
+
+
+
+## [2.0.0-rc.2](https://github.com/nuxt/vue-meta/compare/v2.0.0-rc.1...v2.0.0-rc.2) (2019-06-06)
+
+
+### Bug Fixes
+
+* detect and apply changes triggered before or during initialization ([#377](https://github.com/nuxt/vue-meta/issues/377)) ([34c6ad9](https://github.com/nuxt/vue-meta/commit/34c6ad9))
+
+
+### Features
+
+* add basic support for multiple apps on one page ([#373](https://github.com/nuxt/vue-meta/issues/373)) ([024e7c5](https://github.com/nuxt/vue-meta/commit/024e7c5))
+
+
 
 # [2.0.0-rc.1](https://github.com/nuxt/vue-meta/compare/v2.0.0-rc.0...v2.0.0-rc.1) (2019-04-23)
 

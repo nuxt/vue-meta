@@ -13,8 +13,28 @@ describe('plugin', () => {
   beforeEach(() => jest.clearAllMocks())
   beforeAll(() => (Vue = loadVueMetaPlugin(true)))
 
-  test('is loaded', () => {
+  test('not loaded when no metaInfo defined', () => {
+    const warn = jest.spyOn(console, 'warn').mockImplementation(() => {})
+
     const instance = new Vue()
+    expect(instance.$meta).toEqual(expect.any(Function))
+
+    expect(instance.$meta().inject).toEqual(expect.any(Function))
+    expect(instance.$meta().refresh).toEqual(expect.any(Function))
+    expect(instance.$meta().getOptions).toEqual(expect.any(Function))
+
+    expect(instance.$meta().inject()).not.toBeDefined()
+    expect(warn).toHaveBeenCalledTimes(1)
+    expect(instance.$meta().refresh()).not.toBeDefined()
+    expect(warn).toHaveBeenCalledTimes(2)
+
+    instance.$meta().getOptions()
+    expect(warn).toHaveBeenCalledTimes(3)
+    warn.mockRestore()
+  })
+
+  test('is loaded', () => {
+    const instance = new Vue({ metaInfo: {} })
     expect(instance.$meta).toEqual(expect.any(Function))
 
     expect(instance.$meta().inject).toEqual(expect.any(Function))
@@ -45,6 +65,18 @@ describe('plugin', () => {
     expect(VueMetaBrowserPlugin.version).toBe('test-version')
   })
 
+  test('plugin isnt be installed twice', () => {
+    expect(Vue.__vuemeta_installed).toBe(true)
+
+    Vue.prototype.$meta = undefined
+    Vue.use({ ...VueMetaBrowserPlugin })
+
+    expect(Vue.prototype.$meta).toBeUndefined()
+
+    // reset Vue
+    Vue = loadVueMetaPlugin(true)
+  })
+
   test('updates can be paused and resumed', async () => {
     const { batchUpdate: _batchUpdate } = jest.requireActual('../../src/client/update')
     const batchUpdateSpy = batchUpdate.mockImplementation(_batchUpdate)
@@ -58,7 +90,7 @@ describe('plugin', () => {
     })
 
     const Component = Vue.component('test-component', {
-      metaInfo() {
+      metaInfo () {
         return {
           title: this.title
         }
@@ -129,7 +161,7 @@ describe('plugin', () => {
     })
 
     const Component = Vue.component('test-component', {
-      metaInfo() {
+      metaInfo () {
         return {
           title: this.title
         }

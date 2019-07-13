@@ -1,5 +1,5 @@
 import _getMetaInfo from '../../src/shared/getMetaInfo'
-import { mount, loadVueMetaPlugin, vmTick } from '../utils'
+import { mount, createWrapper, loadVueMetaPlugin, vmTick } from '../utils'
 import { defaultOptions } from '../../src/shared/constants'
 
 import GoodbyeWorld from '../components/goodbye-world.vue'
@@ -90,22 +90,38 @@ describe('client', () => {
 
     jest.runAllTimers()
     metaInfo = getMetaInfo(wrapper.vm.$parent)
-    expect(metaInfo.title).toEqual('')
+    expect(metaInfo.title).toEqual(undefined)
   })
 
   test('meta-info can be rendered with inject', () => {
     const wrapper = mount(HelloWorld, { localVue: Vue })
 
     const metaInfo = wrapper.vm.$meta().inject()
-    expect(metaInfo.title.text()).toEqual('<title data-vue-meta="true">Hello World</title>')
+    expect(metaInfo.title.text()).toEqual('<title>Hello World</title>')
   })
 
   test('doesnt update when ssr attribute is set', () => {
     html.setAttribute(defaultOptions.ssrAttribute, 'true')
-    const wrapper = mount(HelloWorld, { localVue: Vue })
+
+    const el = document.createElement('div')
+    el.setAttribute('id', 'app')
+    el.setAttribute('data-server-rendered', true)
+    document.body.appendChild(el)
+
+    const Component = Vue.extend({
+      metaInfo: { title: 'Test' },
+      render (h) {
+        return h('div', null, 'Test')
+      }
+    })
+
+    const vm = new Component().$mount(el)
+    const wrapper = createWrapper(vm, { attachToDocument: true })
 
     const { tags } = wrapper.vm.$meta().refresh()
     expect(tags).toBe(false)
+
+    wrapper.destroy()
   })
 
   test('changed function is called', async () => {
@@ -141,10 +157,10 @@ describe('client', () => {
       localVue: Vue,
       mocks: {
         $router: {
-          beforeEach(fn) {
+          beforeEach (fn) {
             guards.before = fn
           },
-          afterEach(fn) {
+          afterEach (fn) {
             guards.after = fn
           }
         }
@@ -176,10 +192,10 @@ describe('client', () => {
       localVue: Vue,
       mocks: {
         $router: {
-          beforeEach(fn) {
+          beforeEach (fn) {
             guards.before = fn
           },
-          afterEach(fn) {
+          afterEach (fn) {
             guards.after = fn
           }
         }
@@ -196,5 +212,97 @@ describe('client', () => {
 
     guards.after()
     expect(afterNavigation).toHaveBeenCalled()
+  })
+
+  test('changes before hydration initialization trigger an update', async () => {
+    html.setAttribute(defaultOptions.ssrAttribute, 'true')
+
+    const el = document.createElement('div')
+    el.setAttribute('id', 'app')
+    el.setAttribute('data-server-rendered', true)
+    document.body.appendChild(el)
+
+    // this component uses a computed prop to simulate a non-synchronous
+    // metaInfo update like you would have with a Vuex mutation
+    const Component = Vue.extend({
+      data () {
+        return {
+          hiddenTheme: 'light'
+        }
+      },
+      computed: {
+        theme () {
+          return this.hiddenTheme
+        }
+      },
+      beforeMount () {
+        this.hiddenTheme = 'dark'
+      },
+      render: h => h('div'),
+      metaInfo () {
+        return {
+          htmlAttrs: {
+            theme: this.theme
+          }
+        }
+      }
+    })
+
+    const vm = new Component().$mount(el)
+    const wrapper = createWrapper(vm, { attachToDocument: true })
+    expect(html.getAttribute('theme')).not.toBe('dark')
+
+    await vmTick(wrapper.vm)
+    jest.runAllTimers()
+
+    expect(html.getAttribute('theme')).toBe('dark')
+    html.removeAttribute('theme')
+
+    wrapper.destroy()
+  })
+
+  test('changes during hydration initialization trigger an update', async () => {
+    html.setAttribute(defaultOptions.ssrAttribute, 'true')
+
+    const el = document.createElement('div')
+    el.setAttribute('id', 'app')
+    el.setAttribute('data-server-rendered', true)
+    document.body.appendChild(el)
+
+    const Component = Vue.extend({
+      data () {
+        return {
+          hiddenTheme: 'light'
+        }
+      },
+      computed: {
+        theme () {
+          return this.hiddenTheme
+        }
+      },
+      mounted () {
+        this.hiddenTheme = 'dark'
+      },
+      render: h => h('div'),
+      metaInfo () {
+        return {
+          htmlAttrs: {
+            theme: this.theme
+          }
+        }
+      }
+    })
+
+    const vm = new Component().$mount(el)
+    const wrapper = createWrapper(vm, { attachToDocument: true })
+    expect(html.getAttribute('theme')).not.toBe('dark')
+
+    await vmTick(wrapper.vm)
+    jest.runAllTimers()
+
+    expect(html.getAttribute('theme')).toBe('dark')
+    html.removeAttribute('theme')
+
+    wrapper.destroy()
   })
 })

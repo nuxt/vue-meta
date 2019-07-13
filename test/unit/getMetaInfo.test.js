@@ -13,7 +13,7 @@ describe('getMetaInfo', () => {
     const component = new Vue()
 
     expect(getMetaInfo(component)).toEqual({
-      title: '',
+      title: undefined,
       titleChunk: '',
       titleTemplate: '%s',
       htmlAttrs: {},
@@ -208,7 +208,7 @@ describe('getMetaInfo', () => {
           { charset: 'utf-8' }
         ]
       },
-      data() {
+      data () {
         return {
           helloWorldText: 'Function World'
         }
@@ -648,13 +648,13 @@ describe('getMetaInfo', () => {
 
   test('no errors when metaInfo returns nothing', () => {
     const component = new Vue({
-      metaInfo() {},
+      metaInfo () {},
       el: document.createElement('div'),
       render: h => h('div', null, [])
     })
 
     expect(getMetaInfo(component)).toEqual({
-      title: '',
+      title: undefined,
       titleChunk: '',
       titleTemplate: '%s',
       htmlAttrs: {},
@@ -802,7 +802,7 @@ describe('getMetaInfo', () => {
     })
 
     expect(getMetaInfo(component)).toEqual({
-      title: '',
+      title: undefined,
       titleChunk: '',
       titleTemplate: '%s',
       htmlAttrs: {},
@@ -819,5 +819,37 @@ describe('getMetaInfo', () => {
       __dangerouslyDisableSanitizers: [],
       __dangerouslyDisableSanitizersByTagID: {}
     })
+  })
+
+  test('prints warning for boolean attributes with value undefined', () => {
+    const warn = jest.spyOn(console, 'warn').mockImplementation(() => {})
+
+    const component = new Vue({
+      metaInfo: {
+        htmlAttrs: {
+          amp: undefined
+        }
+      }
+    })
+
+    expect(getMetaInfo(component)).toEqual({
+      title: undefined,
+      titleChunk: '',
+      titleTemplate: '%s',
+      htmlAttrs: {},
+      headAttrs: {},
+      bodyAttrs: {},
+      meta: [],
+      base: [],
+      link: [],
+      style: [],
+      script: [],
+      noscript: [],
+      __dangerouslyDisableSanitizers: [],
+      __dangerouslyDisableSanitizersByTagID: {}
+    })
+
+    expect(warn).toHaveBeenCalledTimes(1)
+    expect(warn).toHaveBeenCalledWith(expect.stringMatching('the value undefined'))
   })
 })

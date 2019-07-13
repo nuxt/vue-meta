@@ -13,7 +13,7 @@ const banner =  `/**
  * (c) ${new Date().getFullYear()}
  * - Declan de Wet
  * - Sébastien Chopin (@Atinux)
- * - All the amazing contributors
+  * - All the amazing contributors
  * @license MIT
  */
 `
@@ -32,7 +32,8 @@ function rollupConfig({
     }
   }
 
-  if (!config.output.format || config.output.format === 'umd') {
+  // keep simple polyfills when buble plugin is used for build
+  if (plugins && plugins.some(p => p.name === 'buble')) {
     replaceConfig.values = {
       'const polyfill = process.env.NODE_ENV === \'test\'': 'const polyfill = true',
     }
@@ -49,40 +50,75 @@ function rollupConfig({
     plugins: [
       json(),
       nodeResolve(),
+      commonjs(),
       replace(replaceConfig)
     ].concat(plugins),
   })
 }
 
 export default [
-  rollupConfig({
+  // umd web build
+  {
     output: {
       file: pkg.web,
     },
     plugins: [
-      commonjs(),
       buble()
     ]
-  }),
-  rollupConfig({
+  },
+  // minimized umd web build
+  {
     output: {
       file: pkg.web.replace('.js', '.min.js'),
     },
     plugins: [
-      commonjs(),
       buble(),
       terser()
     ]
-  }),
-  rollupConfig({
+  },
+  // common js build
+  {
     input: 'src/index.js',
     output: {
       file: pkg.main,
       format: 'cjs'
     },
     plugins: [
-      commonjs()
+      buble()
     ],
     external: Object.keys(pkg.dependencies)
-  })
-]
+  },
+  // esm build
+  {
+    input: 'src/index.js',
+    output: {
+      file: pkg.web.replace('.js', '.esm.js'),
+      format: 'es'
+    },
+    plugins: [
+      buble()
+    ],
+    external: Object.keys(pkg.dependencies)
+  },
+  // browser esm build
+  {
+    input: 'src/browser.js',
+    output: {
+      file: pkg.web.replace('.js', '.esm.browser.js'),
+      format: 'es'
+    },
+    external: Object.keys(pkg.dependencies)
+  },
+  // minimized browser esm build
+  {
+    input: 'src/browser.js',
+    output: {
+      file: pkg.web.replace('.js', '.esm.browser.min.js'),
+      format: 'es'
+    },
+    plugins: [
+      terser()
+    ],
+    external: Object.keys(pkg.dependencies)
+  }
+].map(rollupConfig)

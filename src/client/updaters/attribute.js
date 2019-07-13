@@ -8,7 +8,7 @@ import { isArray } from '../../utils/is-type'
  * @param  {Object} attrs - the new document html attributes
  * @param  {HTMLElement} tag - the HTMLElement tag to update with new attrs
  */
-export default function updateAttribute({ attribute } = {}, attrs, tag) {
+export default function updateAttribute ({ attribute } = {}, attrs, tag) {
   const vueMetaAttrString = tag.getAttribute(attribute)
   const vueMetaAttrs = vueMetaAttrString ? vueMetaAttrString.split(',') : []
   const toRemove = toArray(vueMetaAttrs)

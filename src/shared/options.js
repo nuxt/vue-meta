@@ -1,7 +1,7 @@
 import { isObject } from '../utils/is-type'
 import { defaultOptions } from './constants'
 
-export function setOptions(options) {
+export function setOptions (options) {
   // combine options
   options = isObject(options) ? options : {}
 
@@ -14,7 +14,7 @@ export function setOptions(options) {
   return options
 }
 
-export function getOptions(options) {
+export function getOptions (options) {
   const optionsCopy = {}
   for (const key in options) {
     optionsCopy[key] = options[key]

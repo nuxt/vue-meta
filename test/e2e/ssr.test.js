@@ -10,7 +10,7 @@ describe('basic browser with ssr page', () => {
 
   test('validate ssr', () => {
     const htmlTag = html.match(/<html([^>]+)>/)[0]
-    expect(htmlTag).toContain('data-vue-meta-server-rendered')
+    expect(htmlTag).toContain('data-vue-meta-server-rendered ')
     expect(htmlTag).toContain(' lang="en" ')
     expect(htmlTag).toContain(' amp ')
     expect(htmlTag).not.toContain('allowfullscreen')

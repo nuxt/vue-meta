@@ -1,11 +1,9 @@
-> :ribbon: The second release candidate for v2.0 has been [released](https://github.com/nuxt/vue-meta/releases). Click [here](https://github.com/nuxt/vue-meta/tree/1.x) if you are looking for the old v1 readme
-
 <p align="center">
   <img src="./docs/.vuepress/public/vue-meta.png" alt="vue-meta" />
 </p>
 
 <h5 align="center">
-  Manage page head metadata in Vue.js components with SSR support.
+  Manage HTML metadata in Vue.js components with SSR support
 </h5>
 
 <p align="center">
@@ -73,18 +71,18 @@ $ npm install vue-meta --save
 
 Use the download links below - if you want a previous version, check the instructions at https://unpkg.com.
 
-Latest version: https://unpkg.com/vue-meta/lib/vue-meta.min.js
+Latest version: https://unpkg.com/vue-meta/dist/vue-meta.min.js
 
-Latest v1.x version: https://unpkg.com/vue-meta@1/lib/vue-meta.min.js
+Latest v1.x version: https://unpkg.com/vue-meta@1/dist/vue-meta.min.js
 
 **Uncompressed:**
 ```html
-<script src="https://unpkg.com/vue-meta/lib/vue-meta.js"></script>
+<script src="https://unpkg.com/vue-meta/dist/vue-meta.js"></script>
 ```
 
 **Minified:**
 ```html
-<script src="https://unpkg.com/vue-meta/lib/vue-meta.min.js"></script>
+<script src="https://unpkg.com/vue-meta/dist/vue-meta.min.js"></script>
 ```
 
 ## Quick Usage
@@ -121,6 +119,10 @@ Here are the steps you will need to take:
 - Test your translation by running the docs dev server with `yarn docs`
 - Create a pull request with your changes
 - Receive eternal gratefulness from your fellow language speakers :heart:
+
+## Old versions
+
+Click [here](https://github.com/nuxt/vue-meta/tree/1.x) if you are looking for the old v1 readme
 
 ## License
 

@@ -1,13 +1,19 @@
 module.exports = {
+  plugins: {
+    '@vuepress/google-analytics': {
+      ga: 'UA-88662854-1',
+    },
+    '@vuepress/plugin-pwa': {
+      serviceWorker: true
+    }
+  },
   locales: {
     '/': {
       lang: 'en-US',
       title: 'Vue Meta',
-      description: 'Metadata manager for Vue.js'
+      description: 'HTML Metadata manager for Vue.js'
     },
   },
-  ga: 'UA-88662854-1',
-  serviceWorker: true,
   themeConfig: {
     repo: 'nuxt/vue-meta',
     docsDir: 'docs',
@@ -16,16 +22,11 @@ module.exports = {
         label: 'English',
         selectText: 'Languages',
         editLinkText: 'Edit this page on GitHub',
-        nav: [{
-          text: 'Guide',
-          link: '/guide/'
-        }, {
-          text: 'API',
-          link: '/api/'
-        }, {
-          text: 'Release Notes',
-          link: 'https://github.com/nuxt/vue-meta/releases'
-        }],
+        nav: [
+          { text: 'Guide', link: '/guide/' },
+          { text: 'API', link: '/api/' },
+          { text: 'Release Notes', link: 'https://github.com/nuxt/vue-meta/releases' }
+        ],
         sidebar: [
           '/',
           {

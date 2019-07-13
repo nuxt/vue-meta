@@ -5,7 +5,7 @@ import express from 'express'
 import rewrite from 'express-urlrewrite'
 import webpack from 'webpack'
 import webpackDevMiddleware from 'webpack-dev-middleware'
-import WebpackConfig from './webpack.config.babel'
+import WebpackConfig from './webpack.config'
 
 const app = express()
 

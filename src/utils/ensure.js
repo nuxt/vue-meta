@@ -1,6 +1,6 @@
 import { isArray, isObject } from './is-type'
 
-export function ensureIsArray(arg, key) {
+export function ensureIsArray (arg, key) {
   if (!key || !isObject(arg)) {
     return isArray(arg) ? arg : []
   }
@@ -11,7 +11,7 @@ export function ensureIsArray(arg, key) {
   return arg
 }
 
-export function ensuredPush(object, key, el) {
+export function ensuredPush (object, key, el) {
   ensureIsArray(object, key)
 
   object[key].push(el)

@@ -1,5 +1,4 @@
 import { booleanHtmlAttributes, tagsWithoutEndTag, tagsWithInnerContent, tagAttributeAsInnerContent } from '../../shared/constants'
-import { isUndefined } from '../../utils/is-type'
 
 /**
  * Generates meta, base, link, style, script, noscript tags for use on the server
@@ -8,9 +7,9 @@ import { isUndefined } from '../../utils/is-type'
  * @param  {(Array<Object>|Object)} tags - an array of tag objects or a single object in case of base
  * @return {Object} - the tag generator
  */
-export default function tagGenerator({ attribute, tagIDKeyName } = {}, type, tags) {
+export default function tagGenerator (appId, { attribute, tagIDKeyName } = {}, type, tags) {
   return {
-    text({ body = false } = {}) {
+    text ({ body = false } = {}) {
       // build a string containing all tags of this type
       return tags.reduce((tagsStr, tag) => {
         const tagKeys = Object.keys(tag)
@@ -36,7 +35,12 @@ export default function tagGenerator({ attribute, tagIDKeyName } = {}, type, tag
             prefix = 'data-'
           }
 
-          return isUndefined(tag[attr]) || booleanHtmlAttributes.includes(attr)
+          const isBooleanAttr = booleanHtmlAttributes.includes(attr)
+          if (isBooleanAttr && !tag[attr]) {
+            return attrsStr
+          }
+
+          return isBooleanAttr
             ? `${attrsStr} ${prefix}${attr}`
             : `${attrsStr} ${prefix}${attr}="${tag[attr]}"`
         }, '')
@@ -47,7 +51,7 @@ export default function tagGenerator({ attribute, tagIDKeyName } = {}, type, tag
         // generate tag exactly without any other redundant attribute
         const observeTag = tag.once
           ? ''
-          : `${attribute}="true"`
+          : `${attribute}="${appId}"`
 
         // these tags have no end tag
         const hasEndTag = !tagsWithoutEndTag.includes(type)

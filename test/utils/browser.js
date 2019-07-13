@@ -3,11 +3,11 @@ import puppeteer from 'puppeteer-core'
 import ChromeDetector from './chrome'
 
 export default class Browser {
-  constructor() {
+  constructor () {
     this.detector = new ChromeDetector()
   }
 
-  async start(options = {}) {
+  async start (options = {}) {
     // https://github.com/GoogleChrome/puppeteer/blob/master/docs/api.md#puppeteerlaunchoptions
     const _opts = {
       args: [
@@ -25,13 +25,13 @@ export default class Browser {
     this.browser = await puppeteer.launch(_opts)
   }
 
-  async close() {
-    if (!this.browser) return
+  async close () {
+    if (!this.browser) { return }
     await this.browser.close()
   }
 
-  async page(url, globalName = 'vueMeta') {
-    if (!this.browser) throw new Error('Please call start() before page(url)')
+  async page (url, globalName = 'vueMeta') {
+    if (!this.browser) { throw new Error('Please call start() before page(url)') }
     const page = await this.browser.newPage()
 
     // pass on console messages
@@ -69,7 +69,7 @@ export default class Browser {
     page.$vueMeta = await page.evaluateHandle(page.$globalHandle)
 
     page.vueMeta = {
-      async navigate(path, waitEnd = true) {
+      async navigate (path, waitEnd = true) {
         const hook = page.evaluate(`
           new Promise(resolve =>
             ${page.$globalHandle}.$once('routeChanged', resolve)
@@ -85,7 +85,7 @@ export default class Browser {
         }
         return { hook }
       },
-      routeData() {
+      routeData () {
         return page.evaluate(($vueMeta) => {
           return {
             path: $vueMeta.$route.path,

@@ -12,7 +12,7 @@ describe('plugin', () => {
   beforeAll(() => (Vue = loadVueMetaPlugin()))
 
   test('is loaded', () => {
-    const instance = new Vue()
+    const instance = new Vue({ metaInfo: {} })
     expect(instance.$meta).toEqual(expect.any(Function))
 
     expect(instance.$meta().inject).toEqual(expect.any(Function))
@@ -41,6 +41,18 @@ describe('plugin', () => {
 
   test('plugin sets package version', () => {
     expect(VueMetaServerPlugin.version).toBe('test-version')
+  })
+
+  test('plugin isnt be installed twice', () => {
+    expect(Vue.__vuemeta_installed).toBe(true)
+
+    Vue.prototype.$meta = undefined
+    Vue.use({ ...VueMetaServerPlugin })
+
+    expect(Vue.prototype.$meta).toBeUndefined()
+
+    // reset Vue
+    Vue = loadVueMetaPlugin(true)
   })
 
   test('prints deprecation warning once when using _hasMetaInfo', () => {

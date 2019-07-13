@@ -11,7 +11,7 @@
 // which means the polyfills are removed for other build formats
 const polyfill = process.env.NODE_ENV === 'test'
 
-export function findIndex(array, predicate) {
+export function findIndex (array, predicate) {
   if (polyfill && !Array.prototype.findIndex) {
     // idx needs to be a Number, for..in returns string
     for (let idx = 0; idx < array.length; idx++) {
@@ -24,14 +24,14 @@ export function findIndex(array, predicate) {
   return array.findIndex(predicate, arguments[2])
 }
 
-export function toArray(arg) {
+export function toArray (arg) {
   if (polyfill && !Array.from) {
     return Array.prototype.slice.call(arg)
   }
   return Array.from(arg)
 }
 
-export function includes(array, value) {
+export function includes (array, value) {
   if (polyfill && !Array.prototype.includes) {
     for (const idx in array) {
       if (array[idx] === value) {

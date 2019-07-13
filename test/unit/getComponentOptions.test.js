@@ -23,7 +23,7 @@ describe('getComponentOption', () => {
   test('calls a function option, injecting the component as context', () => {
     const component = new Vue({
       name: 'Foobar',
-      someFunc() {
+      someFunc () {
         return { opt: this.$options.name }
       }
     })
@@ -90,13 +90,13 @@ describe('getComponentOption', () => {
 
     localVue.component('meta-child', {
       foo: { bar: 'baz' },
-      render(h) {
+      render (h) {
         return h('div', this.$slots.default)
       }
     })
 
     localVue.component('nometa-child', {
-      render(h) {
+      render (h) {
         return h('div', this.$slots.default)
       }
     })

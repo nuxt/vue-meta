@@ -12,14 +12,14 @@ export const serverSequences = [
 
 export const clientSequences = [
   [/&/g, '\u0026'],
-  [/</g, '\u003c'],
-  [/>/g, '\u003e'],
+  [/</g, '\u003C'],
+  [/>/g, '\u003E'],
   [/"/g, '\u0022'],
   [/'/g, '\u0027']
 ]
 
 // sanitizes potentially dangerous characters
-export function escape(info, options, escapeOptions) {
+export function escape (info, options, escapeOptions) {
   const { tagIDKeyName } = options
   const { doEscape = v => v } = escapeOptions
   const escaped = {}

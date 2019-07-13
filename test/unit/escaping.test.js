@@ -71,4 +71,35 @@ describe('escaping', () => {
       __dangerouslyDisableSanitizersByTagID: { noscape: ['innerHTML'] }
     })
   })
+
+  test.skip('special chars are escaped unless disabled by vmid', () => {
+    const component = new Vue({
+      metaInfo: {
+        title: 'Hello',
+        script: [
+          { vmid: 'yescape', innerHTML: ['12', 'asd'] }
+        ]
+      }
+    })
+
+    expect(getMetaInfo(component, [[/&/g, '&amp;']])).toEqual({
+      title: 'Hello',
+      titleChunk: 'Hello',
+      titleTemplate: '%s',
+      htmlAttrs: {},
+      headAttrs: {},
+      bodyAttrs: {},
+      meta: [],
+      base: [],
+      link: [],
+      style: [],
+      script: [
+        { innerHTML: 'Hello &amp; Goodbye', vmid: 'yescape' },
+        { innerHTML: 'Hello & Goodbye', vmid: 'noscape' }
+      ],
+      noscript: [],
+      __dangerouslyDisableSanitizers: [],
+      __dangerouslyDisableSanitizersByTagID: { noscape: ['innerHTML'] }
+    })
+  })
 })

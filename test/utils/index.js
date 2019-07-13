@@ -1,4 +1,4 @@
-import { mount, createLocalVue } from '@vue/test-utils'
+import { mount, shallowMount, createWrapper, createLocalVue } from '@vue/test-utils'
 import { renderToString } from '@vue/server-test-utils'
 import { defaultOptions } from '../../src/shared/constants'
 import VueMetaBrowserPlugin from '../../src/browser'
@@ -6,16 +6,18 @@ import VueMetaServerPlugin from '../../src'
 
 export {
   mount,
+  shallowMount,
+  createWrapper,
   renderToString,
   VueMetaBrowserPlugin,
   VueMetaServerPlugin
 }
 
-export function getVue() {
+export function getVue () {
   return createLocalVue()
 }
 
-export function loadVueMetaPlugin(browser, options, localVue = getVue()) {
+export function loadVueMetaPlugin (browser, options, localVue = getVue()) {
   if (browser) {
     localVue.use(VueMetaBrowserPlugin, Object.assign({}, defaultOptions, options))
   } else {

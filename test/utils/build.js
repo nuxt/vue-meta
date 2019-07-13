@@ -7,7 +7,7 @@ import { createRenderer } from 'vue-server-renderer'
 
 const renderer = createRenderer()
 
-export function webpackRun(config) {
+export function webpackRun (config) {
   const compiler = webpack(config)
 
   return new Promise((resolve, reject) => {
@@ -21,7 +21,7 @@ export function webpackRun(config) {
   })
 }
 
-export async function buildFixture(fixture, config = {}) {
+export async function buildFixture (fixture, config = {}) {
   if (!fixture) {
     throw new Error('buildFixture should be called with a fixture name')
   }
@@ -69,7 +69,7 @@ export async function buildFixture(fixture, config = {}) {
   }
 }
 
-export function createWebpackConfig(config = {}) {
+export function createWebpackConfig (config = {}) {
   const publicPath = '.vue-meta'
 
   return {

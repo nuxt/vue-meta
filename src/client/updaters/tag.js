@@ -1,4 +1,4 @@
-import { isUndefined } from '../../utils/is-type'
+import { booleanHtmlAttributes } from '../../shared/constants'
 import { toArray, includes } from '../../utils/array'
 
 /**
@@ -9,9 +9,9 @@ import { toArray, includes } from '../../utils/array'
  * @param  {(Array<Object>|Object)} tags - an array of tag objects or a single object in case of base
  * @return {Object} - a representation of what tags changed
  */
-export default function updateTag({ attribute, tagIDKeyName } = {}, type, tags, headTag, bodyTag) {
-  const oldHeadTags = toArray(headTag.querySelectorAll(`${type}[${attribute}]`))
-  const oldBodyTags = toArray(bodyTag.querySelectorAll(`${type}[${attribute}][data-body="true"]`))
+export default function updateTag (appId, { attribute, tagIDKeyName } = {}, type, tags, headTag, bodyTag) {
+  const oldHeadTags = toArray(headTag.querySelectorAll(`${type}[${attribute}="${appId}"], ${type}[data-${tagIDKeyName}]`))
+  const oldBodyTags = toArray(bodyTag.querySelectorAll(`${type}[${attribute}="${appId}"][data-body="true"], ${type}[data-${tagIDKeyName}][data-body="true"]`))
   const dataAttributes = [tagIDKeyName, 'body']
   const newTags = []
 
@@ -31,7 +31,8 @@ export default function updateTag({ attribute, tagIDKeyName } = {}, type, tags, 
   if (tags.length) {
     tags.forEach((tag) => {
       const newElement = document.createElement(type)
-      newElement.setAttribute(attribute, 'true')
+
+      newElement.setAttribute(attribute, appId)
 
       const oldTags = tag.body !== true ? oldHeadTags : oldBodyTags
 
@@ -50,7 +51,13 @@ export default function updateTag({ attribute, tagIDKeyName } = {}, type, tags, 
             const _attr = includes(dataAttributes, attr)
               ? `data-${attr}`
               : attr
-            const value = isUndefined(tag[attr]) ? '' : tag[attr]
+
+            const isBooleanAttribute = includes(booleanHtmlAttributes, attr)
+            if (isBooleanAttribute && !tag[attr]) {
+              continue
+            }
+
+            const value = isBooleanAttribute ? '' : tag[attr]
             newElement.setAttribute(_attr, value)
           }
         }
