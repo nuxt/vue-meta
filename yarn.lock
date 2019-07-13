@@ -26,7 +26,7 @@
   dependencies:
     "@babel/highlight" "^7.0.0"
 
-"@babel/core@^7.0.0", "@babel/core@^7.1.0", "@babel/core@^7.4.4", "@babel/core@^7.4.5":
+"@babel/core@^7.0.0", "@babel/core@^7.1.0", "@babel/core@^7.4.5":
   version "7.4.5"
   resolved "https://registry.yarnpkg.com/@babel/core/-/core-7.4.5.tgz#081f97e8ffca65a9b4b0fdc7e274e703f000c06a"
   integrity sha512-OvjIh6aqXtlsA8ujtGKfC7LYWksYSX8yQcM8Ay3LuvVeQ63lcOKgoZWVqcpFwkd29aYU9rVx7jxhfhiEDV9MZA==
@@ -4238,10 +4238,10 @@ eslint-config-standard@^12.0.0:
   resolved "https://registry.yarnpkg.com/eslint-config-standard/-/eslint-config-standard-12.0.0.tgz#638b4c65db0bd5a41319f96bba1f15ddad2107d9"
   integrity sha512-COUz8FnXhqFitYj4DTqHzidjIL/t4mumGZto5c7DrBpvWoie+Sn3P4sLEzUGeYhRElWuFEf8K1S1EfvD1vixCQ==
 
-eslint-config-standard@^13.0.0:
-  version "13.0.0"
-  resolved "https://registry.yarnpkg.com/eslint-config-standard/-/eslint-config-standard-13.0.0.tgz#8032d6fe954f651399763ba4607294aa3c201a23"
-  integrity sha512-GRvEpe2lnML3qPqNryLPjgbU0nDeGBEWOC/IMfn/DjDLyO7DoASyDtGtPhN+Z+XDGUzrHWF8dKDLdDx2bO6CGw==
+eslint-config-standard@^13.0.1:
+  version "13.0.1"
+  resolved "https://registry.yarnpkg.com/eslint-config-standard/-/eslint-config-standard-13.0.1.tgz#c9c6ffe0cfb8a51535bc5c7ec9f70eafb8c6b2c0"
+  integrity sha512-zLKp4QOgq6JFgRm1dDCVv1Iu0P5uZ4v5Wa4DTOkg2RFMxdCX/9Qf7lz9ezRj2dBRa955cWQF/O/LWEiYWAHbTw==
 
 eslint-import-resolver-node@^0.3.2:
   version "0.3.2"
@@ -10373,13 +10373,13 @@ thunky@^1.0.2:
   resolved "https://registry.yarnpkg.com/thunky/-/thunky-1.0.3.tgz#f5df732453407b09191dae73e2a8cc73f381a826"
   integrity sha512-YwT8pjmNcAXBZqrubu22P4FYsh2D4dxRmnWBOL8Jk8bUcRUtc5326kx32tuTmFDAZtLOGEVNl8POAR8j896Iow==
 
-tib@^0.5.2:
-  version "0.5.2"
-  resolved "https://registry.yarnpkg.com/tib/-/tib-0.5.2.tgz#4e73afce2cad1b9a46962296b0238621d1cff7aa"
-  integrity sha512-FUzjJRSf3ieajdDZFDMfq+sMtagv4sqRfILGA67+DVBGSY6ywgWg9s9rOWAtlsaP4Clb7RYVw5jXEHS8UpR4wA==
+tib@^0.6.0:
+  version "0.6.0"
+  resolved "https://registry.yarnpkg.com/tib/-/tib-0.6.0.tgz#eabc40cf0816a67135cae56ddc3a1d905d6ce136"
+  integrity sha512-qbqtKQso/5x61ZArRCC56fu5uU0TU0Z1hGOgQhXMr2gazEg0neRbcgaEHHHxaC4Exx6ek87PXtp4XAJuT6OUgg==
   dependencies:
-    "@babel/core" "^7.4.4"
-    "@babel/parser" "^7.4.4"
+    "@babel/core" "^7.5.4"
+    "@babel/parser" "^7.5.0"
     hable "^1.0.1"
     signal-exit "^3.0.2"
     tree-kill "^1.2.1"
