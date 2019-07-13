@@ -22,7 +22,7 @@ describe(browserString, () => {
     }
 
     browser = await createBrowser(browserString, {
-      BrowserStackLocal: { folder },
+      folder,
       extendPage (page) {
         return {
           async navigate (path) {
