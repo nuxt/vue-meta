@@ -39,6 +39,31 @@ describe('escaping', () => {
     })
   })
 
+  test('null title is left as it is', () => {
+    const component = new Vue({
+      metaInfo: {
+        title: null
+      }
+    })
+
+    expect(getMetaInfo(component, [[/&/g, '&amp;']])).toEqual({
+      title: null,
+      titleChunk: '',
+      titleTemplate: '%s',
+      htmlAttrs: {},
+      headAttrs: {},
+      bodyAttrs: {},
+      meta: [],
+      base: [],
+      link: [],
+      style: [],
+      script: [],
+      noscript: [],
+      __dangerouslyDisableSanitizers: [],
+      __dangerouslyDisableSanitizersByTagID: {}
+    })
+  })
+
   test('special chars are escaped unless disabled by vmid', () => {
     const component = new Vue({
       metaInfo: {

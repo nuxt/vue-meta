@@ -1,6 +1,7 @@
 import _generateServerInjector from '../../src/server/generateServerInjector'
 import { defaultOptions } from '../../src/shared/constants'
 import metaInfoData from '../utils/meta-info-data'
+import { titleGenerator } from '../../src/server/generators'
 
 const generateServerInjector = (type, data) => _generateServerInjector('test', defaultOptions, type, data)
 
@@ -58,4 +59,11 @@ describe('generators', () => {
       })
     })
   })
+})
+
+describe('title generator should return an empty string when title is null', () => {
+  const title = null
+  const generatedTitle = titleGenerator(0, {}, 'title', title)
+
+  expect(generatedTitle.text()).toEqual('')
 })

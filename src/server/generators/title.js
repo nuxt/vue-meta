@@ -8,6 +8,9 @@
 export default function titleGenerator (appId, { attribute } = {}, type, data) {
   return {
     text () {
+      if (!data) {
+        return ''
+      }
       return `<${type}>${data}</${type}>`
     }
   }
