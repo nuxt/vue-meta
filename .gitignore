@@ -39,6 +39,7 @@ package-lock.json
 .node_repl_history
 
 # built code
+dist
 lib
 es
 .vue-meta
