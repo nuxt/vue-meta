@@ -8,9 +8,9 @@ import { isUndefined, isArray } from '../../utils/is-type'
  * @param  {Object} data - the attributes to generate
  * @return {Object} - the attribute generator
  */
-export default function attributeGenerator ({ attribute } = {}, type, data) {
+export default function attributeGenerator ({ attribute, ssrAttribute } = {}, type, data) {
   return {
-    text () {
+    text (addSrrAttribute) {
       let attributeStr = ''
       const watchedAttrs = []
 
@@ -26,7 +26,14 @@ export default function attributeGenerator ({ attribute } = {}, type, data) {
         }
       }
 
-      attributeStr += `${attribute}="${(watchedAttrs.sort()).join(',')}"`
+      if (attributeStr) {
+        attributeStr += `${attribute}="${(watchedAttrs.sort()).join(',')}"`
+      }
+
+      if (type === 'htmlAttrs' && addSrrAttribute) {
+        return `${ssrAttribute}${attributeStr ? ' ' : ''}${attributeStr}`
+      }
+
       return attributeStr
     }
   }

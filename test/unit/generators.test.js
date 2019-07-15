@@ -6,7 +6,7 @@ import { titleGenerator } from '../../src/server/generators'
 const generateServerInjector = (type, data) => _generateServerInjector('test', defaultOptions, type, data)
 
 describe('generators', () => {
-  Object.keys(metaInfoData).forEach((type) => {
+  for (const type in metaInfoData) {
     const typeTests = metaInfoData[type]
 
     const testCases = {
@@ -58,6 +58,19 @@ describe('generators', () => {
         }
       })
     })
+  }
+})
+
+describe('extra tests', () => {
+  test('auto add ssrAttribute', () => {
+    const htmlAttrs = generateServerInjector('htmlAttrs', {})
+    expect(htmlAttrs.text(true)).toBe('data-vue-meta-server-rendered')
+
+    const headAttrs = generateServerInjector('headAttrs', {})
+    expect(headAttrs.text(true)).toBe('')
+
+    const bodyAttrs = generateServerInjector('bodyAttrs', {})
+    expect(bodyAttrs.text(true)).toBe('')
   })
 })
 
