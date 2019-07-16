@@ -6,7 +6,7 @@ Easy. Instead of defining `metaInfo` as an object, define it as a function and a
 ```html
 <template>
   <div>
-    <h1>{{{ title }}}</h1>
+    <h1>{{ title }}</h1>
   </div>
 </template>
 
