@@ -26,6 +26,12 @@ The name of the attribute that is added to the `html` tag to inform `vue-meta` t
 
 See [How to prevent update on page load](/faq/prevent-initial)
 
+### ssrAppId
+- type `string`
+- default `ssr`
+
+The app id for a server side rendered app. You shouldnt have to change this normallygit s
+
 ### tagIDKeyName
 - type `string`
 - default `vmid`

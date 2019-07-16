@@ -3,7 +3,9 @@ import { defaultOptions } from '../../src/shared/constants'
 import metaInfoData from '../utils/meta-info-data'
 import { titleGenerator } from '../../src/server/generators'
 
-const generateServerInjector = (type, data) => _generateServerInjector('test', defaultOptions, type, data)
+defaultOptions.ssrAppId = 'test'
+
+const generateServerInjector = (type, data) => _generateServerInjector(defaultOptions, type, data)
 
 describe('generators', () => {
   for (const type in metaInfoData) {
@@ -62,6 +64,13 @@ describe('generators', () => {
 })
 
 describe('extra tests', () => {
+  test('title generator should return an empty string when title is null', () => {
+    const title = null
+    const generatedTitle = titleGenerator({}, 'title', title)
+
+    expect(generatedTitle.text()).toEqual('')
+  })
+
   test('auto add ssrAttribute', () => {
     const htmlAttrs = generateServerInjector('htmlAttrs', {})
     expect(htmlAttrs.text(true)).toBe('data-vue-meta-server-rendered')
@@ -72,11 +81,4 @@ describe('extra tests', () => {
     const bodyAttrs = generateServerInjector('bodyAttrs', {})
     expect(bodyAttrs.text(true)).toBe('')
   })
-})
-
-describe('title generator should return an empty string when title is null', () => {
-  const title = null
-  const generatedTitle = titleGenerator(0, {}, 'title', title)
-
-  expect(generatedTitle.text()).toEqual('')
 })

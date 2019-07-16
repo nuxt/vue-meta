@@ -44,13 +44,17 @@ export const metaTemplateKeyName = 'template'
 // This is the key name for the content-holding property
 export const contentKeyName = 'content'
 
+// The id used for the ssr app
+export const ssrAppId = 'ssr'
+
 export const defaultOptions = {
   keyName,
   attribute,
   ssrAttribute,
   tagIDKeyName,
   contentKeyName,
-  metaTemplateKeyName
+  metaTemplateKeyName,
+  ssrAppId
 }
 
 // List of metaInfo property keys which are configuration options (and dont generate html)
