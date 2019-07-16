@@ -91,12 +91,16 @@ describe(browserString, () => {
     sanitizeCheck.push(...(await page.getTexts('noscript')))
     sanitizeCheck = sanitizeCheck.filter(v => !!v)
 
-    expect(sanitizeCheck.length).toBe(3)
+    expect(sanitizeCheck.length).toBe(4)
     expect(() => JSON.parse(sanitizeCheck[0])).not.toThrow()
     // TODO: check why this doesnt Throw when Home is dynamic loaded
     // (but that causes hydration error)
     expect(() => JSON.parse(sanitizeCheck[1])).toThrow()
     expect(() => JSON.parse(sanitizeCheck[2])).not.toThrow()
+    expect(() => JSON.parse(sanitizeCheck[3])).not.toThrow()
+
+    expect(await page.getElementCount('body noscript:first-child')).toBe(1)
+    expect(await page.getElementCount('body noscript:last-child')).toBe(1)
   })
 
   test('/about', async () => {
