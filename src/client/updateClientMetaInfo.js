@@ -17,7 +17,7 @@ function getTag (tags, tag) {
  * @param  {Object} newInfo - the meta info to update to
  */
 export default function updateClientMetaInfo (appId, options = {}, newInfo) {
-  const { ssrAttribute } = options
+  const { ssrAttribute, ssrAppId } = options
 
   // only cache tags for current update
   const tags = {}
@@ -25,7 +25,7 @@ export default function updateClientMetaInfo (appId, options = {}, newInfo) {
   const htmlTag = getTag(tags, 'html')
 
   // if this is a server render, then dont update
-  if (appId === 'ssr' && htmlTag.hasAttribute(ssrAttribute)) {
+  if (appId === ssrAppId && htmlTag.hasAttribute(ssrAttribute)) {
     // remove the server render attribute so we can update on (next) changes
     htmlTag.removeAttribute(ssrAttribute)
     return false
