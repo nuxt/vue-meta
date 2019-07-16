@@ -1,4 +1,4 @@
-import { isString, isArray, isObject } from '../utils/is-type'
+import { isString, isArray, isPureObject } from '../utils/is-type'
 import { includes } from '../utils/array'
 import { metaInfoOptionKeys, disableOptionKeys } from './constants'
 
@@ -55,11 +55,11 @@ export function escape (info, options, escapeOptions) {
       escaped[key] = doEscape(value)
     } else if (isArray(value)) {
       escaped[key] = value.map((v) => {
-        return isObject(v)
+        return isPureObject(v)
           ? escape(v, options, escapeOptions)
           : doEscape(v)
       })
-    } else if (isObject(value)) {
+    } else if (isPureObject(value)) {
       escaped[key] = escape(value, options, escapeOptions)
     } else {
       escaped[key] = value
