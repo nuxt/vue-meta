@@ -67,14 +67,7 @@ describe(browserString, () => {
   })
 
   test('open page', async () => {
-    const webPath = '/index.html'
-
-    let url
-    if (browser.getLocalFolderUrl) {
-      url = browser.getLocalFolderUrl(webPath)
-    } else {
-      url = `file://${path.join(folder, webPath)}`
-    }
+    const url = browser.getUrl('/index.html')
 
     page = await browser.page(url)
 
