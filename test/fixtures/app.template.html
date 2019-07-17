@@ -10,6 +10,8 @@
     {{ noscript.text() }}
   </head>
   <body {{ bodyAttrs.text() }}>
+    {{ script.text({ pbody: true }) }}
+    {{ noscript.text({ pbody: true }) }}
     {{ app }}
     {{ script.text({ body: true }) }}
     {{ noscript.text({ body: true }) }}

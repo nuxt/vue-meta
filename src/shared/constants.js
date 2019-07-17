@@ -89,6 +89,9 @@ export const tagsWithInnerContent = ['noscript', 'script', 'style']
 // Attributes which are inserted as childNodes instead of HTMLAttribute
 export const tagAttributeAsInnerContent = ['innerHTML', 'cssText']
 
+// Attributes which should be added with data- prefix
+export const commonDataAttributes = ['body', 'pbody']
+
 // from: https://github.com/kangax/html-minifier/blob/gh-pages/src/htmlminifier.js#L202
 export const booleanHtmlAttributes = [
   'allowfullscreen',

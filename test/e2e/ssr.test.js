@@ -18,6 +18,11 @@ describe('basic browser with ssr page', () => {
     expect(html.match(/<meta/g).length).toBe(2)
     expect(html.match(/<meta/g).length).toBe(2)
 
+    // body prepend
+    expect(html.match(/<body[^>]*>\s*<noscript/g).length).toBe(1)
+    // body append
+    expect(html.match(/noscript>\s*<\/body/g).length).toBe(1)
+
     const re = /<(no)?script[^>]+type="application\/ld\+json"[^>]*>(.*?)</g
     const sanitizeCheck = []
     let match
@@ -25,9 +30,10 @@ describe('basic browser with ssr page', () => {
       sanitizeCheck.push(match[2])
     }
 
-    expect(sanitizeCheck.length).toBe(3)
+    expect(sanitizeCheck.length).toBe(4)
     expect(() => JSON.parse(sanitizeCheck[0])).not.toThrow()
     expect(() => JSON.parse(sanitizeCheck[1])).toThrow()
     expect(() => JSON.parse(sanitizeCheck[2])).not.toThrow()
+    expect(() => JSON.parse(sanitizeCheck[3])).not.toThrow()
   })
 })

@@ -1,15 +1,8 @@
 import { metaInfoOptionKeys, metaInfoAttributeKeys } from '../shared/constants'
 import { isArray } from '../utils/is-type'
 import { includes } from '../utils/array'
+import { getTag } from '../utils/elements'
 import { updateAttribute, updateTag, updateTitle } from './updaters'
-
-function getTag (tags, tag) {
-  if (!tags[tag]) {
-    tags[tag] = document.getElementsByTagName(tag)[0]
-  }
-
-  return tags[tag]
-}
 
 /**
  * Performs client-side updates when new meta info is received

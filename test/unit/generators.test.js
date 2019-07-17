@@ -81,4 +81,22 @@ describe('extra tests', () => {
     const bodyAttrs = generateServerInjector('bodyAttrs', {})
     expect(bodyAttrs.text(true)).toBe('')
   })
+
+  test('script prepend body', () => {
+    const tags = [{ src: '/script.js', pbody: true }]
+    const scriptTags = generateServerInjector('script', tags)
+
+    expect(scriptTags.text()).toBe('')
+    expect(scriptTags.text({ body: true })).toBe('')
+    expect(scriptTags.text({ pbody: true })).toBe('<script data-vue-meta="test" src="/script.js" data-pbody="true"></script>')
+  })
+
+  test('script append body', () => {
+    const tags = [{ src: '/script.js', body: true }]
+    const scriptTags = generateServerInjector('script', tags)
+
+    expect(scriptTags.text()).toBe('')
+    expect(scriptTags.text({ body: true })).toBe('<script data-vue-meta="test" src="/script.js" data-body="true"></script>')
+    expect(scriptTags.text({ pbody: true })).toBe('')
+  })
 })

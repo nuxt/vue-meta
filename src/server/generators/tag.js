@@ -1,4 +1,4 @@
-import { booleanHtmlAttributes, tagsWithoutEndTag, tagsWithInnerContent, tagAttributeAsInnerContent } from '../../shared/constants'
+import { booleanHtmlAttributes, tagsWithoutEndTag, tagsWithInnerContent, tagAttributeAsInnerContent, commonDataAttributes } from '../../shared/constants'
 
 /**
  * Generates meta, base, link, style, script, noscript tags for use on the server
@@ -8,8 +8,10 @@ import { booleanHtmlAttributes, tagsWithoutEndTag, tagsWithInnerContent, tagAttr
  * @return {Object} - the tag generator
  */
 export default function tagGenerator ({ ssrAppId, attribute, tagIDKeyName } = {}, type, tags) {
+  const dataAttributes = [tagIDKeyName, ...commonDataAttributes]
+
   return {
-    text ({ body = false } = {}) {
+    text ({ body = false, pbody = false } = {}) {
       // build a string containing all tags of this type
       return tags.reduce((tagsStr, tag) => {
         const tagKeys = Object.keys(tag)
@@ -18,7 +20,7 @@ export default function tagGenerator ({ ssrAppId, attribute, tagIDKeyName } = {}
           return tagsStr // Bail on empty tag object
         }
 
-        if (Boolean(tag.body) !== body) {
+        if (Boolean(tag.body) !== body || Boolean(tag.pbody) !== pbody) {
           return tagsStr
         }
 
@@ -31,7 +33,7 @@ export default function tagGenerator ({ ssrAppId, attribute, tagIDKeyName } = {}
 
           // these form the attribute list for this tag
           let prefix = ''
-          if ([tagIDKeyName, 'body'].includes(attr)) {
+          if (dataAttributes.includes(attr)) {
             prefix = 'data-'
           }
 

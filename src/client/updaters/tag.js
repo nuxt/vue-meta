@@ -1,5 +1,6 @@
-import { booleanHtmlAttributes } from '../../shared/constants'
-import { toArray, includes } from '../../utils/array'
+import { booleanHtmlAttributes, commonDataAttributes } from '../../shared/constants'
+import { includes } from '../../utils/array'
+import { queryElements, getElementsKey } from '../../utils/elements.js'
 
 /**
  * Updates meta tags inside <head> and <body> on the client. Borrowed from `react-helmet`:
@@ -9,11 +10,16 @@ import { toArray, includes } from '../../utils/array'
  * @param  {(Array<Object>|Object)} tags - an array of tag objects or a single object in case of base
  * @return {Object} - a representation of what tags changed
  */
-export default function updateTag (appId, { attribute, tagIDKeyName } = {}, type, tags, headTag, bodyTag) {
-  const oldHeadTags = toArray(headTag.querySelectorAll(`${type}[${attribute}="${appId}"], ${type}[data-${tagIDKeyName}]`))
-  const oldBodyTags = toArray(bodyTag.querySelectorAll(`${type}[${attribute}="${appId}"][data-body="true"], ${type}[data-${tagIDKeyName}][data-body="true"]`))
-  const dataAttributes = [tagIDKeyName, 'body']
-  const newTags = []
+export default function updateTag (appId, { attribute, tagIDKeyName } = {}, type, tags, head, body) {
+  const dataAttributes = [tagIDKeyName, ...commonDataAttributes]
+  const newElements = []
+
+  const queryOptions = { appId, attribute, type, tagIDKeyName }
+  const currentElements = {
+    head: queryElements(head, queryOptions),
+    pbody: queryElements(body, queryOptions, { pbody: true }),
+    body: queryElements(body, queryOptions, { body: true })
+  }
 
   if (tags.length > 1) {
     // remove duplicates that could have been found by merging tags
@@ -29,64 +35,88 @@ export default function updateTag (appId, { attribute, tagIDKeyName } = {}, type
   }
 
   if (tags.length) {
-    tags.forEach((tag) => {
+    for (const tag of tags) {
       const newElement = document.createElement(type)
-
       newElement.setAttribute(attribute, appId)
-
-      const oldTags = tag.body !== true ? oldHeadTags : oldBodyTags
 
       for (const attr in tag) {
         if (tag.hasOwnProperty(attr)) {
           if (attr === 'innerHTML') {
             newElement.innerHTML = tag.innerHTML
-          } else if (attr === 'cssText') {
+            continue
+          }
+
+          if (attr === 'cssText') {
             if (newElement.styleSheet) {
               /* istanbul ignore next */
               newElement.styleSheet.cssText = tag.cssText
             } else {
               newElement.appendChild(document.createTextNode(tag.cssText))
             }
-          } else {
-            const _attr = includes(dataAttributes, attr)
-              ? `data-${attr}`
-              : attr
-
-            const isBooleanAttribute = includes(booleanHtmlAttributes, attr)
-            if (isBooleanAttribute && !tag[attr]) {
-              continue
-            }
-
-            const value = isBooleanAttribute ? '' : tag[attr]
-            newElement.setAttribute(_attr, value)
+            continue
           }
+
+          const _attr = includes(dataAttributes, attr)
+            ? `data-${attr}`
+            : attr
+
+          const isBooleanAttribute = includes(booleanHtmlAttributes, attr)
+          if (isBooleanAttribute && !tag[attr]) {
+            continue
+          }
+
+          const value = isBooleanAttribute ? '' : tag[attr]
+          newElement.setAttribute(_attr, value)
         }
       }
 
+      const oldElements = currentElements[getElementsKey(tag)]
+
       // Remove a duplicate tag from domTagstoRemove, so it isn't cleared.
       let indexToDelete
-      const hasEqualElement = oldTags.some((existingTag, index) => {
+      const hasEqualElement = oldElements.some((existingTag, index) => {
         indexToDelete = index
         return newElement.isEqualNode(existingTag)
       })
 
       if (hasEqualElement && (indexToDelete || indexToDelete === 0)) {
-        oldTags.splice(indexToDelete, 1)
+        oldElements.splice(indexToDelete, 1)
       } else {
-        newTags.push(newElement)
+        newElements.push(newElement)
       }
-    })
+    }
   }
 
-  const oldTags = oldHeadTags.concat(oldBodyTags)
-  oldTags.forEach(tag => tag.parentNode.removeChild(tag))
-  newTags.forEach((tag) => {
-    if (tag.getAttribute('data-body') === 'true') {
-      bodyTag.appendChild(tag)
-    } else {
-      headTag.appendChild(tag)
-    }
-  })
+  let oldElements = []
+  for (const current of Object.values(currentElements)) {
+    oldElements = [
+      ...oldElements,
+      ...current
+    ]
+  }
 
-  return { oldTags, newTags }
+  // remove old elements
+  for (const element of oldElements) {
+    element.parentNode.removeChild(element)
+  }
+
+  // insert new elements
+  for (const element of newElements) {
+    if (element.hasAttribute('data-body')) {
+      body.appendChild(element)
+      continue
+    }
+
+    if (element.hasAttribute('data-pbody')) {
+      body.insertBefore(element, body.firstChild)
+      continue
+    }
+
+    head.appendChild(element)
+  }
+
+  return {
+    oldTags: oldElements,
+    newTags: newElements
+  }
 }

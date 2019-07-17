@@ -114,10 +114,12 @@ const metaInfoData = {
     add: {
       data: [
         { src: 'src', async: false, defer: true, [defaultOptions.tagIDKeyName]: 'content' },
+        { src: 'src-prepend', async: true, defer: false, pbody: true },
         { src: 'src', async: false, defer: true, body: true }
       ],
       expect: [
         '<script data-vue-meta="test" src="src" defer data-vmid="content"></script>',
+        '<script data-vue-meta="test" src="src-prepend" async data-pbody="true"></script>',
         '<script data-vue-meta="test" src="src" defer data-body="true"></script>'
       ],
       test (side, defaultTest) {
@@ -130,14 +132,17 @@ const metaInfoData = {
 
             expect(tags.addedTags.script[0].parentNode.tagName).toBe('HEAD')
             expect(tags.addedTags.script[1].parentNode.tagName).toBe('BODY')
+            expect(tags.addedTags.script[2].parentNode.tagName).toBe('BODY')
           } else {
             // ssr doesnt generate data-body tags
-            const bodyScript = this.expect[1]
+            const bodyPrepended = this.expect[1]
+            const bodyAppended = this.expect[2]
             this.expect = [this.expect[0]]
 
             const tags = defaultTest()
 
-            expect(tags.text()).not.toContain(bodyScript)
+            expect(tags.text()).not.toContain(bodyPrepended)
+            expect(tags.text()).not.toContain(bodyAppended)
           }
         }
       }
