@@ -131,7 +131,7 @@ const metaInfoData = {
             const tags = defaultTest()
 
             expect(tags.addedTags.script[0].parentNode.tagName).toBe('HEAD')
-            expect(tags.addedTagsupdascript[1].parentNode.tagName).toBe('BODY')
+            expect(tags.addedTags.script[1].parentNode.tagName).toBe('BODY')
             expect(tags.addedTags.script[2].parentNode.tagName).toBe('BODY')
           } else {
             // ssr doesnt generate data-body tags
