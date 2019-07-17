@@ -8,10 +8,10 @@ export function getTag (tags, tag) {
   return tags[tag]
 }
 
-export function getElementsKey ({ body, pody }) {
+export function getElementsKey ({ body, pbody }) {
   return body
     ? 'body'
-    : (pody ? 'pody' : 'head')
+    : (pbody ? 'pbody' : 'head')
 }
 
 export function queryElements (parentNode, { appId, attribute, type, tagIDKeyName }, attributes = {}) {

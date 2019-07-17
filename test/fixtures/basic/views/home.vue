@@ -27,7 +27,7 @@ export default {
         { innerHTML: '{ "more": "data" }', type: 'application/ld+json' }
       ],
       noscript: [
-        { innerHTML: '{ "pody": "yes" }', pody: true, type: 'application/ld+json' },
+        { innerHTML: '{ "pbody": "yes" }', pbody: true, type: 'application/ld+json' },
         { innerHTML: '{ "body": "yes" }', body: true, type: 'application/ld+json' }
       ],
       __dangerouslyDisableSanitizers: ['noscript'],

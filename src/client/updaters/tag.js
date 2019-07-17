@@ -17,7 +17,7 @@ export default function updateTag (appId, { attribute, tagIDKeyName } = {}, type
   const queryOptions = { appId, attribute, type, tagIDKeyName }
   const currentElements = {
     head: queryElements(head, queryOptions),
-    pody: queryElements(body, queryOptions, { pody: true }),
+    pbody: queryElements(body, queryOptions, { pbody: true }),
     body: queryElements(body, queryOptions, { body: true })
   }
 
@@ -107,7 +107,7 @@ export default function updateTag (appId, { attribute, tagIDKeyName } = {}, type
       continue
     }
 
-    if (element.hasAttribute('data-pody')) {
+    if (element.hasAttribute('data-pbody')) {
       body.insertBefore(element, body.firstChild)
       continue
     }

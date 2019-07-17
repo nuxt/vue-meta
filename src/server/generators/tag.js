@@ -11,7 +11,7 @@ export default function tagGenerator ({ ssrAppId, attribute, tagIDKeyName } = {}
   const dataAttributes = [tagIDKeyName, ...commonDataAttributes]
 
   return {
-    text ({ body = false, pody = false } = {}) {
+    text ({ body = false, pbody = false } = {}) {
       // build a string containing all tags of this type
       return tags.reduce((tagsStr, tag) => {
         const tagKeys = Object.keys(tag)
@@ -20,7 +20,7 @@ export default function tagGenerator ({ ssrAppId, attribute, tagIDKeyName } = {}
           return tagsStr // Bail on empty tag object
         }
 
-        if (Boolean(tag.body) !== body || Boolean(tag.pody) !== pody) {
+        if (Boolean(tag.body) !== body || Boolean(tag.pbody) !== pbody) {
           return tagsStr
         }
 

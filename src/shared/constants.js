@@ -90,7 +90,7 @@ export const tagsWithInnerContent = ['noscript', 'script', 'style']
 export const tagAttributeAsInnerContent = ['innerHTML', 'cssText']
 
 // Attributes which should be added with data- prefix
-export const commonDataAttributes = ['body', 'pody']
+export const commonDataAttributes = ['body', 'pbody']
 
 // from: https://github.com/kangax/html-minifier/blob/gh-pages/src/htmlminifier.js#L202
 export const booleanHtmlAttributes = [
