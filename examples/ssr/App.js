@@ -48,6 +48,12 @@ export default function createApp () {
             body: true,
             async: true,
             callback: () => this.loadCallback()
+          }, {
+            skip: this.count < 1,
+            src: '/user-2.js',
+            body: true,
+            async: true,
+            callback: () => this.loadCallback()
           }
         ],
         __dangerouslyDisableSanitizersByTagID: {
