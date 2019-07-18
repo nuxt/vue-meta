@@ -20,6 +20,10 @@ export default function tagGenerator ({ ssrAppId, attribute, tagIDKeyName, loadC
     text ({ body = false, pbody = false } = {}) {
       // build a string containing all tags of this type
       return tags.reduce((tagsStr, tag) => {
+        if (tag.skip) {
+          return tagsStr
+        }
+
         const tagKeys = Object.keys(tag)
 
         if (tagKeys.length === 0) {
