@@ -23,8 +23,6 @@ export default function updateTag (appId, options = {}, type, tags, head, body) 
     body: queryElements(body, queryOptions, { body: true })
   }
 
-  const usedTags = []
-
   if (tags.length > 1) {
     // remove duplicates that could have been found by merging tags
     // which include a mixin with metaInfo and that mixin is used
@@ -98,7 +96,6 @@ export default function updateTag (appId, options = {}, type, tags, head, body) 
         oldElements.splice(indexToDelete, 1)
       } else {
         newElements.push(newElement)
-        usedTags.push(tag)
       }
     }
   }
