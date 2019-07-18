@@ -1,5 +1,4 @@
 const callbacks = []
-let observer
 
 export function isDOMLoaded () {
   return document.readyState !== 'loading'
@@ -50,6 +49,10 @@ export async function initListeners (dataAttributeName) {
 export function addListeners (dataAttributeName) {
   applyCallbacks(dataAttributeName)
 
+  if (isDOMLoaded()) {
+    return
+  }
+
   function handleMutation (mutations) {
     for (const mutation of mutations) {
       if (!mutation.addedNodes.length) {
@@ -66,11 +69,15 @@ export function addListeners (dataAttributeName) {
     }
   }
 
-  // TODO?: this doesnt catch src attribute changes
-  // but thats seems a bit wrong to do anyway
-  observer = new MutationObserver(handleMutation)
+  const observer = new MutationObserver(handleMutation)
   observer.observe(document.head, { childList: true })
   observer.observe(document.body, { childList: true })
+
+  document.onreadystatechange = () => {
+    if (isDOMLoaded()) {
+      setTimeout(() => observer.disconnect(), 0)
+    }
+  }
 }
 
 export function applyCallbacks (dataAttributeName, matchElement) {
