@@ -1,7 +1,7 @@
 import commonjs from 'rollup-plugin-commonjs'
 import nodeResolve from 'rollup-plugin-node-resolve'
 import json from 'rollup-plugin-json'
-import buble from 'rollup-plugin-buble'
+import babel from 'rollup-plugin-babel'
 import replace from 'rollup-plugin-replace'
 import { terser } from 'rollup-plugin-terser'
 import defaultsDeep from 'lodash/defaultsDeep'
@@ -32,8 +32,8 @@ function rollupConfig({
     }
   }
 
-  // keep simple polyfills when buble plugin is used for build
-  if (plugins && plugins.some(p => p.name === 'buble')) {
+  // keep simple polyfills when babel plugin is used for build
+  if (plugins && plugins.some(p => p.name === 'babel')) {
     replaceConfig.values = {
       'const polyfill = process.env.NODE_ENV === \'test\'': 'const polyfill = true',
     }
@@ -63,7 +63,7 @@ export default [
       file: pkg.web,
     },
     plugins: [
-      buble()
+      babel()
     ]
   },
   // minimized umd web build
@@ -72,7 +72,7 @@ export default [
       file: pkg.web.replace('.js', '.min.js'),
     },
     plugins: [
-      buble(),
+      babel(),
       terser()
     ]
   },
@@ -84,7 +84,7 @@ export default [
       format: 'cjs'
     },
     plugins: [
-      buble()
+      babel()
     ],
     external: Object.keys(pkg.dependencies)
   },
@@ -96,7 +96,7 @@ export default [
       format: 'es'
     },
     plugins: [
-      buble()
+      babel()
     ],
     external: Object.keys(pkg.dependencies)
   },

@@ -103,7 +103,7 @@
     "puppeteer-core": "^1.18.1",
     "rimraf": "^2.6.3",
     "rollup": "^1.17.0",
-    "rollup-plugin-buble": "^0.19.8",
+    "rollup-plugin-babel": "^4.3.3",
     "rollup-plugin-commonjs": "^10.0.1",
     "rollup-plugin-json": "^4.0.0",
     "rollup-plugin-node-resolve": "^5.2.0",
