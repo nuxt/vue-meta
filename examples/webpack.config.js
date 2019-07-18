@@ -10,12 +10,16 @@ export default {
   devtool: 'inline-source-map',
   mode: 'development',
   entry: fs.readdirSync(__dirname)
-    .filter(entry => entry !== 'ssr')
     .reduce((entries, dir) => {
       const fullDir = path.join(__dirname, dir)
-      const entry = path.join(fullDir, 'app.js')
-      if (fs.statSync(fullDir).isDirectory() && fs.existsSync(entry)) {
-        entries[dir] = entry
+
+      if (dir === 'ssr') {
+        entries[dir] = path.join(fullDir, 'browser.js')
+      } else {
+        const entry = path.join(fullDir, 'app.js')
+        if (fs.statSync(fullDir).isDirectory() && fs.existsSync(entry)) {
+          entries[dir] = entry
+        }
       }
       return entries
     }, {}),

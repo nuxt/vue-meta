@@ -1,0 +1,27 @@
+import path from 'path'
+import fs from 'fs-extra'
+import template from 'lodash/template'
+import { createRenderer } from 'vue-server-renderer'
+import createApp from './App'
+
+const renderer = createRenderer({ runInNewContext: false })
+
+const templateFile = path.resolve(__dirname, 'app.template.html')
+const templateContent = fs.readFileSync(templateFile, { encoding: 'utf8' })
+
+// see: https://lodash.com/docs#template
+const compiled = template(templateContent, { interpolate: /{{([\s\S]+?)}}/g })
+
+process.server = true
+
+export async function renderPage () {
+  const app = await createApp()
+  const appHtml = await renderer.renderToString(app)
+
+  const pageHtml = compiled({
+    app: appHtml,
+    ...app.$meta().inject()
+  })
+
+  return pageHtml
+}

@@ -36,27 +36,27 @@ export default new Vuex.Store({
 
   // GETTERS
   getters: {
-    post(state) {
+    post (state) {
       return state.post
     },
-    publishedPosts(state) {
+    publishedPosts (state) {
       return state.posts.filter(post => post.published)
     },
-    publishedPostsCount(state, getters) {
+    publishedPostsCount (state, getters) {
       return getters.publishedPosts.length
     }
   },
 
   // MUTATIONS
   mutations: {
-    getPost(state, { slug }) {
+    getPost (state, { slug }) {
       state.post = state.posts.find(post => post.slug === slug)
     }
   },
 
   // ACTIONS
   actions: {
-    getPost({ commit }, payload) {
+    getPost ({ commit }, payload) {
       commit('getPost', payload)
     }
   }

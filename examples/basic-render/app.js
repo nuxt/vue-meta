@@ -11,10 +11,10 @@ Vue.component('child', {
       default: ''
     }
   },
-  render(h) {
+  render (h) {
     return h('h3', null, this.page)
   },
-  metaInfo() {
+  metaInfo () {
     return {
       title: this.page
     }

@@ -6,7 +6,7 @@ Vue.use(VueMeta)
 // index.html contains a manual SSR render
 
 const app1 = new Vue({
-  metaInfo() {
+  metaInfo () {
     return {
       title: 'App 1 title',
       bodyAttrs: {
@@ -14,15 +14,15 @@ const app1 = new Vue({
       },
       meta: [
         { name: 'description', content: 'Hello from app 1', vmid: 'test' },
-        { name: 'og:description', content:  this.ogContent }
+        { name: 'og:description', content: this.ogContent }
       ],
       script: [
         { innerHTML: 'var appId=1.1', body: true },
-        { innerHTML: 'var appId=1.2', vmid: 'app-id-body' },
+        { innerHTML: 'var appId=1.2', vmid: 'app-id-body' }
       ]
     }
   },
-  data() {
+  data () {
     return {
       ogContent: 'Hello from ssr app'
     }
@@ -44,7 +44,7 @@ const app2 = new Vue({
     ],
     script: [
       { innerHTML: 'var appId=2.1', body: true },
-      { innerHTML: 'var appId=2.2', vmid: 'app-id-body', body: true },
+      { innerHTML: 'var appId=2.2', vmid: 'app-id-body', body: true }
     ]
   }),
   template: `
@@ -60,7 +60,6 @@ const app3 = new Vue({
   `
 }).$mount('#app3')
 
-
 setTimeout(() => {
   console.log('trigger app 1')
   app1.$data.ogContent = 'Hello from app 1'
@@ -75,8 +74,9 @@ setTimeout(() => {
   console.log('trigger app 3')
   app3.$meta().refresh()
 }, 7500)
+
 setTimeout(() => {
   console.log('trigger app 4')
   const App = Vue.extend({ template: `<div>app 4</div>` })
-  const app4 = new App().$mount()
+  new App().$mount()
 }, 10000)

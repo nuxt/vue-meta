@@ -1,16 +1,22 @@
 <!doctype html>
-<html data-vue-meta-server-rendered {{ htmlAttrs.text() }}>
+<html {{ htmlAttrs.text(true) }}>
   <head {{ headAttrs.text() }}>
-    {{ meta.text() }}
     {{ title.text() }}
+    {{ meta.text() }}
+    <link rel="stylesheet" href="/global.css">
     {{ link.text() }}
     {{ style.text() }}
-    {{ webpackAssets }}
     {{ script.text() }}
     {{ noscript.text() }}
   </head>
   <body {{ bodyAttrs.text() }}>
+    {{ script.text({ pbody: true }) }}
+    {{ noscript.text({ pbody: true }) }}
+
+    <a href="/">&larr; Examples index</a>
     {{ app }}
+
+    <script src="/__build__/ssr.js"></script>
     {{ script.text({ body: true }) }}
     {{ noscript.text({ body: true }) }}
   </body>
