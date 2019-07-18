@@ -23,13 +23,18 @@ fs.readdirSync(__dirname)
   .filter(file => file !== 'ssr')
   .forEach((file) => {
     if (fs.statSync(path.join(__dirname, file)).isDirectory()) {
-      app.use(rewrite(`/${file}/`, `/${file}/index.html`))
+      app.use(rewrite(`/${file}/*`, `/${file}/index.html`))
     }
   })
 
 app.use(express.static(path.join(__dirname, '_static')))
+app.use(express.static(__dirname))
 
 app.use(async (req, res, next) => {
+  if (!req.url.startsWith('/ssr')) {
+    next()
+  }
+
   try {
     const html = await renderPage()
     res.send(html)
