@@ -32,6 +32,9 @@ export const attribute = 'data-vue-meta'
 // that the server has already generated the meta tags for the initial render.
 export const ssrAttribute = 'data-vue-meta-server-rendered'
 
+// The attribute used to identify tags which we need to add a load listener to
+export const loadCallbackAttribute = 'vmload'
+
 // This is the property that tells vue-meta to overwrite (instead of append)
 // an item in a tag list. For example, if you have two `meta` tag list items
 // that both have `vmid` of "description", then vue-meta will overwrite the
@@ -54,7 +57,8 @@ export const defaultOptions = {
   tagIDKeyName,
   contentKeyName,
   metaTemplateKeyName,
-  ssrAppId
+  ssrAppId,
+  loadCallbackAttribute
 }
 
 // List of metaInfo property keys which are configuration options (and dont generate html)

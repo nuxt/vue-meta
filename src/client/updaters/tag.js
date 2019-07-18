@@ -10,7 +10,9 @@ import { queryElements, getElementsKey } from '../../utils/elements.js'
  * @param  {(Array<Object>|Object)} tags - an array of tag objects or a single object in case of base
  * @return {Object} - a representation of what tags changed
  */
-export default function updateTag (appId, { attribute, tagIDKeyName } = {}, type, tags, head, body) {
+export default function updateTag (appId, options = {}, type, tags, head, body) {
+  const { attribute, tagIDKeyName } = options
+
   const dataAttributes = [tagIDKeyName, ...commonDataAttributes]
   const newElements = []
 
@@ -20,6 +22,8 @@ export default function updateTag (appId, { attribute, tagIDKeyName } = {}, type
     pbody: queryElements(body, queryOptions, { pbody: true }),
     body: queryElements(body, queryOptions, { body: true })
   }
+
+  const usedTags = []
 
   if (tags.length > 1) {
     // remove duplicates that could have been found by merging tags
@@ -36,38 +40,49 @@ export default function updateTag (appId, { attribute, tagIDKeyName } = {}, type
 
   if (tags.length) {
     for (const tag of tags) {
+      if (tag.skip) {
+        continue
+      }
+
       const newElement = document.createElement(type)
       newElement.setAttribute(attribute, appId)
 
       for (const attr in tag) {
-        if (tag.hasOwnProperty(attr)) {
-          if (attr === 'innerHTML') {
-            newElement.innerHTML = tag.innerHTML
-            continue
-          }
-
-          if (attr === 'cssText') {
-            if (newElement.styleSheet) {
-              /* istanbul ignore next */
-              newElement.styleSheet.cssText = tag.cssText
-            } else {
-              newElement.appendChild(document.createTextNode(tag.cssText))
-            }
-            continue
-          }
-
-          const _attr = includes(dataAttributes, attr)
-            ? `data-${attr}`
-            : attr
-
-          const isBooleanAttribute = includes(booleanHtmlAttributes, attr)
-          if (isBooleanAttribute && !tag[attr]) {
-            continue
-          }
-
-          const value = isBooleanAttribute ? '' : tag[attr]
-          newElement.setAttribute(_attr, value)
+        if (!tag.hasOwnProperty(attr) || attr === 'skip') {
+          continue
         }
+
+        if (attr === 'innerHTML') {
+          newElement.innerHTML = tag.innerHTML
+          continue
+        }
+
+        if (attr === 'cssText') {
+          if (newElement.styleSheet) {
+            /* istanbul ignore next */
+            newElement.styleSheet.cssText = tag.cssText
+          } else {
+            newElement.appendChild(document.createTextNode(tag.cssText))
+          }
+          continue
+        }
+
+        if (attr === 'callback') {
+          newElement.onload = () => tag[attr](newElement)
+          continue
+        }
+
+        const _attr = includes(dataAttributes, attr)
+          ? `data-${attr}`
+          : attr
+
+        const isBooleanAttribute = includes(booleanHtmlAttributes, attr)
+        if (isBooleanAttribute && !tag[attr]) {
+          continue
+        }
+
+        const value = isBooleanAttribute ? '' : tag[attr]
+        newElement.setAttribute(_attr, value)
       }
 
       const oldElements = currentElements[getElementsKey(tag)]
@@ -83,6 +98,7 @@ export default function updateTag (appId, { attribute, tagIDKeyName } = {}, type
         oldElements.splice(indexToDelete, 1)
       } else {
         newElements.push(newElement)
+        usedTags.push(tag)
       }
     }
   }

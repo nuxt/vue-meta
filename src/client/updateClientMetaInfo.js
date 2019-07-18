@@ -2,6 +2,7 @@ import { metaInfoOptionKeys, metaInfoAttributeKeys } from '../shared/constants'
 import { isArray } from '../utils/is-type'
 import { includes } from '../utils/array'
 import { getTag } from '../utils/elements'
+import { addCallbacks } from '../utils/load'
 import { updateAttribute, updateTag, updateTitle } from './updaters'
 
 /**
@@ -21,6 +22,11 @@ export default function updateClientMetaInfo (appId, options = {}, newInfo) {
   if (appId === ssrAppId && htmlTag.hasAttribute(ssrAttribute)) {
     // remove the server render attribute so we can update on (next) changes
     htmlTag.removeAttribute(ssrAttribute)
+
+    if (newInfo.script) {
+      addCallbacks(options, newInfo.script)
+    }
+
     return false
   }
 
