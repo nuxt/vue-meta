@@ -29,7 +29,7 @@ new Vue({
           vmid: 'meat',
           src: '/user-1.js',
           async: true,
-          callback: el => this.loadCallback(el)
+          callback: el => this.loadCallback(el.dataset.vmid)
         },
         ...this.scripts
       ]
@@ -61,8 +61,8 @@ new Vue({
         }
       })
     },
-    loadCallback (el) {
-      if (el.dataset.vmid === 'meat') {
+    loadCallback (vmid) {
+      if (vmid === 'meat') {
         this.updateCounter()
       }
     }
