@@ -1,8 +1,8 @@
-import { metaInfoOptionKeys, metaInfoAttributeKeys } from '../shared/constants'
+import { metaInfoOptionKeys, metaInfoAttributeKeys, tagsSupportingOnload } from '../shared/constants'
 import { isArray } from '../utils/is-type'
 import { includes } from '../utils/array'
 import { getTag } from '../utils/elements'
-import { addCallbacks } from '../utils/load'
+import { addCallbacks, addListeners } from './load'
 import { updateAttribute, updateTag, updateTitle } from './updaters'
 
 /**
@@ -11,7 +11,7 @@ import { updateAttribute, updateTag, updateTitle } from './updaters'
  * @param  {Object} newInfo - the meta info to update to
  */
 export default function updateClientMetaInfo (appId, options = {}, newInfo) {
-  const { ssrAttribute, ssrAppId } = options
+  const { ssrAttribute, ssrAppId, loadCallbackAttribute } = options
 
   // only cache tags for current update
   const tags = {}
@@ -23,8 +23,16 @@ export default function updateClientMetaInfo (appId, options = {}, newInfo) {
     // remove the server render attribute so we can update on (next) changes
     htmlTag.removeAttribute(ssrAttribute)
 
-    if (newInfo.script) {
-      addCallbacks(options, newInfo.script)
+    // add load callbacks if the
+    let addLoadListeners = false
+    for (const type of tagsSupportingOnload) {
+      if (newInfo[type] && addCallbacks(options, type, newInfo[type])) {
+        addLoadListeners = true
+      }
+    }
+
+    if (addLoadListeners) {
+      addListeners(loadCallbackAttribute)
     }
 
     return false

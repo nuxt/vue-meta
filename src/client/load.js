@@ -21,7 +21,7 @@ export function addCallback (query, callback) {
   callbacks.push([ query, callback ])
 }
 
-export function addCallbacks ({ tagIDKeyName, loadCallbackAttribute }, tags) {
+export function addCallbacks ({ tagIDKeyName, loadCallbackAttribute }, type, tags, autoAddListeners) {
   let hasAsyncCallback = false
 
   for (const tag of tags) {
@@ -30,11 +30,11 @@ export function addCallbacks ({ tagIDKeyName, loadCallbackAttribute }, tags) {
     }
 
     hasAsyncCallback = true
-    addCallback(`[data-${tagIDKeyName}="${tag[tagIDKeyName]}"]`, tag.callback)
+    addCallback(`${type}[data-${tagIDKeyName}="${tag[tagIDKeyName]}"]`, tag.callback)
   }
 
-  if (!hasAsyncCallback) {
-    return
+  if (!autoAddListeners || !hasAsyncCallback) {
+    return hasAsyncCallback
   }
 
   return addListeners(loadCallbackAttribute)
@@ -82,7 +82,7 @@ export function addListeners (dataAttributeName) {
 
 export function applyCallbacks (dataAttributeName, matchElement) {
   for (const [query, callback] of callbacks) {
-    const selector = `[data-${dataAttributeName}]${query}`
+    const selector = `${query}[data-${dataAttributeName}]`
 
     let elements = []
     if (!matchElement) {
