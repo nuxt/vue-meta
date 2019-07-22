@@ -1,17 +1,4 @@
-import path from 'path'
-import { JSDOM, VirtualConsole } from 'jsdom'
-
-const pTick = () => new Promise(resolve => process.nextTick(resolve))
-
-function createDOM(html = '<!DOCTYPE html>', options = {}) {
-  const dom = new JSDOM(html, options)
-
-  return {
-    dom,
-    window: dom.window,
-    document: dom.window.document
-  }
-}
+import { pTick, createDOM } from '../utils'
 
 describe('load callbacks', () => {
   let load
@@ -121,7 +108,7 @@ describe('load callbacks', () => {
     expect(addListeners).toHaveBeenCalled()
   })
 
-  test('callback trigger', async () => {
+  test('callback trigger', () => {
     const { window, document } = createDOM()
 
     const callback = jest.fn()
@@ -141,4 +128,3 @@ describe('load callbacks', () => {
     expect(callback).toHaveBeenCalled()
   })
 })
-
