@@ -40,12 +40,6 @@ export function addCallbacks ({ tagIDKeyName, loadCallbackAttribute }, type, tag
   return addListeners(loadCallbackAttribute)
 }
 
-export async function initListeners (dataAttributeName) {
-  await waitDOMLoaded()
-
-  return addListeners(dataAttributeName)
-}
-
 export function addListeners (dataAttributeName) {
   applyCallbacks(dataAttributeName)
 
@@ -53,6 +47,7 @@ export function addListeners (dataAttributeName) {
     return
   }
 
+  /* istanbul ignore next */
   function handleMutation (mutations) {
     for (const mutation of mutations) {
       if (!mutation.addedNodes.length) {
@@ -69,10 +64,14 @@ export function addListeners (dataAttributeName) {
     }
   }
 
+  /* istanbul ignore next */
   const observer = new MutationObserver(handleMutation)
+  /* istanbul ignore next */
   observer.observe(document.head, { childList: true })
+  /* istanbul ignore next */
   observer.observe(document.body, { childList: true })
 
+  /* istanbul ignore next */
   document.onreadystatechange = () => {
     if (isDOMLoaded()) {
       setTimeout(() => observer.disconnect(), 0)
