@@ -50,7 +50,8 @@ export default function tagGenerator ({ ssrAppId, attribute, tagIDKeyName, loadC
           }
 
           if (attr === 'callback') {
-            attrs += ` ${prefix}${loadCallbackAttribute}="true"`
+            // attrs += ` ${prefix}${loadCallbackAttribute}="1"`
+            attrs += ` onload="this.__vm_l=1"`
             continue
           }
 

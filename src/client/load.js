@@ -4,6 +4,10 @@ export function isDOMLoaded () {
   return document.readyState !== 'loading'
 }
 
+export function isDOMComplete () {
+  return document.readyState === 'complete'
+}
+
 export function waitDOMLoaded () {
   if (isDOMLoaded()) {
     return true
@@ -41,47 +45,20 @@ export function addCallbacks ({ tagIDKeyName, loadCallbackAttribute }, type, tag
 }
 
 export function addListeners (dataAttributeName) {
-  applyCallbacks(dataAttributeName)
-
-  if (isDOMLoaded()) {
+  if (isDOMComplete()) {
+    applyCallbacks(dataAttributeName)
     return
   }
 
-  /* istanbul ignore next */
-  function handleMutation (mutations) {
-    for (const mutation of mutations) {
-      if (!mutation.addedNodes.length) {
-        continue
-      }
-
-      for (const node of mutation.addedNodes) {
-        if (node.nodeType !== 1) {
-          continue
-        }
-
-        applyCallbacks(dataAttributeName, node)
-      }
-    }
-  }
-
-  /* istanbul ignore next */
-  const observer = new MutationObserver(handleMutation)
-  /* istanbul ignore next */
-  observer.observe(document.head, { childList: true })
-  /* istanbul ignore next */
-  observer.observe(document.body, { childList: true })
-
-  /* istanbul ignore next */
+  // Instead of using a MutationObserver, we just apply
   document.onreadystatechange = () => {
-    if (isDOMLoaded()) {
-      setTimeout(() => observer.disconnect(), 0)
-    }
+    applyCallbacks(dataAttributeName)
   }
 }
 
 export function applyCallbacks (dataAttributeName, matchElement) {
   for (const [query, callback] of callbacks) {
-    const selector = `${query}[data-${dataAttributeName}]`
+    const selector = `${query}[onload="this.__vm_l=1"]`
 
     let elements = []
     if (!matchElement) {
@@ -93,10 +70,46 @@ export function applyCallbacks (dataAttributeName, matchElement) {
     }
 
     for (const element of elements) {
-      element.addEventListener('load', () => {
-        element.removeAttribute(`data-${dataAttributeName}`)
+      /* __vm_cb: whether the load callback has been called
+       * __vm_l: set by onload attribute, whether the element was loaded
+       * __vm_ev: whether the event listener was added or not
+       */
+      if (element.__vm_cb) {
+        continue
+      }
+
+      const onload = () => {
+        /* Mark that the callback for this element has already been called,
+         * this prevents the callback to run twice in some (rare) conditions
+         */
+        element.__vm_cb = true
+
+        /* onload needs to be removed because we only need the
+         * attribute after ssr and if we dont remove it the node
+         * will fail isEqualNode on the client
+         */
+        element.removeAttribute('onload')
+
         callback(element)
-      })
+      }
+
+      /* IE9 doesnt seem to load scripts synchronously,
+       * causing a script sometimes/often already to be loaded
+       * when we add the event listener below (thus adding an onload event
+       * listener has no use because it will never be triggered).
+       * Therefore we add the onload attribute during ssr, and
+       * check here if it was already loaded or not
+       */
+      if (element.__vm_l) {
+        onload()
+        continue
+      }
+
+      if (!element.__vm_ev) {
+        element.__vm_ev = true
+
+        element.addEventListener('load', onload)
+      }
     }
   }
 }
