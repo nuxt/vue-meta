@@ -2,6 +2,7 @@ import path from 'path'
 import fs from 'fs-extra'
 import { template } from 'lodash'
 import webpack from 'webpack'
+import CopyWebpackPlugin from 'copy-webpack-plugin'
 import VueLoaderPlugin from 'vue-loader/lib/plugin'
 import { createRenderer } from 'vue-server-renderer'
 
@@ -50,7 +51,9 @@ export async function buildFixture (fixture, config = {}) {
   const templateFile = await fs.readFile(path.resolve(fixturePath, '..', 'app.template.html'), { encoding: 'utf8' })
   const compiled = template(templateFile, { interpolate: /{{([\s\S]+?)}}/g })
 
-  const webpackAssets = webpackStats.assets.reduce((s, asset) => `${s}<script src="./${asset.name}"${asset.name.includes('chunk') ? '' : ' defer'}></script>\n`, '')
+  const webpackAssets = webpackStats.assets
+    .filter(asset => !asset.name.includes('load-test'))
+    .reduce((s, asset) => `${s}<script src="./${asset.name}"${asset.name.includes('chunk') ? '' : ' defer'}></script>\n`, '')
   const app = await renderer.renderToString(vueApp)
   // !!! run inject after renderToString !!!
   const metaInfo = vueApp.$meta().inject()
@@ -125,7 +128,10 @@ export function createWebpackConfig (config = {}) {
           // make sure our simple polyfills are enabled
           'NODE_ENV': '"test"'
         }
-      })
+      }),
+      new CopyWebpackPlugin([
+        { from: path.join(path.dirname(config.entry), 'static') }
+      ])
     ],
     resolve: {
       alias: {

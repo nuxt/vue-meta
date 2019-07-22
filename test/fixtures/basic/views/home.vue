@@ -24,7 +24,8 @@ export default {
       ],
       script: [
         { vmid: 'ldjson', innerHTML: '{ "@context": "http://www.schema.org", "@type": "Organization" }', type: 'application/ld+json' },
-        { innerHTML: '{ "more": "data" }', type: 'application/ld+json' }
+        { innerHTML: '{ "more": "data" }', type: 'application/ld+json' },
+        { vmid: 'loadtest', src: '/load-test.js', async: true, callback: () => (window.loadCallback = 'yes') }
       ],
       noscript: [
         { innerHTML: '{ "pbody": "yes" }', pbody: true, type: 'application/ld+json' },

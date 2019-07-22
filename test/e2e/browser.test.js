@@ -22,7 +22,9 @@ describe(browserString, () => {
     }
 
     browser = await createBrowser(browserString, {
-      folder,
+      staticServer: {
+        folder
+      },
       extendPage (page) {
         return {
           async navigate (path) {
@@ -58,6 +60,8 @@ describe(browserString, () => {
         }
       }
     })
+
+    // browser.setLogLevel(['warn', 'error', 'log', 'info'])
   })
 
   afterAll(async () => {
@@ -94,6 +98,14 @@ describe(browserString, () => {
 
     expect(await page.getElementCount('body noscript:first-child')).toBe(1)
     expect(await page.getElementCount('body noscript:last-child')).toBe(1)
+
+    expect(await page.runScript(() => {
+      return window.loadTest
+    })).toBe('loaded')
+
+    expect(await page.runScript(() => {
+      return window.loadCallback
+    })).toBe('yes')
   })
 
   test('/about', async () => {
