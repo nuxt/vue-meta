@@ -94,6 +94,7 @@
     "esm": "^3.2.25",
     "fs-extra": "^8.1.0",
     "geckodriver": "^1.16.2",
+    "get-port": "^5.0.0",
     "is-wsl": "^2.1.0",
     "jest": "^24.8.0",
     "jest-environment-jsdom": "^24.8.0",

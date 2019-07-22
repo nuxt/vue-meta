@@ -5,6 +5,7 @@ import fs from 'fs'
 import path from 'path'
 import env from 'node-env-file'
 import { createBrowser } from 'tib'
+import { getPort } from '../utils/build'
 
 const browserString = process.env.BROWSER_STRING || 'puppeteer/core'
 
@@ -21,15 +22,16 @@ describe(browserString, () => {
       }
     }
 
+    const port = await getPort()
+
     browser = await createBrowser(browserString, {
+      folder,
       staticServer: {
-        folder
+        port
       },
       extendPage (page) {
         return {
           async navigate (path) {
-            // IMPORTANT: use (arrow) function with block'ed body
-            // see: https://github.com/tunnckoCoreLabs/parse-function/issues/179
             await page.runAsyncScript((path) => {
               return new Promise((resolve) => {
                 const oldTitle = document.title
