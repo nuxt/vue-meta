@@ -27,6 +27,7 @@ describe(browserString, () => {
     browser = await createBrowser(browserString, {
       folder,
       staticServer: {
+        folder,
         port
       },
       extendPage (page) {
