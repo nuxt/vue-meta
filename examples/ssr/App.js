@@ -46,14 +46,13 @@ export default function createApp () {
             hid: 'my-async-script-with-load-callback',
             src: '/user-1.js',
             body: true,
-            async: true,
-            callback: () => this.loadCallback()
+            defer: true,
+            callback: this.loadCallback
           }, {
             skip: this.count < 1,
             src: '/user-2.js',
             body: true,
-            async: true,
-            callback: () => this.loadCallback()
+            callback: this.loadCallback
           }
         ],
         __dangerouslyDisableSanitizersByTagID: {
@@ -79,8 +78,11 @@ export default function createApp () {
       <p>{{ count }} users loaded</p>
 
       <ul>
-        <li v-for="({id, name}) in users">
-        {{ id }}: {{ name }}
+        <li
+          v-for="user in users"
+          :key="user.id"
+        >
+        {{ user.id }}: {{ user.name }}
         </li>
       </ul>
     </div>`

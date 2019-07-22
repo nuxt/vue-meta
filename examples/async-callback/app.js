@@ -29,7 +29,7 @@ new Vue({
           vmid: 'meat',
           src: '/user-1.js',
           async: true,
-          callback: el => this.loadCallback(el.dataset.vmid)
+          callback: el => this.loadCallback(el.getAttribute('data-vmid'))
         },
         ...this.scripts
       ]
@@ -76,10 +76,10 @@ new Vue({
         <h2>Users</h2>
         <ul>
           <li
-            v-for="({ id, name }) in users"
-            :key="id"
+            v-for="user in users"
+            :key="user.id"
           >
-          <strong>{{ id }}</strong>: {{ name }}
+          <strong>{{ user.id }}</strong>: {{ user.name }}
           </li>
         </ul>
       </div>

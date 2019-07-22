@@ -31,7 +31,22 @@ export default {
   },
   module: {
     rules: [
-      { test: /\.js$/, exclude: /node_modules/, use: 'babel-loader' },
+      {
+        test: /\.js$/,
+        exclude: /node_modules/,
+        use: {
+          loader: 'babel-loader',
+          options: {
+            presets: [
+              ['@babel/preset-env', {
+                useBuiltIns: 'usage',
+                corejs: '2',
+                targets: { ie: 9, safari: '5.1' }
+              }]
+            ]
+          }
+        }
+      },
       { test: /\.vue$/, use: 'vue-loader' }
     ]
   },
