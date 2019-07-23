@@ -13,7 +13,7 @@ import {
  * @param  {(Array<Object>|Object)} tags - an array of tag objects or a single object in case of base
  * @return {Object} - the tag generator
  */
-export default function tagGenerator ({ ssrAppId, attribute, tagIDKeyName, loadCallbackAttribute } = {}, type, tags) {
+export default function tagGenerator ({ ssrAppId, attribute, tagIDKeyName } = {}, type, tags) {
   const dataAttributes = [tagIDKeyName, 'callback', ...commonDataAttributes]
 
   return {
@@ -50,7 +50,6 @@ export default function tagGenerator ({ ssrAppId, attribute, tagIDKeyName, loadC
           }
 
           if (attr === 'callback') {
-            // attrs += ` ${prefix}${loadCallbackAttribute}="1"`
             attrs += ` onload="this.__vm_l=1"`
             continue
           }

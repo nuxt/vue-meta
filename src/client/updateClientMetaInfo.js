@@ -11,7 +11,7 @@ import { updateAttribute, updateTag, updateTitle } from './updaters'
  * @param  {Object} newInfo - the meta info to update to
  */
 export default function updateClientMetaInfo (appId, options = {}, newInfo) {
-  const { ssrAttribute, ssrAppId, loadCallbackAttribute } = options
+  const { ssrAttribute, ssrAppId } = options
 
   // only cache tags for current update
   const tags = {}
@@ -32,7 +32,7 @@ export default function updateClientMetaInfo (appId, options = {}, newInfo) {
     }
 
     if (addLoadListeners) {
-      addListeners(loadCallbackAttribute)
+      addListeners()
     }
 
     return false

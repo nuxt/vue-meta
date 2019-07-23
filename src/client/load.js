@@ -1,11 +1,11 @@
 const callbacks = []
 
-export function isDOMLoaded () {
-  return document.readyState !== 'loading'
+export function isDOMLoaded (d = document) {
+  return d.readyState !== 'loading'
 }
 
-export function isDOMComplete () {
-  return document.readyState === 'complete'
+export function isDOMComplete (d = document) {
+  return d.readyState === 'complete'
 }
 
 export function waitDOMLoaded () {
@@ -25,7 +25,7 @@ export function addCallback (query, callback) {
   callbacks.push([ query, callback ])
 }
 
-export function addCallbacks ({ tagIDKeyName, loadCallbackAttribute }, type, tags, autoAddListeners) {
+export function addCallbacks ({ tagIDKeyName }, type, tags, autoAddListeners) {
   let hasAsyncCallback = false
 
   for (const tag of tags) {
@@ -41,22 +41,23 @@ export function addCallbacks ({ tagIDKeyName, loadCallbackAttribute }, type, tag
     return hasAsyncCallback
   }
 
-  return addListeners(loadCallbackAttribute)
+  return addListeners()
 }
 
-export function addListeners (dataAttributeName) {
+export function addListeners () {
   if (isDOMComplete()) {
-    applyCallbacks(dataAttributeName)
+    applyCallbacks()
     return
   }
 
   // Instead of using a MutationObserver, we just apply
+  /* istanbul ignore next */
   document.onreadystatechange = () => {
-    applyCallbacks(dataAttributeName)
+    applyCallbacks()
   }
 }
 
-export function applyCallbacks (dataAttributeName, matchElement) {
+export function applyCallbacks (matchElement) {
   for (const [query, callback] of callbacks) {
     const selector = `${query}[onload="this.__vm_l=1"]`
 
