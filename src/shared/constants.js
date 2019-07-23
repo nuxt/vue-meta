@@ -140,6 +140,3 @@ export const booleanHtmlAttributes = [
   'typemustmatch',
   'visible'
 ]
-
-// eslint-disable-next-line no-console
-export const showWarningNotSupported = () => console.warn('This vue app/component has no vue-meta configuration')

@@ -1,3 +1,5 @@
+import { toArray } from '../utils/array'
+
 const callbacks = []
 
 export function isDOMLoaded (d = document) {
@@ -63,7 +65,7 @@ export function applyCallbacks (matchElement) {
 
     let elements = []
     if (!matchElement) {
-      elements = Array.from(document.querySelectorAll(selector))
+      elements = toArray(document.querySelectorAll(selector))
     }
 
     if (matchElement && matchElement.matches(selector)) {

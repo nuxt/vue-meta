@@ -1,4 +1,4 @@
-import { showWarningNotSupported } from '../shared/constants'
+import { showWarningNotSupported } from '../shared/log'
 import { getOptions } from '../shared/options'
 import { pause, resume } from '../shared/pausing'
 import refresh from './refresh'
