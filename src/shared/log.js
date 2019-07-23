@@ -5,6 +5,7 @@ const _global = hasGlobalWindow ? window : global
 const console = (_global.console = _global.console || {})
 
 export function warn (...args) {
+  /* istanbul ignore next */
   if (!console || !console.warn) {
     return
   }
