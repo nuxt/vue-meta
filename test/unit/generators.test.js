@@ -3,8 +3,6 @@ import { defaultOptions } from '../../src/shared/constants'
 import metaInfoData from '../utils/meta-info-data'
 import { titleGenerator } from '../../src/server/generators'
 
-defaultOptions.ssrAppId = 'test'
-
 const generateServerInjector = (type, data) => _generateServerInjector(defaultOptions, type, data)
 
 describe('generators', () => {
@@ -88,7 +86,7 @@ describe('extra tests', () => {
 
     expect(scriptTags.text()).toBe('')
     expect(scriptTags.text({ body: true })).toBe('')
-    expect(scriptTags.text({ pbody: true })).toBe('<script data-vue-meta="test" src="/script.js" data-pbody="true"></script>')
+    expect(scriptTags.text({ pbody: true })).toBe('<script data-vue-meta="ssr" src="/script.js" data-pbody="true"></script>')
   })
 
   test('script append body', () => {
@@ -96,7 +94,7 @@ describe('extra tests', () => {
     const scriptTags = generateServerInjector('script', tags)
 
     expect(scriptTags.text()).toBe('')
-    expect(scriptTags.text({ body: true })).toBe('<script data-vue-meta="test" src="/script.js" data-body="true"></script>')
+    expect(scriptTags.text({ body: true })).toBe('<script data-vue-meta="ssr" src="/script.js" data-body="true"></script>')
     expect(scriptTags.text({ pbody: true })).toBe('')
   })
 })

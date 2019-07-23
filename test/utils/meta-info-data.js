@@ -26,11 +26,11 @@ const metaInfoData = {
   base: {
     add: {
       data: [{ href: 'href' }],
-      expect: ['<base data-vue-meta="test" href="href">']
+      expect: ['<base data-vue-meta="ssr" href="href">']
     },
     change: {
       data: [{ href: 'href2' }],
-      expect: ['<base data-vue-meta="test" href="href2">']
+      expect: ['<base data-vue-meta="ssr" href="href2">']
     },
     remove: {
       data: [],
@@ -41,8 +41,8 @@ const metaInfoData = {
     add: {
       data: [{ charset: 'utf-8' }, { property: 'a', content: 'a' }],
       expect: [
-        '<meta data-vue-meta="test" charset="utf-8">',
-        '<meta data-vue-meta="test" property="a" content="a">'
+        '<meta data-vue-meta="ssr" charset="utf-8">',
+        '<meta data-vue-meta="ssr" property="a" content="a">'
       ]
     },
     change: {
@@ -51,8 +51,8 @@ const metaInfoData = {
         { property: 'a', content: 'b' }
       ],
       expect: [
-        '<meta data-vue-meta="test" charset="utf-16">',
-        '<meta data-vue-meta="test" property="a" content="b">'
+        '<meta data-vue-meta="ssr" charset="utf-16">',
+        '<meta data-vue-meta="ssr" property="a" content="b">'
       ]
     },
     // make sure elements that already exists are not unnecessarily updated
@@ -62,8 +62,8 @@ const metaInfoData = {
         { property: 'a', content: 'c' }
       ],
       expect: [
-        '<meta data-vue-meta="test" charset="utf-16">',
-        '<meta data-vue-meta="test" property="a" content="c">'
+        '<meta data-vue-meta="ssr" charset="utf-16">',
+        '<meta data-vue-meta="ssr" property="a" content="c">'
       ],
       test (side, defaultTest) {
         if (side === 'client') {
@@ -85,11 +85,11 @@ const metaInfoData = {
   link: {
     add: {
       data: [{ rel: 'stylesheet', href: 'href' }],
-      expect: ['<link data-vue-meta="test" rel="stylesheet" href="href">']
+      expect: ['<link data-vue-meta="ssr" rel="stylesheet" href="href">']
     },
     change: {
       data: [{ rel: 'stylesheet', href: 'href', media: 'screen' }],
-      expect: ['<link data-vue-meta="test" rel="stylesheet" href="href" media="screen">']
+      expect: ['<link data-vue-meta="ssr" rel="stylesheet" href="href" media="screen">']
     },
     remove: {
       data: [],
@@ -99,11 +99,11 @@ const metaInfoData = {
   style: {
     add: {
       data: [{ type: 'text/css', cssText: '.foo { color: red; }' }],
-      expect: ['<style data-vue-meta="test" type="text/css">.foo { color: red; }</style>']
+      expect: ['<style data-vue-meta="ssr" type="text/css">.foo { color: red; }</style>']
     },
     change: {
       data: [{ type: 'text/css', cssText: '.foo { color: blue; }' }],
-      expect: ['<style data-vue-meta="test" type="text/css">.foo { color: blue; }</style>']
+      expect: ['<style data-vue-meta="ssr" type="text/css">.foo { color: blue; }</style>']
     },
     remove: {
       data: [],
@@ -113,20 +113,22 @@ const metaInfoData = {
   script: {
     add: {
       data: [
-        { src: 'src', async: false, defer: true, [defaultOptions.tagIDKeyName]: 'content' },
+        { src: 'src1', async: false, defer: true, [defaultOptions.tagIDKeyName]: 'content', callback: () => {} },
         { src: 'src-prepend', async: true, defer: false, pbody: true },
-        { src: 'src', async: false, defer: true, body: true }
+        { src: 'src2', async: false, defer: true, body: true },
+        { src: 'src3', async: false, skip: true }
       ],
       expect: [
-        '<script data-vue-meta="test" src="src" defer data-vmid="content"></script>',
-        '<script data-vue-meta="test" src="src-prepend" async data-pbody="true"></script>',
-        '<script data-vue-meta="test" src="src" defer data-body="true"></script>'
+        '<script data-vue-meta="ssr" src="src1" defer data-vmid="content" onload="this.__vm_l=1"></script>',
+        '<script data-vue-meta="ssr" src="src-prepend" async data-pbody="true"></script>',
+        '<script data-vue-meta="ssr" src="src2" defer data-body="true"></script>'
       ],
       test (side, defaultTest) {
         return () => {
           if (side === 'client') {
             for (const index in this.expect) {
               this.expect[index] = this.expect[index].replace(/(async|defer)/g, '$1=""')
+              this.expect[index] = this.expect[index].replace(/ onload="this.__vm_l=1"/, '')
             }
             const tags = defaultTest()
 
@@ -150,7 +152,7 @@ const metaInfoData = {
     // this test only runs for client so we can directly expect wrong boolean attributes
     change: {
       data: [{ src: 'src', async: true, defer: true, [defaultOptions.tagIDKeyName]: 'content2' }],
-      expect: ['<script data-vue-meta="test" src="src" async="" defer="" data-vmid="content2"></script>']
+      expect: ['<script data-vue-meta="ssr" src="src" async="" defer="" data-vmid="content2"></script>']
     },
     remove: {
       data: [],
@@ -160,11 +162,11 @@ const metaInfoData = {
   noscript: {
     add: {
       data: [{ innerHTML: '<p>noscript</p>' }],
-      expect: ['<noscript data-vue-meta="test"><p>noscript</p></noscript>']
+      expect: ['<noscript data-vue-meta="ssr"><p>noscript</p></noscript>']
     },
     change: {
       data: [{ innerHTML: '<p>noscript, no really</p>' }],
-      expect: ['<noscript data-vue-meta="test"><p>noscript, no really</p></noscript>']
+      expect: ['<noscript data-vue-meta="ssr"><p>noscript, no really</p></noscript>']
     },
     remove: {
       data: [],

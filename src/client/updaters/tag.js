@@ -46,7 +46,8 @@ export default function updateTag (appId, options = {}, type, tags, head, body) 
       newElement.setAttribute(attribute, appId)
 
       for (const attr in tag) {
-        if (!tag.hasOwnProperty(attr) || attr === 'skip') {
+        /* istanbul ignore next */
+        if (!tag.hasOwnProperty(attr)) {
           continue
         }
 
