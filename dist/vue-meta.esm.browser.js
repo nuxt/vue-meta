@@ -1,5 +1,5 @@
 /**
- * vue-meta v2.0.5
+ * vue-meta v2.1.0
  * (c) 2019
  * - Declan de Wet
  * - Sébastien Chopin (@Atinux)
@@ -9,7 +9,7 @@
 
 import deepmerge from 'deepmerge';
 
-var version = "2.0.5";
+var version = "2.1.0";
 
 // store an id to keep track of DOM updates
 let batchId = null;
@@ -60,6 +60,10 @@ function isUndefined (arg) {
 
 function isObject (arg) {
   return typeof arg === 'object'
+}
+
+function isPureObject (arg) {
+  return typeof arg === 'object' && arg !== null
 }
 
 function isFunction (arg) {
@@ -122,6 +126,31 @@ function addNavGuards (vm) {
   });
 }
 
+function hasGlobalWindowFn () {
+  try {
+    return !isUndefined(window)
+  } catch (e) {
+    return false
+  }
+}
+
+const hasGlobalWindow = hasGlobalWindowFn();
+
+const _global = hasGlobalWindow ? window : global;
+
+const console = (_global.console = _global.console || {});
+
+function warn (...args) {
+  /* istanbul ignore next */
+  if (!console || !console.warn) {
+    return
+  }
+
+  console.warn(...args);
+}
+
+const showWarningNotSupported = () => warn('This vue app/component has no vue-meta configuration');
+
 let appId = 1;
 
 function createMixin (Vue, options) {
@@ -136,7 +165,7 @@ function createMixin (Vue, options) {
         get () {
           // Show deprecation warning once when devtools enabled
           if (Vue.config.devtools && !this.$root._vueMeta.hasMetaInfoDeprecationWarningShown) {
-            console.warn('VueMeta DeprecationWarning: _hasMetaInfo has been deprecated and will be removed in a future version. Please use hasMetaInfo(vm) instead'); // eslint-disable-line no-console
+            warn('VueMeta DeprecationWarning: _hasMetaInfo has been deprecated and will be removed in a future version. Please use hasMetaInfo(vm) instead');
             this.$root._vueMeta.hasMetaInfoDeprecationWarningShown = true;
           }
           return hasMetaInfo(this)
@@ -198,7 +227,7 @@ function createMixin (Vue, options) {
               // if this Vue-app was server rendered, set the appId to 'ssr'
               // only one SSR app per page is supported
               if (this.$root.$el && this.$root.$el.hasAttribute && this.$root.$el.hasAttribute('data-server-rendered')) {
-                this.$root._vueMeta.appId = 'ssr';
+                this.$root._vueMeta.appId = options.ssrAppId;
               }
             });
 
@@ -320,13 +349,17 @@ const metaTemplateKeyName = 'template';
 // This is the key name for the content-holding property
 const contentKeyName = 'content';
 
+// The id used for the ssr app
+const ssrAppId = 'ssr';
+
 const defaultOptions = {
   keyName,
   attribute,
   ssrAttribute,
   tagIDKeyName,
   contentKeyName,
-  metaTemplateKeyName
+  metaTemplateKeyName,
+  ssrAppId
 };
 
 // List of metaInfo property keys which are configuration options (and dont generate html)
@@ -350,6 +383,12 @@ const metaInfoAttributeKeys = [
   'headAttrs',
   'bodyAttrs'
 ];
+
+// HTML elements which support the onload event
+const tagsSupportingOnload = ['link', 'style', 'script'];
+
+// Attributes which should be added with data- prefix
+const commonDataAttributes = ['body', 'pbody'];
 
 // from: https://github.com/kangax/html-minifier/blob/gh-pages/src/htmlminifier.js#L202
 const booleanHtmlAttributes = [
@@ -396,9 +435,6 @@ const booleanHtmlAttributes = [
   'typemustmatch',
   'visible'
 ];
-
-// eslint-disable-next-line no-console
-const showWarningNotSupported = () => console.warn('This vue app/component has no vue-meta configuration');
 
 function setOptions (options) {
   // combine options
@@ -489,7 +525,7 @@ const clientSequences = [
 // sanitizes potentially dangerous characters
 function escape (info, options, escapeOptions) {
   const { tagIDKeyName } = options;
-  const { doEscape = v => v } = escapeOptions;
+  const { doEscape = v => v, escapeKeys } = escapeOptions;
   const escaped = {};
 
   for (const key in info) {
@@ -523,14 +559,24 @@ function escape (info, options, escapeOptions) {
       escaped[key] = doEscape(value);
     } else if (isArray(value)) {
       escaped[key] = value.map((v) => {
-        return isObject(v)
-          ? escape(v, options, escapeOptions)
-          : doEscape(v)
+        if (isPureObject(v)) {
+          return escape(v, options, { ...escapeOptions, escapeKeys: true })
+        }
+
+        return doEscape(v)
       });
-    } else if (isObject(value)) {
-      escaped[key] = escape(value, options, escapeOptions);
+    } else if (isPureObject(value)) {
+      escaped[key] = escape(value, options, { ...escapeOptions, escapeKeys: true });
     } else {
       escaped[key] = value;
+    }
+
+    if (escapeKeys) {
+      const escapedKey = doEscape(key);
+      if (key !== escapedKey) {
+        escaped[escapedKey] = escaped[key];
+        delete escaped[key];
+      }
     }
   }
 
@@ -614,9 +660,8 @@ function merge (target, source, options = {}) {
 
     for (const key in source[attrKey]) {
       if (source[attrKey].hasOwnProperty(key) && source[attrKey][key] === undefined) {
-        if (booleanHtmlAttributes.includes(key)) {
-          // eslint-disable-next-line no-console
-          console.warn('VueMeta: Please note that since v2 the value undefined is not used to indicate boolean attributes anymore, see migration guide for details');
+        if (includes(booleanHtmlAttributes, key)) {
+          warn('VueMeta: Please note that since v2 the value undefined is not used to indicate boolean attributes anymore, see migration guide for details');
         }
         delete source[attrKey][key];
       }
@@ -750,6 +795,141 @@ function getMetaInfo (options = {}, component, escapeSequences = []) {
   return info
 }
 
+function getTag (tags, tag) {
+  if (!tags[tag]) {
+    tags[tag] = document.getElementsByTagName(tag)[0];
+  }
+
+  return tags[tag]
+}
+
+function getElementsKey ({ body, pbody }) {
+  return body
+    ? 'body'
+    : (pbody ? 'pbody' : 'head')
+}
+
+function queryElements (parentNode, { appId, attribute, type, tagIDKeyName }, attributes = {}) {
+  const queries = [
+    `${type}[${attribute}="${appId}"]`,
+    `${type}[data-${tagIDKeyName}]`
+  ].map((query) => {
+    for (const key in attributes) {
+      const val = attributes[key];
+      const attributeValue = val && val !== true ? `="${val}"` : '';
+      query += `[data-${key}${attributeValue}]`;
+    }
+    return query
+  });
+
+  return toArray(parentNode.querySelectorAll(queries.join(', ')))
+}
+
+const callbacks = [];
+
+function isDOMComplete (d = document) {
+  return d.readyState === 'complete'
+}
+
+function addCallback (query, callback) {
+  if (arguments.length === 1) {
+    callback = query;
+    query = '';
+  }
+
+  callbacks.push([ query, callback ]);
+}
+
+function addCallbacks ({ tagIDKeyName }, type, tags, autoAddListeners) {
+  let hasAsyncCallback = false;
+
+  for (const tag of tags) {
+    if (!tag[tagIDKeyName] || !tag.callback) {
+      continue
+    }
+
+    hasAsyncCallback = true;
+    addCallback(`${type}[data-${tagIDKeyName}="${tag[tagIDKeyName]}"]`, tag.callback);
+  }
+
+  if (!autoAddListeners || !hasAsyncCallback) {
+    return hasAsyncCallback
+  }
+
+  return addListeners()
+}
+
+function addListeners () {
+  if (isDOMComplete()) {
+    applyCallbacks();
+    return
+  }
+
+  // Instead of using a MutationObserver, we just apply
+  /* istanbul ignore next */
+  document.onreadystatechange = () => {
+    applyCallbacks();
+  };
+}
+
+function applyCallbacks (matchElement) {
+  for (const [query, callback] of callbacks) {
+    const selector = `${query}[onload="this.__vm_l=1"]`;
+
+    let elements = [];
+    if (!matchElement) {
+      elements = toArray(document.querySelectorAll(selector));
+    }
+
+    if (matchElement && matchElement.matches(selector)) {
+      elements = [matchElement];
+    }
+
+    for (const element of elements) {
+      /* __vm_cb: whether the load callback has been called
+       * __vm_l: set by onload attribute, whether the element was loaded
+       * __vm_ev: whether the event listener was added or not
+       */
+      if (element.__vm_cb) {
+        continue
+      }
+
+      const onload = () => {
+        /* Mark that the callback for this element has already been called,
+         * this prevents the callback to run twice in some (rare) conditions
+         */
+        element.__vm_cb = true;
+
+        /* onload needs to be removed because we only need the
+         * attribute after ssr and if we dont remove it the node
+         * will fail isEqualNode on the client
+         */
+        element.removeAttribute('onload');
+
+        callback(element);
+      };
+
+      /* IE9 doesnt seem to load scripts synchronously,
+       * causing a script sometimes/often already to be loaded
+       * when we add the event listener below (thus adding an onload event
+       * listener has no use because it will never be triggered).
+       * Therefore we add the onload attribute during ssr, and
+       * check here if it was already loaded or not
+       */
+      if (element.__vm_l) {
+        onload();
+        continue
+      }
+
+      if (!element.__vm_ev) {
+        element.__vm_ev = true;
+
+        element.addEventListener('load', onload);
+      }
+    }
+  }
+}
+
 /**
  * Updates the document's html tag attributes
  *
@@ -799,7 +979,7 @@ function updateAttribute ({ attribute } = {}, attrs, tag) {
  * @param  {String} title - the new title of the document
  */
 function updateTitle (title) {
-  if (title === undefined) {
+  if (!title && title !== '') {
     return
   }
 
@@ -814,11 +994,18 @@ function updateTitle (title) {
  * @param  {(Array<Object>|Object)} tags - an array of tag objects or a single object in case of base
  * @return {Object} - a representation of what tags changed
  */
-function updateTag (appId, { attribute, tagIDKeyName } = {}, type, tags, headTag, bodyTag) {
-  const oldHeadTags = toArray(headTag.querySelectorAll(`${type}[${attribute}="${appId}"], ${type}[data-${tagIDKeyName}]`));
-  const oldBodyTags = toArray(bodyTag.querySelectorAll(`${type}[${attribute}="${appId}"][data-body="true"], ${type}[data-${tagIDKeyName}][data-body="true"]`));
-  const dataAttributes = [tagIDKeyName, 'body'];
-  const newTags = [];
+function updateTag (appId, options = {}, type, tags, head, body) {
+  const { attribute, tagIDKeyName } = options;
+
+  const dataAttributes = [tagIDKeyName, ...commonDataAttributes];
+  const newElements = [];
+
+  const queryOptions = { appId, attribute, type, tagIDKeyName };
+  const currentElements = {
+    head: queryElements(head, queryOptions),
+    pbody: queryElements(body, queryOptions, { pbody: true }),
+    body: queryElements(body, queryOptions, { body: true })
+  };
 
   if (tags.length > 1) {
     // remove duplicates that could have been found by merging tags
@@ -834,74 +1021,107 @@ function updateTag (appId, { attribute, tagIDKeyName } = {}, type, tags, headTag
   }
 
   if (tags.length) {
-    tags.forEach((tag) => {
-      const newElement = document.createElement(type);
+    for (const tag of tags) {
+      if (tag.skip) {
+        continue
+      }
 
+      const newElement = document.createElement(type);
       newElement.setAttribute(attribute, appId);
 
-      const oldTags = tag.body !== true ? oldHeadTags : oldBodyTags;
-
       for (const attr in tag) {
-        if (tag.hasOwnProperty(attr)) {
-          if (attr === 'innerHTML') {
-            newElement.innerHTML = tag.innerHTML;
-          } else if (attr === 'cssText') {
-            if (newElement.styleSheet) {
-              /* istanbul ignore next */
-              newElement.styleSheet.cssText = tag.cssText;
-            } else {
-              newElement.appendChild(document.createTextNode(tag.cssText));
-            }
-          } else {
-            const _attr = includes(dataAttributes, attr)
-              ? `data-${attr}`
-              : attr;
-
-            const isBooleanAttribute = includes(booleanHtmlAttributes, attr);
-            if (isBooleanAttribute && !tag[attr]) {
-              continue
-            }
-
-            const value = isBooleanAttribute ? '' : tag[attr];
-            newElement.setAttribute(_attr, value);
-          }
+        /* istanbul ignore next */
+        if (!tag.hasOwnProperty(attr)) {
+          continue
         }
+
+        if (attr === 'innerHTML') {
+          newElement.innerHTML = tag.innerHTML;
+          continue
+        }
+
+        if (attr === 'json') {
+          newElement.innerHTML = JSON.stringify(tag.json);
+          continue
+        }
+
+        if (attr === 'cssText') {
+          if (newElement.styleSheet) {
+            /* istanbul ignore next */
+            newElement.styleSheet.cssText = tag.cssText;
+          } else {
+            newElement.appendChild(document.createTextNode(tag.cssText));
+          }
+          continue
+        }
+
+        if (attr === 'callback') {
+          newElement.onload = () => tag[attr](newElement);
+          continue
+        }
+
+        const _attr = includes(dataAttributes, attr)
+          ? `data-${attr}`
+          : attr;
+
+        const isBooleanAttribute = includes(booleanHtmlAttributes, attr);
+        if (isBooleanAttribute && !tag[attr]) {
+          continue
+        }
+
+        const value = isBooleanAttribute ? '' : tag[attr];
+        newElement.setAttribute(_attr, value);
       }
+
+      const oldElements = currentElements[getElementsKey(tag)];
 
       // Remove a duplicate tag from domTagstoRemove, so it isn't cleared.
       let indexToDelete;
-      const hasEqualElement = oldTags.some((existingTag, index) => {
+      const hasEqualElement = oldElements.some((existingTag, index) => {
         indexToDelete = index;
         return newElement.isEqualNode(existingTag)
       });
 
       if (hasEqualElement && (indexToDelete || indexToDelete === 0)) {
-        oldTags.splice(indexToDelete, 1);
+        oldElements.splice(indexToDelete, 1);
       } else {
-        newTags.push(newElement);
+        newElements.push(newElement);
       }
-    });
-  }
-
-  const oldTags = oldHeadTags.concat(oldBodyTags);
-  oldTags.forEach(tag => tag.parentNode.removeChild(tag));
-  newTags.forEach((tag) => {
-    if (tag.getAttribute('data-body') === 'true') {
-      bodyTag.appendChild(tag);
-    } else {
-      headTag.appendChild(tag);
     }
-  });
-
-  return { oldTags, newTags }
-}
-
-function getTag (tags, tag) {
-  if (!tags[tag]) {
-    tags[tag] = document.getElementsByTagName(tag)[0];
   }
 
-  return tags[tag]
+  let oldElements = [];
+  for (const current of Object.values(currentElements)) {
+    oldElements = [
+      ...oldElements,
+      ...current
+    ];
+  }
+
+  // remove old elements
+  for (const element of oldElements) {
+    element.parentNode.removeChild(element);
+  }
+
+  // insert new elements
+  for (const element of newElements) {
+    if (element.hasAttribute('data-body')) {
+      body.appendChild(element);
+      continue
+    }
+
+    if (element.hasAttribute('data-pbody')) {
+      body.insertBefore(element, body.firstChild);
+      continue
+    }
+
+    head.appendChild(element);
+  }
+
+  return {
+    oldTags: oldElements,
+    newTags: newElements
+  }
 }
 
 /**
@@ -910,7 +1130,7 @@ function getTag (tags, tag) {
  * @param  {Object} newInfo - the meta info to update to
  */
 function updateClientMetaInfo (appId, options = {}, newInfo) {
-  const { ssrAttribute } = options;
+  const { ssrAttribute, ssrAppId } = options;
 
   // only cache tags for current update
   const tags = {};
@@ -918,9 +1138,22 @@ function updateClientMetaInfo (appId, options = {}, newInfo) {
   const htmlTag = getTag(tags, 'html');
 
   // if this is a server render, then dont update
-  if (appId === 'ssr' && htmlTag.hasAttribute(ssrAttribute)) {
+  if (appId === ssrAppId && htmlTag.hasAttribute(ssrAttribute)) {
     // remove the server render attribute so we can update on (next) changes
     htmlTag.removeAttribute(ssrAttribute);
+
+    // add load callbacks if the
+    let addLoadListeners = false;
+    for (const type of tagsSupportingOnload) {
+      if (newInfo[type] && addCallbacks(options, type, newInfo[type])) {
+        addLoadListeners = true;
+      }
+    }
+
+    if (addLoadListeners) {
+      addListeners();
+    }
+
     return false
   }
 
