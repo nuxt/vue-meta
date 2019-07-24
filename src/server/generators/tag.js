@@ -62,8 +62,13 @@ export default function tagGenerator ({ ssrAppId, attribute, tagIDKeyName } = {}
           attrs += ` ${prefix}${attr}` + (isBooleanAttr ? '' : `="${tag[attr]}"`)
         }
 
+        let json = ''
+        if (tag.json) {
+          json = JSON.stringify(tag.json)
+        }
+
         // grab child content from one of these attributes, if possible
-        const content = tag.innerHTML || tag.cssText || ''
+        const content = tag.innerHTML || tag.cssText || json
 
         // generate tag exactly without any other redundant attribute
 

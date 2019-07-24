@@ -56,6 +56,11 @@ export default function updateTag (appId, options = {}, type, tags, head, body) 
           continue
         }
 
+        if (attr === 'json') {
+          newElement.innerHTML = JSON.stringify(tag.json)
+          continue
+        }
+
         if (attr === 'cssText') {
           if (newElement.styleSheet) {
             /* istanbul ignore next */

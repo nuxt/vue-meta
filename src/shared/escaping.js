@@ -21,7 +21,7 @@ export const clientSequences = [
 // sanitizes potentially dangerous characters
 export function escape (info, options, escapeOptions) {
   const { tagIDKeyName } = options
-  const { doEscape = v => v } = escapeOptions
+  const { doEscape = v => v, escapeKeys } = escapeOptions
   const escaped = {}
 
   for (const key in info) {
@@ -55,14 +55,24 @@ export function escape (info, options, escapeOptions) {
       escaped[key] = doEscape(value)
     } else if (isArray(value)) {
       escaped[key] = value.map((v) => {
-        return isPureObject(v)
-          ? escape(v, options, escapeOptions)
-          : doEscape(v)
+        if (isPureObject(v)) {
+          return escape(v, options, { ...escapeOptions, escapeKeys: true })
+        }
+
+        return doEscape(v)
       })
     } else if (isPureObject(value)) {
-      escaped[key] = escape(value, options, escapeOptions)
+      escaped[key] = escape(value, options, { ...escapeOptions, escapeKeys: true })
     } else {
       escaped[key] = value
+    }
+
+    if (escapeKeys) {
+      const escapedKey = doEscape(key)
+      if (key !== escapedKey) {
+        escaped[escapedKey] = escaped[key]
+        delete escaped[key]
+      }
     }
   }
 
