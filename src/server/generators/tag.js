@@ -23,7 +23,7 @@ export default function tagGenerator ({ ssrAppId, attribute, tagIDKeyName } = {}
         if (tag.skip) {
           return tagsStr
         }
-  
+
         const tagKeys = Object.keys(tag)
 
         if (tagKeys.length === 0) {

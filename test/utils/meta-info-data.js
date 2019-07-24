@@ -119,11 +119,11 @@ const metaInfoData = {
         { src: 'src3', async: false, skip: true },
         { type: 'application/ld+json',
           json: {
-            "@context": "http://schema.org",
-            "@type" : "Organization",
-            "name" : "MyApp",
-            "url" : "https://www.myurl.com",
-            "logo": "https://www.myurl.com/images/logo.png",
+            '@context': 'http://schema.org',
+            '@type': 'Organization',
+            'name': 'MyApp',
+            'url': 'https://www.myurl.com',
+            'logo': 'https://www.myurl.com/images/logo.png'
           }
         }
       ],
