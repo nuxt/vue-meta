@@ -90,7 +90,7 @@ export const tagsWithoutEndTag = ['base', 'meta', 'link']
 export const tagsWithInnerContent = ['noscript', 'script', 'style']
 
 // Attributes which are inserted as childNodes instead of HTMLAttribute
-export const tagAttributeAsInnerContent = ['innerHTML', 'cssText']
+export const tagAttributeAsInnerContent = ['innerHTML', 'cssText', 'json']
 
 // Attributes which should be added with data- prefix
 export const commonDataAttributes = ['body', 'pbody']

@@ -1,6 +1,7 @@
 import _getMetaInfo from '../../src/shared/getMetaInfo'
 import { loadVueMetaPlugin } from '../utils'
 import { defaultOptions } from '../../src/shared/constants'
+import { serverSequences } from '../../src/shared/escaping'
 
 const getMetaInfo = (component, escapeSequences) => _getMetaInfo(defaultOptions, component, escapeSequences)
 
@@ -94,6 +95,45 @@ describe('escaping', () => {
       noscript: [],
       __dangerouslyDisableSanitizers: [],
       __dangerouslyDisableSanitizersByTagID: { noscape: ['innerHTML'] }
+    })
+  })
+
+  test('json is still safely escaped', () => {
+    const component = new Vue({
+      metaInfo: {
+        script: [
+          {
+            json: {
+              perfectlySave: '</script><p class="unsafe">This is safe</p><script>',
+              '</script>unsafeKey': 'This is also still safe'
+            }
+          }
+        ]
+      }
+    })
+
+    expect(getMetaInfo(component, serverSequences)).toEqual({
+      title: undefined,
+      titleChunk: '',
+      titleTemplate: '%s',
+      htmlAttrs: {},
+      headAttrs: {},
+      bodyAttrs: {},
+      meta: [],
+      base: [],
+      link: [],
+      style: [],
+      script: [
+        {
+          json: {
+            perfectlySave: '&lt;/script&gt;&lt;p class=&quot;unsafe&quot;&gt;This is safe&lt;/p&gt;&lt;script&gt;',
+            '&lt;/script&gt;unsafeKey': 'This is also still safe'
+          }
+        }
+      ],
+      noscript: [],
+      __dangerouslyDisableSanitizers: [],
+      __dangerouslyDisableSanitizersByTagID: {}
     })
   })
 })

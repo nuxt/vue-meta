@@ -116,12 +116,22 @@ const metaInfoData = {
         { src: 'src1', async: false, defer: true, [defaultOptions.tagIDKeyName]: 'content', callback: () => {} },
         { src: 'src-prepend', async: true, defer: false, pbody: true },
         { src: 'src2', async: false, defer: true, body: true },
-        { src: 'src3', async: false, skip: true }
+        { src: 'src3', async: false, skip: true },
+        { type: 'application/ld+json',
+          json: {
+            '@context': 'http://schema.org',
+            '@type': 'Organization',
+            'name': 'MyApp',
+            'url': 'https://www.myurl.com',
+            'logo': 'https://www.myurl.com/images/logo.png'
+          }
+        }
       ],
       expect: [
         '<script data-vue-meta="ssr" src="src1" defer data-vmid="content" onload="this.__vm_l=1"></script>',
         '<script data-vue-meta="ssr" src="src-prepend" async data-pbody="true"></script>',
-        '<script data-vue-meta="ssr" src="src2" defer data-body="true"></script>'
+        '<script data-vue-meta="ssr" src="src2" defer data-body="true"></script>',
+        '<script data-vue-meta="ssr" type="application/ld+json">{"@context":"http://schema.org","@type":"Organization","name":"MyApp","url":"https://www.myurl.com","logo":"https://www.myurl.com/images/logo.png"}</script>'
       ],
       test (side, defaultTest) {
         return () => {
@@ -139,12 +149,13 @@ const metaInfoData = {
             // ssr doesnt generate data-body tags
             const bodyPrepended = this.expect[1]
             const bodyAppended = this.expect[2]
-            this.expect = [this.expect[0]]
+            this.expect = [this.expect.shift(), this.expect.pop()]
 
             const tags = defaultTest()
+            const html = tags.text()
 
-            expect(tags.text()).not.toContain(bodyPrepended)
-            expect(tags.text()).not.toContain(bodyAppended)
+            expect(html).not.toContain(bodyPrepended)
+            expect(html).not.toContain(bodyAppended)
           }
         }
       }
