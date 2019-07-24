@@ -2,11 +2,13 @@ import './vue'
 import Vue, { ComponentOptions, PluginFunction } from 'vue'
 
 type Component = ComponentOptions<Vue> | typeof Vue
+type CallbackFn = () => void
 type elements = HTMLElement[]
 
 export interface VueMetaOptions {
   keyName: string, // the component option name that vue-meta looks for meta info on.
   attribute: string, // the attribute name vue-meta adds to the tags it observes
+  ssrAppId: string, // the app id used for ssr app
   ssrAttribute: string, // the attribute name that lets vue-meta know that meta info has already been server-rendered
   tagIDKeyName: string // the property name that vue-meta uses to determine whether to overwrite or append a tag
   refreshOnceOnNavigation: boolean
@@ -43,6 +45,10 @@ export interface AttributeProperty {
 
 export interface MetaDataProperty {
   vmid?: string,
+  once?: boolean,
+  skip?: boolean,
+  body?: boolean,
+  pbody?: boolean,
   [key: string]: any
 }
 
@@ -75,20 +81,32 @@ export interface MetaPropertyProperty extends MetaDataProperty {
   template?: (chunk: string) => string
 }
 
-export interface LinkProperty extends MetaDataProperty {
+export interface LinkPropertyBase extends MetaDataProperty {
   rel: string,
   crossOrigin?: string | null,
-  href?: string,
-  hreflang?: string,
   media?: string,
   nonce?: string,
   referrerPolicy?: string,
   rev?: string,
-  type?: string,
+  type?: string
+}
+
+export interface LinkPropertyHref extends LinkPropertyBase {
+  href?: string,
+  hreflang?: string,
+  callback?: void
+}
+
+export interface LinkPropertyHrefCallback extends LinkPropertyBase {
+  vmid: string,
+  callback: CallbackFn,
+  href?: string,
+  hreflang?: string
 }
 
 export interface StyleProperty extends MetaDataProperty {
   cssText: string,
+  callback?: CallbackFn
   media?: string,
   nonce?: string,
   type?: string,
@@ -97,7 +115,6 @@ export interface StyleProperty extends MetaDataProperty {
 export interface ScriptPropertyBase extends MetaDataProperty {
   type?: string,
   charset?: string,
-  body?: boolean,
   async?: boolean,
   defer?: boolean,
   crossOrigin?: string,
@@ -105,11 +122,17 @@ export interface ScriptPropertyBase extends MetaDataProperty {
 }
 
 export interface ScriptPropertyText extends ScriptPropertyBase {
-  innerHTML: string,
+  innerHTML: string
 }
 
 export interface ScriptPropertySrc extends ScriptPropertyBase {
   src: string,
+  callback?: void
+}
+
+export interface ScriptPropertySrcCallback extends ScriptPropertyBase {
+  vmid: string,
+  callback: CallbackFn
 }
 
 export interface NoScriptProperty extends MetaDataProperty {
@@ -130,9 +153,9 @@ export interface MetaInfo {
   }
 
   meta?: (MetaPropertyCharset | MetaPropertyEquiv | MetaPropertyName | MetaPropertyMicrodata | MetaPropertyProperty)[]
-  link?: LinkProperty[]
+  link?: (LinkPropertyBase | LinkPropertyHref | LinkPropertyHrefCallback)[]
   style?: StyleProperty[]
-  script?: (ScriptPropertyText | ScriptPropertySrc)[]
+  script?: (ScriptPropertyText | ScriptPropertySrc | ScriptPropertySrcCallback)[]
   noscript?: NoScriptProperty[]
 
   __dangerouslyDisableSanitizers?: string[]
@@ -150,16 +173,25 @@ interface ToText {
   text(): string
 }
 
+interface ToTextBooleanArg {
+  text(addSrrAttribute?: boolean): string
+}
+
 interface ToBodyTextOption {
   body: boolean
 }
+
+interface ToPbodyTextOption {
+  pbody: boolean
+}
+
 interface ToBodyText {
-  text(options?: ToBodyTextOption): string
+  text(options?: (ToBodyTextOption | ToPbodyTextOption)): string
 }
 
 export interface MetaInfoSSR {
   title?: ToText
-  htmlAttrs?: ToText
+  htmlAttrs?: ToTextBooleanArg
   headAttrs?: ToText
   bodyAttrs?: ToText
   base?: ToText
