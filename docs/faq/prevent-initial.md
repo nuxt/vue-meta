@@ -1,9 +1,15 @@
 # How to prevent update on page load
 
-Add the `data-vue-meta-server-rendered` attribute to the `<html>` tag on the server-side:
+In your template call the text method of `htmlAttrs` with `true` as first argument:
+```
+<html {{ htmlAttrs.text(true) }}>
+...
+```
 
-```html
-<html data-vue-meta-server-rendered>
+Or manually add the [`data-vue-meta-server-rendered`](/api/#ssrattribute) attribute to the `<html>` tag on the server-side:
+
+```
+<html data-vue-meta-server-rendered <%= meta.htmlAttrs.text() %>>
 ...
 ```
 

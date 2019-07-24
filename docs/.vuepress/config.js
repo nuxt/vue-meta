@@ -46,6 +46,7 @@ module.exports = {
               '/guide/metainfo',
               '/guide/special',
               '/guide/caveats',
+              '/guide/multiple-apps',
             ]
           },
           {
@@ -57,6 +58,7 @@ module.exports = {
               '/faq/prevent-initial.md',
               '/faq/component-props.md',
               '/faq/async-action.md',
+              '/faq/chaining.md',
             ]
           }
         ]

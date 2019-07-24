@@ -30,7 +30,7 @@ See [How to prevent update on page load](/faq/prevent-initial)
 - type `string`
 - default `ssr`
 
-The app id for a server side rendered app. You shouldnt have to change this normallygit s
+The app id for a server side rendered app. You shouldnt have to change this normally
 
 ### tagIDKeyName
 - type `string`
@@ -88,6 +88,10 @@ Useful when updating metadata as the result of an asynchronous action that resol
 It returns a special `metaInfo` object where all keys have an object as value which contains a `text()` method for returning html code
 
 See [Rendering with renderToString](/guide/ssr.html#simple-rendering-with-rendertostring) for an example
+
+#### Passing arguments to `text()`
+
+In some cases you can pass an argument to the text method. E.g. to [automatically add the ssrAttribute on ssr](/faq/prevent-initial.html) or [render properties in the body](/api/#ssr-support)
 
 ### $meta().pause
 - arguments:
@@ -229,10 +233,12 @@ Since `v1.5.0`, you can now set up meta templates that work similar to the title
     meta: [
       { charset: 'utf-8' },
       {
-        'property': 'og:title',
-        'content': 'Test title',
-        'template': chunk => `${chunk} - My page`, //or as string template: '%s - My page',
-        'vmid': 'og:title'
+        property: 'og:title',
+        content: 'Test title',
+        // following template options are identical
+        // template: '%s - My page',
+        template: chunk => `${chunk} - My page`,
+        vmid: 'og:title'
       }
     ]
   }
@@ -304,7 +310,37 @@ Each item in the array maps to a newly-created `<script>` element, where object 
 <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js" async defer></script>
 ```
 
-#### Add json or other raw data
+#### Add JSON data (since v2.1)
+
+If you wish to use a JSON variable within a script tag (e.g. for JSON-LD), you can directly pass your variable by using the `json` property.
+
+::: tip
+When passing an array or object to the `json` property the keys and values of the variable will still be sanitized to prevent XSS
+:::
+
+```js
+{
+  metaInfo: {
+    script: [{
+      type: 'application/ld+json'
+      json: {
+        '@context': 'http://schema.org',
+        unsafe: '<p>hello</p>'
+      }
+    }]
+  }
+}
+```
+
+```html
+<script type="application/ld+json">
+  { "@context": "http://schema.org", "unsafe": "&lt;p&gt;hello&lt;/p&gt;" }
+</script>
+```
+
+
+#### Add other raw data
+
 ::: warning
 You have to disable sanitizers so the content of `innerHTML` won't be escaped. Please see [__dangerouslyDisableSanitizersByTagID](/api/#dangerouslydisablesanitizersbytagid)  for more info on related risks
 :::
@@ -326,22 +362,6 @@ You have to disable sanitizers so the content of `innerHTML` won't be escaped. P
 
 ```html
 <script type="application/ld+json">{ "@context": "http://schema.org" }</script>
-```
-#### Special attribute: `body: true`
-
-If you e.g. wish to force delayed execution of a script or just want the script to be included in the `<body>` of the page, add `body: true`.
-Script tags with `body: true` are rendered just before `</body>`
-
-```js
-{
-  metaInfo: {
-    script: [{
-      innerHTML: 'console.log("I am in body");',
-      type: 'text/javascript',
-      body: true
-    }]
-  }
-}
 ```
 
 ### noscript
@@ -474,3 +494,118 @@ The callback receives the following arguments:
 }
 
 ```
+
+## Special metaInfo attributes
+
+These attributes define specific features when used in a metaInfo property
+
+### once
+
+When adding a metaInfo property that should be added once without reactivity (thus will never be updated) you can add `once: true` to the property.
+
+```js
+{
+  metaInfo: {
+    link: [{
+      once: true,
+      rel: 'stylesheet'
+      href: 'style.css'
+    }]
+  }
+}
+```
+
+### skip _(since v2.1)_
+
+When a metaInfo property has a `skip` attribute with truthy value it will not be rendered. This attribute helps with e.g. chaining scripts (see [callback attribute](#callback-since-v2-1))
+
+```js
+{
+  metaInfo: {
+    script: [{
+      skip: true,
+      innerHTML: 'console.log("you wont see me")'
+    }]
+  }
+}
+```
+
+### body
+### pbody _(since v2.1)_
+tags
+::: warning
+VueMeta supports the body and pbody attributes on all metaInfo properties, but its up to you or your framework to support these attributes during SSR
+
+Using these body attributes without SSR support could result in hydration errors / re-rendering or missing tags.
+:::
+
+You can filter tags to be included in the `<body>` instead of the `<head>` to e.g. force delayed execution of a script.
+
+Use `pbody: true` if you wish to prepend the tag to the body (so its rendered just after `<body>`) or use `body: true` to append the tag to the body (the tag is rendered just before `</body>`).
+
+```js
+{
+  metaInfo: {
+    script: [{
+      innerHTML: 'console.log("I am in body");',
+      type: 'text/javascript',
+      body: true
+    }]
+  }
+}
+```
+
+#### SSR Support
+
+When rendering your template on SSR make sure to pass an object as first argument to the text method of the metaInfo property with either a value `body: true` or `pbody: true`
+```html
+<head>
+  <!-- render script tags in HEAD, no argument -->
+  ${script.text()}
+</head>
+<body>
+  ${script.text({ pbody: true })}
+
+  <div id="app"></div>
+
+  ${script.text({ body: true })}
+</body>
+```
+
+### callback _(since v2.1)_
+
+:::tip vmid required on SSR
+When using SSR it is required to define a [`vmid`](/api/#tagidkeyname) property for the metaInfo property
+
+The vmid is needed to resolve the corresponding callback for that element on hydration
+:::
+
+The callback attribute should specificy a function which is called once the corresponding tag has been loaded (i.e. the onload event is triggered). Use this to chain javascript if one depends on the other.
+
+```js
+{
+  metaInfo() {
+    return {
+      script: [
+        {
+          vmid: 'extscript',
+          src: '/my-external-script.js',
+          callback: () => (this.externalLoaded = true)
+        },
+        {
+          skip: !this.externalLoaded,
+          innerHTML: `
+            /* this is only added once external script has been loaded */
+            /* and e.g. window.$externalVar exists */
+          `
+        }
+      ]
+    }
+  },
+  data() {
+    return {
+      externalLoaded: false
+    }
+  }
+}
+

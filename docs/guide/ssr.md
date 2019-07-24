@@ -37,7 +37,7 @@ app.get('*', (req, res) => {
     } = context.meta.inject()
     return res.send(`
       <!doctype html>
-      <html data-vue-meta-server-rendered ${htmlAttrs.text()}>
+      <html ${htmlAttrs.text(true)}>
         <head ${headAttrs.text()}>
           ${meta.text()}
           ${title.text()}
@@ -47,10 +47,22 @@ app.get('*', (req, res) => {
           ${noscript.text()}
         </head>
         <body ${bodyAttrs.text()}>
+          <!-- prepended metaInfo properties -->
+          ${style.text({ pbody: true })}
+          ${script.text({ pbody: true })}
+          ${noscript.text({ pbody: true })}
+
+          <!-- app -->
           ${html}
+
+          <!-- webpack assets -->
           <script src="/assets/vendor.bundle.js"></script>
           <script src="/assets/client.bundle.js"></script>
+
+          <!-- appended metaInfo properties -->
+          ${style.text({ body: true })}
           ${script.text({ body: true })}
+          ${noscript.text({ body: true })}
         </body>
       </html>
     `)
@@ -70,7 +82,6 @@ If you are using a separate template file, edit your head tag with
 Notice the use of `{{{` to avoid double escaping. Be extremely cautious when you use `{{{` with [`__dangerouslyDisableSanitizersByTagID`](/api/#dangerouslydisablesanitizersbytagid).
 
 ## Inject metadata into page stream
-
 
 A little more complex, but well worth it, is to instead stream your response. `vue-meta` supports streaming with no effort (on it's part :stuck_out_tongue_winking_eye:) thanks to Vue's clever `bundleRenderer` context injection:
 
