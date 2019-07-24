@@ -19,16 +19,20 @@ const BarMetaInfo: MetaInfo = {
   __dangerouslyDisableSanitizersByTagID: {
     ldjson: ['innerHTML']
   },
-  script: [{
-    src: '', crossorigin: '', async: true
-  }],
+  link: [
+    { vmid: '', rel: '', href: '', callback: () => {} }
+  ],
+  script: [
+    { src: '', crossorigin: '', async: true },
+    { vmid: '', src: '', callback: () => {} }
+  ],
   meta: [
     { charset: 'utf-8' },
     {
-      'property': 'og:title',
-      'content': 'Test title',
-      'template': chunk => `${chunk} - My page`, //or as string template: '%s - My page',
-      'vmid': 'og:title'
+      property: 'og:title',
+      content: 'Test title',
+      template: chunk => `${chunk} - My page`, //or as string template: '%s - My page',
+      vmid: 'og:title'
     }
   ],
   changed(newdata: MetaInfo, newTags: HTMLElement[], oldTags: HTMLElement[]) {
