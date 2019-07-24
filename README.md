@@ -99,10 +99,13 @@ Vue.use(VueMeta, {
 ```
 
 ## Frameworks using vue-meta
+
 If you wish to create your app even more quickly, take a look at the following frameworks which use vue-meta
 
-- [Nuxt.js](https://github.com/nuxt/nuxt.js) - The Vue.js Meta framework
-- [Gridsome](https://github.com/gridsome/gridsome) - The Vue.js JAMstack framework
+- [Nuxt.js](https://github.com/nuxt/nuxt.js) - The Vue.js Progressive Framework
+- [Gridsome](https://github.com/gridsome/gridsome) - The Vue.js JAMstack Framework
+- [Ream](https://github.com/ream/ream) - Framework for building universal web app and static website in Vue.js
+- [Vue-Storefront](https://github.com/DivanteLtd/vue-storefront) - PWA for eCommerce
 
 ## How to translate documentation
 
