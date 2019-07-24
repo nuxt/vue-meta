@@ -1,3 +1,4 @@
+import { JSDOM } from 'jsdom'
 import { mount, shallowMount, createWrapper, createLocalVue } from '@vue/test-utils'
 import { renderToString } from '@vue/server-test-utils'
 import { defaultOptions } from '../../src/shared/constants'
@@ -31,4 +32,16 @@ export const vmTick = (vm) => {
   return new Promise((resolve) => {
     vm.$nextTick(resolve)
   })
+}
+
+export const pTick = () => new Promise(resolve => process.nextTick(resolve))
+
+export function createDOM (html = '<!DOCTYPE html>', options = {}) {
+  const dom = new JSDOM(html, options)
+
+  return {
+    dom,
+    window: dom.window,
+    document: dom.window.document
+  }
 }

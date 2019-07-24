@@ -5,7 +5,7 @@
     {{ title.text() }}
     {{ link.text() }}
     {{ style.text() }}
-    {{ webpackAssets }}
+    {{ headAssets }}
     {{ script.text() }}
     {{ noscript.text() }}
   </head>
@@ -13,6 +13,7 @@
     {{ script.text({ pbody: true }) }}
     {{ noscript.text({ pbody: true }) }}
     {{ app }}
+    {{ bodyAssets }}
     {{ script.text({ body: true }) }}
     {{ noscript.text({ body: true }) }}
   </body>

@@ -1,7 +1,8 @@
-import { metaInfoOptionKeys, metaInfoAttributeKeys } from '../shared/constants'
+import { metaInfoOptionKeys, metaInfoAttributeKeys, tagsSupportingOnload } from '../shared/constants'
 import { isArray } from '../utils/is-type'
 import { includes } from '../utils/array'
 import { getTag } from '../utils/elements'
+import { addCallbacks, addListeners } from './load'
 import { updateAttribute, updateTag, updateTitle } from './updaters'
 
 /**
@@ -21,6 +22,19 @@ export default function updateClientMetaInfo (appId, options = {}, newInfo) {
   if (appId === ssrAppId && htmlTag.hasAttribute(ssrAttribute)) {
     // remove the server render attribute so we can update on (next) changes
     htmlTag.removeAttribute(ssrAttribute)
+
+    // add load callbacks if the
+    let addLoadListeners = false
+    for (const type of tagsSupportingOnload) {
+      if (newInfo[type] && addCallbacks(options, type, newInfo[type])) {
+        addLoadListeners = true
+      }
+    }
+
+    if (addLoadListeners) {
+      addListeners()
+    }
+
     return false
   }
 

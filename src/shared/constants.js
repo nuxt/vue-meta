@@ -79,6 +79,9 @@ export const metaInfoAttributeKeys = [
   'bodyAttrs'
 ]
 
+// HTML elements which support the onload event
+export const tagsSupportingOnload = ['link', 'style', 'script']
+
 // HTML elements which dont have a head tag (shortened to our needs)
 // see: https://www.w3.org/TR/html52/document-metadata.html
 export const tagsWithoutEndTag = ['base', 'meta', 'link']
@@ -137,6 +140,3 @@ export const booleanHtmlAttributes = [
   'typemustmatch',
   'visible'
 ]
-
-// eslint-disable-next-line no-console
-export const showWarningNotSupported = () => console.warn('This vue app/component has no vue-meta configuration')

@@ -1,4 +1,10 @@
-import { booleanHtmlAttributes, tagsWithoutEndTag, tagsWithInnerContent, tagAttributeAsInnerContent, commonDataAttributes } from '../../shared/constants'
+import {
+  booleanHtmlAttributes,
+  tagsWithoutEndTag,
+  tagsWithInnerContent,
+  tagAttributeAsInnerContent,
+  commonDataAttributes
+} from '../../shared/constants'
 
 /**
  * Generates meta, base, link, style, script, noscript tags for use on the server
@@ -8,12 +14,16 @@ import { booleanHtmlAttributes, tagsWithoutEndTag, tagsWithInnerContent, tagAttr
  * @return {Object} - the tag generator
  */
 export default function tagGenerator ({ ssrAppId, attribute, tagIDKeyName } = {}, type, tags) {
-  const dataAttributes = [tagIDKeyName, ...commonDataAttributes]
+  const dataAttributes = [tagIDKeyName, 'callback', ...commonDataAttributes]
 
   return {
     text ({ body = false, pbody = false } = {}) {
       // build a string containing all tags of this type
       return tags.reduce((tagsStr, tag) => {
+        if (tag.skip) {
+          return tagsStr
+        }
+
         const tagKeys = Object.keys(tag)
 
         if (tagKeys.length === 0) {
@@ -24,11 +34,13 @@ export default function tagGenerator ({ ssrAppId, attribute, tagIDKeyName } = {}
           return tagsStr
         }
 
+        let attrs = tag.once ? '' : ` ${attribute}="${ssrAppId}"`
+
         // build a string containing all attributes of this tag
-        const attrs = tagKeys.reduce((attrsStr, attr) => {
+        for (const attr in tag) {
           // these attributes are treated as children on the tag
           if (tagAttributeAsInnerContent.includes(attr) || attr === 'once') {
-            return attrsStr
+            continue
           }
 
           // these form the attribute list for this tag
@@ -37,23 +49,23 @@ export default function tagGenerator ({ ssrAppId, attribute, tagIDKeyName } = {}
             prefix = 'data-'
           }
 
-          const isBooleanAttr = booleanHtmlAttributes.includes(attr)
-          if (isBooleanAttr && !tag[attr]) {
-            return attrsStr
+          if (attr === 'callback') {
+            attrs += ` onload="this.__vm_l=1"`
+            continue
           }
 
-          return isBooleanAttr
-            ? `${attrsStr} ${prefix}${attr}`
-            : `${attrsStr} ${prefix}${attr}="${tag[attr]}"`
-        }, '')
+          const isBooleanAttr = !prefix && booleanHtmlAttributes.includes(attr)
+          if (isBooleanAttr && !tag[attr]) {
+            continue
+          }
+
+          attrs += ` ${prefix}${attr}` + (isBooleanAttr ? '' : `="${tag[attr]}"`)
+        }
 
         // grab child content from one of these attributes, if possible
         const content = tag.innerHTML || tag.cssText || ''
 
         // generate tag exactly without any other redundant attribute
-        const observeTag = tag.once
-          ? ''
-          : `${attribute}="${ssrAppId}"`
 
         // these tags have no end tag
         const hasEndTag = !tagsWithoutEndTag.includes(type)
@@ -62,9 +74,8 @@ export default function tagGenerator ({ ssrAppId, attribute, tagIDKeyName } = {}
         const hasContent = hasEndTag && tagsWithInnerContent.includes(type)
 
         // the final string for this specific tag
-        return !hasContent
-          ? `${tagsStr}<${type} ${observeTag}${attrs}${hasEndTag ? '/' : ''}>`
-          : `${tagsStr}<${type} ${observeTag}${attrs}>${content}</${type}>`
+        return `${tagsStr}<${type}${attrs}${!hasContent && hasEndTag ? '/' : ''}>` +
+          (hasContent ? `${content}</${type}>` : '')
       }, '')
     }
   }

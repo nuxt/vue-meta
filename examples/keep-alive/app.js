@@ -11,11 +11,11 @@ Vue.component('foo', {
 })
 
 new Vue({
-  data() {
+  data () {
     return { showFoo: false }
   },
   methods: {
-    show() {
+    show () {
       this.showFoo = !this.showFoo
     }
   },

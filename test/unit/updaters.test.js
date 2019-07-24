@@ -1,8 +1,9 @@
 import _updateClientMetaInfo from '../../src/client/updateClientMetaInfo'
-import { defaultOptions } from '../../src/shared/constants'
+import { defaultOptions, ssrAppId, ssrAttribute } from '../../src/shared/constants'
 import metaInfoData from '../utils/meta-info-data'
+import * as load from '../../src/client/load'
 
-const updateClientMetaInfo = (type, data) => _updateClientMetaInfo('test', defaultOptions, { [type]: data })
+const updateClientMetaInfo = (type, data) => _updateClientMetaInfo(ssrAppId, defaultOptions, { [type]: data })
 
 describe('updaters', () => {
   let html
@@ -14,7 +15,7 @@ describe('updaters', () => {
     Array.from(html.getElementsByTagName('meta')).forEach(el => el.parentNode.removeChild(el))
   })
 
-  Object.keys(metaInfoData).forEach((type) => {
+  for (const type in metaInfoData) {
     const typeTests = metaInfoData[type]
 
     const testCases = {
@@ -93,5 +94,22 @@ describe('updaters', () => {
         }
       })
     })
+  }
+})
+
+describe('extra tests', () => {
+  test('adds callback listener on hydration', () => {
+    const addListeners = load.addListeners
+    const addListenersSpy = jest.spyOn(load, 'addListeners').mockImplementation(addListeners)
+
+    const html = document.getElementsByTagName('html')[0]
+    html.setAttribute(ssrAttribute, 'true')
+
+    const data = [{ src: 'src1', [defaultOptions.tagIDKeyName]: 'content', callback: () => {} }]
+    const tags = updateClientMetaInfo('script', data)
+
+    expect(tags).toBe(false)
+    expect(html.hasAttribute(ssrAttribute)).toBe(false)
+    expect(addListenersSpy).toHaveBeenCalledTimes(1)
   })
 })

@@ -134,5 +134,3 @@ workflows:
           requires:       [test-e2e-ssr]
           filters:
             branches:     { ignore: /^pull\/.*/ }
-
-
