@@ -42,6 +42,7 @@ package-lock.json
 dist
 lib
 es
+__build__
 .vue-meta
 .nuxt
 
