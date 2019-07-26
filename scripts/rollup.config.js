@@ -18,6 +18,18 @@ const banner =  `/**
  */
 `
 
+const babelConfig = () => ({
+  presets: [
+    ['@babel/preset-env', {
+      targets: {
+        node: 8,
+        ie: 9,
+        safari: '5.1'
+      }
+    }]
+  ]
+})
+
 function rollupConfig({
   plugins = [],
   ...config
@@ -50,8 +62,9 @@ function rollupConfig({
     plugins: [
       json(),
       nodeResolve(),
+      replace(replaceConfig),
       commonjs(),
-      replace(replaceConfig)
+      babel(babelConfig()),
     ].concat(plugins),
   })
 }
@@ -61,10 +74,7 @@ export default [
   {
     output: {
       file: pkg.web,
-    },
-    plugins: [
-      babel()
-    ]
+    }
   },
   // minimized umd web build
   {
@@ -72,7 +82,6 @@ export default [
       file: pkg.web.replace('.js', '.min.js'),
     },
     plugins: [
-      babel(),
       terser()
     ]
   },
@@ -83,9 +92,6 @@ export default [
       file: pkg.main,
       format: 'cjs'
     },
-    plugins: [
-      babel()
-    ],
     external: Object.keys(pkg.dependencies)
   },
   // esm build
@@ -95,9 +101,6 @@ export default [
       file: pkg.web.replace('.js', '.esm.js'),
       format: 'es'
     },
-    plugins: [
-      babel()
-    ],
     external: Object.keys(pkg.dependencies)
   },
   // browser esm build
