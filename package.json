@@ -1,6 +1,6 @@
 {
   "name": "vue-meta",
-  "version": "2.1.0",
+  "version": "2.1.1",
   "description": "Manage HTML metadata in Vue.js components with ssr support",
   "keywords": [
     "attribute",
