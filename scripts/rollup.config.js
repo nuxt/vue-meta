@@ -23,8 +23,8 @@ const babelConfig = () => ({
     ['@babel/preset-env', {
       targets: {
         node: 8,
-        ie: 9,
-        safari: '5.1'
+        /*ie: 9,
+        safari: '5.1'*/
       }
     }]
   ]
