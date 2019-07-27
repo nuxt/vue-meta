@@ -1,10 +1,14 @@
 import Vue from 'vue'
-import VueMeta from '../../../src'
+import { _import, getVueMetaPath } from '../../utils/build'
 import App from './App.vue'
 import createRouter from './router'
 
-Vue.use(VueMeta)
+export default async function createServerApp () {
+  const VueMeta = await _import(getVueMetaPath())
 
-App.router = createRouter()
+  Vue.use(VueMeta)
 
-export default new Vue(App)
+  App.router = createRouter()
+
+  return new Vue(App)
+}
