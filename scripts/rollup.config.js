@@ -23,8 +23,8 @@ const babelConfig = () => ({
     ['@babel/preset-env', {
       targets: {
         node: 8,
-        /*ie: 9,
-        safari: '5.1'*/
+        ie: 9,
+        safari: '5.1'
       }
     }]
   ]
@@ -40,7 +40,7 @@ function rollupConfig({
     delimiters: ['', ''],
     values: {
       // replaceConfig needs to have some values
-      'const polyfill = process.env.NODE_ENV === \'test\'': 'const polyfill = false',
+      'const polyfill = process.env.NODE_ENV === \'test\'': 'const polyfill = true',
     }
   }
 

@@ -19,7 +19,7 @@ export const useDist = stdEnv.test && stdEnv.ci
 
 export function getVueMetaPath (browser) {
   if (useDist) {
-    return path.resolve(__dirname, `../..`)
+    return path.resolve(__dirname, `../..${browser ? '/dist/vue-meta.js' : ''}`)
   }
 
   return path.resolve(__dirname, `../../src${browser ? '/browser' : ''}`)

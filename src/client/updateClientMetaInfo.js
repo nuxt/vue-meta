@@ -25,11 +25,11 @@ export default function updateClientMetaInfo (appId, options = {}, newInfo) {
 
     // add load callbacks if the
     let addLoadListeners = false
-    for (const type of tagsSupportingOnload) {
+    tagsSupportingOnload.forEach((type) => {
       if (newInfo[type] && addCallbacks(options, type, newInfo[type])) {
         addLoadListeners = true
       }
-    }
+    })
 
     if (addLoadListeners) {
       addListeners()

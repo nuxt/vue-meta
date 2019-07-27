@@ -30,14 +30,14 @@ export function addCallback (query, callback) {
 export function addCallbacks ({ tagIDKeyName }, type, tags, autoAddListeners) {
   let hasAsyncCallback = false
 
-  for (const tag of tags) {
+  tags.forEach((tag) => {
     if (!tag[tagIDKeyName] || !tag.callback) {
-      continue
+      return
     }
 
     hasAsyncCallback = true
     addCallback(`${type}[data-${tagIDKeyName}="${tag[tagIDKeyName]}"]`, tag.callback)
-  }
+  })
 
   if (!autoAddListeners || !hasAsyncCallback) {
     return hasAsyncCallback
@@ -60,7 +60,7 @@ export function addListeners () {
 }
 
 export function applyCallbacks (matchElement) {
-  for (const [query, callback] of callbacks) {
+  callbacks.forEach(([query, callback]) => {
     const selector = `${query}[onload="this.__vm_l=1"]`
 
     let elements = []
@@ -72,13 +72,13 @@ export function applyCallbacks (matchElement) {
       elements = [matchElement]
     }
 
-    for (const element of elements) {
+    elements.forEach((element) => {
       /* __vm_cb: whether the load callback has been called
        * __vm_l: set by onload attribute, whether the element was loaded
        * __vm_ev: whether the event listener was added or not
        */
       if (element.__vm_cb) {
-        continue
+        return
       }
 
       const onload = () => {
@@ -105,7 +105,7 @@ export function applyCallbacks (matchElement) {
        */
       if (element.__vm_l) {
         onload()
-        continue
+        return
       }
 
       if (!element.__vm_ev) {
@@ -113,6 +113,6 @@ export function applyCallbacks (matchElement) {
 
         element.addEventListener('load', onload)
       }
-    }
-  }
+    })
+  })
 }

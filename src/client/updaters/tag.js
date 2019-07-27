@@ -13,7 +13,7 @@ import { queryElements, getElementsKey } from '../../utils/elements.js'
 export default function updateTag (appId, options = {}, type, tags, head, body) {
   const { attribute, tagIDKeyName } = options
 
-  const dataAttributes = [tagIDKeyName, ...commonDataAttributes]
+  const dataAttributes = commonDataAttributes.slice().push(tagIDKeyName)
   const newElements = []
 
   const queryOptions = { appId, attribute, type, tagIDKeyName }
@@ -37,9 +37,9 @@ export default function updateTag (appId, options = {}, type, tags, head, body) 
   }
 
   if (tags.length) {
-    for (const tag of tags) {
+    tags.forEach((tag) => {
       if (tag.skip) {
-        continue
+        return
       }
 
       const newElement = document.createElement(type)
@@ -48,17 +48,17 @@ export default function updateTag (appId, options = {}, type, tags, head, body) 
       for (const attr in tag) {
         /* istanbul ignore next */
         if (!tag.hasOwnProperty(attr)) {
-          continue
+          return
         }
 
         if (attr === 'innerHTML') {
           newElement.innerHTML = tag.innerHTML
-          continue
+          return
         }
 
         if (attr === 'json') {
           newElement.innerHTML = JSON.stringify(tag.json)
-          continue
+          return
         }
 
         if (attr === 'cssText') {
@@ -68,12 +68,12 @@ export default function updateTag (appId, options = {}, type, tags, head, body) 
           } else {
             newElement.appendChild(document.createTextNode(tag.cssText))
           }
-          continue
+          return
         }
 
         if (attr === 'callback') {
           newElement.onload = () => tag[attr](newElement)
-          continue
+          return
         }
 
         const _attr = includes(dataAttributes, attr)
@@ -82,7 +82,7 @@ export default function updateTag (appId, options = {}, type, tags, head, body) 
 
         const isBooleanAttribute = includes(booleanHtmlAttributes, attr)
         if (isBooleanAttribute && !tag[attr]) {
-          continue
+          return
         }
 
         const value = isBooleanAttribute ? '' : tag[attr]
@@ -103,36 +103,33 @@ export default function updateTag (appId, options = {}, type, tags, head, body) 
       } else {
         newElements.push(newElement)
       }
-    }
+    })
   }
 
-  let oldElements = []
-  for (const current of Object.values(currentElements)) {
-    oldElements = [
-      ...oldElements,
-      ...current
-    ]
+  const oldElements = []
+  for (const type in currentElements) {
+    Array.prototype.push.apply(oldElements, currentElements[type])
   }
 
   // remove old elements
-  for (const element of oldElements) {
+  oldElements.forEach((element) => {
     element.parentNode.removeChild(element)
-  }
+  })
 
   // insert new elements
-  for (const element of newElements) {
+  newElements.forEach((element) => {
     if (element.hasAttribute('data-body')) {
       body.appendChild(element)
-      continue
+      return
     }
 
     if (element.hasAttribute('data-pbody')) {
       body.insertBefore(element, body.firstChild)
-      continue
+      return
     }
 
     head.appendChild(element)
-  }
+  })
 
   return {
     oldTags: oldElements,
