@@ -14,7 +14,7 @@ import {
  * @return {Object} - the tag generator
  */
 export default function tagGenerator ({ ssrAppId, attribute, tagIDKeyName } = {}, type, tags) {
-  const dataAttributes = [tagIDKeyName, 'callback', ...commonDataAttributes]
+  const dataAttributes = [tagIDKeyName, ...commonDataAttributes]
 
   return {
     text ({ body = false, pbody = false } = {}) {
@@ -43,15 +43,15 @@ export default function tagGenerator ({ ssrAppId, attribute, tagIDKeyName } = {}
             continue
           }
 
+          if (attr === 'callback') {
+            attrs += ` onload="this.__vm_l=1"`
+            continue
+          }
+
           // these form the attribute list for this tag
           let prefix = ''
           if (dataAttributes.includes(attr)) {
             prefix = 'data-'
-          }
-
-          if (attr === 'callback') {
-            attrs += ` onload="this.__vm_l=1"`
-            continue
           }
 
           const isBooleanAttr = !prefix && booleanHtmlAttributes.includes(attr)
