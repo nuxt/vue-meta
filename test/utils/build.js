@@ -5,10 +5,25 @@ import webpack from 'webpack'
 import CopyWebpackPlugin from 'copy-webpack-plugin'
 import VueLoaderPlugin from 'vue-loader/lib/plugin'
 import { createRenderer } from 'vue-server-renderer'
+import stdEnv from 'std-env'
 
 const renderer = createRenderer()
 
 export { default as getPort } from 'get-port'
+
+export function _import (moduleName) {
+  return import(moduleName).then(m => m.default || m)
+}
+
+export const useDist = stdEnv.test && stdEnv.ci
+
+export function getVueMetaPath (browser) {
+  if (useDist) {
+    return path.resolve(__dirname, `../..${browser ? '/dist/vue-meta.js' : ''}`)
+  }
+
+  return path.resolve(__dirname, `../../src${browser ? '/browser' : ''}`)
+}
 
 export function webpackRun (config) {
   const compiler = webpack(config)
@@ -48,7 +63,8 @@ export async function buildFixture (fixture, config = {}) {
   webpackStats.errors.forEach(e => console.error(e)) // eslint-disable-line no-console
   webpackStats.warnings.forEach(e => console.warn(e)) // eslint-disable-line no-console
 
-  const vueApp = await import(path.resolve(fixturePath, 'server')).then(m => m.default || m)
+  const createApp = await _import(path.resolve(fixturePath, 'server'))
+  const vueApp = await createApp()
 
   const templateFile = await fs.readFile(path.resolve(fixturePath, '..', 'app.template.html'), { encoding: 'utf8' })
   const compiled = template(templateFile, { interpolate: /{{([\s\S]+?)}}/g })
@@ -64,7 +80,7 @@ export async function buildFixture (fixture, config = {}) {
     .reduce((s, asset) => `${s}<script src="./${asset.name}"></script>\n`, '')
 
   const app = await renderer.renderToString(vueApp)
-  // !!! run inject after renderToString !!!
+
   const metaInfo = vueApp.$meta().inject()
 
   const appFile = path.resolve(webpackStats.outputPath, 'index.html')
@@ -97,7 +113,7 @@ export function createWebpackConfig (config = {}) {
       rules: [
         {
           test: /\.js$/,
-          exclude: /node_modules/,
+          exclude: /(node_modules|dist)/,
           use: {
             loader: 'babel-loader',
             options: {
@@ -144,7 +160,8 @@ export function createWebpackConfig (config = {}) {
     ],
     resolve: {
       alias: {
-        'vue': 'vue/dist/vue.esm.js'
+        'vue': 'vue/dist/vue.esm.js',
+        'vue-meta': getVueMetaPath(true)
       }
     },
     ...config

@@ -13,7 +13,9 @@ import { queryElements, getElementsKey } from '../../utils/elements.js'
 export default function updateTag (appId, options = {}, type, tags, head, body) {
   const { attribute, tagIDKeyName } = options
 
-  const dataAttributes = [tagIDKeyName, ...commonDataAttributes]
+  const dataAttributes = commonDataAttributes.slice()
+  dataAttributes.push(tagIDKeyName)
+
   const newElements = []
 
   const queryOptions = { appId, attribute, type, tagIDKeyName }
@@ -36,103 +38,98 @@ export default function updateTag (appId, options = {}, type, tags, head, body) 
     })
   }
 
-  if (tags.length) {
-    for (const tag of tags) {
-      if (tag.skip) {
+  tags.forEach((tag) => {
+    if (tag.skip) {
+      return
+    }
+
+    const newElement = document.createElement(type)
+    newElement.setAttribute(attribute, appId)
+
+    for (const attr in tag) {
+      /* istanbul ignore next */
+      if (!tag.hasOwnProperty(attr)) {
         continue
       }
 
-      const newElement = document.createElement(type)
-      newElement.setAttribute(attribute, appId)
-
-      for (const attr in tag) {
-        /* istanbul ignore next */
-        if (!tag.hasOwnProperty(attr)) {
-          continue
-        }
-
-        if (attr === 'innerHTML') {
-          newElement.innerHTML = tag.innerHTML
-          continue
-        }
-
-        if (attr === 'json') {
-          newElement.innerHTML = JSON.stringify(tag.json)
-          continue
-        }
-
-        if (attr === 'cssText') {
-          if (newElement.styleSheet) {
-            /* istanbul ignore next */
-            newElement.styleSheet.cssText = tag.cssText
-          } else {
-            newElement.appendChild(document.createTextNode(tag.cssText))
-          }
-          continue
-        }
-
-        if (attr === 'callback') {
-          newElement.onload = () => tag[attr](newElement)
-          continue
-        }
-
-        const _attr = includes(dataAttributes, attr)
-          ? `data-${attr}`
-          : attr
-
-        const isBooleanAttribute = includes(booleanHtmlAttributes, attr)
-        if (isBooleanAttribute && !tag[attr]) {
-          continue
-        }
-
-        const value = isBooleanAttribute ? '' : tag[attr]
-        newElement.setAttribute(_attr, value)
+      if (attr === 'innerHTML') {
+        newElement.innerHTML = tag.innerHTML
+        continue
       }
 
-      const oldElements = currentElements[getElementsKey(tag)]
-
-      // Remove a duplicate tag from domTagstoRemove, so it isn't cleared.
-      let indexToDelete
-      const hasEqualElement = oldElements.some((existingTag, index) => {
-        indexToDelete = index
-        return newElement.isEqualNode(existingTag)
-      })
-
-      if (hasEqualElement && (indexToDelete || indexToDelete === 0)) {
-        oldElements.splice(indexToDelete, 1)
-      } else {
-        newElements.push(newElement)
+      if (attr === 'json') {
+        newElement.innerHTML = JSON.stringify(tag.json)
+        continue
       }
+
+      if (attr === 'cssText') {
+        if (newElement.styleSheet) {
+          /* istanbul ignore next */
+          newElement.styleSheet.cssText = tag.cssText
+        } else {
+          newElement.appendChild(document.createTextNode(tag.cssText))
+        }
+        continue
+      }
+
+      if (attr === 'callback') {
+        newElement.onload = () => tag[attr](newElement)
+        continue
+      }
+
+      const _attr = includes(dataAttributes, attr)
+        ? `data-${attr}`
+        : attr
+
+      const isBooleanAttribute = includes(booleanHtmlAttributes, attr)
+      if (isBooleanAttribute && !tag[attr]) {
+        continue
+      }
+
+      const value = isBooleanAttribute ? '' : tag[attr]
+      newElement.setAttribute(_attr, value)
     }
-  }
 
-  let oldElements = []
-  for (const current of Object.values(currentElements)) {
-    oldElements = [
-      ...oldElements,
-      ...current
-    ]
+    const oldElements = currentElements[getElementsKey(tag)]
+
+    // Remove a duplicate tag from domTagstoRemove, so it isn't cleared.
+    let indexToDelete
+    const hasEqualElement = oldElements.some((existingTag, index) => {
+      indexToDelete = index
+      return newElement.isEqualNode(existingTag)
+    })
+
+    if (hasEqualElement && (indexToDelete || indexToDelete === 0)) {
+      oldElements.splice(indexToDelete, 1)
+    } else {
+      newElements.push(newElement)
+    }
+  })
+
+  const oldElements = []
+  for (const type in currentElements) {
+    Array.prototype.push.apply(oldElements, currentElements[type])
   }
 
   // remove old elements
-  for (const element of oldElements) {
+  oldElements.forEach((element) => {
     element.parentNode.removeChild(element)
-  }
+  })
 
   // insert new elements
-  for (const element of newElements) {
+  newElements.forEach((element) => {
     if (element.hasAttribute('data-body')) {
       body.appendChild(element)
-      continue
+      return
     }
 
     if (element.hasAttribute('data-pbody')) {
       body.insertBefore(element, body.firstChild)
-      continue
+      return
     }
 
     head.appendChild(element)
-  }
+  })
 
   return {
     oldTags: oldElements,

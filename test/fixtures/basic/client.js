@@ -1,5 +1,5 @@
 import Vue from 'vue'
-import VueMeta from '../../../src/browser'
+import VueMeta from 'vue-meta'
 import App from './App.vue'
 import createRouter from './router'
 

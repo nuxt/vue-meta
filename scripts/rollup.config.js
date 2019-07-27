@@ -40,7 +40,7 @@ function rollupConfig({
     delimiters: ['', ''],
     values: {
       // replaceConfig needs to have some values
-      'const polyfill = process.env.NODE_ENV === \'test\'': 'const polyfill = false',
+      'const polyfill = process.env.NODE_ENV === \'test\'': 'const polyfill = true',
     }
   }
 
