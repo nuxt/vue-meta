@@ -93,4 +93,16 @@ describe('plugin', () => {
 
     warn.mockRestore()
   })
+
+  test('can use generate export', () => {
+    const rawInfo = {
+      meta: [{ charset: 'utf-8' }]
+    }
+
+    const metaInfo = VueMetaServerPlugin.generate(rawInfo)
+    expect(metaInfo.meta.text()).toBe('<meta data-vue-meta="ssr" charset="utf-8">')
+
+    // no error on not provided metaInfo types
+    expect(metaInfo.script.text()).toBe('')
+  })
 })

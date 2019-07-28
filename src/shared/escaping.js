@@ -1,5 +1,6 @@
 import { isString, isArray, isPureObject } from '../utils/is-type'
 import { includes } from '../utils/array'
+import { ensureIsArray } from '../utils/ensure'
 import { metaInfoOptionKeys, disableOptionKeys } from './constants'
 
 export const serverSequences = [
@@ -77,4 +78,25 @@ export function escape (info, options, escapeOptions, escapeKeys) {
   }
 
   return escaped
+}
+
+export function escapeMetaInfo (options, info, escapeSequences = []) {
+  const escapeOptions = {
+    doEscape: value => escapeSequences.reduce((val, [v, r]) => val.replace(v, r), value)
+  }
+
+  disableOptionKeys.forEach((disableKey, index) => {
+    if (index === 0) {
+      ensureIsArray(info, disableKey)
+    } else if (index === 1) {
+      for (const key in info[disableKey]) {
+        ensureIsArray(info[disableKey], key)
+      }
+    }
+
+    escapeOptions[disableKey] = info[disableKey]
+  })
+
+  // begin sanitization
+  return escape(info, options, escapeOptions)
 }

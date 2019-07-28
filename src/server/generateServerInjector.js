@@ -1,4 +1,4 @@
-import { metaInfoAttributeKeys } from '../shared/constants'
+import { metaInfoOptionKeys, metaInfoAttributeKeys, defaultInfo } from '../shared/constants'
 import { titleGenerator, attributeGenerator, tagGenerator } from './generators'
 
 /**
@@ -9,14 +9,24 @@ import { titleGenerator, attributeGenerator, tagGenerator } from './generators'
  * @return {Object} - the new injector
  */
 
-export default function generateServerInjector (options, type, data) {
-  if (type === 'title') {
-    return titleGenerator(options, type, data)
+export default function generateServerInjector (options, newInfo) {
+  for (const type in defaultInfo) {
+    if (metaInfoOptionKeys.includes(type)) {
+      continue
+    }
+
+    if (type === 'title') {
+      newInfo[type] = titleGenerator(options, type, newInfo[type])
+      continue
+    }
+
+    if (metaInfoAttributeKeys.includes(type)) {
+      newInfo[type] = attributeGenerator(options, type, newInfo[type])
+      continue
+    }
+
+    newInfo[type] = tagGenerator(options, type, newInfo[type])
   }
 
-  if (metaInfoAttributeKeys.includes(type)) {
-    return attributeGenerator(options, type, data)
-  }
-
-  return tagGenerator(options, type, data)
+  return newInfo
 }

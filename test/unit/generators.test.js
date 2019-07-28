@@ -3,7 +3,7 @@ import { defaultOptions } from '../../src/shared/constants'
 import metaInfoData from '../utils/meta-info-data'
 import { titleGenerator } from '../../src/server/generators'
 
-const generateServerInjector = (type, data) => _generateServerInjector(defaultOptions, type, data)
+const generateServerInjector = metaInfo => _generateServerInjector(defaultOptions, metaInfo)
 
 describe('generators', () => {
   for (const type in metaInfoData) {
@@ -34,9 +34,9 @@ describe('generators', () => {
         }
 
         const defaultTestFn = () => {
-          const tags = generateServerInjector(type, testInfo.data)
-          testCases[action](tags)
-          return tags
+          const newInfo = generateServerInjector({ [type]: testInfo.data })
+          testCases[action](newInfo[type])
+          return newInfo[type]
         }
 
         let testFn
@@ -62,6 +62,18 @@ describe('generators', () => {
 })
 
 describe('extra tests', () => {
+  test('empty config doesnt generate a tag', () => {
+    const { meta } = generateServerInjector({ meta: [] })
+
+    expect(meta.text()).toEqual('')
+  })
+
+  test('config with empty object doesnt generate a tag', () => {
+    const { meta } = generateServerInjector({ meta: [{}] })
+
+    expect(meta.text()).toEqual('')
+  })
+
   test('title generator should return an empty string when title is null', () => {
     const title = null
     const generatedTitle = titleGenerator({}, 'title', title)
@@ -70,19 +82,19 @@ describe('extra tests', () => {
   })
 
   test('auto add ssrAttribute', () => {
-    const htmlAttrs = generateServerInjector('htmlAttrs', {})
+    const { htmlAttrs } = generateServerInjector({ htmlAttrs: {} })
     expect(htmlAttrs.text(true)).toBe('data-vue-meta-server-rendered')
 
-    const headAttrs = generateServerInjector('headAttrs', {})
+    const { headAttrs } = generateServerInjector({ headAttrs: {} })
     expect(headAttrs.text(true)).toBe('')
 
-    const bodyAttrs = generateServerInjector('bodyAttrs', {})
+    const { bodyAttrs } = generateServerInjector({ bodyAttrs: {} })
     expect(bodyAttrs.text(true)).toBe('')
   })
 
   test('script prepend body', () => {
     const tags = [{ src: '/script.js', pbody: true }]
-    const scriptTags = generateServerInjector('script', tags)
+    const { script: scriptTags } = generateServerInjector({ script: tags })
 
     expect(scriptTags.text()).toBe('')
     expect(scriptTags.text({ body: true })).toBe('')
@@ -91,7 +103,7 @@ describe('extra tests', () => {
 
   test('script append body', () => {
     const tags = [{ src: '/script.js', body: true }]
-    const scriptTags = generateServerInjector('script', tags)
+    const { script: scriptTags } = generateServerInjector({ script: tags })
 
     expect(scriptTags.text()).toBe('')
     expect(scriptTags.text({ body: true })).toBe('<script data-vue-meta="ssr" src="/script.js" data-body="true"></script>')

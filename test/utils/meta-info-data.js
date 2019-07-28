@@ -225,13 +225,6 @@ const metaInfoData = {
       data: {},
       expect: ['<body>']
     }
-  },
-  empty: {
-    add: {
-      data: [{}],
-      expect: [''],
-      test: side => side === 'server'
-    }
   }
 }
 

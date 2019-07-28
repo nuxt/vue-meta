@@ -18,6 +18,10 @@ export default function tagGenerator ({ ssrAppId, attribute, tagIDKeyName } = {}
 
   return {
     text ({ body = false, pbody = false } = {}) {
+      if (!tags || !tags.length) {
+        return ''
+      }
+
       // build a string containing all tags of this type
       return tags.reduce((tagsStr, tag) => {
         if (tag.skip) {
