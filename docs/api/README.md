@@ -4,6 +4,59 @@ sidebar: auto
 
 # API Reference
 
+## Plugin properties
+
+:::tip
+VueMeta exports a Vue plugin as default export. This section describes the properties of that default export
+:::
+
+### version
+- type `string`
+
+The version of the plugin, it is the same as the package version
+
+### install
+
+The method used by Vue to install the plugin
+
+### hasMetaInfo
+- argument:
+  - vm (a Vue component)
+- returns `boolean`
+
+A helper function which returns true when the Vue component passed as argument has metaInfo defined
+
+### generate (since v2.2)
+::: warning
+This method is not available in the browser builds
+:::
+- arguments:
+  - metaInfo
+  - options (optional)
+- returns `metaInfo`
+
+This method is similar to [`$meta.inject()`](/api/#meta-inject) but works without the need for a Vue instance
+
+```js
+import VueMeta from 'vue-meta'
+
+const { generate } = VueMeta
+
+const rawMetaInfo = {
+  meta: [{ charset: 'utf-8' }]
+}
+
+const metaInfo = generate(rawMetaInfo /*, yourOptions*/)
+
+const HEAD = metaInfo.script.text() + metaInfo.meta.text()
+```
+will result In
+
+```html
+<meta charset="utf-8">
+```
+
+
 ## Plugin options
 
 ### keyName
