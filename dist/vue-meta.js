@@ -1,5 +1,5 @@
 /**
- * vue-meta v2.1.1
+ * vue-meta v2.2.0
  * (c) 2019
  * - Declan de Wet
  * - Sébastien Chopin (@Atinux)
@@ -13,7 +13,7 @@
   (global = global || self, global.VueMeta = factory());
 }(this, function () { 'use strict';
 
-  var version = "2.1.1";
+  var version = "2.2.0";
 
   // store an id to keep track of DOM updates
   var batchId = null;
@@ -63,77 +63,12 @@
     return _typeof(obj);
   }
 
-  function _defineProperty(obj, key, value) {
-    if (key in obj) {
-      Object.defineProperty(obj, key, {
-        value: value,
-        enumerable: true,
-        configurable: true,
-        writable: true
-      });
-    } else {
-      obj[key] = value;
-    }
-
-    return obj;
-  }
-
-  function ownKeys(object, enumerableOnly) {
-    var keys = Object.keys(object);
-
-    if (Object.getOwnPropertySymbols) {
-      var symbols = Object.getOwnPropertySymbols(object);
-      if (enumerableOnly) symbols = symbols.filter(function (sym) {
-        return Object.getOwnPropertyDescriptor(object, sym).enumerable;
-      });
-      keys.push.apply(keys, symbols);
-    }
-
-    return keys;
-  }
-
-  function _objectSpread2(target) {
-    for (var i = 1; i < arguments.length; i++) {
-      var source = arguments[i] != null ? arguments[i] : {};
-
-      if (i % 2) {
-        ownKeys(source, true).forEach(function (key) {
-          _defineProperty(target, key, source[key]);
-        });
-      } else if (Object.getOwnPropertyDescriptors) {
-        Object.defineProperties(target, Object.getOwnPropertyDescriptors(source));
-      } else {
-        ownKeys(source).forEach(function (key) {
-          Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key));
-        });
-      }
-    }
-
-    return target;
-  }
-
   function _slicedToArray(arr, i) {
     return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _nonIterableRest();
   }
 
-  function _toConsumableArray(arr) {
-    return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _nonIterableSpread();
-  }
-
-  function _arrayWithoutHoles(arr) {
-    if (Array.isArray(arr)) {
-      for (var i = 0, arr2 = new Array(arr.length); i < arr.length; i++) arr2[i] = arr[i];
-
-      return arr2;
-    }
-  }
-
   function _arrayWithHoles(arr) {
     if (Array.isArray(arr)) return arr;
-  }
-
-  function _iterableToArray(iter) {
-    if (Symbol.iterator in Object(iter) || Object.prototype.toString.call(iter) === "[object Arguments]") return Array.from(iter);
   }
 
   function _iterableToArrayLimit(arr, i) {
@@ -160,10 +95,6 @@
     }
 
     return _arr;
-  }
-
-  function _nonIterableSpread() {
-    throw new TypeError("Invalid attempt to spread non-iterable instance");
   }
 
   function _nonIterableRest() {
@@ -256,13 +187,13 @@
   var _global = hasGlobalWindow ? window : global;
 
   var console = _global.console = _global.console || {};
-  function warn() {
+  function warn(str) {
     /* istanbul ignore next */
     if (!console || !console.warn) {
       return;
     }
 
-    console.warn.apply(console, arguments);
+    console.warn(str);
   }
   var showWarningNotSupported = function showWarningNotSupported() {
     return warn('This vue app/component has no vue-meta configuration');
@@ -527,29 +458,6 @@
     }
   }
 
-  function applyTemplate(_ref, headObject, template, chunk) {
-    var component = _ref.component,
-        metaTemplateKeyName = _ref.metaTemplateKeyName,
-        contentKeyName = _ref.contentKeyName;
-
-    if (isUndefined(template)) {
-      template = headObject[metaTemplateKeyName];
-      delete headObject[metaTemplateKeyName];
-    } // return early if no template defined
-
-
-    if (!template) {
-      return false;
-    }
-
-    if (isUndefined(chunk)) {
-      chunk = headObject[contentKeyName];
-    }
-
-    headObject[contentKeyName] = isFunction(template) ? template.call(component, chunk) : template.replace(/%s/g, chunk);
-    return true;
-  }
-
   /*
    * To reduce build size, this file provides simple polyfills without
    * overly excessive type checking and without modifying
@@ -559,27 +467,48 @@
    * files in server/ still use normal js function
    */
   function findIndex(array, predicate) {
+    if ( !Array.prototype.findIndex) {
+      // idx needs to be a Number, for..in returns string
+      for (var idx = 0; idx < array.length; idx++) {
+        if (predicate.call(arguments[2], array[idx], idx, array)) {
+          return idx;
+        }
+      }
+
+      return -1;
+    }
 
     return array.findIndex(predicate, arguments[2]);
   }
   function toArray(arg) {
+    if ( !Array.from) {
+      return Array.prototype.slice.call(arg);
+    }
 
     return Array.from(arg);
   }
   function includes(array, value) {
+    if ( !Array.prototype.includes) {
+      for (var idx in array) {
+        if (array[idx] === value) {
+          return true;
+        }
+      }
+
+      return false;
+    }
 
     return array.includes(value);
   }
 
   var clientSequences = [[/&/g, "&"], [/</g, "<"], [/>/g, ">"], [/"/g, "\""], [/'/g, "'"]]; // sanitizes potentially dangerous characters
 
-  function escape(info, options, escapeOptions) {
+  function escape(info, options, escapeOptions, escapeKeys) {
     var tagIDKeyName = options.tagIDKeyName;
     var _escapeOptions$doEsca = escapeOptions.doEscape,
         doEscape = _escapeOptions$doEsca === void 0 ? function (v) {
       return v;
-    } : _escapeOptions$doEsca,
-        escapeKeys = escapeOptions.escapeKeys;
+    } : _escapeOptions$doEsca;
     var escaped = {};
 
     for (var key in info) {
@@ -615,17 +544,13 @@
       } else if (isArray(value)) {
         escaped[key] = value.map(function (v) {
           if (isPureObject(v)) {
-            return escape(v, options, _objectSpread2({}, escapeOptions, {
-              escapeKeys: true
-            }));
+            return escape(v, options, escapeOptions, true);
           }
 
           return doEscape(v);
         });
       } else if (isPureObject(value)) {
-        escaped[key] = escape(value, options, _objectSpread2({}, escapeOptions, {
-          escapeKeys: true
-        }));
+        escaped[key] = escape(value, options, escapeOptions, true);
       } else {
         escaped[key] = value;
       }
@@ -641,6 +566,33 @@
     }
 
     return escaped;
+  }
+  function escapeMetaInfo(options, info) {
+    var escapeSequences = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : [];
+    var escapeOptions = {
+      doEscape: function doEscape(value) {
+        return escapeSequences.reduce(function (val, _ref) {
+          var _ref2 = _slicedToArray(_ref, 2),
+              v = _ref2[0],
+              r = _ref2[1];
+
+          return val.replace(v, r);
+        }, value);
+      }
+    };
+    disableOptionKeys.forEach(function (disableKey, index) {
+      if (index === 0) {
+        ensureIsArray(info, disableKey);
+      } else if (index === 1) {
+        for (var key in info[disableKey]) {
+          ensureIsArray(info[disableKey], key);
+        }
+      }
+
+      escapeOptions[disableKey] = info[disableKey];
+    }); // begin sanitization
+
+    return escape(info, options, escapeOptions);
   }
 
   var isMergeableObject = function isMergeableObject(value) {
@@ -746,6 +698,29 @@
   var deepmerge_1 = deepmerge;
   var cjs = deepmerge_1;
 
+  function applyTemplate(_ref, headObject, template, chunk) {
+    var component = _ref.component,
+        metaTemplateKeyName = _ref.metaTemplateKeyName,
+        contentKeyName = _ref.contentKeyName;
+
+    if (isUndefined(template)) {
+      template = headObject[metaTemplateKeyName];
+      delete headObject[metaTemplateKeyName];
+    } // return early if no template defined
+
+
+    if (!template) {
+      return false;
+    }
+
+    if (isUndefined(chunk)) {
+      chunk = headObject[contentKeyName];
+    }
+
+    headObject[contentKeyName] = isFunction(template) ? template.call(component, chunk) : template.replace(/%s/g, chunk);
+    return true;
+  }
+
   function _arrayMerge(_ref, target, source) {
     var component = _ref.component,
         tagIDKeyName = _ref.tagIDKeyName,
@@ -849,6 +824,11 @@
     });
   }
 
+  function getComponentMetaInfo() {
+    var options = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+    var component = arguments.length > 1 ? arguments[1] : undefined;
+    return getComponentOption(options, component, defaultInfo);
+  }
   /**
    * Returns the `opts.option` $option value of the given `opts.component`.
    * If methods are encountered, they will be bound to the component context.
@@ -937,12 +917,12 @@
 
   function getMetaInfo() {
     var options = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
-    var component = arguments.length > 1 ? arguments[1] : undefined;
+    var info = arguments.length > 1 ? arguments[1] : undefined;
     var escapeSequences = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : [];
-    // collect & aggregate all metaInfo $options
-    var info = getComponentOption(options, component, defaultInfo); // Remove all "template" tags from meta
-    // backup the title chunk in case user wants access to it
+    var component = arguments.length > 3 ? arguments[3] : undefined;
 
+    // Remove all "template" tags from meta
+    // backup the title chunk in case user wants access to it
     if (info.title) {
       info.titleChunk = info.title;
     } // replace title with populated template
@@ -961,31 +941,7 @@
       info.base = Object.keys(info.base).length ? [info.base] : [];
     }
 
-    var escapeOptions = {
-      doEscape: function doEscape(value) {
-        return escapeSequences.reduce(function (val, _ref) {
-          var _ref2 = _slicedToArray(_ref, 2),
-              v = _ref2[0],
-              r = _ref2[1];
-
-          return val.replace(v, r);
-        }, value);
-      }
-    };
-    disableOptionKeys.forEach(function (disableKey, index) {
-      if (index === 0) {
-        ensureIsArray(info, disableKey);
-      } else if (index === 1) {
-        for (var key in info[disableKey]) {
-          ensureIsArray(info[disableKey], key);
-        }
-      }
-
-      escapeOptions[disableKey] = info[disableKey];
-    }); // begin sanitization
-
-    info = escape(info, options, escapeOptions);
-    return info;
+    return escapeMetaInfo(options, info, escapeSequences);
   }
 
   function getTag(tags, tag) {
@@ -1034,35 +990,14 @@
   function addCallbacks(_ref, type, tags, autoAddListeners) {
     var tagIDKeyName = _ref.tagIDKeyName;
     var hasAsyncCallback = false;
-    var _iteratorNormalCompletion = true;
-    var _didIteratorError = false;
-    var _iteratorError = undefined;
-
-    try {
-      for (var _iterator = tags[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
-        var tag = _step.value;
-
-        if (!tag[tagIDKeyName] || !tag.callback) {
-          continue;
-        }
-
-        hasAsyncCallback = true;
-        addCallback("".concat(type, "[data-").concat(tagIDKeyName, "=\"").concat(tag[tagIDKeyName], "\"]"), tag.callback);
+    tags.forEach(function (tag) {
+      if (!tag[tagIDKeyName] || !tag.callback) {
+        return;
       }
-    } catch (err) {
-      _didIteratorError = true;
-      _iteratorError = err;
-    } finally {
-      try {
-        if (!_iteratorNormalCompletion && _iterator.return != null) {
-          _iterator.return();
-        }
-      } finally {
-        if (_didIteratorError) {
-          throw _iteratorError;
-        }
-      }
-    }
+
+      hasAsyncCallback = true;
+      addCallback("".concat(type, "[data-").concat(tagIDKeyName, "=\"").concat(tag[tagIDKeyName], "\"]"), tag.callback);
+    });
 
     if (!autoAddListeners || !hasAsyncCallback) {
       return hasAsyncCallback;
@@ -1084,10 +1019,10 @@
     };
   }
   function applyCallbacks(matchElement) {
-    var _loop = function _loop() {
-      var _callbacks$_i = _slicedToArray(_callbacks[_i], 2),
-          query = _callbacks$_i[0],
-          callback = _callbacks$_i[1];
+    callbacks.forEach(function (_ref2) {
+      var _ref3 = _slicedToArray(_ref2, 2),
+          query = _ref3[0],
+          callback = _ref3[1];
 
       var selector = "".concat(query, "[onload=\"this.__vm_l=1\"]");
       var elements = [];
@@ -1100,79 +1035,48 @@
         elements = [matchElement];
       }
 
-      var _iteratorNormalCompletion2 = true;
-      var _didIteratorError2 = false;
-      var _iteratorError2 = undefined;
+      elements.forEach(function (element) {
+        /* __vm_cb: whether the load callback has been called
+         * __vm_l: set by onload attribute, whether the element was loaded
+         * __vm_ev: whether the event listener was added or not
+         */
+        if (element.__vm_cb) {
+          return;
+        }
 
-      try {
-        var _loop2 = function _loop2() {
-          var element = _step2.value;
-
-          /* __vm_cb: whether the load callback has been called
-           * __vm_l: set by onload attribute, whether the element was loaded
-           * __vm_ev: whether the event listener was added or not
+        var onload = function onload() {
+          /* Mark that the callback for this element has already been called,
+           * this prevents the callback to run twice in some (rare) conditions
            */
-          if (element.__vm_cb) {
-            return "continue";
-          }
-
-          var onload = function onload() {
-            /* Mark that the callback for this element has already been called,
-             * this prevents the callback to run twice in some (rare) conditions
-             */
-            element.__vm_cb = true;
-            /* onload needs to be removed because we only need the
-             * attribute after ssr and if we dont remove it the node
-             * will fail isEqualNode on the client
-             */
-
-            element.removeAttribute('onload');
-            callback(element);
-          };
-          /* IE9 doesnt seem to load scripts synchronously,
-           * causing a script sometimes/often already to be loaded
-           * when we add the event listener below (thus adding an onload event
-           * listener has no use because it will never be triggered).
-           * Therefore we add the onload attribute during ssr, and
-           * check here if it was already loaded or not
+          element.__vm_cb = true;
+          /* onload needs to be removed because we only need the
+           * attribute after ssr and if we dont remove it the node
+           * will fail isEqualNode on the client
            */
 
-
-          if (element.__vm_l) {
-            onload();
-            return "continue";
-          }
-
-          if (!element.__vm_ev) {
-            element.__vm_ev = true;
-            element.addEventListener('load', onload);
-          }
+          element.removeAttribute('onload');
+          callback(element);
         };
+        /* IE9 doesnt seem to load scripts synchronously,
+         * causing a script sometimes/often already to be loaded
+         * when we add the event listener below (thus adding an onload event
+         * listener has no use because it will never be triggered).
+         * Therefore we add the onload attribute during ssr, and
+         * check here if it was already loaded or not
+         */
 
-        for (var _iterator2 = elements[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
-          var _ret = _loop2();
 
-          if (_ret === "continue") continue;
+        if (element.__vm_l) {
+          onload();
+          return;
         }
-      } catch (err) {
-        _didIteratorError2 = true;
-        _iteratorError2 = err;
-      } finally {
-        try {
-          if (!_iteratorNormalCompletion2 && _iterator2.return != null) {
-            _iterator2.return();
-          }
-        } finally {
-          if (_didIteratorError2) {
-            throw _iteratorError2;
-          }
-        }
-      }
-    };
 
-    for (var _i = 0, _callbacks = callbacks; _i < _callbacks.length; _i++) {
-      _loop();
-    }
+        if (!element.__vm_ev) {
+          element.__vm_ev = true;
+          element.addEventListener('load', onload);
+        }
+      });
+    });
   }
 
   /**
@@ -1251,7 +1155,8 @@
     var body = arguments.length > 5 ? arguments[5] : undefined;
     var attribute = options.attribute,
         tagIDKeyName = options.tagIDKeyName;
-    var dataAttributes = [tagIDKeyName].concat(_toConsumableArray(commonDataAttributes));
+    var dataAttributes = commonDataAttributes.slice();
+    dataAttributes.push(tagIDKeyName);
     var newElements = [];
     var queryOptions = {
       appId: appId,
@@ -1282,141 +1187,105 @@
       });
     }
 
-    if (tags.length) {
-      var _iteratorNormalCompletion = true;
-      var _didIteratorError = false;
-      var _iteratorError = undefined;
+    tags.forEach(function (tag) {
+      if (tag.skip) {
+        return;
+      }
 
-      try {
-        var _loop = function _loop() {
-          var tag = _step.value;
+      var newElement = document.createElement(type);
+      newElement.setAttribute(attribute, appId);
 
-          if (tag.skip) {
-            return "continue";
+      var _loop = function _loop(attr) {
+        /* istanbul ignore next */
+        if (!tag.hasOwnProperty(attr)) {
+          return "continue";
+        }
+
+        if (attr === 'innerHTML') {
+          newElement.innerHTML = tag.innerHTML;
+          return "continue";
+        }
+
+        if (attr === 'json') {
+          newElement.innerHTML = JSON.stringify(tag.json);
+          return "continue";
+        }
+
+        if (attr === 'cssText') {
+          if (newElement.styleSheet) {
+            /* istanbul ignore next */
+            newElement.styleSheet.cssText = tag.cssText;
+          } else {
+            newElement.appendChild(document.createTextNode(tag.cssText));
           }
 
-          var newElement = document.createElement(type);
-          newElement.setAttribute(attribute, appId);
+          return "continue";
+        }
 
-          var _loop2 = function _loop2(attr) {
-            /* istanbul ignore next */
-            if (!tag.hasOwnProperty(attr)) {
-              return "continue";
-            }
-
-            if (attr === 'innerHTML') {
-              newElement.innerHTML = tag.innerHTML;
-              return "continue";
-            }
-
-            if (attr === 'json') {
-              newElement.innerHTML = JSON.stringify(tag.json);
-              return "continue";
-            }
-
-            if (attr === 'cssText') {
-              if (newElement.styleSheet) {
-                /* istanbul ignore next */
-                newElement.styleSheet.cssText = tag.cssText;
-              } else {
-                newElement.appendChild(document.createTextNode(tag.cssText));
-              }
-
-              return "continue";
-            }
-
-            if (attr === 'callback') {
-              newElement.onload = function () {
-                return tag[attr](newElement);
-              };
-
-              return "continue";
-            }
-
-            var _attr = includes(dataAttributes, attr) ? "data-".concat(attr) : attr;
-
-            var isBooleanAttribute = includes(booleanHtmlAttributes, attr);
-
-            if (isBooleanAttribute && !tag[attr]) {
-              return "continue";
-            }
-
-            var value = isBooleanAttribute ? '' : tag[attr];
-            newElement.setAttribute(_attr, value);
+        if (attr === 'callback') {
+          newElement.onload = function () {
+            return tag[attr](newElement);
           };
 
-          for (var attr in tag) {
-            var _ret2 = _loop2(attr);
-
-            if (_ret2 === "continue") continue;
-          }
-
-          var oldElements = currentElements[getElementsKey(tag)]; // Remove a duplicate tag from domTagstoRemove, so it isn't cleared.
-
-          var indexToDelete = void 0;
-          var hasEqualElement = oldElements.some(function (existingTag, index) {
-            indexToDelete = index;
-            return newElement.isEqualNode(existingTag);
-          });
-
-          if (hasEqualElement && (indexToDelete || indexToDelete === 0)) {
-            oldElements.splice(indexToDelete, 1);
-          } else {
-            newElements.push(newElement);
-          }
-        };
-
-        for (var _iterator = tags[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
-          var _ret = _loop();
-
-          if (_ret === "continue") continue;
+          return "continue";
         }
-      } catch (err) {
-        _didIteratorError = true;
-        _iteratorError = err;
-      } finally {
-        try {
-          if (!_iteratorNormalCompletion && _iterator.return != null) {
-            _iterator.return();
-          }
-        } finally {
-          if (_didIteratorError) {
-            throw _iteratorError;
-          }
+
+        var _attr = includes(dataAttributes, attr) ? "data-".concat(attr) : attr;
+
+        var isBooleanAttribute = includes(booleanHtmlAttributes, attr);
+
+        if (isBooleanAttribute && !tag[attr]) {
+          return "continue";
         }
+
+        var value = isBooleanAttribute ? '' : tag[attr];
+        newElement.setAttribute(_attr, value);
+      };
+
+      for (var attr in tag) {
+        var _ret = _loop(attr);
+
+        if (_ret === "continue") continue;
       }
-    }
 
+      var oldElements = currentElements[getElementsKey(tag)]; // Remove a duplicate tag from domTagstoRemove, so it isn't cleared.
+
+      var indexToDelete;
+      var hasEqualElement = oldElements.some(function (existingTag, index) {
+        indexToDelete = index;
+        return newElement.isEqualNode(existingTag);
+      });
+
+      if (hasEqualElement && (indexToDelete || indexToDelete === 0)) {
+        oldElements.splice(indexToDelete, 1);
+      } else {
+        newElements.push(newElement);
+      }
+    });
     var oldElements = [];
 
-    for (var _i = 0, _Object$values = Object.values(currentElements); _i < _Object$values.length; _i++) {
-      var current = _Object$values[_i];
-      oldElements = [].concat(_toConsumableArray(oldElements), _toConsumableArray(current));
+    for (var _type in currentElements) {
+      Array.prototype.push.apply(oldElements, currentElements[_type]);
     } // remove old elements
 
 
-    for (var _i2 = 0, _oldElements = oldElements; _i2 < _oldElements.length; _i2++) {
-      var element = _oldElements[_i2];
+    oldElements.forEach(function (element) {
       element.parentNode.removeChild(element);
-    } // insert new elements
+    }); // insert new elements
 
-
-    for (var _i3 = 0, _newElements = newElements; _i3 < _newElements.length; _i3++) {
-      var _element = _newElements[_i3];
-
-      if (_element.hasAttribute('data-body')) {
-        body.appendChild(_element);
-        continue;
+    newElements.forEach(function (element) {
+      if (element.hasAttribute('data-body')) {
+        body.appendChild(element);
+        return;
       }
 
-      if (_element.hasAttribute('data-pbody')) {
-        body.insertBefore(_element, body.firstChild);
-        continue;
+      if (element.hasAttribute('data-pbody')) {
+        body.insertBefore(element, body.firstChild);
+        return;
       }
 
-      head.appendChild(_element);
-    }
-
+      head.appendChild(element);
+    });
     return {
       oldTags: oldElements,
       newTags: newElements
@@ -1443,32 +1312,11 @@
       htmlTag.removeAttribute(ssrAttribute); // add load callbacks if the
 
       var addLoadListeners = false;
-      var _iteratorNormalCompletion = true;
-      var _didIteratorError = false;
-      var _iteratorError = undefined;
-
-      try {
-        for (var _iterator = tagsSupportingOnload[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
-          var type = _step.value;
-
-          if (newInfo[type] && addCallbacks(options, type, newInfo[type])) {
-            addLoadListeners = true;
-          }
+      tagsSupportingOnload.forEach(function (type) {
+        if (newInfo[type] && addCallbacks(options, type, newInfo[type])) {
+          addLoadListeners = true;
         }
-      } catch (err) {
-        _didIteratorError = true;
-        _iteratorError = err;
-      } finally {
-        try {
-          if (!_iteratorNormalCompletion && _iterator.return != null) {
-            _iterator.return();
-          }
-        } finally {
-          if (_didIteratorError) {
-            throw _iteratorError;
-          }
-        }
-      }
+      });
 
       if (addLoadListeners) {
         addListeners();
@@ -1481,37 +1329,36 @@
     var addedTags = {};
     var removedTags = {};
 
-    for (var _type in newInfo) {
+    for (var type in newInfo) {
       // ignore these
-      if (includes(metaInfoOptionKeys, _type)) {
+      if (includes(metaInfoOptionKeys, type)) {
         continue;
       }
 
-      if (_type === 'title') {
+      if (type === 'title') {
         // update the title
         updateTitle(newInfo.title);
         continue;
       }
 
-      if (includes(metaInfoAttributeKeys, _type)) {
-        var tagName = _type.substr(0, 4);
-
-        updateAttribute(options, newInfo[_type], getTag(tags, tagName));
+      if (includes(metaInfoAttributeKeys, type)) {
+        var tagName = type.substr(0, 4);
+        updateAttribute(options, newInfo[type], getTag(tags, tagName));
         continue;
       } // tags should always be an array, ignore if it isnt
 
 
-      if (!isArray(newInfo[_type])) {
+      if (!isArray(newInfo[type])) {
         continue;
       }
 
-      var _updateTag = updateTag(appId, options, _type, newInfo[_type], getTag(tags, 'head'), getTag(tags, 'body')),
+      var _updateTag = updateTag(appId, options, type, newInfo[type], getTag(tags, 'head'), getTag(tags, 'body')),
           oldTags = _updateTag.oldTags,
           newTags = _updateTag.newTags;
 
       if (newTags.length) {
-        addedTags[_type] = newTags;
-        removedTags[_type] = oldTags;
+        addedTags[type] = newTags;
+        removedTags[type] = oldTags;
       }
     }
 
@@ -1535,7 +1382,9 @@
      * @return {Object} - new meta info
      */
     return function refresh() {
-      var metaInfo = getMetaInfo(options, this.$root, clientSequences);
+      // collect & aggregate all metaInfo $options
+      var rawInfo = getComponentMetaInfo(options, this.$root);
+      var metaInfo = getMetaInfo(options, rawInfo, clientSequences, this.$root);
       var appId = this.$root._vueMeta.appId;
       var tags = updateClientMetaInfo(appId, options, metaInfo); // emit "event" with new info
 
