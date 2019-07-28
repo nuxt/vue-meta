@@ -74,3 +74,5 @@ const ret: void = resume()
 resume = $meta.pause(true)
 const { metaInfo: metaData2 }: { metaInfo: MetaInfo } = resume()
 const { metaInfo: metaData3 }: { metaInfo: MetaInfo } = $meta.resume(true)
+
+const metaInfo: MetaInfoSSR = VueMeta.generate({ meta: [{ charset: 'utf-8' }] }, { ssrAppId: 1 })

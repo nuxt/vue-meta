@@ -18,6 +18,7 @@ export declare class VueMeta {
   static version: string
   static install(vue: typeof Vue, options?: VueMetaOptions): PluginFunction<never>
   static hasMetaInfo(vm: Component): boolean
+  static generate(metaInfo: MetaInfo, options?: Object): MetaInfoSSR
 }
 
 interface Refreshed {
