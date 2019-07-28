@@ -2,6 +2,7 @@ import { version } from '../package.json'
 import createMixin from './shared/mixin'
 import { setOptions } from './shared/options'
 import $meta from './server/$meta'
+import generate from './server/generate'
 import { hasMetaInfo } from './shared/meta-helpers'
 
 /**
@@ -24,5 +25,6 @@ function install (Vue, options = {}) {
 export default {
   version,
   install,
-  hasMetaInfo
+  hasMetaInfo,
+  generate
 }

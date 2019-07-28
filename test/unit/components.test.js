@@ -1,3 +1,4 @@
+import { getComponentMetaInfo } from '../../src/shared/getComponentOption'
 import _getMetaInfo from '../../src/shared/getMetaInfo'
 import { mount, createWrapper, loadVueMetaPlugin, vmTick } from '../utils'
 import { defaultOptions } from '../../src/shared/constants'
@@ -7,7 +8,7 @@ import HelloWorld from '../components/hello-world.vue'
 import KeepAlive from '../components/keep-alive.vue'
 import Changed from '../components/changed.vue'
 
-const getMetaInfo = component => _getMetaInfo(defaultOptions, component)
+const getMetaInfo = component => _getMetaInfo(defaultOptions, getComponentMetaInfo(defaultOptions, component))
 
 jest.mock('../../src/utils/window', () => ({
   hasGlobalWindow: false

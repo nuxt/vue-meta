@@ -1,6 +1,6 @@
-import getMetaInfo from '../shared/getMetaInfo'
-import { metaInfoOptionKeys } from '../shared/constants'
 import { serverSequences } from '../shared/escaping'
+import { getComponentMetaInfo } from '../shared/getComponentOption'
+import getMetaInfo from '../shared/getMetaInfo'
 import generateServerInjector from './generateServerInjector'
 
 export default function _inject (options = {}) {
@@ -12,15 +12,13 @@ export default function _inject (options = {}) {
    * @return {Object} - server meta info with `toString` methods
    */
   return function inject () {
-    // get meta info with sensible defaults
-    const metaInfo = getMetaInfo(options, this.$root, serverSequences)
+    // collect & aggregate all metaInfo $options
+    const rawInfo = getComponentMetaInfo(options, this.$root)
+
+    const metaInfo = getMetaInfo(options, rawInfo, serverSequences, this.$root)
 
     // generate server injectors
-    for (const key in metaInfo) {
-      if (!metaInfoOptionKeys.includes(key) && metaInfo.hasOwnProperty(key)) {
-        metaInfo[key] = generateServerInjector(options, key, metaInfo[key])
-      }
-    }
+    generateServerInjector(options, metaInfo)
 
     return metaInfo
   }

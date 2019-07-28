@@ -1,8 +1,13 @@
 import { isFunction, isObject } from '../utils/is-type'
 import { findIndex } from '../utils/array'
+import { defaultInfo } from './constants'
 import { merge } from './merge'
 import { applyTemplate } from './template'
 import { inMetaInfoBranch } from './meta-helpers'
+
+export function getComponentMetaInfo (options = {}, component) {
+  return getComponentOption(options, component, defaultInfo)
+}
 
 /**
  * Returns the `opts.option` $option value of the given `opts.component`.
@@ -18,7 +23,7 @@ import { inMetaInfoBranch } from './meta-helpers'
  * @param  {Object} [result={}] - result so far
  * @return {Object} result - final aggregated result
  */
-export default function getComponentOption (options = {}, component, result = {}) {
+export function getComponentOption (options = {}, component, result = {}) {
   const { keyName, metaTemplateKeyName, tagIDKeyName } = options
   const { $options, $children } = component
 

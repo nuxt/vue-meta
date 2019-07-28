@@ -1,9 +1,10 @@
+import { getComponentMetaInfo } from '../../src/shared/getComponentOption'
 import _getMetaInfo from '../../src/shared/getMetaInfo'
 import { loadVueMetaPlugin } from '../utils'
 import { defaultOptions } from '../../src/shared/constants'
 import { serverSequences } from '../../src/shared/escaping'
 
-const getMetaInfo = (component, escapeSequences) => _getMetaInfo(defaultOptions, component, escapeSequences)
+const getMetaInfo = (component, escapeSequences) => _getMetaInfo(defaultOptions, getComponentMetaInfo(defaultOptions, component), escapeSequences)
 
 describe('escaping', () => {
   let Vue

@@ -1,8 +1,5 @@
-import { ensureIsArray } from '../utils/ensure'
+import { escapeMetaInfo } from '../shared/escaping'
 import { applyTemplate } from './template'
-import { defaultInfo, disableOptionKeys } from './constants'
-import { escape } from './escaping'
-import getComponentOption from './getComponentOption'
 
 /**
  * Returns the correct meta info for the given component
@@ -11,10 +8,7 @@ import getComponentOption from './getComponentOption'
  * @param  {Object} component - the Vue instance to get meta info from
  * @return {Object} - returned meta info
  */
-export default function getMetaInfo (options = {}, component, escapeSequences = []) {
-  // collect & aggregate all metaInfo $options
-  let info = getComponentOption(options, component, defaultInfo)
-
+export default function getMetaInfo (options = {}, info, escapeSequences = [], component) {
   // Remove all "template" tags from meta
 
   // backup the title chunk in case user wants access to it
@@ -33,24 +27,5 @@ export default function getMetaInfo (options = {}, component, escapeSequences = 
     info.base = Object.keys(info.base).length ? [info.base] : []
   }
 
-  const escapeOptions = {
-    doEscape: value => escapeSequences.reduce((val, [v, r]) => val.replace(v, r), value)
-  }
-
-  disableOptionKeys.forEach((disableKey, index) => {
-    if (index === 0) {
-      ensureIsArray(info, disableKey)
-    } else if (index === 1) {
-      for (const key in info[disableKey]) {
-        ensureIsArray(info[disableKey], key)
-      }
-    }
-
-    escapeOptions[disableKey] = info[disableKey]
-  })
-
-  // begin sanitization
-  info = escape(info, options, escapeOptions)
-
-  return info
+  return escapeMetaInfo(options, info, escapeSequences)
 }

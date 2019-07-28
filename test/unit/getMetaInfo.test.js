@@ -1,8 +1,9 @@
+import { getComponentMetaInfo } from '../../src/shared/getComponentOption'
 import _getMetaInfo from '../../src/shared/getMetaInfo'
 import { loadVueMetaPlugin } from '../utils'
 import { defaultOptions } from '../../src/shared/constants'
 
-const getMetaInfo = component => _getMetaInfo(defaultOptions, component)
+const getMetaInfo = component => _getMetaInfo(defaultOptions, getComponentMetaInfo(defaultOptions, component), [], component)
 
 describe('getMetaInfo', () => {
   let Vue

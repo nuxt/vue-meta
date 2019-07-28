@@ -21,6 +21,8 @@ const banner =  `/**
 const babelConfig = () => ({
   presets: [
     ['@babel/preset-env', {
+      /*useBuiltIns: 'usage',
+      corejs: 2,*/
       targets: {
         node: 8,
         ie: 9,

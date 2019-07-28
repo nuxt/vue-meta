@@ -1,4 +1,4 @@
-import getComponentOption from '../../src/shared/getComponentOption'
+import { getComponentOption } from '../../src/shared/getComponentOption'
 import { inMetaInfoBranch } from '../../src/shared/meta-helpers'
 import { mount, getVue, loadVueMetaPlugin } from '../utils'
 
