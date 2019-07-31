@@ -2,4 +2,5 @@ import createApp from './App'
 
 window.users = []
 
-createApp().$mount('#app')
+const { app } = createApp()
+app.$mount('#app')

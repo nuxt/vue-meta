@@ -1,32 +1,82 @@
 import Vue from 'vue'
+import Router from 'vue-router'
 import VueMeta from '../../'
 
+Vue.use(Router)
 Vue.use(VueMeta, {
   tagIDKeyName: 'hid'
 })
 
 export default function createApp () {
-  return new Vue({
-    components: {
-      Hello: {
-        template: '<p>Hello World</p>',
-        metaInfo: {
-          title: 'Hello World',
-          meta: [
-            {
-              hid: 'description',
-              name: 'description',
-              content: 'The description'
-            }
-          ]
+  const Home = {
+    template: `<div>
+      <router-link to="/about">About</router-link>
+
+      <p>Hello World</p>
+    </div>`,
+    metaInfo: {
+      title: 'Hello World',
+      meta: [
+        {
+          hid: 'og:title',
+          name: 'og:title',
+          content: 'Hello World'
+        },
+        {
+          hid: 'description',
+          name: 'description',
+          content: 'Hello World'
         }
-      }
-    },
+      ]
+    }
+  }
+
+  const About = {
+    template: `<div>
+      <router-link to="/">Home</router-link>
+
+      <p>About</p>
+    </div>`,
+    metaInfo: {
+      title: 'About World',
+      meta: [
+        {
+          hid: 'og:title',
+          name: 'og:title',
+          content: 'About World'
+        },
+        {
+          hid: 'description',
+          name: 'description',
+          content: 'About World'
+        }
+      ]
+    }
+  }
+
+  const router = new Router({
+    mode: 'history',
+    base: '/ssr',
+    routes: [
+      { path: '/', component: Home },
+      { path: '/about', component: About }
+    ]
+  })
+
+  const app = new Vue({
+    router,
     metaInfo () {
       return {
         title: 'Boring Title',
         htmlAttrs: { amp: true },
         meta: [
+          {
+            skip: this.count < 1,
+            hid: 'og:title',
+            name: 'og:title',
+            template: chunk => `${chunk} - My Site`,
+            content: 'Default Title'
+          },
           {
             hid: 'description',
             name: 'description',
@@ -73,8 +123,6 @@ export default function createApp () {
     },
     template: `
     <div id="app">
-      <hello/>
-
       <p>{{ count }} users loaded</p>
 
       <ul>
@@ -85,6 +133,10 @@ export default function createApp () {
         {{ user.id }}: {{ user.name }}
         </li>
       </ul>
+
+      <router-view />
     </div>`
   })
+
+  return { app, router }
 }

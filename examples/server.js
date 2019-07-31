@@ -32,11 +32,12 @@ app.use(express.static(__dirname))
 
 app.use(async (req, res, next) => {
   if (!req.url.startsWith('/ssr')) {
-    next()
+    return next()
   }
 
   try {
-    const html = await renderPage()
+    const context = { url: req.url }
+    const html = await renderPage(context)
     res.send(html)
   } catch (e) {
     consola.error('SSR Oops:', e)
