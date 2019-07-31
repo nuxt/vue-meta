@@ -10,6 +10,10 @@ export function arrayMerge ({ component, tagIDKeyName, metaTemplateKeyName, cont
   // using an O(1) lookup associative array exploit
   const destination = []
 
+  if (!target.length && !source.length) {
+    return destination
+  }
+
   target.forEach((targetItem, targetIndex) => {
     // no tagID so no need to check for duplicity
     if (!targetItem[tagIDKeyName]) {
@@ -53,12 +57,17 @@ export function arrayMerge ({ component, tagIDKeyName, metaTemplateKeyName, cont
     }
 
     const sourceTemplate = sourceItem[metaTemplateKeyName]
-
     if (!sourceTemplate) {
       // use parent template and child content
       applyTemplate({ component, metaTemplateKeyName, contentKeyName }, sourceItem, targetTemplate)
-    } else if (!sourceItem[contentKeyName]) {
-      // use child template and parent content
+
+      // set template to true to indicate template was already applied
+      sourceItem.template = true
+      return
+    }
+
+    if (!sourceItem[contentKeyName]) {
+      // use parent content and child template
       applyTemplate({ component, metaTemplateKeyName, contentKeyName }, sourceItem, undefined, targetItem[contentKeyName])
     }
   })
