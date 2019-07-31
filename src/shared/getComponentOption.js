@@ -21,7 +21,7 @@ export function getComponentMetaInfo (options = {}, component) {
  * @param  {Object} [result={}] - result so far
  * @return {Object} result - final aggregated result
  */
-export function getComponentOption (options = {}, component, result = {}, iter = 0) {
+export function getComponentOption (options = {}, component, result = {}) {
   const { keyName } = options
   const { $options, $children } = component
 
