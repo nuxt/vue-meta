@@ -1,8 +1,6 @@
 import { isFunction, isObject } from '../utils/is-type'
-import { findIndex } from '../utils/array'
 import { defaultInfo } from './constants'
 import { merge } from './merge'
-import { applyTemplate } from './template'
 import { inMetaInfoBranch } from './meta-helpers'
 
 export function getComponentMetaInfo (options = {}, component) {
@@ -24,7 +22,7 @@ export function getComponentMetaInfo (options = {}, component) {
  * @return {Object} result - final aggregated result
  */
 export function getComponentOption (options = {}, component, result = {}) {
-  const { keyName, metaTemplateKeyName, tagIDKeyName } = options
+  const { keyName } = options
   const { $options, $children } = component
 
   if (component._inactive) {
@@ -59,21 +57,6 @@ export function getComponentOption (options = {}, component, result = {}) {
       }
 
       result = getComponentOption(options, childComponent, result)
-    })
-  }
-
-  if (metaTemplateKeyName && result.meta) {
-    // apply templates if needed
-    result.meta.forEach(metaObject => applyTemplate(options, metaObject))
-
-    // remove meta items with duplicate vmid's
-    result.meta = result.meta.filter((metaItem, index, arr) => {
-      return (
-        // keep meta item if it doesnt has a vmid
-        !metaItem.hasOwnProperty(tagIDKeyName) ||
-        // or if it's the first item in the array with this vmid
-        index === findIndex(arr, item => item[tagIDKeyName] === metaItem[tagIDKeyName])
-      )
     })
   }
 

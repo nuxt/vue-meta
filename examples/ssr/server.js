@@ -14,14 +14,27 @@ const compiled = template(templateContent, { interpolate: /{{([\s\S]+?)}}/g })
 
 process.server = true
 
-export async function renderPage () {
-  const app = await createApp()
-  const appHtml = await renderer.renderToString(app)
+export async function renderPage ({ url }) {
+  const { app, router } = await createApp()
 
-  const pageHtml = compiled({
-    app: appHtml,
-    ...app.$meta().inject()
+  router.push(url.substr(4))
+
+  return new Promise((resolve, reject) => {
+    router.onReady(async () => {
+      const matchedComponents = router.getMatchedComponents()
+      // no matched routes, reject with 404
+      if (!matchedComponents.length) {
+        return reject({ code: 404 })
+      }
+
+      const appHtml = await renderer.renderToString(app)
+
+      const pageHtml = compiled({
+        app: appHtml,
+        ...app.$meta().inject()
+      })
+
+      resolve(pageHtml)
+    })
   })
-
-  return pageHtml
 }

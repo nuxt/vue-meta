@@ -1,4 +1,4 @@
-import { booleanHtmlAttributes, commonDataAttributes } from '../../shared/constants'
+import { booleanHtmlAttributes, commonDataAttributes, tagProperties } from '../../shared/constants'
 import { includes } from '../../utils/array'
 import { queryElements, getElementsKey } from '../../utils/elements.js'
 
@@ -48,7 +48,7 @@ export default function updateTag (appId, options = {}, type, tags, head, body) 
 
     for (const attr in tag) {
       /* istanbul ignore next */
-      if (!tag.hasOwnProperty(attr)) {
+      if (!tag.hasOwnProperty(attr) || includes(tagProperties, attr)) {
         continue
       }
 

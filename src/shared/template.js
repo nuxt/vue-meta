@@ -1,13 +1,23 @@
 import { isUndefined, isFunction } from '../utils/is-type'
 
 export function applyTemplate ({ component, metaTemplateKeyName, contentKeyName }, headObject, template, chunk) {
-  if (isUndefined(template)) {
+  if (template === true || headObject[metaTemplateKeyName] === true) {
+    // abort, template was already applied
+    return false
+  }
+
+  if (isUndefined(template) && headObject[metaTemplateKeyName]) {
     template = headObject[metaTemplateKeyName]
-    delete headObject[metaTemplateKeyName]
+    headObject[metaTemplateKeyName] = true
   }
 
   // return early if no template defined
   if (!template) {
+    // cleanup faulty template properties
+    if (headObject.hasOwnProperty(metaTemplateKeyName)) {
+      delete headObject[metaTemplateKeyName]
+    }
+
     return false
   }
 

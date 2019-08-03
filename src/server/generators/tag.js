@@ -3,6 +3,7 @@ import {
   tagsWithoutEndTag,
   tagsWithInnerContent,
   tagAttributeAsInnerContent,
+  tagProperties,
   commonDataAttributes
 } from '../../shared/constants'
 
@@ -43,7 +44,7 @@ export default function tagGenerator ({ ssrAppId, attribute, tagIDKeyName } = {}
         // build a string containing all attributes of this tag
         for (const attr in tag) {
           // these attributes are treated as children on the tag
-          if (tagAttributeAsInnerContent.includes(attr) || attr === 'once') {
+          if (tagAttributeAsInnerContent.includes(attr) || tagProperties.includes(attr)) {
             continue
           }
 

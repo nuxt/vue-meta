@@ -251,7 +251,7 @@ describe('getMetaInfo', () => {
       }
     })
 
-    expect(getMetaInfo(component)).toEqual({
+    const expectedMetaInfo = {
       title: 'Hello',
       titleChunk: 'Hello',
       titleTemplate: '%s',
@@ -262,7 +262,8 @@ describe('getMetaInfo', () => {
         {
           vmid: 'og:title',
           property: 'og:title',
-          content: 'Test title - My page'
+          content: 'Test title - My page',
+          template: true
         }
       ],
       base: [],
@@ -272,7 +273,10 @@ describe('getMetaInfo', () => {
       noscript: [],
       __dangerouslyDisableSanitizers: [],
       __dangerouslyDisableSanitizersByTagID: {}
-    })
+    }
+
+    expect(getMetaInfo(component)).toEqual(expectedMetaInfo)
+    expect(getMetaInfo(component)).toEqual(expectedMetaInfo)
   })
 
   test('properly uses function meta templates', () => {
@@ -290,7 +294,7 @@ describe('getMetaInfo', () => {
       }
     })
 
-    expect(getMetaInfo(component)).toEqual({
+    const expectedMetaInfo = {
       title: 'Hello',
       titleChunk: 'Hello',
       titleTemplate: '%s',
@@ -301,7 +305,8 @@ describe('getMetaInfo', () => {
         {
           vmid: 'og:title',
           property: 'og:title',
-          content: 'Test title - My page'
+          content: 'Test title - My page',
+          template: true
         }
       ],
       base: [],
@@ -311,7 +316,10 @@ describe('getMetaInfo', () => {
       noscript: [],
       __dangerouslyDisableSanitizers: [],
       __dangerouslyDisableSanitizersByTagID: {}
-    })
+    }
+
+    expect(getMetaInfo(component)).toEqual(expectedMetaInfo)
+    expect(getMetaInfo(component)).toEqual(expectedMetaInfo)
   })
 
   test('properly uses content only if template is not defined', () => {
@@ -460,7 +468,7 @@ describe('getMetaInfo', () => {
       render: h => h('div', null, [h('merge-child')])
     })
 
-    expect(getMetaInfo(component)).toEqual({
+    const expectedMetaInfo = {
       title: 'Hello',
       titleChunk: 'Hello',
       titleTemplate: '%s',
@@ -471,7 +479,8 @@ describe('getMetaInfo', () => {
         {
           vmid: 'og:title',
           property: 'og:title',
-          content: 'An important title! - My page'
+          content: 'An important title! - My page',
+          template: true
         }
       ],
       base: [],
@@ -481,7 +490,10 @@ describe('getMetaInfo', () => {
       noscript: [],
       __dangerouslyDisableSanitizers: [],
       __dangerouslyDisableSanitizersByTagID: {}
-    })
+    }
+
+    expect(getMetaInfo(component)).toEqual(expectedMetaInfo)
+    expect(getMetaInfo(component)).toEqual(expectedMetaInfo)
   })
 
   test('properly uses meta templates with one-level-deep nested children template', () => {
@@ -514,7 +526,7 @@ describe('getMetaInfo', () => {
       render: h => h('div', null, [h('merge-child')])
     })
 
-    expect(getMetaInfo(component)).toEqual({
+    const expectedMetaInfo = {
       title: 'Hello',
       titleChunk: 'Hello',
       titleTemplate: '%s',
@@ -525,7 +537,8 @@ describe('getMetaInfo', () => {
         {
           vmid: 'og:title',
           property: 'og:title',
-          content: 'Test title - My page'
+          content: 'Test title - My page',
+          template: true
         }
       ],
       base: [],
@@ -535,7 +548,10 @@ describe('getMetaInfo', () => {
       noscript: [],
       __dangerouslyDisableSanitizers: [],
       __dangerouslyDisableSanitizersByTagID: {}
-    })
+    }
+
+    expect(getMetaInfo(component)).toEqual(expectedMetaInfo)
+    expect(getMetaInfo(component)).toEqual(expectedMetaInfo)
   })
 
   test('properly uses meta templates with one-level-deep nested children template and content', () => {
@@ -569,7 +585,7 @@ describe('getMetaInfo', () => {
       render: h => h('div', null, [h('merge-child')])
     })
 
-    expect(getMetaInfo(component)).toEqual({
+    const expectedMetaInfo = {
       title: 'Hello',
       titleChunk: 'Hello',
       titleTemplate: '%s',
@@ -580,7 +596,8 @@ describe('getMetaInfo', () => {
         {
           vmid: 'og:title',
           property: 'og:title',
-          content: 'An important title! - My page'
+          content: 'An important title! - My page',
+          template: true
         }
       ],
       base: [],
@@ -590,7 +607,10 @@ describe('getMetaInfo', () => {
       noscript: [],
       __dangerouslyDisableSanitizers: [],
       __dangerouslyDisableSanitizersByTagID: {}
-    })
+    }
+
+    expect(getMetaInfo(component)).toEqual(expectedMetaInfo)
+    expect(getMetaInfo(component)).toEqual(expectedMetaInfo)
   })
 
   test('properly uses meta templates with one-level-deep nested children when parent has no template', () => {
@@ -623,7 +643,7 @@ describe('getMetaInfo', () => {
       render: h => h('div', null, [h('merge-child')])
     })
 
-    expect(getMetaInfo(component)).toEqual({
+    const expectedMetaInfo = {
       title: 'Hello',
       titleChunk: 'Hello',
       titleTemplate: '%s',
@@ -634,7 +654,8 @@ describe('getMetaInfo', () => {
         {
           vmid: 'og:title',
           property: 'og:title',
-          content: 'An important title! - My page'
+          content: 'An important title! - My page',
+          template: true
         }
       ],
       base: [],
@@ -644,7 +665,10 @@ describe('getMetaInfo', () => {
       noscript: [],
       __dangerouslyDisableSanitizers: [],
       __dangerouslyDisableSanitizersByTagID: {}
-    })
+    }
+
+    expect(getMetaInfo(component)).toEqual(expectedMetaInfo)
+    expect(getMetaInfo(component)).toEqual(expectedMetaInfo)
   })
 
   test('no errors when metaInfo returns nothing', () => {
@@ -721,7 +745,8 @@ describe('getMetaInfo', () => {
         {
           vmid: 'og:title',
           property: 'og:title',
-          content: 'Test title - My page'
+          content: 'Test title - My page',
+          template: true
         }
       ],
       base: [],
