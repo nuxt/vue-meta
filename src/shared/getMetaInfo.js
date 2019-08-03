@@ -32,12 +32,13 @@ export default function getMetaInfo (options = {}, info, escapeSequences = [], c
   if (info.meta) {
     // remove meta items with duplicate vmid's
     info.meta = info.meta.filter((metaItem, index, arr) => {
-      return (
-        // keep meta item if it doesnt has a vmid
-        !metaItem.hasOwnProperty(tagIDKeyName) ||
-        // or if it's the first item in the array with this vmid
-        index === findIndex(arr, item => item[tagIDKeyName] === metaItem[tagIDKeyName])
-      )
+      const hasVmid = metaItem.hasOwnProperty(tagIDKeyName)
+      if (!hasVmid) {
+        return true
+      }
+
+      const isFirstItemForVmid = index === findIndex(arr, item => item[tagIDKeyName] === metaItem[tagIDKeyName])
+      return isFirstItemForVmid
     })
 
     // apply templates if needed
