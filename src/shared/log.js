@@ -2,7 +2,7 @@ import { hasGlobalWindow } from '../utils/window'
 
 const _global = hasGlobalWindow ? window : global
 
-const console = (_global.console = _global.console || {})
+const console = _global.console || {}
 
 export function warn (str) {
   /* istanbul ignore next */
