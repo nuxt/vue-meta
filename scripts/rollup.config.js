@@ -8,8 +8,10 @@ import defaultsDeep from 'lodash/defaultsDeep'
 
 const pkg = require('../package.json')
 
+const version = pkg.version
+
 const banner =  `/**
- * vue-meta v${pkg.version}
+ * vue-meta v${version}
  * (c) ${new Date().getFullYear()}
  * - Declan de Wet
  * - Sébastien Chopin (@Atinux)
@@ -43,15 +45,16 @@ function rollupConfig({
     values: {
       // replaceConfig needs to have some values
       'const polyfill = process.env.NODE_ENV === \'test\'': 'const polyfill = true',
+      'process.env.VERSION': `"${version}"`
     }
   }
 
-  // keep simple polyfills when babel plugin is used for build
+  /* / keep simple polyfills when babel plugin is used for build
   if (plugins && plugins.some(p => p.name === 'babel')) {
     replaceConfig.values = {
       'const polyfill = process.env.NODE_ENV === \'test\'': 'const polyfill = true',
     }
-  }
+  }*/
 
   return defaultsDeep({}, config, {
     input: 'src/browser.js',

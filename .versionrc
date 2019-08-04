@@ -1,0 +1,7 @@
+{
+  "commit-all": true,
+  "scripts": {
+    "postbump": "yarn build",
+    "precommit": "git add -f dist/*"
+  }
+}
