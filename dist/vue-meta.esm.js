@@ -1,5 +1,5 @@
 /**
- * vue-meta v2.2.0
+ * vue-meta v2.2.1
  * (c) 2019
  * - Declan de Wet
  * - Sébastien Chopin (@Atinux)
@@ -9,7 +9,7 @@
 
 import deepmerge from 'deepmerge';
 
-var version = "2.2.0";
+var version = "2.2.1";
 
 // store an id to keep track of DOM updates
 var batchId = null;
@@ -202,7 +202,7 @@ var hasGlobalWindow = hasGlobalWindowFn();
 
 var _global = hasGlobalWindow ? window : global;
 
-var console = _global.console = _global.console || {};
+var console = _global.console || {};
 function warn(str) {
   /* istanbul ignore next */
   if (!console || !console.warn) {
@@ -434,7 +434,8 @@ var tagsWithoutEndTag = ['base', 'meta', 'link']; // HTML elements which can hav
 
 var tagsWithInnerContent = ['noscript', 'script', 'style']; // Attributes which are inserted as childNodes instead of HTMLAttribute
 
-var tagAttributeAsInnerContent = ['innerHTML', 'cssText', 'json']; // Attributes which should be added with data- prefix
+var tagAttributeAsInnerContent = ['innerHTML', 'cssText', 'json'];
+var tagProperties = ['once', 'template']; // Attributes which should be added with data- prefix
 
 var commonDataAttributes = ['body', 'pbody']; // from: https://github.com/kangax/html-minifier/blob/gh-pages/src/htmlminifier.js#L202
 
@@ -621,13 +622,23 @@ function applyTemplate(_ref, headObject, template, chunk) {
       metaTemplateKeyName = _ref.metaTemplateKeyName,
       contentKeyName = _ref.contentKeyName;
 
-  if (isUndefined(template)) {
+  if (template === true || headObject[metaTemplateKeyName] === true) {
+    // abort, template was already applied
+    return false;
+  }
+
+  if (isUndefined(template) && headObject[metaTemplateKeyName]) {
     template = headObject[metaTemplateKeyName];
-    delete headObject[metaTemplateKeyName];
+    headObject[metaTemplateKeyName] = true;
   } // return early if no template defined
 
 
   if (!template) {
+    // cleanup faulty template properties
+    if (headObject.hasOwnProperty(metaTemplateKeyName)) {
+      delete headObject[metaTemplateKeyName];
+    }
+
     return false;
   }
 
@@ -648,6 +659,11 @@ function _arrayMerge(_ref, target, source) {
   // but we check for a `vmid` property on each object in the array
   // using an O(1) lookup associative array exploit
   var destination = [];
+
+  if (!target.length && !source.length) {
+    return destination;
+  }
+
   target.forEach(function (targetItem, targetIndex) {
     // no tagID so no need to check for duplicity
     if (!targetItem[tagIDKeyName]) {
@@ -698,9 +714,14 @@ function _arrayMerge(_ref, target, source) {
         component: component,
         metaTemplateKeyName: metaTemplateKeyName,
         contentKeyName: contentKeyName
-      }, sourceItem, targetTemplate);
-    } else if (!sourceItem[contentKeyName]) {
-      // use child template and parent content
+      }, sourceItem, targetTemplate); // set template to true to indicate template was already applied
+
+      sourceItem.template = true;
+      return;
+    }
+
+    if (!sourceItem[contentKeyName]) {
+      // use parent content and child template
       applyTemplate({
         component: component,
         metaTemplateKeyName: metaTemplateKeyName,
@@ -766,9 +787,7 @@ function getComponentOption() {
   var options = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
   var component = arguments.length > 1 ? arguments[1] : undefined;
   var result = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
-  var keyName = options.keyName,
-      metaTemplateKeyName = options.metaTemplateKeyName,
-      tagIDKeyName = options.tagIDKeyName;
+  var keyName = options.keyName;
   var $options = component.$options,
       $children = component.$children;
 
@@ -806,22 +825,6 @@ function getComponentOption() {
     });
   }
 
-  if (metaTemplateKeyName && result.meta) {
-    // apply templates if needed
-    result.meta.forEach(function (metaObject) {
-      return applyTemplate(options, metaObject);
-    }); // remove meta items with duplicate vmid's
-
-    result.meta = result.meta.filter(function (metaItem, index, arr) {
-      return (// keep meta item if it doesnt has a vmid
-        !metaItem.hasOwnProperty(tagIDKeyName) || // or if it's the first item in the array with this vmid
-        index === findIndex(arr, function (item) {
-          return item[tagIDKeyName] === metaItem[tagIDKeyName];
-        })
-      );
-    });
-  }
-
   return result;
 }
 
@@ -838,9 +841,9 @@ function getMetaInfo() {
   var info = arguments.length > 1 ? arguments[1] : undefined;
   var escapeSequences = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : [];
   var component = arguments.length > 3 ? arguments[3] : undefined;
-
-  // Remove all "template" tags from meta
+  var tagIDKeyName = options.tagIDKeyName; // Remove all "template" tags from meta
   // backup the title chunk in case user wants access to it
+
   if (info.title) {
     info.titleChunk = info.title;
   } // replace title with populated template
@@ -857,6 +860,26 @@ function getMetaInfo() {
 
   if (info.base) {
     info.base = Object.keys(info.base).length ? [info.base] : [];
+  }
+
+  if (info.meta) {
+    // remove meta items with duplicate vmid's
+    info.meta = info.meta.filter(function (metaItem, index, arr) {
+      var hasVmid = metaItem.hasOwnProperty(tagIDKeyName);
+
+      if (!hasVmid) {
+        return true;
+      }
+
+      var isFirstItemForVmid = index === findIndex(arr, function (item) {
+        return item[tagIDKeyName] === metaItem[tagIDKeyName];
+      });
+      return isFirstItemForVmid;
+    }); // apply templates if needed
+
+    info.meta.forEach(function (metaObject) {
+      return applyTemplate(options, metaObject);
+    });
   }
 
   return escapeMetaInfo(options, info, escapeSequences);
@@ -1115,7 +1138,7 @@ function updateTag(appId) {
 
     var _loop = function _loop(attr) {
       /* istanbul ignore next */
-      if (!tag.hasOwnProperty(attr)) {
+      if (!tag.hasOwnProperty(attr) || includes(tagProperties, attr)) {
         return "continue";
       }
 
@@ -1432,7 +1455,7 @@ function tagGenerator() {
 
         for (var attr in tag) {
           // these attributes are treated as children on the tag
-          if (tagAttributeAsInnerContent.includes(attr) || attr === 'once') {
+          if (tagAttributeAsInnerContent.includes(attr) || tagProperties.includes(attr)) {
             continue;
           }
 

@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [2.2.1](https://github.com/nuxt/vue-meta/compare/v2.2.0...v2.2.1) (2019-08-04)
+
+
+### Bug Fixes
+
+* dont assign to global console ([2c0c4c3](https://github.com/nuxt/vue-meta/commit/2c0c4c3))
+* meta content templates ([#429](https://github.com/nuxt/vue-meta/issues/429)) ([6907f9a](https://github.com/nuxt/vue-meta/commit/6907f9a))
+
 ## [2.2.0](https://github.com/nuxt/vue-meta/compare/v2.1.1...v2.2.0) (2019-07-28)
 
 
