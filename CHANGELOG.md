@@ -2,82 +2,36 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
-## [2.2.0](https://github.com/nuxt/vue-meta/compare/v2.0.3...v2.2.0) (2019-07-28)
-
-
-### Bug Fixes
-
-* add warning for v1 boolean attribute syntax ([bfeab17](https://github.com/nuxt/vue-meta/commit/bfeab17))
-* also use ssrAppId for client update ([50c0509](https://github.com/nuxt/vue-meta/commit/50c0509))
-* babel config for rollup ([71b2d52](https://github.com/nuxt/vue-meta/commit/71b2d52))
-* don't generate <title> tag if metaInfo.title is null or false ([#409](https://github.com/nuxt/vue-meta/issues/409)) ([39ef287](https://github.com/nuxt/vue-meta/commit/39ef287))
-* dont change title when value is undefined (fix [#396](https://github.com/nuxt/vue-meta/issues/396)) ([90f9710](https://github.com/nuxt/vue-meta/commit/90f9710))
-* dont update title on client with falsy value except empty string ([6efcdf1](https://github.com/nuxt/vue-meta/commit/6efcdf1))
-* ensure hasAttribute exists on $root.$el ([f1511ac](https://github.com/nuxt/vue-meta/commit/f1511ac))
-* only show boolean attrs with truthy value ([1d9072a](https://github.com/nuxt/vue-meta/commit/1d9072a))
+## [2.2.0](https://github.com/nuxt/vue-meta/compare/v2.1.1...v2.2.0) (2019-07-28)
 
 
 ### Features
 
-* add option for prepending (no)script to body ([#410](https://github.com/nuxt/vue-meta/issues/410)) ([05163a7](https://github.com/nuxt/vue-meta/commit/05163a7))
-* auto add ssrAttribute to htmlAttrs ([9cf6d32](https://github.com/nuxt/vue-meta/commit/9cf6d32))
-* enable onload callbacks ([#414](https://github.com/nuxt/vue-meta/issues/414)) ([fc71e1f](https://github.com/nuxt/vue-meta/commit/fc71e1f))
-* make ssr app id configurable ([b0c85e5](https://github.com/nuxt/vue-meta/commit/b0c85e5))
 * support generating tags directly from metaInfo object ([cb2758e](https://github.com/nuxt/vue-meta/commit/cb2758e))
-* support json content (without disabling sanitizers) ([#415](https://github.com/nuxt/vue-meta/issues/415)) ([51fe6ea](https://github.com/nuxt/vue-meta/commit/51fe6ea))
 
 
 ### Tests
 
-* enable all getMetaInfo tests again ([24d7fee](https://github.com/nuxt/vue-meta/commit/24d7fee))
-* update browser config ([8c35863](https://github.com/nuxt/vue-meta/commit/8c35863))
 * use build/dist for e2e testing ([#421](https://github.com/nuxt/vue-meta/issues/421)) ([0bf0ceb](https://github.com/nuxt/vue-meta/commit/0bf0ceb))
 
 
-
-### [2.1.1](https://github.com/nuxt/vue-meta/compare/v2.0.3...v2.1.1) (2019-07-26)
+### [2.1.1](https://github.com/nuxt/vue-meta/compare/v2.1.0...v2.1.1) (2019-07-26)
 
 
 ### Bug Fixes
 
-* add warning for v1 boolean attribute syntax ([bfeab17](https://github.com/nuxt/vue-meta/commit/bfeab17))
-* also use ssrAppId for client update ([50c0509](https://github.com/nuxt/vue-meta/commit/50c0509))
 * babel config for rollup ([71b2d52](https://github.com/nuxt/vue-meta/commit/71b2d52))
-* don't generate <title> tag if metaInfo.title is null or false ([#409](https://github.com/nuxt/vue-meta/issues/409)) ([39ef287](https://github.com/nuxt/vue-meta/commit/39ef287))
-* dont change title when value is undefined (fix [#396](https://github.com/nuxt/vue-meta/issues/396)) ([90f9710](https://github.com/nuxt/vue-meta/commit/90f9710))
-* dont update title on client with falsy value except empty string ([6efcdf1](https://github.com/nuxt/vue-meta/commit/6efcdf1))
-* ensure hasAttribute exists on $root.$el ([f1511ac](https://github.com/nuxt/vue-meta/commit/f1511ac))
-* only show boolean attrs with truthy value ([1d9072a](https://github.com/nuxt/vue-meta/commit/1d9072a))
-
-
-### Features
-
-* add option for prepending (no)script to body ([#410](https://github.com/nuxt/vue-meta/issues/410)) ([05163a7](https://github.com/nuxt/vue-meta/commit/05163a7))
-* auto add ssrAttribute to htmlAttrs ([9cf6d32](https://github.com/nuxt/vue-meta/commit/9cf6d32))
-* enable onload callbacks ([#414](https://github.com/nuxt/vue-meta/issues/414)) ([fc71e1f](https://github.com/nuxt/vue-meta/commit/fc71e1f))
-* make ssr app id configurable ([b0c85e5](https://github.com/nuxt/vue-meta/commit/b0c85e5))
-* support json content (without disabling sanitizers) ([#415](https://github.com/nuxt/vue-meta/issues/415)) ([51fe6ea](https://github.com/nuxt/vue-meta/commit/51fe6ea))
-
-
-### Tests
-
-* enable all getMetaInfo tests again ([24d7fee](https://github.com/nuxt/vue-meta/commit/24d7fee))
-* update browser config ([8c35863](https://github.com/nuxt/vue-meta/commit/8c35863))
 
 
 
-## [2.1.0](https://github.com/nuxt/vue-meta/compare/v2.0.3...v2.1.0) (2019-07-24)
+## [2.1.0](https://github.com/nuxt/vue-meta/compare/v2.0.5...v2.1.0) (2019-07-24)
 
 
 ### Bug Fixes
 
-* add warning for v1 boolean attribute syntax ([bfeab17](https://github.com/nuxt/vue-meta/commit/bfeab17))
 * also use ssrAppId for client update ([50c0509](https://github.com/nuxt/vue-meta/commit/50c0509))
 * don't generate <title> tag if metaInfo.title is null or false ([#409](https://github.com/nuxt/vue-meta/issues/409)) ([39ef287](https://github.com/nuxt/vue-meta/commit/39ef287))
-* dont change title when value is undefined (fix [#396](https://github.com/nuxt/vue-meta/issues/396)) ([90f9710](https://github.com/nuxt/vue-meta/commit/90f9710))
 * dont update title on client with falsy value except empty string ([6efcdf1](https://github.com/nuxt/vue-meta/commit/6efcdf1))
-* ensure hasAttribute exists on $root.$el ([f1511ac](https://github.com/nuxt/vue-meta/commit/f1511ac))
-* only show boolean attrs with truthy value ([1d9072a](https://github.com/nuxt/vue-meta/commit/1d9072a))
 
 
 ### Features
@@ -91,25 +45,17 @@ All notable changes to this project will be documented in this file. See [standa
 
 ### Tests
 
-* enable all getMetaInfo tests again ([24d7fee](https://github.com/nuxt/vue-meta/commit/24d7fee))
 * update browser config ([8c35863](https://github.com/nuxt/vue-meta/commit/8c35863))
 
 
 
-### [2.0.5](https://github.com/nuxt/vue-meta/compare/v2.0.3...v2.0.5) (2019-07-11)
+### [2.0.5](https://github.com/nuxt/vue-meta/compare/v2.0.4...v2.0.5) (2019-07-11)
 
 
 ### Bug Fixes
 
-* add warning for v1 boolean attribute syntax ([bfeab17](https://github.com/nuxt/vue-meta/commit/bfeab17))
-* dont change title when value is undefined (fix [#396](https://github.com/nuxt/vue-meta/issues/396)) ([90f9710](https://github.com/nuxt/vue-meta/commit/90f9710))
 * ensure hasAttribute exists on $root.$el ([f1511ac](https://github.com/nuxt/vue-meta/commit/f1511ac))
 * only show boolean attrs with truthy value ([1d9072a](https://github.com/nuxt/vue-meta/commit/1d9072a))
-
-
-### Tests
-
-* enable all getMetaInfo tests again ([24d7fee](https://github.com/nuxt/vue-meta/commit/24d7fee))
 
 
 
