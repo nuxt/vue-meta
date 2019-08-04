@@ -51,7 +51,7 @@
     "docs:build": "vuepress build docs",
     "lint": "eslint src test",
     "prerelease": "git checkout master && git pull -r",
-    "release": "yarn lint && yarn test && yarn build && standard-version",
+    "release": "yarn lint && yarn test && standard-version",
     "test": "yarn test:unit && yarn test:e2e-ssr && yarn test:e2e-browser",
     "test:e2e-ssr": "jest test/e2e/ssr",
     "test:e2e-browser": "jest test/e2e/browser",
