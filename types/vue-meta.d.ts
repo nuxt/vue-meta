@@ -59,7 +59,7 @@ export interface MetaPropertyCharset extends MetaDataProperty {
 
 export interface MetaPropertyEquiv extends MetaDataProperty {
   httpEquiv: string,
-  name: string,
+  content: string,
   template?: (chunk: string) => string
 }
 
