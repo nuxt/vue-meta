@@ -136,6 +136,16 @@ export interface ScriptPropertySrcCallback extends ScriptPropertyBase {
   callback: CallbackFn
 }
 
+type JsonVal = string | number | boolean | JsonObj | JsonObj[] | null
+
+interface JsonObj {
+  [key: string]: JsonVal | JsonVal[]
+}
+
+export interface ScriptPropertyJson extends ScriptPropertyBase {
+  json: JsonObj
+}
+
 export interface NoScriptProperty extends MetaDataProperty {
   innerHTML: string,
 }
@@ -156,7 +166,7 @@ export interface MetaInfo {
   meta?: (MetaPropertyCharset | MetaPropertyEquiv | MetaPropertyName | MetaPropertyMicrodata | MetaPropertyProperty)[]
   link?: (LinkPropertyBase | LinkPropertyHref | LinkPropertyHrefCallback)[]
   style?: StyleProperty[]
-  script?: (ScriptPropertyText | ScriptPropertySrc | ScriptPropertySrcCallback)[]
+  script?: (ScriptPropertyText | ScriptPropertySrc | ScriptPropertySrcCallback | ScriptPropertyJson)[]
   noscript?: NoScriptProperty[]
 
   __dangerouslyDisableSanitizers?: string[]
