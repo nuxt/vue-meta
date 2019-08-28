@@ -7,5 +7,21 @@ export {
   VueMetaOptions,
   VueMetaPlugin,
   MetaInfo,
-  MetaInfoSSR
+  MetaInfoSSR,
+  AttributeProperty,
+  LinkPropertyBase,
+  LinkPropertyHref,
+  LinkPropertyHrefCallback,
+  MetaPropertyCharset,
+  MetaPropertyEquiv,
+  MetaPropertyName,
+  MetaPropertyMicrodata,
+  MetaPropertyProperty,
+  NoScriptProperty,
+  ScriptPropertyBase,
+  ScriptPropertyText,
+  ScriptPropertySrc,
+  ScriptPropertySrcCallback,
+  ScriptPropertyJson,
+  StyleProperty
 } from './vue-meta'
