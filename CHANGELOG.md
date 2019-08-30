@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [2.2.2](https://github.com/nuxt/vue-meta/compare/v2.2.1...v2.2.2) (2019-08-30)
+
+
+### Bug Fixes
+
+* workaround for memoryleak in destroyed hook ([ec7b1fb](https://github.com/nuxt/vue-meta/commit/ec7b1fb))
+* **types:** add "content" property to MetaPropertyEquiv and remove "name" ([#436](https://github.com/nuxt/vue-meta/issues/436)) ([4384f44](https://github.com/nuxt/vue-meta/commit/4384f44))
+
 ### [2.2.1](https://github.com/nuxt/vue-meta/compare/v2.2.0...v2.2.1) (2019-08-04)
 
 
