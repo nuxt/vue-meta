@@ -8,7 +8,7 @@ Proceed to the [Gridsome documentation](https://gridsome.org/docs)
 
 ## Nuxt.js
 
-Proceed to the [Nuxt.js documentation](https://nuxtjs.org/api)
+Proceed to the [Nuxt.js documentation](https://nuxtjs.org/api/pages-head)
 
 ## Ream
 
