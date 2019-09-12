@@ -1,4 +1,4 @@
-import { isFunction, isObject } from '../utils/is-type'
+import { isObject } from '../utils/is-type'
 import { defaultInfo } from './constants'
 import { merge } from './merge'
 import { inMetaInfoBranch } from './meta-helpers'

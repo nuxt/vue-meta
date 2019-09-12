@@ -18,17 +18,13 @@ export default {
   },
   metaInfo() {
     return {
-      changed: this._changed
+      changed: this.changed.bind(this)
     }
   },
   data() {
     return {
-      childVisible: false,
-      _changed: () => {}
+      childVisible: false
     }
-  },
-  mounted() {
-    this._changed = this.changed.bind(this)
-  }
+f  }
 }
 </script>

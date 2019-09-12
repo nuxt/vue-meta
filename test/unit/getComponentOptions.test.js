@@ -20,13 +20,19 @@ describe('getComponentOption', () => {
     expect(mergedOption.foo).toEqual('bar')
   })
 
-  test('calls a function option, injecting the component as context', () => {
+  test('calls a function as computed prop, injecting the component as context', () => {
     const component = new Vue({
       name: 'Foobar',
       someFunc () {
-        return { opt: this.$options.name }
+        return { opt: this.name }
+      },
+      computed: {
+        $metaInfo () {
+          return this.$options.someFunc()
+        }
       }
     })
+
     const mergedOption = getComponentOption({ keyName: 'someFunc' }, component)
     // TODO: Should this be foobar or Foobar
     expect(mergedOption.opt).toBeDefined()
