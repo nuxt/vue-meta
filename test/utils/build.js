@@ -22,7 +22,8 @@ export function getVueMetaPath (browser) {
     return path.resolve(__dirname, `../..${browser ? '/dist/vue-meta.js' : ''}`)
   }
 
-  return path.resolve(__dirname, `../../src${browser ? '/browser' : ''}`)
+  process.server = !browser
+  return path.resolve(__dirname, `../../src`)
 }
 
 export function webpackRun (config) {

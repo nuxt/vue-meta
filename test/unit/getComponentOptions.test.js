@@ -40,7 +40,7 @@ describe('getComponentOption', () => {
   })
 
   test('fetches deeply nested component options and merges them', () => {
-    const localVue = loadVueMetaPlugin(true, { keyName: 'foo' })
+    const localVue = loadVueMetaPlugin({ keyName: 'foo' })
     localVue.component('merge-child', { render: h => h('div'), foo: { bar: 'baz' } })
 
     const component = localVue.component('parent', {
@@ -92,7 +92,7 @@ describe('getComponentOption', () => {
   }) */
 
   test('only traverses branches with metaInfo components', () => {
-    const localVue = loadVueMetaPlugin(false, { keyName: 'foo' })
+    const localVue = loadVueMetaPlugin({ keyName: 'foo' })
 
     localVue.component('meta-child', {
       foo: { bar: 'baz' },

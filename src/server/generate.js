@@ -5,5 +5,7 @@ import generateServerInjector from './generateServerInjector'
 
 export default function generate (rawInfo, options = {}) {
   const metaInfo = getMetaInfo(setOptions(options), rawInfo, serverSequences)
-  return generateServerInjector(options, metaInfo)
+
+  const serverInjector = generateServerInjector(options, metaInfo)
+  return serverInjector.injectors
 }

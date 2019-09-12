@@ -1,23 +1,16 @@
 <!doctype html>
 <html {{ htmlAttrs.text(true) }}>
   <head {{ headAttrs.text() }}>
-    {{ title.text() }}
-    {{ meta.text() }}
+    {{ head(true) }}
     <link rel="stylesheet" href="/global.css">
-    {{ link.text() }}
-    {{ style.text() }}
-    {{ script.text() }}
-    {{ noscript.text() }}
   </head>
   <body {{ bodyAttrs.text() }}>
-    {{ script.text({ pbody: true }) }}
-    {{ noscript.text({ pbody: true }) }}
+    {{ bodyPrepend(true) }}
 
     <a href="/">&larr; Examples index</a>
     {{ app }}
 
     <script src="/__build__/ssr.js"></script>
-    {{ script.text({ body: true }) }}
-    {{ noscript.text({ body: true }) }}
+    {{ bodyAppend(true) }}
   </body>
 </html>

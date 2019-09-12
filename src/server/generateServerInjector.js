@@ -9,24 +9,71 @@ import { titleGenerator, attributeGenerator, tagGenerator } from './generators'
  * @return {Object} - the new injector
  */
 
-export default function generateServerInjector (options, newInfo) {
+export default function generateServerInjector (options, metaInfo) {
+  const serverInjector = {
+    data: metaInfo,
+    extraData: undefined,
+    addInfo (appId, metaInfo) {
+      this.extraData = this.extraData || {}
+      this.extraData[appId] = metaInfo
+    },
+    callInjectors (opts) {
+      const m = this.injectors
+
+      // only call title for the head
+      return (opts.body || opts.pbody ? '' : m.title.text(opts)) +
+        m.meta.text(opts) +
+        m.link.text(opts) +
+        m.style.text(opts) +
+        m.script.text(opts) +
+        m.noscript.text(opts)
+    },
+    injectors: {
+      head: ln => serverInjector.callInjectors({ ln }),
+      bodyPrepend: ln => serverInjector.callInjectors({ ln, pbody: true }),
+      bodyAppend: ln => serverInjector.callInjectors({ ln, body: true })
+    }
+  }
+
   for (const type in defaultInfo) {
     if (metaInfoOptionKeys.includes(type)) {
       continue
     }
 
-    if (type === 'title') {
-      newInfo[type] = titleGenerator(options, type, newInfo[type])
-      continue
-    }
+    serverInjector.injectors[type] = {
+      text (arg) {
+        if (type === 'title') {
+          return titleGenerator(options, type, serverInjector.data[type], arg)
+        }
 
-    if (metaInfoAttributeKeys.includes(type)) {
-      newInfo[type] = attributeGenerator(options, type, newInfo[type])
-      continue
-    }
+        if (metaInfoAttributeKeys.includes(type)) {
+          let str = attributeGenerator(options, type, serverInjector.data[type], arg)
 
-    newInfo[type] = tagGenerator(options, type, newInfo[type])
+          if (serverInjector.extraData) {
+            for (const appId in serverInjector.extraData) {
+              const data = serverInjector.extraData[appId][type]
+              const extraStr = attributeGenerator(options, type, data, arg)
+              str = `${str}${extraStr}`
+            }
+          }
+
+          return str
+        }
+
+        let str = tagGenerator(options, type, serverInjector.data[type], arg)
+
+        if (serverInjector.extraData) {
+          for (const appId in serverInjector.extraData) {
+            const data = serverInjector.extraData[appId][type]
+            const extraStr = tagGenerator(options, type, data, { appId, ...arg })
+            str = `${str}${extraStr}`
+          }
+        }
+
+        return str
+      }
+    }
   }
 
-  return newInfo
+  return serverInjector
 }

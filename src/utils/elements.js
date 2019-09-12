@@ -29,3 +29,7 @@ export function queryElements (parentNode, { appId, attribute, type, tagIDKeyNam
 
   return toArray(parentNode.querySelectorAll(queries.join(', ')))
 }
+
+export function removeElementsByAppId ({ attribute }, appId) {
+  toArray(document.querySelectorAll(`[${attribute}="${appId}"]`)).map(el => el.remove())
+}
