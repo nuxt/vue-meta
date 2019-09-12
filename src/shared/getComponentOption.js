@@ -23,7 +23,7 @@ export function getComponentMetaInfo (options = {}, component) {
  */
 export function getComponentOption (options = {}, component, result = {}) {
   const { keyName } = options
-  const { $options, $children } = component
+  const { $metaInfo, $options, $children } = component
 
   if (component._inactive) {
     return result
@@ -31,12 +31,11 @@ export function getComponentOption (options = {}, component, result = {}) {
 
   // only collect option data if it exists
   if ($options[keyName]) {
-    let data = $options[keyName]
-
-    // if option is a function, replace it with it's result
-    if (isFunction(data)) {
-      data = data.call(component)
-    }
+    // if $metaInfo exists then [keyName] was defined as a function
+    // and set to the computed prop $metaInfo in the mixin
+    // using the computed prop should be a small performance increase
+    // because Vue caches those internally
+    const data = $metaInfo || $options[keyName]
 
     // ignore data if its not an object, then we keep our previous result
     if (!isObject(data)) {
