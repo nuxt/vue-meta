@@ -17,7 +17,9 @@ function install (Vue, options = {}) {
 
   options = setOptions(options)
 
-  Vue.prototype.$meta = $meta(options)
+  Vue.prototype.$meta = function () {
+    return $meta.call(this, options)
+  }
 
   Vue.mixin(createMixin(Vue, options))
 }

@@ -11,15 +11,14 @@ export default function _inject (options = {}) {
    * @this {Object} - Vue instance - ideally the root component
    * @return {Object} - server meta info with `toString` methods
    */
-  return function inject () {
-    // collect & aggregate all metaInfo $options
-    const rawInfo = getComponentMetaInfo(options, this.$root)
 
-    const metaInfo = getMetaInfo(options, rawInfo, serverSequences, this.$root)
+  // collect & aggregate all metaInfo $options
+  const rawInfo = getComponentMetaInfo(options, this.$root)
 
-    // generate server injectors
-    generateServerInjector(options, metaInfo)
+  const metaInfo = getMetaInfo(options, rawInfo, serverSequences, this.$root)
 
-    return metaInfo
-  }
+  // generate server injectors
+  generateServerInjector(options, metaInfo)
+
+  return metaInfo
 }

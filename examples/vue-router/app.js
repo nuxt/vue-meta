@@ -13,7 +13,7 @@ const ChildComponent = {
   props: ['page'],
   template: `<div>
 <h3>You're looking at the <strong>{{ page }}</strong> page</h3>
-<p>Has metaInfo been updated? {{ metaUpdated }}</p>
+<p>Has metaInfo been updated due to navigation? {{ metaUpdated }}</p>
 </div>`,
   metaInfo () {
     return {
@@ -64,6 +64,13 @@ const router = new Router({
 
 const App = {
   router,
+  metaInfo () {
+    return {
+      meta: [
+        { charset: 'utf=8' }
+      ]
+    }
+  },
   template: `
     <div id="app">
       <h1>vue-router</h1>
@@ -80,3 +87,43 @@ const App = {
 const app = new Vue(App)
 
 app.$mount('#app')
+/*
+const waitFor = time => new Promise(r => setTimeout(r, time || 1000))
+const o = {
+  meta: [{ a: 1 }]
+}
+const ob = Vue.observable(o)
+
+const root = new Vue({
+  beforeCreate() {
+    this.meta = ob.meta
+
+    this.$options.computed = this.$options.computed || {}
+    this.$options.computed['$ob'] = () => {
+      return { meta: this.meta }
+    }
+  },
+  created() {
+    console.log('HERE')
+    this.$watch('$ob', (a, b) => {
+      console.log('WATCHER', this.$ob.meta[0].a, a.meta[0].a, b.meta[0].a, diff(a, b))
+    }, { deep: true })
+  },
+  render(h) {
+    return h('div', null, 'test')
+  }
+})
+
+async function main () {
+  root.$mount('#app')
+  console.log(root)
+  await waitFor(500)
+
+  root.meta[0].a = 2
+  await waitFor(100)
+
+  ob.meta[0].a = 3
+  await waitFor(100)
+}
+main()
+/**/
