@@ -30,9 +30,12 @@ const ChildComponent = {
     }
   },
   mounted () {
-    setInterval(() => {
+    this.interval = setInterval(() => {
       this.date = new Date()
     }, 1000)
+  },
+  destroyed () {
+    clearInterval(this.interval)
   }
 }
 
