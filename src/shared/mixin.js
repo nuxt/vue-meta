@@ -66,7 +66,6 @@ export default function createMixin (Vue, options) {
           // credit for this suggestion goes to [Sébastien Chopin](https://github.com/Atinux)
           ensuredPush(this.$options, 'created', () => {
             this.$watch('$metaInfo', () => {
-              this.__metaInfo = undefined
               triggerUpdate(this, 'watcher')
             })
           })
@@ -142,10 +141,9 @@ export default function createMixin (Vue, options) {
     // TODO: move back into beforeCreate when Vue issue is resolved
     destroyed () {
       // do not trigger refresh:
-      // - on the server side
       // - when the component doesnt have a parent
       // - doesnt have metaInfo defined
-      if (this.$isServer || !this.$parent || !hasMetaInfo(this)) {
+      if (!this.$parent || !hasMetaInfo(this)) {
         return
       }
 
