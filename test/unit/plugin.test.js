@@ -1,5 +1,5 @@
 import { triggerUpdate, batchUpdate } from '../../src/client/update'
-import { mount, vmTick, VueMetaBrowserPlugin, loadVueMetaPlugin } from '../utils'
+import { mount, vmTick, VueMetaPlugin, loadVueMetaPlugin } from '../utils'
 import { defaultOptions } from '../../src/shared/constants'
 
 jest.mock('../../src/client/update')
@@ -15,6 +15,7 @@ describe('plugin', () => {
 
   test('not loaded when no metaInfo defined', () => {
     const warn = jest.spyOn(console, 'warn').mockImplementation(() => {})
+    process.server = false
 
     const instance = new Vue()
     expect(instance.$meta).toEqual(expect.any(Function))
@@ -23,14 +24,16 @@ describe('plugin', () => {
     expect(instance.$meta().refresh).toEqual(expect.any(Function))
     expect(instance.$meta().getOptions).toEqual(expect.any(Function))
 
-    expect(instance.$meta().inject()).not.toBeDefined()
+    expect(instance.$meta().inject()).toBeUndefined()
     expect(warn).toHaveBeenCalledTimes(1)
-    expect(instance.$meta().refresh()).not.toBeDefined()
+    expect(instance.$meta().refresh()).toEqual({})
     expect(warn).toHaveBeenCalledTimes(2)
 
     instance.$meta().getOptions()
-    expect(warn).toHaveBeenCalledTimes(3)
+    expect(warn).toHaveBeenCalledTimes(2)
+
     warn.mockRestore()
+    delete process.server
   })
 
   test('is loaded', () => {
@@ -62,19 +65,70 @@ describe('plugin', () => {
   })
 
   test('plugin sets package version', () => {
-    expect(VueMetaBrowserPlugin.version).toBe('test-version')
+    expect(VueMetaPlugin.version).toBe('test-version')
   })
 
   test('plugin isnt be installed twice', () => {
     expect(Vue.__vuemeta_installed).toBe(true)
 
     Vue.prototype.$meta = undefined
-    Vue.use({ ...VueMetaBrowserPlugin })
+    Vue.use({ ...VueMetaPlugin })
 
     expect(Vue.prototype.$meta).toBeUndefined()
 
     // reset Vue
     Vue = loadVueMetaPlugin(true)
+  })
+
+  test('prints deprecation warning once when using _hasMetaInfo', () => {
+    const warn = jest.spyOn(console, 'warn').mockImplementation(() => {})
+
+    const Component = Vue.component('test-component', {
+      template: '<div>Test</div>',
+      [defaultOptions.keyName]: {
+        title: 'Hello World'
+      }
+    })
+
+    Vue.config.devtools = true
+    const { vm } = mount(Component, { localVue: Vue })
+
+    expect(vm._hasMetaInfo).toBe(true)
+    expect(warn).toHaveBeenCalledTimes(1)
+
+    expect(vm._hasMetaInfo).toBe(true)
+    expect(warn).toHaveBeenCalledTimes(1)
+    warn.mockRestore()
+  })
+
+  test('can use hasMetaInfo export', () => {
+    const warn = jest.spyOn(console, 'warn').mockImplementation(() => {})
+
+    const Component = Vue.component('test-component', {
+      template: '<div>Test</div>',
+      [defaultOptions.keyName]: {
+        title: 'Hello World'
+      }
+    })
+
+    const { vm } = mount(Component, { localVue: Vue })
+
+    expect(VueMetaPlugin.hasMetaInfo(vm)).toBe(true)
+    expect(warn).not.toHaveBeenCalled()
+
+    warn.mockRestore()
+  })
+
+  test('can use generate export', () => {
+    const rawInfo = {
+      meta: [{ charset: 'utf-8' }]
+    }
+
+    const metaInfo = VueMetaPlugin.generate(rawInfo)
+    expect(metaInfo.meta.text()).toBe('<meta data-vue-meta="ssr" charset="utf-8">')
+
+    // no error on not provided metaInfo types
+    expect(metaInfo.script.text()).toBe('')
   })
 
   test('updates can be paused and resumed', async () => {

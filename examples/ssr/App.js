@@ -138,5 +138,10 @@ export default function createApp () {
     </div>`
   })
 
+  const { set } = app.$meta().addApp('custom')
+  set({
+    meta: [{ charset: 'utf-8' }]
+  })
+
   return { app, router }
 }

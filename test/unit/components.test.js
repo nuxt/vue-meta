@@ -146,7 +146,7 @@ describe('client', () => {
   })
 
   test('afterNavigation function is called with refreshOnce: true', async () => {
-    const Vue = loadVueMetaPlugin(false, { refreshOnceOnNavigation: true })
+    const Vue = loadVueMetaPlugin({ refreshOnceOnNavigation: true })
     const afterNavigation = jest.fn()
     const component = Vue.component('nav-component', {
       render: h => h('div'),
@@ -181,7 +181,7 @@ describe('client', () => {
   })
 
   test('afterNavigation function is called with refreshOnce: false', async () => {
-    const Vue = loadVueMetaPlugin(false, { refreshOnceOnNavigation: false })
+    const Vue = loadVueMetaPlugin({ refreshOnceOnNavigation: false })
     const afterNavigation = jest.fn()
     const component = Vue.component('nav-component', {
       render: h => h('div'),

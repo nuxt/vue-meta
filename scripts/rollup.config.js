@@ -15,7 +15,8 @@ const banner =  `/**
  * (c) ${new Date().getFullYear()}
  * - Declan de Wet
  * - Sébastien Chopin (@Atinux)
-  * - All the amazing contributors
+ * - Pim (@pimlie)
+ * - All the amazing contributors
  * @license MIT
  */
 `
@@ -39,13 +40,16 @@ function rollupConfig({
   ...config
   }) {
 
+  const isBrowserBuild = !config.output || !config.output.format || config.output.format === 'umd' || config.output.file.includes('.browser.')
+
   const replaceConfig = {
     exclude: 'node_modules/**',
     delimiters: ['', ''],
     values: {
       // replaceConfig needs to have some values
       'const polyfill = process.env.NODE_ENV === \'test\'': 'const polyfill = true',
-      'process.env.VERSION': `"${version}"`
+      'process.env.VERSION': `"${version}"`,
+      'process.server' : isBrowserBuild ? 'false' : 'true'
     }
   }
 
@@ -57,7 +61,7 @@ function rollupConfig({
   }*/
 
   return defaultsDeep({}, config, {
-    input: 'src/browser.js',
+    input: 'src/index.js',
     output: {
       name: 'VueMeta',
       format: 'umd',
@@ -92,7 +96,6 @@ export default [
   },
   // common js build
   {
-    input: 'src/index.js',
     output: {
       file: pkg.main,
       format: 'cjs'
@@ -101,7 +104,6 @@ export default [
   },
   // esm build
   {
-    input: 'src/index.js',
     output: {
       file: pkg.web.replace('.js', '.esm.js'),
       format: 'es'
@@ -110,7 +112,6 @@ export default [
   },
   // browser esm build
   {
-    input: 'src/browser.js',
     output: {
       file: pkg.web.replace('.js', '.esm.browser.js'),
       format: 'es'
@@ -119,7 +120,6 @@ export default [
   },
   // minimized browser esm build
   {
-    input: 'src/browser.js',
     output: {
       file: pkg.web.replace('.js', '.esm.browser.min.js'),
       format: 'es'

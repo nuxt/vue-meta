@@ -64,13 +64,6 @@ const router = new Router({
 
 const App = {
   router,
-  metaInfo () {
-    return {
-      meta: [
-        { charset: 'utf=8' }
-      ]
-    }
-  },
   template: `
     <div id="app">
       <h1>vue-router</h1>
@@ -86,7 +79,17 @@ const App = {
 
 const app = new Vue(App)
 
+const { set, remove } = app.$meta().addApp('custom')
+
+set({
+  meta: [
+    { charset: 'utf=8' }
+  ]
+})
+setTimeout(() => remove(), 3000)
+
 app.$mount('#app')
+
 /*
 const waitFor = time => new Promise(r => setTimeout(r, time || 1000))
 const o = {

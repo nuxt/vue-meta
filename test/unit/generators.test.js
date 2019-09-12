@@ -3,7 +3,7 @@ import { defaultOptions } from '../../src/shared/constants'
 import metaInfoData from '../utils/meta-info-data'
 import { titleGenerator } from '../../src/server/generators'
 
-const generateServerInjector = metaInfo => _generateServerInjector(defaultOptions, metaInfo)
+const generateServerInjector = metaInfo => _generateServerInjector(defaultOptions, metaInfo).injectors
 
 describe('generators', () => {
   for (const type in metaInfoData) {
@@ -78,7 +78,7 @@ describe('extra tests', () => {
     const title = null
     const generatedTitle = titleGenerator({}, 'title', title)
 
-    expect(generatedTitle.text()).toEqual('')
+    expect(generatedTitle).toEqual('')
   })
 
   test('auto add ssrAttribute', () => {
