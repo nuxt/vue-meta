@@ -18,7 +18,7 @@ export default function updateAttribute (appId, { attribute } = {}, type, attrs,
     tag.removeAttribute(attribute)
   }
 
-  let data = attributeMap[type] || {}
+  const data = attributeMap[type] || {}
 
   const toUpdate = []
 

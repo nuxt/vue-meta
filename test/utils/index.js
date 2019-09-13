@@ -45,6 +45,6 @@ export function createDOM (html = '<!DOCTYPE html>', options = {}) {
 // this is ok because this code normally only runs on
 // the client and not during ssr
 // TODO: findout why jest.resetModules doesnt work for this
-export function clearClientAttributeMap() {
+export function clearClientAttributeMap () {
   Object.keys(attributeMap).forEach(key => delete attributeMap[key])
 }

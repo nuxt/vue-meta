@@ -283,7 +283,7 @@ const metaInfoData = {
             expect(attributeMap).toEqual({ bodyAttrs: {
               foo: { ssr: 'bar' },
               fizz: { ssr: ['fuzz', 'fozz'] }
-            }})
+            } })
           }
         }
       }
