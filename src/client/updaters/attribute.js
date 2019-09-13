@@ -1,6 +1,9 @@
 import { booleanHtmlAttributes } from '../../shared/constants'
-import { toArray, includes } from '../../utils/array'
-import { isArray } from '../../utils/is-type'
+import { includes } from '../../utils/array'
+
+// keep a local map of attribute values
+// instead of adding it to the html
+export const attributeMap = {}
 
 /**
  * Updates the document's html tag attributes
@@ -8,39 +11,62 @@ import { isArray } from '../../utils/is-type'
  * @param  {Object} attrs - the new document html attributes
  * @param  {HTMLElement} tag - the HTMLElement tag to update with new attrs
  */
-export default function updateAttribute ({ attribute } = {}, attrs, tag) {
+export default function updateAttribute (appId, { attribute } = {}, type, attrs, tag) {
   const vueMetaAttrString = tag.getAttribute(attribute)
-  const vueMetaAttrs = vueMetaAttrString ? vueMetaAttrString.split(',') : []
-  const toRemove = toArray(vueMetaAttrs)
+  if (vueMetaAttrString) {
+    attributeMap[type] = JSON.parse(decodeURI(vueMetaAttrString))
+    tag.removeAttribute(attribute)
+  }
 
-  const keepIndexes = []
-  for (const attr in attrs) {
-    if (attrs.hasOwnProperty(attr)) {
-      const value = includes(booleanHtmlAttributes, attr)
-        ? ''
-        : isArray(attrs[attr]) ? attrs[attr].join(' ') : attrs[attr]
+  let data = attributeMap[type] || {}
 
-      tag.setAttribute(attr, value || '')
+  const toUpdate = []
 
-      if (!includes(vueMetaAttrs, attr)) {
-        vueMetaAttrs.push(attr)
+  // remove attributes from the map
+  // which have been removed for this appId
+  for (const attr in data) {
+    if (data[attr] && appId in data[attr]) {
+      toUpdate.push(attr)
+
+      if (!attrs[attr]) {
+        delete data[attr][appId]
       }
-
-      // filter below wont ever check -1
-      keepIndexes.push(toRemove.indexOf(attr))
     }
   }
 
-  const removedAttributesCount = toRemove
-    .filter((el, index) => !includes(keepIndexes, index))
-    .reduce((acc, attr) => {
-      tag.removeAttribute(attr)
-      return acc + 1
-    }, 0)
+  for (const attr in attrs) {
+    const attrData = data[attr]
 
-  if (vueMetaAttrs.length === removedAttributesCount) {
-    tag.removeAttribute(attribute)
-  } else {
-    tag.setAttribute(attribute, (vueMetaAttrs.sort()).join(','))
+    if (!attrData || attrData[appId] !== attrs[attr]) {
+      toUpdate.push(attr)
+
+      if (attrs[attr]) {
+        data[attr] = data[attr] || {}
+        data[attr][appId] = attrs[attr]
+      } else {
+        delete data[attr][appId]
+      }
+    }
   }
+
+  for (const attr of toUpdate) {
+    const attrData = data[attr]
+
+    const attrValues = []
+    for (const appId in attrData) {
+      Array.prototype.push.apply(attrValues, [].concat(attrData[appId]))
+    }
+
+    if (attrValues.length) {
+      const attrValue = includes(booleanHtmlAttributes, attr) && attrValues.some(Boolean)
+        ? ''
+        : attrValues.filter(Boolean).join(' ')
+
+      tag.setAttribute(attr, attrValue)
+    } else {
+      tag.removeAttribute(attr)
+    }
+  }
+
+  attributeMap[type] = data
 }

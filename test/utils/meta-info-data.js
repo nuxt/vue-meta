@@ -1,4 +1,5 @@
 import { defaultOptions } from '../../src/shared/constants'
+import { attributeMap } from '../../src/client/updaters/attribute'
 
 const metaInfoData = {
   title: {
@@ -187,43 +188,127 @@ const metaInfoData = {
   htmlAttrs: {
     add: {
       data: { foo: 'bar' },
-      expect: ['<html foo="bar" data-vue-meta="foo">']
+      expect: ['<html foo="bar" data-vue-meta="%7B%22foo%22:%7B%22ssr%22:%22bar%22%7D%7D">'],
+      test (side, defaultTest) {
+        return () => {
+          if (side === 'client') {
+            this.expect[0] = this.expect[0].replace(/ data-vue-meta="[^"]+"/, '')
+          }
+
+          defaultTest()
+
+          if (side === 'client') {
+            expect(attributeMap).toEqual({ htmlAttrs: { foo: { ssr: 'bar' } } })
+          }
+        }
+      }
     },
     change: {
       data: { foo: 'baz' },
-      expect: ['<html foo="baz" data-vue-meta="foo">']
+      expect: ['<html foo="baz">'],
+      test (side, defaultTest) {
+        return () => {
+          defaultTest()
+
+          expect(attributeMap).toEqual({ htmlAttrs: { foo: { ssr: 'baz' } } })
+        }
+      }
     },
     remove: {
       data: {},
-      expect: ['<html>']
+      expect: ['<html>'],
+      test (side, defaultTest) {
+        return () => {
+          defaultTest()
+
+          expect(attributeMap).toEqual({ htmlAttrs: { foo: {} } })
+        }
+      }
     }
   },
   headAttrs: {
     add: {
       data: { foo: 'bar' },
-      expect: ['<head foo="bar" data-vue-meta="foo">']
+      expect: ['<head foo="bar" data-vue-meta="%7B%22foo%22:%7B%22ssr%22:%22bar%22%7D%7D">'],
+      test (side, defaultTest) {
+        return () => {
+          if (side === 'client') {
+            this.expect[0] = this.expect[0].replace(/ data-vue-meta="[^"]+"/, '')
+          }
+
+          defaultTest()
+
+          if (side === 'client') {
+            expect(attributeMap).toEqual({ headAttrs: { foo: { ssr: 'bar' } } })
+          }
+        }
+      }
     },
     change: {
       data: { foo: 'baz' },
-      expect: ['<head foo="baz" data-vue-meta="foo">']
+      expect: ['<head foo="baz">'],
+      test (side, defaultTest) {
+        return () => {
+          defaultTest()
+
+          expect(attributeMap).toEqual({ headAttrs: { foo: { ssr: 'baz' } } })
+        }
+      }
     },
     remove: {
       data: {},
-      expect: ['<head>']
+      expect: ['<head>'],
+      test (side, defaultTest) {
+        return () => {
+          defaultTest()
+
+          expect(attributeMap).toEqual({ headAttrs: { foo: {} } })
+        }
+      }
     }
   },
   bodyAttrs: {
     add: {
       data: { foo: 'bar', fizz: ['fuzz', 'fozz'] },
-      expect: ['<body foo="bar" fizz="fuzz fozz" data-vue-meta="fizz,foo">']
+      expect: ['<body foo="bar" fizz="fuzz fozz" data-vue-meta="%7B%22foo%22:%7B%22ssr%22:%22bar%22%7D,%22fizz%22:%7B%22ssr%22:%5B%22fuzz%22,%22fozz%22%5D%7D%7D">'],
+      test (side, defaultTest) {
+        return () => {
+          if (side === 'client') {
+            this.expect[0] = this.expect[0].replace(/ data-vue-meta="[^"]+"/, '')
+          }
+
+          defaultTest()
+
+          if (side === 'client') {
+            expect(attributeMap).toEqual({ bodyAttrs: {
+              foo: { ssr: 'bar' },
+              fizz: { ssr: ['fuzz', 'fozz'] }
+            }})
+          }
+        }
+      }
     },
     change: {
       data: { foo: 'baz' },
-      expect: ['<body foo="baz" data-vue-meta="fizz,foo">']
+      expect: ['<body foo="baz">'],
+      test (side, defaultTest) {
+        return () => {
+          defaultTest()
+
+          expect(attributeMap).toEqual({ bodyAttrs: { foo: { ssr: 'baz' }, fizz: {} } })
+        }
+      }
     },
     remove: {
       data: {},
-      expect: ['<body>']
+      expect: ['<body>'],
+      test (side, defaultTest) {
+        return () => {
+          defaultTest()
+
+          expect(attributeMap).toEqual({ bodyAttrs: { foo: {}, fizz: {} } })
+        }
+      }
     }
   }
 }

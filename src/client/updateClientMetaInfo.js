@@ -56,7 +56,7 @@ export default function updateClientMetaInfo (appId, options = {}, newInfo) {
 
     if (includes(metaInfoAttributeKeys, type)) {
       const tagName = type.substr(0, 4)
-      updateAttribute(options, newInfo[type], getTag(tags, tagName))
+      updateAttribute(appId, options, type, newInfo[type], getTag(tags, tagName))
       continue
     }
 

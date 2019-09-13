@@ -2,6 +2,7 @@ import _updateClientMetaInfo from '../../src/client/updateClientMetaInfo'
 import { defaultOptions, ssrAppId, ssrAttribute } from '../../src/shared/constants'
 import metaInfoData from '../utils/meta-info-data'
 import * as load from '../../src/client/load'
+import { clearClientAttributeMap } from '../utils'
 
 const updateClientMetaInfo = (type, data) => _updateClientMetaInfo(ssrAppId, defaultOptions, { [type]: data })
 
@@ -43,7 +44,6 @@ describe('updaters', () => {
       },
       remove: (tags) => {
         // TODO: i'd expect tags.removedTags to be populated
-
         typeTests.add.expect.forEach((expected, index) => {
           expect(html.outerHTML).not.toContain(expected)
         })
@@ -57,6 +57,8 @@ describe('updaters', () => {
     }
 
     describe(`${type} type tests`, () => {
+      beforeAll(() => clearClientAttributeMap())
+
       Object.keys(typeTests).forEach((action) => {
         const testInfo = typeTests[action]
 

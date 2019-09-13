@@ -34,7 +34,10 @@ export function escape (info, options, escapeOptions, escapeKeys) {
       continue
     }
 
-    let [ disableKey ] = disableOptionKeys
+    // do not use destructuring for disableOptionKeys, it increases transpiled size
+    // due to var checks while we are guaranteed the structure of the cb
+    let disableKey = disableOptionKeys[0]
+
     if (escapeOptions[disableKey] && includes(escapeOptions[disableKey], key)) {
       // this info[key] doesnt need to escaped if the option is listed in __dangerouslyDisableSanitizers
       escaped[key] = value
@@ -81,8 +84,10 @@ export function escape (info, options, escapeOptions, escapeKeys) {
 }
 
 export function escapeMetaInfo (options, info, escapeSequences = []) {
+  // do not use destructuring for seq, it increases transpiled size
+  // due to var checks while we are guaranteed the structure of the cb
   const escapeOptions = {
-    doEscape: value => escapeSequences.reduce((val, [v, r]) => val.replace(v, r), value)
+    doEscape: value => escapeSequences.reduce((val, seq) => val.replace(seq[0], seq[1]), value)
   }
 
   disableOptionKeys.forEach((disableKey, index) => {

@@ -43,13 +43,15 @@ function rollupConfig({
   const isBrowserBuild = !config.output || !config.output.format || config.output.format === 'umd' || config.output.file.includes('.browser.')
 
   const replaceConfig = {
-    exclude: 'node_modules/**',
+    exclude: 'node_modules/(?!is-mergeable-object)',
     delimiters: ['', ''],
     values: {
       // replaceConfig needs to have some values
       'const polyfill = process.env.NODE_ENV === \'test\'': 'const polyfill = true',
       'process.env.VERSION': `"${version}"`,
-      'process.server' : isBrowserBuild ? 'false' : 'true'
+      'process.server' : isBrowserBuild ? 'false' : 'true',
+      // remove react stuff from is-mergeable-object
+      '|| isReactElement(value)': '|| false'
     }
   }
 

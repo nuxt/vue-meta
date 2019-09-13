@@ -18,6 +18,9 @@ const ChildComponent = {
   metaInfo () {
     return {
       title: `${this.page} - ${this.date && this.date.toTimeString()}`,
+      bodyAttrs: {
+        class: 'child-component'
+      },
       afterNavigation () {
         metaUpdated = 'yes'
       }
@@ -82,6 +85,9 @@ const app = new Vue(App)
 const { set, remove } = app.$meta().addApp('custom')
 
 set({
+  bodyAttrs: {
+    class: 'custom-app'
+  },
   meta: [
     { charset: 'utf=8' }
   ]

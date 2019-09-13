@@ -1,6 +1,6 @@
 import { getComponentMetaInfo } from '../../src/shared/getComponentOption'
 import _getMetaInfo from '../../src/shared/getMetaInfo'
-import { mount, createWrapper, loadVueMetaPlugin, vmTick } from '../utils'
+import { mount, createWrapper, loadVueMetaPlugin, vmTick, clearClientAttributeMap } from '../utils'
 import { defaultOptions } from '../../src/shared/constants'
 
 import GoodbyeWorld from '../components/goodbye-world.vue'
@@ -226,6 +226,13 @@ describe('client', () => {
     // this component uses a computed prop to simulate a non-synchronous
     // metaInfo update like you would have with a Vuex mutation
     const Component = Vue.extend({
+      metaInfo () {
+        return {
+          htmlAttrs: {
+            theme: this.theme
+          }
+        }
+      },
       data () {
         return {
           hiddenTheme: 'light'
@@ -239,14 +246,7 @@ describe('client', () => {
       beforeMount () {
         this.hiddenTheme = 'dark'
       },
-      render: h => h('div'),
-      metaInfo () {
-        return {
-          htmlAttrs: {
-            theme: this.theme
-          }
-        }
-      }
+      render: h => h('div')
     })
 
     const vm = new Component().$mount(el)
@@ -263,6 +263,8 @@ describe('client', () => {
   })
 
   test('changes during hydration initialization trigger an update', async () => {
+    clearClientAttributeMap()
+
     html.setAttribute(defaultOptions.ssrAttribute, 'true')
 
     const el = document.createElement('div')

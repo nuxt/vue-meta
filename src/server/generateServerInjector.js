@@ -47,17 +47,30 @@ export default function generateServerInjector (options, metaInfo) {
         }
 
         if (metaInfoAttributeKeys.includes(type)) {
-          let str = attributeGenerator(options, type, serverInjector.data[type], arg)
+          const attributeData = {}
 
-          if (serverInjector.extraData) {
-            for (const appId in serverInjector.extraData) {
-              const data = serverInjector.extraData[appId][type]
-              const extraStr = attributeGenerator(options, type, data, arg)
-              str = `${str}${extraStr}`
+          const data = serverInjector.data[type]
+          if (data) {
+            for (const attr in data) {
+              attributeData[attr] = {
+                [options.ssrAppId]: data[attr]
+              }
             }
           }
 
-          return str
+          for (const appId in serverInjector.extraData) {
+            const data = serverInjector.extraData[appId][type]
+            if (data) {
+              for (const attr in data) {
+                attributeData[attr] = {
+                  ...attributeData[attr],
+                  [appId]: data[attr]
+                }
+              }
+            }
+          }
+
+          return attributeGenerator(options, type, attributeData, arg)
         }
 
         let str = tagGenerator(options, type, serverInjector.data[type], arg)
