@@ -61,7 +61,7 @@ describe('generators', () => {
   }
 })
 
-describe('extra tests', () => {
+describe.only('extra tests', () => {
   test('empty config doesnt generate a tag', () => {
     const { meta } = generateServerInjector({ meta: [] })
 
@@ -108,5 +108,34 @@ describe('extra tests', () => {
     expect(scriptTags.text()).toBe('')
     expect(scriptTags.text({ body: true })).toBe('<script data-vue-meta="ssr" src="/script.js" data-body="true"></script>')
     expect(scriptTags.text({ pbody: true })).toBe('')
+  })
+
+  test('add additional app and test head/body injector helpers', () => {
+    const baseInfo = {
+      title: 'hello',
+      htmlAttrs: { lang: 'en' },
+      bodyAttrs: { class: 'base-class' },
+      script: [{ src: '/script.js', body: true }]
+    }
+    const extraInfo = {
+      bodyAttrs: { class: 'extra-class' },
+      script: [{ src: '/script.js', pbody: true }]
+    }
+
+    const serverInjector = _generateServerInjector(defaultOptions, baseInfo)
+    serverInjector.addInfo('test-app', extraInfo)
+
+    const meta = serverInjector.injectors
+
+    expect(meta.script.text()).toBe('')
+    expect(meta.script.text({ body: true })).toBe('<script data-vue-meta="ssr" src="/script.js" data-body="true"></script>')
+    expect(meta.script.text({ pbody: true })).toBe('<script data-vue-meta="test-app" src="/script.js" data-pbody="true"></script>')
+
+    expect(meta.head(true)).toBe('<title>hello</title>\n')
+    expect(meta.bodyPrepend(true)).toBe('<script data-vue-meta="test-app" src="/script.js" data-pbody="true"></script>\n')
+    expect(meta.bodyAppend()).toBe('<script data-vue-meta="ssr" src="/script.js" data-body="true"></script>')
+
+    expect(meta.htmlAttrs.text()).toBe('lang="en" data-vue-meta="%7B%22lang%22:%7B%22ssr%22:%22en%22%7D%7D"')
+    expect(meta.bodyAttrs.text()).toBe('class="base-class extra-class" data-vue-meta="%7B%22class%22:%7B%22ssr%22:%22base-class%22,%22test-app%22:%22extra-class%22%7D%7D"')
   })
 })

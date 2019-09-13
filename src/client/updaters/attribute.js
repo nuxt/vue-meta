@@ -43,8 +43,6 @@ export default function updateAttribute (appId, { attribute } = {}, type, attrs,
       if (attrs[attr]) {
         data[attr] = data[attr] || {}
         data[attr][appId] = attrs[attr]
-      } else {
-        delete data[attr][appId]
       }
     }
   }

@@ -76,7 +76,7 @@ jobs:
       - attach-project
       - run:
           name: E2E SSR Tests
-          command: yarn build && yarn test:e2e-ssr
+          command: yarn build && yarn test:e2e-ssr --coverage && yarn coverage
       - persist_to_workspace:
           root: ~/project
           paths:

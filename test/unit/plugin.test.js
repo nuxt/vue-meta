@@ -120,6 +120,7 @@ describe('plugin', () => {
   })
 
   test('can use generate export', () => {
+    process.server = true
     const rawInfo = {
       meta: [{ charset: 'utf-8' }]
     }
@@ -129,6 +130,22 @@ describe('plugin', () => {
 
     // no error on not provided metaInfo types
     expect(metaInfo.script.text()).toBe('')
+  })
+
+  test('warning when calling generate in browser build', () => {
+    process.server = false
+    const warn = jest.spyOn(console, 'warn').mockImplementation(() => {})
+
+    const rawInfo = {
+      meta: [{ charset: 'utf-8' }]
+    }
+
+    const metaInfo = VueMetaPlugin.generate(rawInfo)
+    expect(metaInfo).toBeUndefined()
+    expect(warn).toHaveBeenCalledTimes(1)
+    expect(warn).toHaveBeenCalledWith('generate is not supported in browser builds')
+
+    warn.mockRestore()
   })
 
   test('updates can be paused and resumed', async () => {

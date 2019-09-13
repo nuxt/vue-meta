@@ -14,9 +14,9 @@ jest.mock('../../src/utils/window', () => ({
   hasGlobalWindow: false
 }))
 
-describe('client', () => {
+describe('components', () => {
   let Vue
-  let html
+  let elements
 
   beforeAll(() => {
     Vue = loadVueMetaPlugin()
@@ -25,15 +25,36 @@ describe('client', () => {
     delete window.requestAnimationFrame
     delete window.cancelAnimationFrame
 
-    html = document.createElement('html')
+    elements = {
+      html: document.createElement('html'),
+      head: document.createElement('head'),
+      body: document.createElement('body')
+    }
+
+    elements.html.appendChild(elements.head)
+    elements.html.appendChild(elements.body)
+
     document._getElementsByTagName = document.getElementsByTagName
     jest.spyOn(document, 'getElementsByTagName').mockImplementation((tag) => {
-      if (tag === 'html') {
-        return [html]
+      if (elements[tag]) {
+        return [elements[tag]]
       }
 
       return document._getElementsByTagName(tag)
     })
+    jest.spyOn(document, 'querySelectorAll').mockImplementation((query) => {
+      return elements.html.querySelectorAll(query)
+    })
+  })
+
+  afterEach(() => {
+    elements.html.getAttributeNames().forEach(name => elements.html.removeAttribute(name))
+    elements.head.childNodes.forEach(child => child.remove())
+    elements.head.getAttributeNames().forEach(name => elements.head.removeAttribute(name))
+    elements.body.childNodes.forEach(child => child.remove())
+    elements.body.getAttributeNames().forEach(name => elements.body.removeAttribute(name))
+
+    clearClientAttributeMap()
   })
 
   test('meta-info refreshed on component\'s data change', () => {
@@ -94,6 +115,22 @@ describe('client', () => {
     expect(metaInfo.title).toEqual(undefined)
   })
 
+  test('warns when component doesnt has metaInfo', () => {
+    const warn = jest.spyOn(console, 'warn').mockImplementation(() => {})
+    const metaInfo = HelloWorld.metaInfo
+    delete HelloWorld.metaInfo
+
+    const wrapper = mount(HelloWorld, { localVue: Vue })
+    wrapper.vm.$meta().inject()
+
+    HelloWorld.metaInfo = metaInfo
+
+    expect(warn).toHaveBeenCalledTimes(1)
+    expect(warn).toHaveBeenCalledWith('This vue app/component has no vue-meta configuration')
+
+    warn.mockRestore()
+  })
+
   test('meta-info can be rendered with inject', () => {
     const wrapper = mount(HelloWorld, { localVue: Vue })
 
@@ -101,8 +138,54 @@ describe('client', () => {
     expect(metaInfo.title.text()).toEqual('<title>Hello World</title>')
   })
 
+  test('inject also renders additional app info', () => {
+    HelloWorld.created = function () {
+      const { set } = this.$meta().addApp('inject-test-app')
+      set({
+        htmlAttrs: { lang: 'nl' },
+        meta: [{ name: 'description', content: 'test-description' }]
+      })
+    }
+
+    const wrapper = mount(HelloWorld, { localVue: Vue })
+
+    const metaInfo = wrapper.vm.$meta().inject()
+    expect(metaInfo.title.text()).toEqual('<title>Hello World</title>')
+
+    expect(metaInfo.htmlAttrs.text()).toEqual('lang="en nl" data-vue-meta="%7B%22lang%22:%7B%22ssr%22:%22en%22,%22inject-test-app%22:%22nl%22%7D%7D"')
+    expect(metaInfo.meta.text()).toEqual('<meta data-vue-meta="ssr" charset="utf-8"><meta data-vue-meta="inject-test-app" name="description" content="test-description">')
+
+    delete HelloWorld.created
+  })
+
+  test('attributes with special meaning or functioning correct with inject', () => {
+    HelloWorld.created = function () {
+      const { set } = this.$meta().addApp('inject-test-app')
+      set({
+        meta: [{ skip: true, name: 'description', content: 'test-description' }],
+        script: [{
+          once: true,
+          callback: true,
+          async: false,
+          json: {
+            a: 1
+          }
+        }]
+      })
+    }
+
+    const wrapper = mount(HelloWorld, { localVue: Vue })
+
+    const metaInfo = wrapper.vm.$meta().inject()
+
+    expect(metaInfo.meta.text()).toEqual('<meta data-vue-meta="ssr" charset="utf-8">')
+    expect(metaInfo.script.text()).toEqual('<script onload="this.__vm_l=1">{"a":1}</script>')
+
+    delete HelloWorld.created
+  })
+
   test('doesnt update when ssr attribute is set', () => {
-    html.setAttribute(defaultOptions.ssrAttribute, 'true')
+    elements.html.setAttribute(defaultOptions.ssrAttribute, 'true')
 
     const el = document.createElement('div')
     el.setAttribute('id', 'app')
@@ -216,6 +299,7 @@ describe('client', () => {
   })
 
   test('changes before hydration initialization trigger an update', async () => {
+    const { html } = elements
     html.setAttribute(defaultOptions.ssrAttribute, 'true')
 
     const el = document.createElement('div')
@@ -257,14 +341,11 @@ describe('client', () => {
     jest.runAllTimers()
 
     expect(html.getAttribute('theme')).toBe('dark')
-    html.removeAttribute('theme')
-
     wrapper.destroy()
   })
 
   test('changes during hydration initialization trigger an update', async () => {
-    clearClientAttributeMap()
-
+    const { html } = elements
     html.setAttribute(defaultOptions.ssrAttribute, 'true')
 
     const el = document.createElement('div')
@@ -304,8 +385,122 @@ describe('client', () => {
     jest.runAllTimers()
 
     expect(html.getAttribute('theme')).toBe('dark')
-    html.removeAttribute('theme')
+    wrapper.destroy()
+  })
+
+  test('can add/remove meta info from additional app ', () => {
+    const { html } = elements
+    let app
+
+    HelloWorld.created = function () {
+      // make sure that app's which set data but are removed before mounting
+      // are really removed
+      const { set, remove } = this.$meta().addApp('my-bogus-app')
+      set({
+        meta: [{ name: 'og:description', content: 'test-description' }]
+      })
+      remove()
+
+      app = this.$meta().addApp('my-test-app')
+      app.set({
+        htmlAttrs: { lang: 'nl' },
+        meta: [{ name: 'description', content: 'test-description' }],
+        script: [{ innerHTML: 'var test = true;' }]
+      })
+    }
+
+    const wrapper = mount(HelloWorld, {
+      localVue: Vue
+    })
+
+    wrapper.vm.$meta().refresh()
+
+    expect(html.getAttribute('lang')).toEqual('en nl')
+    expect(Array.from(html.querySelectorAll('meta')).length).toBe(2)
+    expect(Array.from(html.querySelectorAll('script')).length).toBe(1)
+    expect(Array.from(html.querySelectorAll('[data-vue-meta="my-test-app"]')).length).toBe(2)
+
+    app.remove()
+
+    // add another app to make sure on client data is immediately added
+    const anotherApp = wrapper.vm.$meta().addApp('another-test-app')
+    anotherApp.set({
+      meta: [{ name: 'og:description', content: 'test-description' }]
+    })
+
+    expect(html.getAttribute('lang')).toEqual('en')
+    expect(Array.from(html.querySelectorAll('meta')).length).toBe(2)
+    expect(Array.from(html.querySelectorAll('script')).length).toBe(0)
+    expect(Array.from(html.querySelectorAll('[data-vue-meta="my-test-app"]')).length).toBe(0)
+    expect(Array.from(html.querySelectorAll('[data-vue-meta="another-test-app"]')).length).toBe(1)
 
     wrapper.destroy()
+    delete HelloWorld.created
+  })
+
+  test('retrieves ssr app config from attribute', () => {
+    const { html, body } = elements
+    html.setAttribute(defaultOptions.ssrAttribute, 'true')
+
+    body.setAttribute('foo', 'bar')
+    body.setAttribute('data-vue-meta', '%7B%22foo%22:%7B%22ssr%22:%22bar%22%7D%7D')
+
+    const el = document.createElement('div')
+    el.setAttribute('id', 'app')
+    el.setAttribute('data-server-rendered', true)
+    document.body.appendChild(el)
+
+    const Component = Vue.extend({
+      metaInfo: {
+        title: 'Test',
+        bodyAttrs: {
+          foo: 'bar'
+        }
+      },
+      render: h => h('div', null, 'Test')
+    })
+
+    const vm = new Component().$mount(el)
+
+    const wrapper = createWrapper(vm)
+
+    wrapper.vm.$meta().refresh()
+    expect(body.getAttribute('foo')).toBe('bar')
+    expect(body.getAttribute('data-vue-meta')).toBe('%7B%22foo%22:%7B%22ssr%22:%22bar%22%7D%7D')
+
+    wrapper.vm.$meta().refresh()
+    expect(body.getAttribute('foo')).toBe('bar')
+    expect(body.getAttribute('data-vue-meta')).toBeNull()
+
+    wrapper.vm.$meta().refresh()
+    expect(body.getAttribute('foo')).toBe('bar')
+    expect(body.getAttribute('data-vue-meta')).toBeNull()
+
+    wrapper.destroy()
+  })
+
+  test('can toggle refreshOnceOnNavigation runtime', () => {
+    const guards = {}
+    const wrapper = mount(HelloWorld, {
+      localVue: Vue,
+      mocks: {
+        $router: {
+          beforeEach (fn) {
+            guards.before = fn
+          },
+          afterEach (fn) {
+            guards.after = fn
+          }
+        }
+      }
+    })
+
+    expect(guards.before).toBeUndefined()
+    expect(guards.after).toBeUndefined()
+
+    wrapper.vm.$meta().setOptions({ refreshOnceOnNavigation: true })
+
+    expect(guards.before).not.toBeUndefined()
+    expect(guards.after).not.toBeUndefined()
   })
 })
