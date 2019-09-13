@@ -25,6 +25,6 @@ export default {
     return {
       childVisible: false
     }
-f  }
+  }
 }
 </script>

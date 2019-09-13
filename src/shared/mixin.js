@@ -48,12 +48,12 @@ export default function createMixin (Vue, options) {
       if (!this[rootConfigKey]) {
         this[rootConfigKey] = true
 
-        let p = this.$parent
-        while (p && p !== $root) {
-          if (isUndefined(p[rootConfigKey])) {
-            p[rootConfigKey] = false
+        let parent = this.$parent
+        while (parent && parent !== $root) {
+          if (isUndefined(parent[rootConfigKey])) {
+            parent[rootConfigKey] = false
           }
-          p = p.$parent
+          parent = parent.$parent
         }
       }
 
@@ -140,7 +140,7 @@ export default function createMixin (Vue, options) {
 
       // no need to add this hooks on server side
       updateOnLifecycleHook.forEach((lifecycleHook) => {
-        ensuredPush($options, lifecycleHook, () => triggerUpdate(this, lifecycleHook))
+        ensuredPush($options, lifecycleHook, () => triggerUpdate($root, lifecycleHook))
       })
     },
     // TODO: move back into beforeCreate when Vue issue is resolved
