@@ -1,4 +1,5 @@
 import { serverSequences } from '../shared/escaping'
+import { rootConfigKey } from '../shared/constants'
 import { showWarningNotSupported } from '../shared/log'
 import { getComponentMetaInfo } from '../shared/getComponentOption'
 import { getAppsMetaInfo, clearAppsMetaInfo } from '../shared/additional-app'
@@ -12,17 +13,17 @@ import generateServerInjector from './generateServerInjector'
  * @vm {Object} - Vue instance - ideally the root component
  * @return {Object} - server meta info with `toString` methods
  */
-export default function inject (vm, options = {}) {
+export default function inject (rootVm, options = {}) {
   // make sure vue-meta was initiated
-  if (!vm.$root._vueMeta) {
+  if (!rootVm[rootConfigKey]) {
     showWarningNotSupported()
     return {}
   }
 
   // collect & aggregate all metaInfo $options
-  const rawInfo = getComponentMetaInfo(options, vm.$root)
+  const rawInfo = getComponentMetaInfo(options, rootVm)
 
-  const metaInfo = getMetaInfo(options, rawInfo, serverSequences, vm.$root)
+  const metaInfo = getMetaInfo(options, rawInfo, serverSequences, rootVm)
 
   // generate server injector
   const serverInjector = generateServerInjector(options, metaInfo)

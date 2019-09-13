@@ -1,4 +1,5 @@
 import { clientSequences } from '../shared/escaping'
+import { rootConfigKey } from '../shared/constants'
 import { showWarningNotSupported } from '../shared/log'
 import { getComponentMetaInfo } from '../shared/getComponentOption'
 import { getAppsMetaInfo, clearAppsMetaInfo } from '../shared/additional-app'
@@ -16,19 +17,19 @@ import updateClientMetaInfo from './updateClientMetaInfo'
  *
  * @return {Object} - new meta info
  */
-export default function refresh (vm, options = {}) {
+export default function refresh (rootVm, options = {}) {
   // make sure vue-meta was initiated
-  if (!vm.$root._vueMeta) {
+  if (!rootVm[rootConfigKey]) {
     showWarningNotSupported()
     return {}
   }
 
   // collect & aggregate all metaInfo $options
-  const rawInfo = getComponentMetaInfo(options, vm.$root)
+  const rawInfo = getComponentMetaInfo(options, rootVm)
 
-  const metaInfo = getMetaInfo(options, rawInfo, clientSequences, vm.$root)
+  const metaInfo = getMetaInfo(options, rawInfo, clientSequences, rootVm)
 
-  const { appId } = vm.$root._vueMeta
+  const { appId } = rootVm[rootConfigKey]
   const tags = updateClientMetaInfo(appId, options, metaInfo)
 
   // emit "event" with new info
@@ -45,5 +46,5 @@ export default function refresh (vm, options = {}) {
     clearAppsMetaInfo(true)
   }
 
-  return { vm, metaInfo, tags }
+  return { vm: rootVm, metaInfo, tags }
 }

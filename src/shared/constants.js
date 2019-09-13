@@ -20,6 +20,8 @@ export const defaultInfo = {
   __dangerouslyDisableSanitizersByTagID: {}
 }
 
+export const rootConfigKey = '_vueMeta'
+
 // This is the name of the component option that contains all the information that
 // gets converted to the various meta tags & attributes for the page.
 export const keyName = 'metaInfo'

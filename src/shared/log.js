@@ -13,4 +13,6 @@ export function warn (str) {
   console.warn(str)
 }
 
+export const showWarningNotSupportedInBrowserBundle = method => warn(`${method} is not supported in browser builds`)
+
 export const showWarningNotSupported = () => warn('This vue app/component has no vue-meta configuration')
