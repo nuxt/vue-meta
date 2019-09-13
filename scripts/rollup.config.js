@@ -61,10 +61,7 @@ function rollupConfig({
       // we dont provide a custom merge
       'options.customMerge' : 'false',
       // dont use this
-      'deepmerge.all = ' : 'false; ',
-      // we know we will only merge objects together
-      'sourceIsArray = ' : 'sourceIsArray = false;',
-      'targetIsArray = ' : 'targetIsArray = false;'
+      'deepmerge.all = ' : 'false;'
     }
   }
 
