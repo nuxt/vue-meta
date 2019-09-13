@@ -1,16 +1,17 @@
 import { isFunction } from '../utils/is-type'
+import { rootConfigKey } from './constants'
 
-export function addNavGuards (vm) {
+export function addNavGuards (rootVm) {
   // return when nav guards already added or no router exists
-  if (vm.$root._vueMeta.navGuards || !vm.$root.$router) {
+  if (rootVm[rootConfigKey].navGuards || !rootVm.$router) {
     /* istanbul ignore next */
     return
   }
 
-  vm.$root._vueMeta.navGuards = true
+  rootVm[rootConfigKey].navGuards = true
 
-  const $router = vm.$root.$router
-  const $meta = vm.$root.$meta()
+  const $router = rootVm.$router
+  const $meta = rootVm.$meta()
 
   $router.beforeEach((to, from, next) => {
     $meta.pause()

@@ -1,4 +1,5 @@
 import { version } from '../package.json'
+import { showWarningNotSupportedInBrowserBundle } from './shared/log'
 import createMixin from './shared/mixin'
 import { setOptions } from './shared/options'
 import $meta from './shared/$meta'
@@ -27,6 +28,6 @@ function install (Vue, options = {}) {
 export default {
   version,
   install,
-  generate: process.server ? generate : () => {},
+  generate: process.server ? generate : () => showWarningNotSupportedInBrowserBundle('generate'),
   hasMetaInfo
 }

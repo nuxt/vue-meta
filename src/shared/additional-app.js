@@ -5,16 +5,16 @@ import { getTag, removeElementsByAppId } from '../utils/elements'
 
 let appsMetaInfo
 
-export function addApp (vm, appId, options) {
+export function addApp (rootVm, appId, options) {
   return {
-    set: metaInfo => setMetaInfo(vm.$root, appId, options, metaInfo),
-    remove: () => removeMetaInfo(vm.$root, appId, options)
+    set: metaInfo => setMetaInfo(rootVm, appId, options, metaInfo),
+    remove: () => removeMetaInfo(rootVm, appId, options)
   }
 }
 
-export function setMetaInfo (vm, appId, options, metaInfo) {
+export function setMetaInfo (rootVm, appId, options, metaInfo) {
   // if a vm exists _and_ its mounted then immediately update
-  if (vm && vm.$el) {
+  if (rootVm && rootVm.$el) {
     return updateClientMetaInfo(appId, options, metaInfo)
   }
 
@@ -24,8 +24,8 @@ export function setMetaInfo (vm, appId, options, metaInfo) {
   appsMetaInfo[appId] = metaInfo
 }
 
-export function removeMetaInfo (vm, appId, options) {
-  if (vm && vm.$el) {
+export function removeMetaInfo (rootVm, appId, options) {
+  if (rootVm && rootVm.$el) {
     const tags = {}
     for (const type of metaInfoAttributeKeys) {
       const tagName = type.substr(0, 4)

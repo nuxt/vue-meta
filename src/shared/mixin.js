@@ -1,6 +1,7 @@
 import { triggerUpdate } from '../client/update'
 import { isUndefined, isFunction } from '../utils/is-type'
 import { ensuredPush } from '../utils/ensure'
+import { rootConfigKey } from './constants'
 import { hasMetaInfo } from './meta-helpers'
 import { addNavGuards } from './nav-guards'
 import { warn } from './log'
@@ -14,13 +15,17 @@ export default function createMixin (Vue, options) {
   // watch for client side component updates
   return {
     beforeCreate () {
+      const $root = this.$root
+      const $options = this.$options
+      const $isServer = this.$isServer
+
       Object.defineProperty(this, '_hasMetaInfo', {
         configurable: true,
         get () {
           // Show deprecation warning once when devtools enabled
-          if (Vue.config.devtools && !this.$root._vueMeta.hasMetaInfoDeprecationWarningShown) {
+          if (Vue.config.devtools && !$root[rootConfigKey]._shown) {
             warn('VueMeta DeprecationWarning: _hasMetaInfo has been deprecated and will be removed in a future version. Please use hasMetaInfo(vm) instead')
-            this.$root._vueMeta.hasMetaInfoDeprecationWarningShown = true
+            $root[rootConfigKey]._shown = true
           }
           return hasMetaInfo(this)
         }
@@ -29,24 +34,24 @@ export default function createMixin (Vue, options) {
       // Add a marker to know if it uses metaInfo
       // _vnode is used to know that it's attached to a real component
       // useful if we use some mixin to add some meta tags (like nuxt-i18n)
-      if (isUndefined(this.$options[options.keyName]) || this.$options[options.keyName] === null) {
+      if (isUndefined($options[options.keyName]) || $options[options.keyName] === null) {
         return
       }
 
-      if (!this.$root._vueMeta) {
-        this.$root._vueMeta = { appId }
+      if (!$root[rootConfigKey]) {
+        $root[rootConfigKey] = { appId }
         appId++
       }
 
       // to speed up updates we keep track of branches which have a component with vue-meta info defined
       // if _vueMeta = true it has info, if _vueMeta = false a child has info
-      if (!this._vueMeta) {
-        this._vueMeta = true
+      if (!this[rootConfigKey]) {
+        this[rootConfigKey] = true
 
         let p = this.$parent
-        while (p && p !== this.$root) {
-          if (isUndefined(p._vueMeta)) {
-            p._vueMeta = false
+        while (p && p !== $root) {
+          if (isUndefined(p[rootConfigKey])) {
+            p[rootConfigKey] = false
           }
           p = p.$parent
         }
@@ -54,19 +59,19 @@ export default function createMixin (Vue, options) {
 
       // coerce function-style metaInfo to a computed prop so we can observe
       // it on creation
-      if (isFunction(this.$options[options.keyName])) {
-        if (!this.$options.computed) {
-          this.$options.computed = {}
+      if (isFunction($options[options.keyName])) {
+        if (!$options.computed) {
+          $options.computed = {}
         }
-        this.$options.computed.$metaInfo = this.$options[options.keyName]
+        $options.computed.$metaInfo = $options[options.keyName]
 
-        if (!this.$isServer) {
+        if (!$isServer) {
           // if computed $metaInfo exists, watch it for updates & trigger a refresh
           // when it changes (i.e. automatically handle async actions that affect metaInfo)
           // credit for this suggestion goes to [Sébastien Chopin](https://github.com/Atinux)
-          ensuredPush(this.$options, 'created', () => {
+          ensuredPush($options, 'created', () => {
             this.$watch('$metaInfo', () => {
-              triggerUpdate(this, 'watcher')
+              triggerUpdate($root, 'watcher')
             })
           })
         }
@@ -76,28 +81,28 @@ export default function createMixin (Vue, options) {
       // to triggerUpdate until this initial refresh is finished
       // this is to make sure that when a page is opened in an inactive tab which
       // has throttled rAF/timers we still immediately set the page title
-      if (isUndefined(this.$root._vueMeta.initialized)) {
-        this.$root._vueMeta.initialized = this.$isServer
+      if (isUndefined($root[rootConfigKey].initialized)) {
+        $root[rootConfigKey].initialized = $isServer
 
-        if (!this.$root._vueMeta.initialized) {
-          ensuredPush(this.$options, 'beforeMount', () => {
+        if (!$root[rootConfigKey].initialized) {
+          ensuredPush($options, 'beforeMount', () => {
             // if this Vue-app was server rendered, set the appId to 'ssr'
             // only one SSR app per page is supported
-            if (this.$root.$el && this.$root.$el.hasAttribute && this.$root.$el.hasAttribute('data-server-rendered')) {
-              this.$root._vueMeta.appId = options.ssrAppId
+            if ($root.$el && $root.$el.hasAttribute && $root.$el.hasAttribute('data-server-rendered')) {
+              $root[rootConfigKey].appId = options.ssrAppId
             }
           })
 
           // we use the mounted hook here as on page load
-          ensuredPush(this.$options, 'mounted', () => {
-            if (!this.$root._vueMeta.initialized) {
+          ensuredPush($options, 'mounted', () => {
+            if (!$root[rootConfigKey].initialized) {
               // used in triggerUpdate to check if a change was triggered
               // during initialization
-              this.$root._vueMeta.initializing = true
+              $root[rootConfigKey].initializing = true
 
               // refresh meta in nextTick so all child components have loaded
               this.$nextTick(function () {
-                const { tags, metaInfo } = this.$root.$meta().refresh()
+                const { tags, metaInfo } = $root.$meta().refresh()
 
                 // After ssr hydration (identifier by tags === false) check
                 // if initialized was set to null in triggerUpdate. That'd mean
@@ -105,17 +110,17 @@ export default function createMixin (Vue, options) {
                 // to be applied OR a metaInfo watcher was triggered before the
                 // current hook was called
                 // (during initialization all changes are blocked)
-                if (tags === false && this.$root._vueMeta.initialized === null) {
-                  this.$nextTick(() => triggerUpdate(this, 'initializing'))
+                if (tags === false && $root[rootConfigKey].initialized === null) {
+                  this.$nextTick(() => triggerUpdate($root, 'initializing'))
                 }
 
-                this.$root._vueMeta.initialized = true
-                delete this.$root._vueMeta.initializing
+                $root[rootConfigKey].initialized = true
+                delete $root[rootConfigKey].initializing
 
                 // add the navigation guards if they havent been added yet
                 // they are needed for the afterNavigation callback
                 if (!options.refreshOnceOnNavigation && metaInfo.afterNavigation) {
-                  addNavGuards(this)
+                  addNavGuards($root)
                 }
               })
             }
@@ -123,19 +128,19 @@ export default function createMixin (Vue, options) {
 
           // add the navigation guards if requested
           if (options.refreshOnceOnNavigation) {
-            addNavGuards(this)
+            addNavGuards($root)
           }
         }
       }
 
       // do not trigger refresh on the server side
-      if (this.$isServer) {
+      if ($isServer) {
         return
       }
 
       // no need to add this hooks on server side
       updateOnLifecycleHook.forEach((lifecycleHook) => {
-        ensuredPush(this.$options, lifecycleHook, () => triggerUpdate(this, lifecycleHook))
+        ensuredPush($options, lifecycleHook, () => triggerUpdate(this, lifecycleHook))
       })
     },
     // TODO: move back into beforeCreate when Vue issue is resolved
@@ -155,7 +160,7 @@ export default function createMixin (Vue, options) {
 
         clearInterval(interval)
 
-        triggerUpdate(this, 'destroyed')
+        triggerUpdate(this.$root, 'destroyed')
       }, 50)
     }
   }

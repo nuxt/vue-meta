@@ -1,13 +1,15 @@
-export function pause (vm, refresh = true) {
-  vm.$root._vueMeta.paused = true
+import { rootConfigKey } from './constants'
+
+export function pause (rootVm, refresh = true) {
+  rootVm[rootConfigKey].paused = true
 
   return () => resume(refresh)
 }
 
-export function resume (vm, refresh = true) {
-  vm.$root._vueMeta.paused = false
+export function resume (rootVm, refresh = true) {
+  rootVm[rootConfigKey].paused = false
 
   if (refresh) {
-    return vm.$root.$meta().refresh()
+    return rootVm.$meta().refresh()
   }
 }
