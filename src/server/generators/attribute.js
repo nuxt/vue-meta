@@ -1,5 +1,4 @@
 import { booleanHtmlAttributes } from '../../shared/constants'
-import { isUndefined, isArray } from '../../utils/is-type'
 
 /**
  * Generates tag attributes for use on the server.
@@ -10,22 +9,26 @@ import { isUndefined, isArray } from '../../utils/is-type'
  */
 export default function attributeGenerator ({ attribute, ssrAttribute } = {}, type, data, addSrrAttribute) {
   let attributeStr = ''
-  const watchedAttrs = []
 
   for (const attr in data) {
-    if (data.hasOwnProperty(attr)) {
-      watchedAttrs.push(attr)
+    const attrData = data[attr]
+    const attrValues = []
 
-      attributeStr += isUndefined(data[attr]) || booleanHtmlAttributes.includes(attr)
-        ? attr
-        : `${attr}="${isArray(data[attr]) ? data[attr].join(' ') : data[attr]}"`
+    for (const appId in attrData) {
+      attrValues.push(...[].concat(attrData[appId]))
+    }
+
+    if (attrValues.length) {
+      attributeStr += booleanHtmlAttributes.includes(attr) && attrValues.some(Boolean)
+        ? `${attr}`
+        : `${attr}="${attrValues.join(' ')}"`
 
       attributeStr += ' '
     }
   }
 
   if (attributeStr) {
-    attributeStr += `${attribute}="${(watchedAttrs.sort()).join(',')}"`
+    attributeStr += `${attribute}="${encodeURI(JSON.stringify(data))}"`
   }
 
   if (type === 'htmlAttrs' && addSrrAttribute) {

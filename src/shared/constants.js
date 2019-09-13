@@ -57,19 +57,18 @@ export const defaultOptions = {
   ssrAppId
 }
 
+// The metaInfo property keys which are used to disable escaping
+export const disableOptionKeys = [
+  '__dangerouslyDisableSanitizers',
+  '__dangerouslyDisableSanitizersByTagID'
+]
+
 // List of metaInfo property keys which are configuration options (and dont generate html)
 export const metaInfoOptionKeys = [
   'titleChunk',
   'titleTemplate',
   'changed',
-  '__dangerouslyDisableSanitizers',
-  '__dangerouslyDisableSanitizersByTagID'
-]
-
-// The metaInfo property keys which are used to disable escaping
-export const disableOptionKeys = [
-  '__dangerouslyDisableSanitizers',
-  '__dangerouslyDisableSanitizersByTagID'
+  ...disableOptionKeys
 ]
 
 // List of metaInfo property keys which only generates attributes and no tags

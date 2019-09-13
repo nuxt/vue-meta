@@ -69,6 +69,7 @@ export default function createApp () {
       return {
         title: 'Boring Title',
         htmlAttrs: { amp: true },
+        bodyAttrs: { class: 'main-app' },
         meta: [
           {
             skip: this.count < 1,
@@ -116,6 +117,14 @@ export default function createApp () {
         users: process.server ? [] : window.users
       }
     },
+    mounted() {
+      const { set, remove } = this.$meta().addApp('client-only')
+      set({
+        bodyAttrs: { class: 'client-only' }
+      })
+
+      setTimeout(() => remove(), 3000)
+    },
     methods: {
       loadCallback () {
         this.count++
@@ -140,6 +149,7 @@ export default function createApp () {
 
   const { set } = app.$meta().addApp('custom')
   set({
+    bodyAttrs: { class: 'custom-app' },
     meta: [{ charset: 'utf-8' }]
   })
 

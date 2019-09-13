@@ -1,5 +1,7 @@
 import updateClientMetaInfo from '../client/updateClientMetaInfo'
-import { removeElementsByAppId } from '../utils/elements'
+import { updateAttribute } from '../client/updaters'
+import { metaInfoAttributeKeys } from '../shared/constants'
+import { getTag, removeElementsByAppId } from '../utils/elements'
 
 let appsMetaInfo
 
@@ -24,6 +26,12 @@ export function setMetaInfo (vm, appId, options, metaInfo) {
 
 export function removeMetaInfo (vm, appId, options) {
   if (vm && vm.$el) {
+    const tags = {}
+    for (const type of metaInfoAttributeKeys) {
+      const tagName = type.substr(0, 4)
+      updateAttribute(appId, options, type, {}, getTag(tags, tagName))
+    }
+
     return removeElementsByAppId(options, appId)
   }
 

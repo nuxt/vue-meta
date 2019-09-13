@@ -1,6 +1,7 @@
 import { JSDOM } from 'jsdom'
 import { mount, shallowMount, createWrapper, createLocalVue } from '@vue/test-utils'
 import { renderToString } from '@vue/server-test-utils'
+import { attributeMap } from '../../src/client/updaters/attribute'
 import { defaultOptions } from '../../src/shared/constants'
 import VueMetaPlugin from '../../src'
 
@@ -38,4 +39,12 @@ export function createDOM (html = '<!DOCTYPE html>', options = {}) {
     window: dom.window,
     document: dom.window.document
   }
+}
+
+// dirty hack to remove data from previous test
+// this is ok because this code normally only runs on
+// the client and not during ssr
+// TODO: findout why jest.resetModules doesnt work for this
+export function clearClientAttributeMap() {
+  Object.keys(attributeMap).forEach(key => delete attributeMap[key])
 }

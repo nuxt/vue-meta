@@ -29,7 +29,7 @@ describe('generators', () => {
         const testInfo = typeTests[action]
 
         // return when no test case available
-        if (!testCases[action] && !testInfo.test) {
+        if (!testCases[action]) {
           return
         }
 

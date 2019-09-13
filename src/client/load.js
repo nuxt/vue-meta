@@ -60,7 +60,11 @@ export function addListeners () {
 }
 
 export function applyCallbacks (matchElement) {
-  callbacks.forEach(([query, callback]) => {
+  callbacks.forEach((args) => {
+    // do not use destructuring for args, it increases transpiled size
+    // due to var checks while we are guaranteed the structure of the cb
+    const query = args[0]
+    const callback = args[1]
     const selector = `${query}[onload="this.__vm_l=1"]`
 
     let elements = []
