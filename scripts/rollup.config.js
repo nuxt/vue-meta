@@ -50,8 +50,21 @@ function rollupConfig({
       'const polyfill = process.env.NODE_ENV === \'test\'': 'const polyfill = true',
       'process.env.VERSION': `"${version}"`,
       'process.server' : isBrowserBuild ? 'false' : 'true',
+      /* remove unused stuff from deepmerge */
+
       // remove react stuff from is-mergeable-object
-      '|| isReactElement(value)': '|| false'
+      '|| isReactElement(value)': '|| false',
+      // we always provide an arrayMerge, remove default
+      '|| defaultArrayMerge' : '',
+      // we dont provide a custom merge
+      'options.clone' : 'false',
+      // we dont provide a custom merge
+      'options.customMerge' : 'false',
+      // dont use this
+      'deepmerge.all = ' : 'false; ',
+      // we know we will only merge objects together
+      'sourceIsArray = ' : 'sourceIsArray = false;',
+      'targetIsArray = ' : 'targetIsArray = false;'
     }
   }
 
