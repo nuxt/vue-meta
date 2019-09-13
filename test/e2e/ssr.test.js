@@ -3,8 +3,12 @@ import { buildFixture } from '../utils/build'
 describe('basic browser with ssr page', () => {
   let html
 
-  beforeAll(async () => {
+  test('build', async () => {
     const fixture = await buildFixture('basic')
+
+    expect(fixture).toBeDefined()
+    expect(fixture.html).toBeDefined()
+
     html = fixture.html
   })
 
