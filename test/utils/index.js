@@ -1,6 +1,6 @@
 import { JSDOM } from 'jsdom'
 import { mount, shallowMount, createWrapper, createLocalVue } from '@vue/test-utils'
-import { renderToString } from '@vue/server-test-utils'
+import { render, renderToString } from '@vue/server-test-utils'
 import { attributeMap } from '../../src/client/updaters/attribute'
 import { defaultOptions } from '../../src/shared/constants'
 import VueMetaPlugin from '../../src'
@@ -9,8 +9,10 @@ export {
   mount,
   shallowMount,
   createWrapper,
+  render,
   renderToString,
-  VueMetaPlugin
+  VueMetaPlugin,
+  attributeMap
 }
 
 export function getVue () {

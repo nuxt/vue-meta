@@ -58,13 +58,15 @@ export default function generateServerInjector (options, metaInfo) {
             }
           }
 
-          for (const appId in serverInjector.extraData) {
-            const data = serverInjector.extraData[appId][type]
-            if (data) {
-              for (const attr in data) {
-                attributeData[attr] = {
-                  ...attributeData[attr],
-                  [appId]: data[attr]
+          if (serverInjector.extraData) {
+            for (const appId in serverInjector.extraData) {
+              const data = serverInjector.extraData[appId][type]
+              if (data) {
+                for (const attr in data) {
+                  attributeData[attr] = {
+                    ...attributeData[attr],
+                    [appId]: data[attr]
+                  }
                 }
               }
             }

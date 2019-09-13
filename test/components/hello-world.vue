@@ -6,18 +6,18 @@
 export default {
   metaInfo() {
     return {
-      title: this.title
-    }
-  },
-  data() {
-    return {
-      title: 'Hello World',
+      title: this.title,
       htmlAttrs: {
         lang: 'en'
       },
       meta: [
         { charset: 'utf-8' }
       ]
+    }
+  },
+  data() {
+    return {
+      title: 'Hello World',
     }
   }
 }
