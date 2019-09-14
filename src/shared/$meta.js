@@ -6,7 +6,8 @@ import { addNavGuards } from './nav-guards'
 import { pause, resume } from './pausing'
 import { getOptions } from './options'
 
-export default function $meta (options = {}) {
+export default function $meta (options) {
+  options = options || {}
   /**
    * Returns an injector for server-side rendering.
    * @this {Object} - the Vue instance (a root component)
@@ -15,16 +16,18 @@ export default function $meta (options = {}) {
   const $root = this.$root
 
   return {
-    getOptions: () => getOptions(options),
-    setOptions: ({ refreshOnceOnNavigation } = {}) => {
-      if (refreshOnceOnNavigation) {
+    'getOptions': () => getOptions(options),
+    'setOptions': (newOptions) => {
+      const refreshNavKey = 'refreshOnceOnNavigation'
+      if (newOptions && newOptions[refreshNavKey]) {
+        options.refreshOnceOnNavigation = newOptions[refreshNavKey]
         addNavGuards($root)
       }
     },
-    refresh: () => refresh($root, options),
-    inject: () => process.server ? inject($root, options) : showWarningNotSupportedInBrowserBundle('inject'),
-    pause: () => pause($root),
-    resume: () => resume($root),
-    addApp: appId => addApp($root, appId, options)
+    'refresh': () => refresh($root, options),
+    'inject': () => process.server ? inject($root, options) : showWarningNotSupportedInBrowserBundle('inject'),
+    'pause': () => pause($root),
+    'resume': () => resume($root),
+    'addApp': appId => addApp($root, appId, options)
   }
 }

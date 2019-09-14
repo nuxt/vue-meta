@@ -15,19 +15,22 @@ export default function createMixin (Vue, options) {
   // watch for client side component updates
   return {
     beforeCreate () {
-      const $root = this.$root
-      const $options = this.$options
-      const $isServer = this.$isServer
+      // https://github.com/terser/terser/issues/458
+      const $this = this
+      const $root = $this.$root
+      const $options = $this.$options
+      const $isServer = $this.$isServer
+      const $nextTick = $this.$nextTick
 
-      Object.defineProperty(this, '_hasMetaInfo', {
+      Object.defineProperty($this, '_hasMetaInfo', {
         configurable: true,
         get () {
           // Show deprecation warning once when devtools enabled
-          if (Vue.config.devtools && !$root[rootConfigKey]._shown) {
+          if (Vue.config.devtools && !$root[rootConfigKey].deprecationWarningShown) {
             warn('VueMeta DeprecationWarning: _hasMetaInfo has been deprecated and will be removed in a future version. Please use hasMetaInfo(vm) instead')
-            $root[rootConfigKey]._shown = true
+            $root[rootConfigKey].deprecationWarningShown = true
           }
-          return hasMetaInfo(this)
+          return hasMetaInfo($this)
         }
       })
 
@@ -45,10 +48,10 @@ export default function createMixin (Vue, options) {
 
       // to speed up updates we keep track of branches which have a component with vue-meta info defined
       // if _vueMeta = true it has info, if _vueMeta = false a child has info
-      if (!this[rootConfigKey]) {
-        this[rootConfigKey] = true
+      if (!$this[rootConfigKey]) {
+        $this[rootConfigKey] = true
 
-        let parent = this.$parent
+        let parent = $this.$parent
         while (parent && parent !== $root) {
           if (isUndefined(parent[rootConfigKey])) {
             parent[rootConfigKey] = false
@@ -60,9 +63,7 @@ export default function createMixin (Vue, options) {
       // coerce function-style metaInfo to a computed prop so we can observe
       // it on creation
       if (isFunction($options[options.keyName])) {
-        if (!$options.computed) {
-          $options.computed = {}
-        }
+        $options.computed = $options.computed || {}
         $options.computed.$metaInfo = $options[options.keyName]
 
         if (!$isServer) {
@@ -70,7 +71,7 @@ export default function createMixin (Vue, options) {
           // when it changes (i.e. automatically handle async actions that affect metaInfo)
           // credit for this suggestion goes to [Sébastien Chopin](https://github.com/Atinux)
           ensuredPush($options, 'created', () => {
-            this.$watch('$metaInfo', () => {
+            $this.$watch('$metaInfo', () => {
               triggerUpdate($root, 'watcher')
             })
           })
@@ -88,7 +89,7 @@ export default function createMixin (Vue, options) {
           ensuredPush($options, 'beforeMount', () => {
             // if this Vue-app was server rendered, set the appId to 'ssr'
             // only one SSR app per page is supported
-            if ($root.$el && $root.$el.hasAttribute && $root.$el.hasAttribute('data-server-rendered')) {
+            if ($root.$el && $root.$el.nodeType === 1 && $root.$el.hasAttribute('data-server-rendered')) {
               $root[rootConfigKey].appId = options.ssrAppId
             }
           })
@@ -101,7 +102,7 @@ export default function createMixin (Vue, options) {
               $root[rootConfigKey].initializing = true
 
               // refresh meta in nextTick so all child components have loaded
-              this.$nextTick(function () {
+              $nextTick(function () {
                 const { tags, metaInfo } = $root.$meta().refresh()
 
                 // After ssr hydration (identifier by tags === false) check
@@ -111,7 +112,7 @@ export default function createMixin (Vue, options) {
                 // current hook was called
                 // (during initialization all changes are blocked)
                 if (tags === false && $root[rootConfigKey].initialized === null) {
-                  this.$nextTick(() => triggerUpdate($root, 'initializing'))
+                  $nextTick(() => triggerUpdate($root, 'init'))
                 }
 
                 $root[rootConfigKey].initialized = true
@@ -145,23 +146,24 @@ export default function createMixin (Vue, options) {
     },
     // TODO: move back into beforeCreate when Vue issue is resolved
     destroyed () {
+      const $this = this
       // do not trigger refresh:
       // - when the component doesnt have a parent
       // - doesnt have metaInfo defined
-      if (!this.$parent || !hasMetaInfo(this)) {
+      if (!$this.$parent || !hasMetaInfo($this)) {
         return
       }
 
       // Wait that element is hidden before refreshing meta tags (to support animations)
       const interval = setInterval(() => {
-        if (this.$el && this.$el.offsetParent !== null) {
+        if ($this.$el && $this.$el.offsetParent !== null) {
           /* istanbul ignore next line */
           return
         }
 
         clearInterval(interval)
 
-        triggerUpdate(this.$root, 'destroyed')
+        triggerUpdate($this.$root, 'destroyed')
       }, 50)
     }
   }

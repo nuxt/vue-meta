@@ -71,9 +71,9 @@ const metaInfoData = {
           return () => {
             const tags = defaultTest()
 
-            expect(tags.addedTags.meta.length).toBe(1)
+            expect(tags.tagsAdded.meta.length).toBe(1)
             // TODO: not sure if we really expect this
-            expect(tags.removedTags.meta.length).toBe(1)
+            expect(tags.tagsRemoved.meta.length).toBe(1)
           }
         }
       }
@@ -143,9 +143,9 @@ const metaInfoData = {
             }
             const tags = defaultTest()
 
-            expect(tags.addedTags.script[0].parentNode.tagName).toBe('HEAD')
-            expect(tags.addedTags.script[1].parentNode.tagName).toBe('BODY')
-            expect(tags.addedTags.script[2].parentNode.tagName).toBe('BODY')
+            expect(tags.tagsAdded.script[0].parentNode.tagName).toBe('HEAD')
+            expect(tags.tagsAdded.script[1].parentNode.tagName).toBe('BODY')
+            expect(tags.tagsAdded.script[2].parentNode.tagName).toBe('BODY')
           } else {
             // ssr doesnt generate data-body tags
             const bodyPrepended = this.expect[1]

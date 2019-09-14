@@ -83,7 +83,8 @@ export function escape (info, options, escapeOptions, escapeKeys) {
   return escaped
 }
 
-export function escapeMetaInfo (options, info, escapeSequences = []) {
+export function escapeMetaInfo (options, info, escapeSequences) {
+  escapeSequences = escapeSequences || []
   // do not use destructuring for seq, it increases transpiled size
   // due to var checks while we are guaranteed the structure of the cb
   const escapeOptions = {

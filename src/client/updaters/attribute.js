@@ -1,5 +1,6 @@
 import { booleanHtmlAttributes } from '../../shared/constants'
 import { includes } from '../../utils/array'
+import { removeAttribute } from '../../utils/elements'
 
 // keep a local map of attribute values
 // instead of adding it to the html
@@ -11,11 +12,13 @@ export const attributeMap = {}
  * @param  {Object} attrs - the new document html attributes
  * @param  {HTMLElement} tag - the HTMLElement tag to update with new attrs
  */
-export default function updateAttribute (appId, { attribute } = {}, type, attrs, tag) {
+export default function updateAttribute (appId, options, type, attrs, tag) {
+  const { attribute } = options || {}
+
   const vueMetaAttrString = tag.getAttribute(attribute)
   if (vueMetaAttrString) {
     attributeMap[type] = JSON.parse(decodeURI(vueMetaAttrString))
-    tag.removeAttribute(attribute)
+    removeAttribute(tag, attribute)
   }
 
   const data = attributeMap[type] || {}
@@ -62,7 +65,7 @@ export default function updateAttribute (appId, { attribute } = {}, type, attrs,
 
       tag.setAttribute(attr, attrValue)
     } else {
-      tag.removeAttribute(attr)
+      removeAttribute(tag, attr)
     }
   }
 

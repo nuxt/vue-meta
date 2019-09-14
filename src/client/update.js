@@ -11,7 +11,7 @@ export function triggerUpdate (rootVm, hookName) {
     rootVm[rootConfigKey].initialized = null
   }
 
-  if (rootVm[rootConfigKey].initialized && !rootVm[rootConfigKey].paused) {
+  if (rootVm[rootConfigKey].initialized && !rootVm[rootConfigKey].pausing) {
     // batch potential DOM updates to prevent extraneous re-rendering
     batchUpdate(() => rootVm.$meta().refresh())
   }
@@ -24,7 +24,9 @@ export function triggerUpdate (rootVm, hookName) {
  * @param  {Function} callback - the update to perform
  * @return {Number} id - a new ID
  */
-export function batchUpdate (callback, timeout = 10) {
+export function batchUpdate (callback, timeout) {
+  timeout = timeout || 10
+
   clearTimeout(batchId)
 
   batchId = setTimeout(() => {

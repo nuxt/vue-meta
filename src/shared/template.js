@@ -14,10 +14,7 @@ export function applyTemplate ({ component, metaTemplateKeyName, contentKeyName 
   // return early if no template defined
   if (!template) {
     // cleanup faulty template properties
-    if (headObject.hasOwnProperty(metaTemplateKeyName)) {
-      delete headObject[metaTemplateKeyName]
-    }
-
+    delete headObject[metaTemplateKeyName]
     return false
   }
 

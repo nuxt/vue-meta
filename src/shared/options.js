@@ -5,13 +5,22 @@ export function setOptions (options) {
   // combine options
   options = isObject(options) ? options : {}
 
-  for (const key in defaultOptions) {
-    if (!options[key]) {
-      options[key] = defaultOptions[key]
-    }
+  // The options are set like this so they can
+  // be minified by terser while keeping the
+  // user api intact
+  // terser --mangle-properties keep_quoted=strict
+  /* eslint-disable dot-notation */
+  return {
+    keyName: options['keyName'] || defaultOptions.keyName,
+    attribute: options['attribute'] || defaultOptions.attribute,
+    ssrAttribute: options['ssrAttribute'] || defaultOptions.ssrAttribute,
+    tagIDKeyName: options['tagIDKeyName'] || defaultOptions.tagIDKeyName,
+    contentKeyName: options['contentKeyName'] || defaultOptions.contentKeyName,
+    metaTemplateKeyName: options['metaTemplateKeyName'] || defaultOptions.metaTemplateKeyName,
+    ssrAppId: options['ssrAppId'] || defaultOptions.ssrAppId,
+    refreshOnceOnNavigation: !!options['refreshOnceOnNavigation']
   }
-
-  return options
+  /* eslint-enable dot-notation */
 }
 
 export function getOptions (options) {

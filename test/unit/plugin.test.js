@@ -148,13 +148,13 @@ describe('plugin', () => {
     warn.mockRestore()
   })
 
-  test('updates can be paused and resumed', async () => {
+  test('updates can be pausing and resumed', async () => {
     const { batchUpdate: _batchUpdate } = jest.requireActual('../../src/client/update')
     const batchUpdateSpy = batchUpdate.mockImplementation(_batchUpdate)
     // because triggerUpdate & batchUpdate reside in the same file we cant mock them both,
     // so just recreate the triggerUpdate fn by copying its implementation
     const triggerUpdateSpy = triggerUpdate.mockImplementation((vm, hookName) => {
-      if (vm.$root._vueMeta.initialized && !vm.$root._vueMeta.paused) {
+      if (vm.$root._vueMeta.initialized && !vm.$root._vueMeta.pausing) {
         // batch potential DOM updates to prevent extraneous re-rendering
         batchUpdateSpy(() => vm.$meta().refresh())
       }
@@ -185,7 +185,7 @@ describe('plugin', () => {
 
     // no batchUpdate on initialization
     expect(wrapper.vm.$root._vueMeta.initialized).toBe(false)
-    expect(wrapper.vm.$root._vueMeta.paused).toBeFalsy()
+    expect(wrapper.vm.$root._vueMeta.pausing).toBeFalsy()
     expect(triggerUpdateSpy).toHaveBeenCalledTimes(1)
     expect(batchUpdateSpy).not.toHaveBeenCalled()
     jest.clearAllMocks()
@@ -196,7 +196,7 @@ describe('plugin', () => {
 
     // batchUpdate on normal update
     expect(wrapper.vm.$root._vueMeta.initialized).toBe(true)
-    expect(wrapper.vm.$root._vueMeta.paused).toBeFalsy()
+    expect(wrapper.vm.$root._vueMeta.pausing).toBeFalsy()
     expect(triggerUpdateSpy).toHaveBeenCalledTimes(1)
     expect(batchUpdateSpy).toHaveBeenCalledTimes(1)
     jest.clearAllMocks()
@@ -205,9 +205,9 @@ describe('plugin', () => {
     title = 'third title'
     wrapper.setProps({ title })
 
-    // no batchUpdate when paused
+    // no batchUpdate when pausing
     expect(wrapper.vm.$root._vueMeta.initialized).toBe(true)
-    expect(wrapper.vm.$root._vueMeta.paused).toBe(true)
+    expect(wrapper.vm.$root._vueMeta.pausing).toBe(true)
     expect(triggerUpdateSpy).toHaveBeenCalledTimes(1)
     expect(batchUpdateSpy).not.toHaveBeenCalled()
     jest.clearAllMocks()
@@ -225,7 +225,7 @@ describe('plugin', () => {
     // because triggerUpdate & batchUpdate reside in the same file we cant mock them both,
     // so just recreate the triggerUpdate fn by copying its implementation
     triggerUpdate.mockImplementation((vm, hookName) => {
-      if (vm.$root._vueMeta.initialized && !vm.$root._vueMeta.paused) {
+      if (vm.$root._vueMeta.initialized && !vm.$root._vueMeta.pausing) {
         // batch potential DOM updates to prevent extraneous re-rendering
         batchUpdateSpy(refreshSpy)
       }

@@ -5,7 +5,9 @@
  * @param  {String} data - the title text
  * @return {Object} - the title generator
  */
-export default function titleGenerator ({ attribute } = {}, type, data, { ln } = {}) {
+export default function titleGenerator (options, type, data, generatorOptions) {
+  const { ln } = generatorOptions || {}
+
   if (!data) {
     return ''
   }

@@ -1,5 +1,7 @@
 import { toArray } from './array'
 
+export const querySelector = (arg, el) => (el || document).querySelectorAll(arg)
+
 export function getTag (tags, tag) {
   if (!tags[tag]) {
     tags[tag] = document.getElementsByTagName(tag)[0]
@@ -14,7 +16,9 @@ export function getElementsKey ({ body, pbody }) {
     : (pbody ? 'pbody' : 'head')
 }
 
-export function queryElements (parentNode, { appId, attribute, type, tagIDKeyName }, attributes = {}) {
+export function queryElements (parentNode, { appId, attribute, type, tagIDKeyName }, attributes) {
+  attributes = attributes || {}
+
   const queries = [
     `${type}[${attribute}="${appId}"]`,
     `${type}[data-${tagIDKeyName}]`
@@ -27,9 +31,13 @@ export function queryElements (parentNode, { appId, attribute, type, tagIDKeyNam
     return query
   })
 
-  return toArray(parentNode.querySelectorAll(queries.join(', ')))
+  return toArray(querySelector(queries.join(', '), parentNode))
 }
 
 export function removeElementsByAppId ({ attribute }, appId) {
-  toArray(document.querySelectorAll(`[${attribute}="${appId}"]`)).map(el => el.remove())
+  toArray(querySelector(`[${attribute}="${appId}"]`)).map(el => el.remove())
+}
+
+export function removeAttribute (el, attributeName) {
+  el.removeAttribute(attributeName)
 }
