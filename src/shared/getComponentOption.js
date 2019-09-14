@@ -3,8 +3,8 @@ import { defaultInfo } from './constants'
 import { merge } from './merge'
 import { inMetaInfoBranch } from './meta-helpers'
 
-export function getComponentMetaInfo (options = {}, component) {
-  return getComponentOption(options, component, defaultInfo)
+export function getComponentMetaInfo (options, component) {
+  return getComponentOption(options || {}, component, defaultInfo)
 }
 
 /**
@@ -21,13 +21,16 @@ export function getComponentMetaInfo (options = {}, component) {
  * @param  {Object} [result={}] - result so far
  * @return {Object} result - final aggregated result
  */
-export function getComponentOption (options = {}, component, result = {}) {
-  const { keyName } = options
-  const { $metaInfo, $options, $children } = component
+export function getComponentOption (options, component, result) {
+  result = result || {}
 
   if (component._inactive) {
     return result
   }
+
+  options = options || {}
+  const { keyName } = options
+  const { $metaInfo, $options, $children } = component
 
   // only collect option data if it exists
   if ($options[keyName]) {

@@ -1,7 +1,7 @@
 import { metaInfoOptionKeys, metaInfoAttributeKeys, tagsSupportingOnload } from '../shared/constants'
 import { isArray } from '../utils/is-type'
 import { includes } from '../utils/array'
-import { getTag } from '../utils/elements'
+import { getTag, removeAttribute } from '../utils/elements'
 import { addCallbacks, addListeners } from './load'
 import { updateAttribute, updateTag, updateTitle } from './updaters'
 
@@ -10,7 +10,8 @@ import { updateAttribute, updateTag, updateTitle } from './updaters'
  *
  * @param  {Object} newInfo - the meta info to update to
  */
-export default function updateClientMetaInfo (appId, options = {}, newInfo) {
+export default function updateClientMetaInfo (appId, options, newInfo) {
+  options = options || {}
   const { ssrAttribute, ssrAppId } = options
 
   // only cache tags for current update
@@ -21,7 +22,7 @@ export default function updateClientMetaInfo (appId, options = {}, newInfo) {
   // if this is a server render, then dont update
   if (appId === ssrAppId && htmlTag.hasAttribute(ssrAttribute)) {
     // remove the server render attribute so we can update on (next) changes
-    htmlTag.removeAttribute(ssrAttribute)
+    removeAttribute(htmlTag, ssrAttribute)
 
     // add load callbacks if the
     let addLoadListeners = false
@@ -39,8 +40,8 @@ export default function updateClientMetaInfo (appId, options = {}, newInfo) {
   }
 
   // initialize tracked changes
-  const addedTags = {}
-  const removedTags = {}
+  const tagsAdded = {}
+  const tagsRemoved = {}
 
   for (const type in newInfo) {
     // ignore these
@@ -75,10 +76,10 @@ export default function updateClientMetaInfo (appId, options = {}, newInfo) {
     )
 
     if (newTags.length) {
-      addedTags[type] = newTags
-      removedTags[type] = oldTags
+      tagsAdded[type] = newTags
+      tagsRemoved[type] = oldTags
     }
   }
 
-  return { addedTags, removedTags }
+  return { tagsAdded, tagsRemoved }
 }

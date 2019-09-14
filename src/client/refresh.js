@@ -17,7 +17,9 @@ import updateClientMetaInfo from './updateClientMetaInfo'
  *
  * @return {Object} - new meta info
  */
-export default function refresh (rootVm, options = {}) {
+export default function refresh (rootVm, options) {
+  options = options || {}
+
   // make sure vue-meta was initiated
   if (!rootVm[rootConfigKey]) {
     showWarningNotSupported()
@@ -30,11 +32,16 @@ export default function refresh (rootVm, options = {}) {
   const metaInfo = getMetaInfo(options, rawInfo, clientSequences, rootVm)
 
   const { appId } = rootVm[rootConfigKey]
-  const tags = updateClientMetaInfo(appId, options, metaInfo)
+  let tags = updateClientMetaInfo(appId, options, metaInfo)
 
   // emit "event" with new info
   if (tags && isFunction(metaInfo.changed)) {
-    metaInfo.changed(metaInfo, tags.addedTags, tags.removedTags)
+    metaInfo.changed(metaInfo, tags.tagsAdded, tags.tagsRemoved)
+
+    tags = {
+      addedTags: tags.tagsAdded,
+      removedTags: tags.tagsRemoved
+    }
   }
 
   const appsMetaInfo = getAppsMetaInfo()
@@ -46,5 +53,9 @@ export default function refresh (rootVm, options = {}) {
     clearAppsMetaInfo(true)
   }
 
-  return { vm: rootVm, metaInfo, tags }
+  return {
+    vm: rootVm,
+    metaInfo: metaInfo, // eslint-disable-line object-shorthand
+    tags
+  }
 }

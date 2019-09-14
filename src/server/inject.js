@@ -13,7 +13,7 @@ import generateServerInjector from './generateServerInjector'
  * @vm {Object} - Vue instance - ideally the root component
  * @return {Object} - server meta info with `toString` methods
  */
-export default function inject (rootVm, options = {}) {
+export default function inject (rootVm, options) {
   // make sure vue-meta was initiated
   if (!rootVm[rootConfigKey]) {
     showWarningNotSupported()

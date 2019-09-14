@@ -9,7 +9,10 @@ import { applyTemplate } from './template'
  * @param  {Object} component - the Vue instance to get meta info from
  * @return {Object} - returned meta info
  */
-export default function getMetaInfo (options = {}, info, escapeSequences = [], component) {
+export default function getMetaInfo (options, info, escapeSequences, component) {
+  options = options || {}
+  escapeSequences = escapeSequences || []
+
   const { tagIDKeyName } = options
   // Remove all "template" tags from meta
 
@@ -32,7 +35,7 @@ export default function getMetaInfo (options = {}, info, escapeSequences = [], c
   if (info.meta) {
     // remove meta items with duplicate vmid's
     info.meta = info.meta.filter((metaItem, index, arr) => {
-      const hasVmid = metaItem.hasOwnProperty(tagIDKeyName)
+      const hasVmid = !!metaItem[tagIDKeyName]
       if (!hasVmid) {
         return true
       }

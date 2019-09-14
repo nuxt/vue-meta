@@ -5,6 +5,7 @@ import babel from 'rollup-plugin-babel'
 import replace from 'rollup-plugin-replace'
 import { terser } from 'rollup-plugin-terser'
 import defaultsDeep from 'lodash/defaultsDeep'
+import { defaultOptions } from '../src/shared/constants'
 
 const pkg = require('../package.json')
 
@@ -35,6 +36,41 @@ const babelConfig = () => ({
   ]
 })
 
+const internalObjectProperties = [
+  // Plugin options
+  // NOTE, see shared/options for why/how this is possible to do
+  ...Object.keys(defaultOptions),
+  'refreshOnceOnNavigation',
+  // Runtime state props on $root._vueMeta
+  'appId',
+  'pausing',
+  'navGuards',
+  'initialized',
+  'initializing',
+  'deprecationWarningShown',
+  // updateClientMetaInfo return props
+  'tagsAdded',
+  'tagsRemoved',
+  // escapeOptions
+  'doEscape',
+  // deepmerge
+  'isMergeableObject',
+  'arrayMerge'
+]
+
+const terserOpts = {
+  nameCache: {},
+  mangle: {
+    properties: {
+      //debug: '___DEBUGGGG___',
+      // minimize all object properties except when they are quotes like obj['prop']
+      keep_quoted: "strict",
+      // and minimize props listed in internalObjectProperties
+      regex: new RegExp(`^(${internalObjectProperties.join('|')})$`)
+    }
+  }
+}
+
 function rollupConfig({
   plugins = [],
   ...config
@@ -51,17 +87,18 @@ function rollupConfig({
       'process.env.VERSION': `"${version}"`,
       'process.server' : isBrowserBuild ? 'false' : 'true',
       /* remove unused stuff from deepmerge */
-
       // remove react stuff from is-mergeable-object
       '|| isReactElement(value)': '|| false',
       // we always provide an arrayMerge, remove default
       '|| defaultArrayMerge' : '',
-      // we dont provide a custom merge
+      // clone is a deprecated option we dont use
       'options.clone' : 'false',
       // we dont provide a custom merge
       'options.customMerge' : 'false',
-      // dont use this
-      'deepmerge.all = ' : 'false;'
+      // we dont use this helper
+      'deepmerge.all = ' : 'false;',
+      // we dont use symbols on our objects
+      '.concat(getEnumerableOwnPropertySymbols(target))': ''
     }
   }
 
@@ -103,7 +140,7 @@ export default [
       file: pkg.web.replace('.js', '.min.js'),
     },
     plugins: [
-      terser()
+      terser(terserOpts)
     ]
   },
   // common js build
@@ -137,7 +174,7 @@ export default [
       format: 'es'
     },
     plugins: [
-      terser()
+      terser(terserOpts)
     ],
     external: Object.keys(pkg.dependencies)
   }

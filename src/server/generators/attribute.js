@@ -7,7 +7,8 @@ import { booleanHtmlAttributes } from '../../shared/constants'
  * @param  {Object} data - the attributes to generate
  * @return {Object} - the attribute generator
  */
-export default function attributeGenerator ({ attribute, ssrAttribute } = {}, type, data, addSrrAttribute) {
+export default function attributeGenerator (options, type, data, addSrrAttribute) {
+  const { attribute, ssrAttribute } = options || {}
   let attributeStr = ''
 
   for (const attr in data) {

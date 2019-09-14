@@ -23,7 +23,7 @@ describe('updaters', () => {
       add: (tags) => {
         typeTests.add.expect.forEach((expected, index) => {
           if (!['title', 'htmlAttrs', 'headAttrs', 'bodyAttrs'].includes(type)) {
-            expect(tags.addedTags[type][index].outerHTML).toBe(expected)
+            expect(tags.tagsAdded[type][index].outerHTML).toBe(expected)
           }
           expect(html.outerHTML).toContain(expected)
         })
@@ -37,7 +37,7 @@ describe('updaters', () => {
 
         typeTests.change.expect.forEach((expected, index) => {
           if (!['title', 'htmlAttrs', 'headAttrs', 'bodyAttrs'].includes(type)) {
-            expect(tags.addedTags[type][index].outerHTML).toBe(expected)
+            expect(tags.tagsAdded[type][index].outerHTML).toBe(expected)
           }
           expect(html.outerHTML).toContain(expected)
         })

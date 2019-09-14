@@ -14,7 +14,10 @@ import {
  * @param  {(Array<Object>|Object)} tags - an array of tag objects or a single object in case of base
  * @return {Object} - the tag generator
  */
-export default function tagGenerator ({ ssrAppId, attribute, tagIDKeyName } = {}, type, tags, { appId, body = false, pbody = false, ln = false } = {}) {
+export default function tagGenerator (options, type, tags, generatorOptions) {
+  const { ssrAppId, attribute, tagIDKeyName } = options || {}
+  const { appId, body = false, pbody = false, ln = false } = generatorOptions || {}
+
   const dataAttributes = [tagIDKeyName, ...commonDataAttributes]
 
   if (!tags || !tags.length) {

@@ -1,13 +1,14 @@
 import { toArray } from '../utils/array'
+import { querySelector, removeAttribute } from '../utils/elements'
 
 const callbacks = []
 
-export function isDOMLoaded (d = document) {
-  return d.readyState !== 'loading'
+export function isDOMLoaded (d) {
+  return (d || document).readyState !== 'loading'
 }
 
-export function isDOMComplete (d = document) {
-  return d.readyState === 'complete'
+export function isDOMComplete (d) {
+  return (d || document).readyState === 'complete'
 }
 
 export function waitDOMLoaded () {
@@ -69,7 +70,7 @@ export function applyCallbacks (matchElement) {
 
     let elements = []
     if (!matchElement) {
-      elements = toArray(document.querySelectorAll(selector))
+      elements = toArray(querySelector(selector))
     }
 
     if (matchElement && matchElement.matches(selector)) {
@@ -95,7 +96,7 @@ export function applyCallbacks (matchElement) {
          * attribute after ssr and if we dont remove it the node
          * will fail isEqualNode on the client
          */
-        element.removeAttribute('onload')
+        removeAttribute(element, 'onload')
 
         callback(element)
       }

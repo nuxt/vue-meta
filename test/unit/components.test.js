@@ -257,7 +257,7 @@ describe('components', () => {
     expect(guards.after).toBeDefined()
 
     guards.before(null, null, () => {})
-    expect(wrapper.vm.$root._vueMeta.paused).toBe(true)
+    expect(wrapper.vm.$root._vueMeta.pausing).toBe(true)
 
     guards.after()
     expect(afterNavigation).toHaveBeenCalled()
@@ -292,7 +292,7 @@ describe('components', () => {
     expect(guards.after).toBeDefined()
 
     guards.before(null, null, () => {})
-    expect(wrapper.vm.$root._vueMeta.paused).toBe(true)
+    expect(wrapper.vm.$root._vueMeta.pausing).toBe(true)
 
     guards.after()
     expect(afterNavigation).toHaveBeenCalled()

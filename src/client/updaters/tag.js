@@ -10,8 +10,8 @@ import { queryElements, getElementsKey } from '../../utils/elements.js'
  * @param  {(Array<Object>|Object)} tags - an array of tag objects or a single object in case of base
  * @return {Object} - a representation of what tags changed
  */
-export default function updateTag (appId, options = {}, type, tags, head, body) {
-  const { attribute, tagIDKeyName } = options
+export default function updateTag (appId, options, type, tags, head, body) {
+  const { attribute, tagIDKeyName } = options || {}
 
   const dataAttributes = commonDataAttributes.slice()
   dataAttributes.push(tagIDKeyName)
@@ -46,20 +46,20 @@ export default function updateTag (appId, options = {}, type, tags, head, body) 
     const newElement = document.createElement(type)
     newElement.setAttribute(attribute, appId)
 
-    for (const attr in tag) {
+    Object.keys(tag).forEach((attr) => {
       /* istanbul ignore next */
-      if (!tag.hasOwnProperty(attr) || includes(tagProperties, attr)) {
-        continue
+      if (includes(tagProperties, attr)) {
+        return
       }
 
       if (attr === 'innerHTML') {
         newElement.innerHTML = tag.innerHTML
-        continue
+        return
       }
 
       if (attr === 'json') {
         newElement.innerHTML = JSON.stringify(tag.json)
-        continue
+        return
       }
 
       if (attr === 'cssText') {
@@ -69,12 +69,12 @@ export default function updateTag (appId, options = {}, type, tags, head, body) 
         } else {
           newElement.appendChild(document.createTextNode(tag.cssText))
         }
-        continue
+        return
       }
 
       if (attr === 'callback') {
         newElement.onload = () => tag[attr](newElement)
-        continue
+        return
       }
 
       const _attr = includes(dataAttributes, attr)
@@ -83,12 +83,12 @@ export default function updateTag (appId, options = {}, type, tags, head, body) 
 
       const isBooleanAttribute = includes(booleanHtmlAttributes, attr)
       if (isBooleanAttribute && !tag[attr]) {
-        continue
+        return
       }
 
       const value = isBooleanAttribute ? '' : tag[attr]
       newElement.setAttribute(_attr, value)
-    }
+    })
 
     const oldElements = currentElements[getElementsKey(tag)]
 

@@ -33,8 +33,10 @@ export function arrayMerge ({ component, tagIDKeyName, metaTemplateKeyName, cont
     // when sourceItem explictly defines contentKeyName or innerHTML as undefined, its
     // an indication that we need to skip the default behaviour or child has preference over parent
     // which means we keep the targetItem and ignore/remove the sourceItem
-    if ((sourceItem.hasOwnProperty(contentKeyName) && sourceItem[contentKeyName] === undefined) ||
-      (sourceItem.hasOwnProperty('innerHTML') && sourceItem.innerHTML === undefined)) {
+    if (
+      (contentKeyName in sourceItem && sourceItem[contentKeyName] === undefined) ||
+      ('innerHTML' in sourceItem && sourceItem.innerHTML === undefined)
+    ) {
       destination.push(targetItem)
       // remove current index from source array so its not concatenated to destination below
       source.splice(sourceIndex, 1)
@@ -75,11 +77,15 @@ export function arrayMerge ({ component, tagIDKeyName, metaTemplateKeyName, cont
   return destination.concat(source)
 }
 
-export function merge (target, source, options = {}) {
+let warningShown = false
+
+export function merge (target, source, options) {
+  options = options || {}
+
   // remove properties explicitly set to false so child components can
   // optionally _not_ overwrite the parents content
   // (for array properties this is checked in arrayMerge)
-  if (source.hasOwnProperty('title') && source.title === undefined) {
+  if (source.title === undefined) {
     delete source.title
   }
 
@@ -89,9 +95,10 @@ export function merge (target, source, options = {}) {
     }
 
     for (const key in source[attrKey]) {
-      if (source[attrKey].hasOwnProperty(key) && source[attrKey][key] === undefined) {
-        if (includes(booleanHtmlAttributes, key)) {
+      if (key in source[attrKey] && source[attrKey][key] === undefined) {
+        if (includes(booleanHtmlAttributes, key) && !warningShown) {
           warn('VueMeta: Please note that since v2 the value undefined is not used to indicate boolean attributes anymore, see migration guide for details')
+          warningShown = true
         }
         delete source[attrKey][key]
       }

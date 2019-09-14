@@ -59,25 +59,28 @@ export const defaultOptions = {
   ssrAppId
 }
 
+// might be a bit ugly, but minimizes the browser bundles a bit
+const defaultInfoKeys = Object.keys(defaultInfo)
+
 // The metaInfo property keys which are used to disable escaping
 export const disableOptionKeys = [
-  '__dangerouslyDisableSanitizers',
-  '__dangerouslyDisableSanitizersByTagID'
+  defaultInfoKeys[12],
+  defaultInfoKeys[13]
 ]
 
 // List of metaInfo property keys which are configuration options (and dont generate html)
 export const metaInfoOptionKeys = [
-  'titleChunk',
-  'titleTemplate',
+  defaultInfoKeys[1],
+  defaultInfoKeys[2],
   'changed',
   ...disableOptionKeys
 ]
 
 // List of metaInfo property keys which only generates attributes and no tags
 export const metaInfoAttributeKeys = [
-  'htmlAttrs',
-  'headAttrs',
-  'bodyAttrs'
+  defaultInfoKeys[3],
+  defaultInfoKeys[4],
+  defaultInfoKeys[5]
 ]
 
 // HTML elements which support the onload event

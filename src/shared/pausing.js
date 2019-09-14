@@ -1,15 +1,15 @@
 import { rootConfigKey } from './constants'
 
-export function pause (rootVm, refresh = true) {
-  rootVm[rootConfigKey].paused = true
+export function pause (rootVm, refresh) {
+  rootVm[rootConfigKey].pausing = true
 
-  return () => resume(refresh)
+  return () => resume(rootVm, refresh)
 }
 
-export function resume (rootVm, refresh = true) {
-  rootVm[rootConfigKey].paused = false
+export function resume (rootVm, refresh) {
+  rootVm[rootConfigKey].pausing = false
 
-  if (refresh) {
+  if (refresh || refresh === undefined) {
     return rootVm.$meta().refresh()
   }
 }
