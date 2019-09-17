@@ -2,6 +2,22 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.3.0-beta.0](https://github.com/nuxt/vue-meta/compare/v2.2.2...v2.3.0-beta.0) (2019-09-17)
+
+
+### Bug Fixes
+
+* use computed prop (which uses caching) instead of calling the fn directly ([c344d60](https://github.com/nuxt/vue-meta/commit/c344d60))
+
+
+### Features
+
+* add option waitOnDestroyed ([f745059](https://github.com/nuxt/vue-meta/commit/f745059))
+* add options debounceWait ([d43b77c](https://github.com/nuxt/vue-meta/commit/d43b77c))
+* add possibility to add additional  meta info ([0ab76ee](https://github.com/nuxt/vue-meta/commit/0ab76ee))
+* add support for setting attributes from multiple apps ([d9b0ab2](https://github.com/nuxt/vue-meta/commit/d9b0ab2))
+* enable setting refreshOnceOnNavigation during runtime ([9d14387](https://github.com/nuxt/vue-meta/commit/9d14387))
+
 ### [2.2.2](https://github.com/nuxt/vue-meta/compare/v2.2.1...v2.2.2) (2019-08-30)
 
 
