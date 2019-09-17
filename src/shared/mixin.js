@@ -147,25 +147,32 @@ export default function createMixin (Vue, options) {
     },
     // TODO: move back into beforeCreate when Vue issue is resolved
     destroyed () {
-      const $this = this
       // do not trigger refresh:
+      // - when user configured to not wait for transitions on destroyed
       // - when the component doesnt have a parent
       // - doesnt have metaInfo defined
-      if (!$this.$parent || !hasMetaInfo($this)) {
+      if (!this.$parent || !hasMetaInfo(this)) {
         return
       }
 
-      // Wait that element is hidden before refreshing meta tags (to support animations)
-      const interval = setInterval(() => {
-        if ($this.$el && $this.$el.offsetParent !== null) {
-          /* istanbul ignore next line */
+      this.$nextTick(() => {
+        if (!options.waitOnDestroyed || !this.$el || !this.$el.offsetParent) {
+          triggerUpdate(options, this.$root, 'destroyed')
           return
         }
 
-        clearInterval(interval)
+        // Wait that element is hidden before refreshing meta tags (to support animations)
+        const interval = setInterval(() => {
+          if (this.$el && this.$el.offsetParent !== null) {
+            /* istanbul ignore next line */
+            return
+          }
 
-        triggerUpdate(options, $this.$root, 'destroyed')
-      }, 50)
+          clearInterval(interval)
+
+          triggerUpdate(options, this.$root, 'destroyed')
+        }, 50)
+      })
     }
   }
 }

@@ -61,7 +61,7 @@ describe('generators', () => {
   }
 })
 
-describe.only('extra tests', () => {
+describe('extra tests', () => {
   test('empty config doesnt generate a tag', () => {
     const { meta } = generateServerInjector({ meta: [] })
 

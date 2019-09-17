@@ -1,5 +1,6 @@
 import { getComponentMetaInfo } from '../../src/shared/getComponentOption'
 import _getMetaInfo from '../../src/shared/getMetaInfo'
+import { triggerUpdate, batchUpdate } from '../../src/client/update'
 import { mount, createWrapper, loadVueMetaPlugin, vmTick, clearClientAttributeMap } from '../utils'
 import { defaultOptions } from '../../src/shared/constants'
 
@@ -10,6 +11,7 @@ import Changed from '../components/changed.vue'
 
 const getMetaInfo = component => _getMetaInfo(defaultOptions, getComponentMetaInfo(defaultOptions, component))
 
+jest.mock('../../src/client/update')
 jest.mock('../../src/utils/window', () => ({
   hasGlobalWindow: false
 }))
@@ -48,6 +50,8 @@ describe('components', () => {
   })
 
   afterEach(() => {
+    jest.clearAllMocks()
+
     elements.html.getAttributeNames().forEach(name => elements.html.removeAttribute(name))
     elements.head.childNodes.forEach(child => child.remove())
     elements.head.getAttributeNames().forEach(name => elements.head.removeAttribute(name))
@@ -209,6 +213,10 @@ describe('components', () => {
   })
 
   test('changed function is called', async () => {
+    const update = jest.requireActual('../../src/client/update')
+    triggerUpdate.mockImplementation(update.triggerUpdate)
+    batchUpdate.mockImplementation(update.batchUpdate)
+
     let context
     const changed = jest.fn(function () {
       context = this
@@ -226,6 +234,9 @@ describe('components', () => {
 
     expect(changed).toHaveBeenCalledTimes(2)
     expect(context._uid).toBe(wrapper.vm._uid)
+
+    triggerUpdate.mockRestore()
+    batchUpdate.mockRestore()
   })
 
   test('afterNavigation function is called with refreshOnce: true', async () => {
@@ -299,6 +310,10 @@ describe('components', () => {
   })
 
   test('changes before hydration initialization trigger an update', async () => {
+    const update = jest.requireActual('../../src/client/update')
+    triggerUpdate.mockImplementation(update.triggerUpdate)
+    batchUpdate.mockImplementation(update.batchUpdate)
+
     const { html } = elements
     html.setAttribute(defaultOptions.ssrAttribute, 'true')
 
@@ -342,9 +357,16 @@ describe('components', () => {
 
     expect(html.getAttribute('theme')).toBe('dark')
     wrapper.destroy()
+
+    triggerUpdate.mockRestore()
+    batchUpdate.mockRestore()
   })
 
   test('changes during hydration initialization trigger an update', async () => {
+    const update = jest.requireActual('../../src/client/update')
+    triggerUpdate.mockImplementation(update.triggerUpdate)
+    batchUpdate.mockImplementation(update.batchUpdate)
+
     const { html } = elements
     html.setAttribute(defaultOptions.ssrAttribute, 'true')
 
@@ -386,6 +408,9 @@ describe('components', () => {
 
     expect(html.getAttribute('theme')).toBe('dark')
     wrapper.destroy()
+
+    triggerUpdate.mockRestore()
+    batchUpdate.mockRestore()
   })
 
   test('can add/remove meta info from additional app ', () => {
@@ -504,13 +529,34 @@ describe('components', () => {
     expect(guards.after).not.toBeUndefined()
   })
 
-  test('can set option debounceWait runtime', () => {
-    const wrapper = mount(HelloWorld, { localVue: Vue })
+  test('destroyed hook calls triggerUpdate delayed', async () => {
+    jest.useFakeTimers()
+    const wrapper = mount(HelloWorld, { localVue: Vue, parentComponent: { render: h => h('div') } })
+    const spy = jest.spyOn(wrapper.vm.$el, 'offsetParent', 'get').mockReturnValue(true)
 
-    expect(wrapper.vm.$meta().getOptions().debounceWait).toBe(10)
+    wrapper.destroy()
 
-    wrapper.vm.$meta().setOptions({ debounceWait: 69420 })
+    await vmTick(wrapper.vm)
 
-    expect(wrapper.vm.$meta().getOptions().debounceWait).toBe(69420)
+    expect(triggerUpdate).toHaveBeenCalledTimes(1)
+    spy.mockRestore()
+
+    jest.advanceTimersByTime(51)
+
+    expect(triggerUpdate).toHaveBeenCalledTimes(2)
+    expect(triggerUpdate).toHaveBeenCalledWith(expect.any(Object), expect.any(Object), 'destroyed')
+  })
+
+  test('destroyed hook calls triggerUpdate immediately when waitOnDestroyed: false', async () => {
+    jest.useFakeTimers()
+
+    const wrapper = mount(HelloWorld, { localVue: Vue, parentComponent: { render: h => h('div') } })
+    wrapper.vm.$meta().setOptions({ waitOnDestroyed: false })
+    wrapper.destroy()
+
+    await vmTick(wrapper.vm)
+
+    expect(triggerUpdate).toHaveBeenCalledTimes(2)
+    expect(triggerUpdate).toHaveBeenCalledWith(expect.any(Object), expect.any(Object), 'destroyed')
   })
 })

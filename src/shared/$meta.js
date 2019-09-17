@@ -20,16 +20,21 @@ export default function $meta (options) {
     'setOptions': (newOptions) => {
       const refreshNavKey = 'refreshOnceOnNavigation'
       if (newOptions && newOptions[refreshNavKey]) {
-        options.refreshOnceOnNavigation = newOptions[refreshNavKey]
+        options.refreshOnceOnNavigation = !!newOptions[refreshNavKey]
         addNavGuards($root)
       }
 
       const debounceWaitKey = 'debounceWait'
-      if (newOptions && newOptions[debounceWaitKey]) {
+      if (newOptions && debounceWaitKey in newOptions) {
         const debounceWait = parseInt(newOptions[debounceWaitKey])
         if (!isNaN(debounceWait)) {
           options.debounceWait = debounceWait
         }
+      }
+
+      const waitOnDestroyedKey = 'waitOnDestroyed'
+      if (newOptions && waitOnDestroyedKey in newOptions) {
+        options.waitOnDestroyed = !!newOptions[waitOnDestroyedKey]
       }
     },
     'refresh': () => refresh($root, options),
