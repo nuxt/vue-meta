@@ -1,4 +1,4 @@
-import { isObject } from '../utils/is-type'
+import { isObject, isUndefined } from '../utils/is-type'
 import { defaultOptions } from './constants'
 
 export function setOptions (options) {
@@ -17,7 +17,8 @@ export function setOptions (options) {
     tagIDKeyName: options['tagIDKeyName'] || defaultOptions.tagIDKeyName,
     contentKeyName: options['contentKeyName'] || defaultOptions.contentKeyName,
     metaTemplateKeyName: options['metaTemplateKeyName'] || defaultOptions.metaTemplateKeyName,
-    debounceWait: options['debounceWait'] || defaultOptions.debounceWait,
+    debounceWait: isUndefined(options['debounceWait']) ? defaultOptions.debounceWait : options['debounceWait'],
+    waitOnDestroyed: isUndefined(options['waitOnDestroyed']) ? defaultOptions.waitOnDestroyed : options['waitOnDestroyed'],
     ssrAppId: options['ssrAppId'] || defaultOptions.ssrAppId,
     refreshOnceOnNavigation: !!options['refreshOnceOnNavigation']
   }

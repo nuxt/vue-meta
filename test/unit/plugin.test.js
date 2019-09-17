@@ -263,4 +263,24 @@ describe('plugin', () => {
     jest.advanceTimersByTime(10)
     expect(refreshSpy).toHaveBeenCalled()
   })
+
+  test('can set option waitOnDestroyed runtime', () => {
+    const wrapper = mount({ render: h => h('div') }, { localVue: Vue })
+
+    expect(wrapper.vm.$meta().getOptions().waitOnDestroyed).toBe(true)
+
+    wrapper.vm.$meta().setOptions({ waitOnDestroyed: false })
+
+    expect(wrapper.vm.$meta().getOptions().waitOnDestroyed).toBe(false)
+  })
+
+  test('can set option debounceWait runtime', () => {
+    const wrapper = mount({ render: h => h('div') }, { localVue: Vue })
+
+    expect(wrapper.vm.$meta().getOptions().debounceWait).toBe(10)
+
+    wrapper.vm.$meta().setOptions({ debounceWait: 69420 })
+
+    expect(wrapper.vm.$meta().getOptions().debounceWait).toBe(69420)
+  })
 })
