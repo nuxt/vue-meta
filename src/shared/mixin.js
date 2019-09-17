@@ -15,14 +15,11 @@ export default function createMixin (Vue, options) {
   // watch for client side component updates
   return {
     beforeCreate () {
-      // https://github.com/terser/terser/issues/458
-      const $this = this
-      const $root = $this.$root
-      const $options = $this.$options
-      const $isServer = $this.$isServer
-      const $nextTick = $this.$nextTick
+      const rootKey = '$root'
+      const $root = this[rootKey]
+      const $options = this.$options
 
-      Object.defineProperty($this, '_hasMetaInfo', {
+      Object.defineProperty(this, '_hasMetaInfo', {
         configurable: true,
         get () {
           // Show deprecation warning once when devtools enabled
@@ -30,7 +27,7 @@ export default function createMixin (Vue, options) {
             warn('VueMeta DeprecationWarning: _hasMetaInfo has been deprecated and will be removed in a future version. Please use hasMetaInfo(vm) instead')
             $root[rootConfigKey].deprecationWarningShown = true
           }
-          return hasMetaInfo($this)
+          return hasMetaInfo(this)
         }
       })
 
@@ -48,10 +45,10 @@ export default function createMixin (Vue, options) {
 
       // to speed up updates we keep track of branches which have a component with vue-meta info defined
       // if _vueMeta = true it has info, if _vueMeta = false a child has info
-      if (!$this[rootConfigKey]) {
-        $this[rootConfigKey] = true
+      if (!this[rootConfigKey]) {
+        this[rootConfigKey] = true
 
-        let parent = $this.$parent
+        let parent = this.$parent
         while (parent && parent !== $root) {
           if (isUndefined(parent[rootConfigKey])) {
             parent[rootConfigKey] = false
@@ -66,13 +63,13 @@ export default function createMixin (Vue, options) {
         $options.computed = $options.computed || {}
         $options.computed.$metaInfo = $options[options.keyName]
 
-        if (!$isServer) {
+        if (!this.$isServer) {
           // if computed $metaInfo exists, watch it for updates & trigger a refresh
           // when it changes (i.e. automatically handle async actions that affect metaInfo)
           // credit for this suggestion goes to [Sébastien Chopin](https://github.com/Atinux)
-          ensuredPush($options, 'created', () => {
-            $this.$watch('$metaInfo', () => {
-              triggerUpdate($root, 'watcher')
+          ensuredPush($options, 'created', function () {
+            this.$watch('$metaInfo', function () {
+              triggerUpdate(this[rootKey], 'watcher')
             })
           })
         }
@@ -83,10 +80,11 @@ export default function createMixin (Vue, options) {
       // this is to make sure that when a page is opened in an inactive tab which
       // has throttled rAF/timers we still immediately set the page title
       if (isUndefined($root[rootConfigKey].initialized)) {
-        $root[rootConfigKey].initialized = $isServer
+        $root[rootConfigKey].initialized = this.$isServer
 
         if (!$root[rootConfigKey].initialized) {
-          ensuredPush($options, 'beforeMount', () => {
+          ensuredPush($options, 'beforeMount', function () {
+            const $root = this[rootKey]
             // if this Vue-app was server rendered, set the appId to 'ssr'
             // only one SSR app per page is supported
             if ($root.$el && $root.$el.nodeType === 1 && $root.$el.hasAttribute('data-server-rendered')) {
@@ -95,14 +93,16 @@ export default function createMixin (Vue, options) {
           })
 
           // we use the mounted hook here as on page load
-          ensuredPush($options, 'mounted', () => {
+          ensuredPush($options, 'mounted', function () {
+            const $root = this[rootKey]
+
             if (!$root[rootConfigKey].initialized) {
               // used in triggerUpdate to check if a change was triggered
               // during initialization
               $root[rootConfigKey].initializing = true
 
               // refresh meta in nextTick so all child components have loaded
-              $nextTick(function () {
+              this.$nextTick(function () {
                 const { tags, metaInfo } = $root.$meta().refresh()
 
                 // After ssr hydration (identifier by tags === false) check
@@ -112,7 +112,7 @@ export default function createMixin (Vue, options) {
                 // current hook was called
                 // (during initialization all changes are blocked)
                 if (tags === false && $root[rootConfigKey].initialized === null) {
-                  $nextTick(() => triggerUpdate($root, 'init'))
+                  this.$nextTick(() => triggerUpdate($root, 'init'))
                 }
 
                 $root[rootConfigKey].initialized = true
@@ -135,13 +135,15 @@ export default function createMixin (Vue, options) {
       }
 
       // do not trigger refresh on the server side
-      if ($isServer) {
+      if (this.$isServer) {
         return
       }
 
       // no need to add this hooks on server side
       updateOnLifecycleHook.forEach((lifecycleHook) => {
-        ensuredPush($options, lifecycleHook, () => triggerUpdate($root, lifecycleHook))
+        ensuredPush($options, lifecycleHook, function () {
+          triggerUpdate(this[rootKey], lifecycleHook)
+        })
       })
     },
     // TODO: move back into beforeCreate when Vue issue is resolved
