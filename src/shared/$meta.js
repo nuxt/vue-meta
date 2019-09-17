@@ -23,6 +23,14 @@ export default function $meta (options) {
         options.refreshOnceOnNavigation = newOptions[refreshNavKey]
         addNavGuards($root)
       }
+
+      const debounceWaitKey = 'debounceWait'
+      if (newOptions && newOptions[debounceWaitKey]) {
+        const debounceWait = parseInt(newOptions[debounceWaitKey])
+        if (!isNaN(debounceWait)) {
+          options.debounceWait = debounceWait
+        }
+      }
     },
     'refresh': () => refresh($root, options),
     'inject': () => process.server ? inject($root, options) : showWarningNotSupportedInBrowserBundle('inject'),

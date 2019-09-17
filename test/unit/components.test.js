@@ -479,7 +479,7 @@ describe('components', () => {
     wrapper.destroy()
   })
 
-  test('can toggle refreshOnceOnNavigation runtime', () => {
+  test('can enable option refreshOnceOnNavigation runtime', () => {
     const guards = {}
     const wrapper = mount(HelloWorld, {
       localVue: Vue,
@@ -502,5 +502,15 @@ describe('components', () => {
 
     expect(guards.before).not.toBeUndefined()
     expect(guards.after).not.toBeUndefined()
+  })
+
+  test('can set option debounceWait runtime', () => {
+    const wrapper = mount(HelloWorld, { localVue: Vue })
+
+    expect(wrapper.vm.$meta().getOptions().debounceWait).toBe(10)
+
+    wrapper.vm.$meta().setOptions({ debounceWait: 69420 })
+
+    expect(wrapper.vm.$meta().getOptions().debounceWait).toBe(69420)
   })
 })

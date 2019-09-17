@@ -3,7 +3,7 @@ import { rootConfigKey } from '../shared/constants'
 // store an id to keep track of DOM updates
 let batchId = null
 
-export function triggerUpdate (rootVm, hookName) {
+export function triggerUpdate ({ debounceWait }, rootVm, hookName) {
   // if an update was triggered during initialization or when an update was triggered by the
   // metaInfo watcher, set initialized to null
   // then we keep falsy value but know we need to run a triggerUpdate after initialization
@@ -13,7 +13,7 @@ export function triggerUpdate (rootVm, hookName) {
 
   if (rootVm[rootConfigKey].initialized && !rootVm[rootConfigKey].pausing) {
     // batch potential DOM updates to prevent extraneous re-rendering
-    batchUpdate(() => rootVm.$meta().refresh())
+    batchUpdate(() => void rootVm.$meta().refresh(), debounceWait)
   }
 }
 
@@ -25,10 +25,14 @@ export function triggerUpdate (rootVm, hookName) {
  * @return {Number} id - a new ID
  */
 export function batchUpdate (callback, timeout) {
-  timeout = timeout || 10
+  timeout = timeout === undefined ? 10 : timeout
+
+  if (!timeout) {
+    callback()
+    return
+  }
 
   clearTimeout(batchId)
-
   batchId = setTimeout(() => {
     callback()
   }, timeout)

@@ -69,7 +69,7 @@ export default function createMixin (Vue, options) {
           // credit for this suggestion goes to [Sébastien Chopin](https://github.com/Atinux)
           ensuredPush($options, 'created', function () {
             this.$watch('$metaInfo', function () {
-              triggerUpdate(this[rootKey], 'watcher')
+              triggerUpdate(options, this[rootKey], 'watcher')
             })
           })
         }
@@ -112,7 +112,7 @@ export default function createMixin (Vue, options) {
                 // current hook was called
                 // (during initialization all changes are blocked)
                 if (tags === false && $root[rootConfigKey].initialized === null) {
-                  this.$nextTick(() => triggerUpdate($root, 'init'))
+                  this.$nextTick(() => triggerUpdate(options, $root, 'init'))
                 }
 
                 $root[rootConfigKey].initialized = true
@@ -126,7 +126,6 @@ export default function createMixin (Vue, options) {
               })
             }
           })
-
           // add the navigation guards if requested
           if (options.refreshOnceOnNavigation) {
             addNavGuards($root)
@@ -142,7 +141,7 @@ export default function createMixin (Vue, options) {
       // no need to add this hooks on server side
       updateOnLifecycleHook.forEach((lifecycleHook) => {
         ensuredPush($options, lifecycleHook, function () {
-          triggerUpdate(this[rootKey], lifecycleHook)
+          triggerUpdate(options, this[rootKey], lifecycleHook)
         })
       })
     },
@@ -165,7 +164,7 @@ export default function createMixin (Vue, options) {
 
         clearInterval(interval)
 
-        triggerUpdate($this.$root, 'destroyed')
+        triggerUpdate(options, $this.$root, 'destroyed')
       }, 50)
     }
   }

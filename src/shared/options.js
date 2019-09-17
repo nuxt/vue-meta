@@ -17,6 +17,7 @@ export function setOptions (options) {
     tagIDKeyName: options['tagIDKeyName'] || defaultOptions.tagIDKeyName,
     contentKeyName: options['contentKeyName'] || defaultOptions.contentKeyName,
     metaTemplateKeyName: options['metaTemplateKeyName'] || defaultOptions.metaTemplateKeyName,
+    debounceWait: options['debounceWait'] || defaultOptions.debounceWait,
     ssrAppId: options['ssrAppId'] || defaultOptions.ssrAppId,
     refreshOnceOnNavigation: !!options['refreshOnceOnNavigation']
   }

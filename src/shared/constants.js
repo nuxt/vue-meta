@@ -49,6 +49,9 @@ export const contentKeyName = 'content'
 // The id used for the ssr app
 export const ssrAppId = 'ssr'
 
+// How long meta update
+export const debounceWait = 10
+
 export const defaultOptions = {
   keyName,
   attribute,
@@ -56,6 +59,7 @@ export const defaultOptions = {
   tagIDKeyName,
   contentKeyName,
   metaTemplateKeyName,
+  debounceWait,
   ssrAppId
 }
 

@@ -153,7 +153,7 @@ describe('plugin', () => {
     const batchUpdateSpy = batchUpdate.mockImplementation(_batchUpdate)
     // because triggerUpdate & batchUpdate reside in the same file we cant mock them both,
     // so just recreate the triggerUpdate fn by copying its implementation
-    const triggerUpdateSpy = triggerUpdate.mockImplementation((vm, hookName) => {
+    const triggerUpdateSpy = triggerUpdate.mockImplementation((options, vm, hookName) => {
       if (vm.$root._vueMeta.initialized && !vm.$root._vueMeta.pausing) {
         // batch potential DOM updates to prevent extraneous re-rendering
         batchUpdateSpy(() => vm.$meta().refresh())
@@ -216,7 +216,7 @@ describe('plugin', () => {
     expect(metaInfo.title).toBe(title)
   })
 
-  test('updates are batched', async () => {
+  test('updates are batched by default', async () => {
     jest.useFakeTimers()
 
     const { batchUpdate: _batchUpdate } = jest.requireActual('../../src/client/update')
@@ -224,7 +224,7 @@ describe('plugin', () => {
     const refreshSpy = jest.fn()
     // because triggerUpdate & batchUpdate reside in the same file we cant mock them both,
     // so just recreate the triggerUpdate fn by copying its implementation
-    triggerUpdate.mockImplementation((vm, hookName) => {
+    triggerUpdate.mockImplementation((options, vm, hookName) => {
       if (vm.$root._vueMeta.initialized && !vm.$root._vueMeta.pausing) {
         // batch potential DOM updates to prevent extraneous re-rendering
         batchUpdateSpy(refreshSpy)
