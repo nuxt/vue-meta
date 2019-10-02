@@ -106,6 +106,7 @@ If you wish to create your app even more quickly, take a look at the following f
 - [Gridsome](https://github.com/gridsome/gridsome) - The Vue.js JAMstack Framework
 - [Ream](https://github.com/ream/ream) - Framework for building universal web app and static website in Vue.js
 - [Vue-Storefront](https://github.com/DivanteLtd/vue-storefront) - PWA for eCommerce
+- [Factor JS](https://github.com/fiction-com/factor) - Extension-first VueJS platform for front-end developers.
 
 ## How to translate documentation
 

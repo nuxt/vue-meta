@@ -17,3 +17,7 @@ Proceed to the [Ream documentation](https://ream.js.org/)
 ## Vue-Storefront
 
 Proceed to the [Vue-Storefront documentation](https://docs.vuestorefront.io/)
+
+## Factor
+
+Proceed to the [Factor documentation](https://factor.dev/guide/meta)
