@@ -1,4 +1,10 @@
 import { rootConfigKey } from '../shared/constants'
+import { hasGlobalWindow } from '../utils/window'
+
+const scheduleRefresh = (hasGlobalWindow && window.requestIdleCallback) || function (cb, { timeout }) {
+  return setTimeout(cb, timeout)
+}
+const cancelRefresh = (hasGlobalWindow && window.cancelIdleCallback) || clearTimeout
 
 // store an id to keep track of DOM updates
 let batchId = null
@@ -32,10 +38,10 @@ export function batchUpdate (callback, timeout) {
     return
   }
 
-  clearTimeout(batchId)
-  batchId = setTimeout(() => {
+  cancelRefresh(batchId)
+  batchId = scheduleRefresh(() => {
     callback()
-  }, timeout)
+  }, { timeout })
 
   return batchId
 }
