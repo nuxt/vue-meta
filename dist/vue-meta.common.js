@@ -1,5 +1,5 @@
 /**
- * vue-meta v2.3.0-beta.0
+ * vue-meta v2.3.0
  * (c) 2019
  * - Declan de Wet
  * - Sébastien Chopin (@Atinux)
@@ -14,7 +14,7 @@ function _interopDefault (ex) { return (ex && (typeof ex === 'object') && 'defau
 
 var deepmerge = _interopDefault(require('deepmerge'));
 
-var version = "2.3.0-beta.0";
+var version = "2.3.0";
 
 function _typeof(obj) {
   if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") {
