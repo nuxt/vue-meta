@@ -28,6 +28,6 @@ function install (Vue, options) {
 export default {
   version,
   install,
-  generate: metaInfo => process.server ? generate(metaInfo) : showWarningNotSupportedInBrowserBundle('generate'),
+  generate: (metaInfo, options) => process.server ? generate(metaInfo, options) : showWarningNotSupportedInBrowserBundle('generate'),
   hasMetaInfo
 }
