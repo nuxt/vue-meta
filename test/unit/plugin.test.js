@@ -119,14 +119,16 @@ describe('plugin', () => {
     warn.mockRestore()
   })
 
-  test('can use generate export', () => {
+  test('can use generate export with options', () => {
     process.server = true
     const rawInfo = {
       meta: [{ charset: 'utf-8' }]
     }
 
-    const metaInfo = VueMetaPlugin.generate(rawInfo)
-    expect(metaInfo.meta.text()).toBe('<meta data-vue-meta="ssr" charset="utf-8">')
+    const metaInfo = VueMetaPlugin.generate(rawInfo, {
+      ssrAppId: 'my-test-app-id'
+    })
+    expect(metaInfo.meta.text()).toBe('<meta data-vue-meta="my-test-app-id" charset="utf-8">')
 
     // no error on not provided metaInfo types
     expect(metaInfo.script.text()).toBe('')
