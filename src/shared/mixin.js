@@ -41,6 +41,17 @@ export default function createMixin (Vue, options) {
       if (!$root[rootConfigKey]) {
         $root[rootConfigKey] = { appId }
         appId++
+
+        if ($root.$options[options.keyName]) {
+          // use nextTick so the children should be added to $root
+          this.$nextTick(() => {
+            // find the first child that lists fnOptions
+            const child = $root.$children.find(c => c.$vnode && c.$vnode.fnOptions)
+            if (child && child.$vnode.fnOptions[options.keyName]) {
+              warn(`VueMeta has detected a possible global mixin which adds a ${options.keyName} property to all Vue components on the page. This could cause severe performance issues. If possible, use $meta().addApp to add meta information instead`)
+            }
+          })
+        }
       }
 
       // to speed up updates we keep track of branches which have a component with vue-meta info defined
@@ -83,14 +94,18 @@ export default function createMixin (Vue, options) {
         $root[rootConfigKey].initialized = this.$isServer
 
         if (!$root[rootConfigKey].initialized) {
-          ensuredPush($options, 'beforeMount', function () {
-            const $root = this[rootKey]
-            // if this Vue-app was server rendered, set the appId to 'ssr'
-            // only one SSR app per page is supported
-            if ($root.$el && $root.$el.nodeType === 1 && $root.$el.hasAttribute('data-server-rendered')) {
-              $root[rootConfigKey].appId = options.ssrAppId
-            }
-          })
+          if (!$root[rootConfigKey].initializedSsr) {
+            $root[rootConfigKey].initializedSsr = true
+
+            ensuredPush($options, 'beforeMount', function () {
+              const $root = this
+              // if this Vue-app was server rendered, set the appId to 'ssr'
+              // only one SSR app per page is supported
+              if ($root.$el && $root.$el.nodeType === 1 && $root.$el.hasAttribute('data-server-rendered')) {
+                $root[rootConfigKey].appId = options.ssrAppId
+              }
+            })
+          }
 
           // we use the mounted hook here as on page load
           ensuredPush($options, 'mounted', function () {
@@ -154,6 +169,7 @@ export default function createMixin (Vue, options) {
       if (!this.$parent || !hasMetaInfo(this)) {
         return
       }
+      delete this._hasMetaInfo
 
       this.$nextTick(() => {
         if (!options.waitOnDestroyed || !this.$el || !this.$el.offsetParent) {
