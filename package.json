@@ -67,8 +67,6 @@
     "@babel/node": "^7.6.2",
     "@babel/plugin-syntax-dynamic-import": "^7.2.0",
     "@babel/preset-env": "^7.6.2",
-    "@nuxt/loading-screen": "^1.2.0",
-    "@nuxt/press": "^0.2.0-beta.0",
     "@nuxtjs/eslint-config": "^1.1.2",
     "@vue/server-test-utils": "^1.0.0-beta.29",
     "@vue/test-utils": "^1.0.0-beta.29",
