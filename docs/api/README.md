@@ -26,7 +26,8 @@ The method used by Vue to install the plugin
 
 A helper function which returns true when the Vue component passed as argument has metaInfo defined
 
-### generate (since v2.2)
+### generate <Badge text="v2.2+"/>
+
 ::: warning
 This method is not available in the browser builds
 :::
@@ -105,12 +106,30 @@ The key name for the content-holding property
 
 The key name for possible meta templates
 
-### refreshOnceOnNavigation
+### refreshOnceOnNavigation <Badge text="runtime" type="yellow" />
 - type `boolean`
 - default `false`
 
 When `true` then `vue-meta` will pause updates once page navigation starts and resumes updates when navigation finishes (resuming also triggers an update).
 This could both be a performance improvement as a possible fix for 'flickering' when you are e.g. replacing stylesheets
+
+:::tip
+Its not supported to disable `refreshOnceOnNavigation` once enabled
+:::
+
+### debounceWait <Badge text="v2.3+"/><Badge text="runtime" type="yellow" />
+- type `number`
+- default `10`
+
+A timeout is used to debounce updates so vue-meta won't be updating the meta info immediately, this option determines how long updates are debounced
+
+### waitOnDestroyed <Badge text="v2.3+"/><Badge text="runtime" type="yellow" />
+- type `boolean`
+- default `true`
+
+Once a component is destroyed, vue-meta will update the meta information to make sure any info added by the destroyed component is removed.
+
+To support transitions, vue-meta sets an interval to wait until the DOM element has been removed before it requests a meta info update. If you set this option to `false`, the meta info update will be immediately called after `nextTick` instead
 
 ## Plugin methods
 
@@ -124,6 +143,45 @@ The `vue-meta` plugin injects a `$meta()` function in the Vue prototype which pr
 - returns [`pluginOptions`](/api/#plugin-options)
 
 Could be used by third-party libraries who wish to interact with `vue-meta`
+
+### $meta().setOptions <Badge text="v2.3+"/>
+- arguments:
+  - options (type `object`)
+- returns [`pluginOptions`](/api/#plugin-options)
+
+You can toggle some plugin options during runtime by calling this method. Only [plugin options](/api/#plugin-options) marked <Badge text="runtime" type="yellow" /> can be changed
+
+```js
+vm.$meta().setOptions({ debounceWait: 50 })
+```
+
+### $meta().addApp <Badge text="v2.3+"/>
+- arguments:
+  - appName (type: `string`)
+- returns app object `{ set, remove }`
+
+Originally `vue-meta` only supported adding meta info from Vue components. This caused some issues for third party integrations as they have to add their meta info through eg the root component while that already could contain meta info.
+
+To improve this third party integrations can use `addApp` to add their meta information.
+
+Example of adding additional meta info for eg a third party plugin:
+
+```js
+const { set, remove } = vm.$meta().addApp('custom')
+
+set({
+  meta: [{ charset: 'utf=8' }]
+})
+
+setTimeout(() => remove(), 3000)
+```
+
+There is no reactivity for custom apps. The integrator need to take care of that and call `set` and `remove` when appropiate. If you call `addApp.set` on the client before the app is mounted, the tags will be processed on the first refresh. If you call set when the app is mounted they tags are immediately processed.
+
+The function is called addApp because the added metaInfo is treated exactly the same as when there are multiple apps on one page. Eg the tags that will be added will also list the `appId` you specifiy:
+```html
+<meta data-vue-meta="custom" charset="utf-8">
+```
 
 ### $meta().refresh
 - returns [`metaInfo`](/api/#metaInfo-properties)
@@ -363,7 +421,7 @@ Each item in the array maps to a newly-created `<script>` element, where object 
 <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js" async defer></script>
 ```
 
-#### Add JSON data (since v2.1)
+#### Add JSON data <Badge text="v2.1+"/>
 
 If you wish to use a JSON variable within a script tag (e.g. for JSON-LD), you can directly pass your variable by using the `json` property.
 
@@ -568,9 +626,9 @@ When adding a metaInfo property that should be added once without reactivity (th
 }
 ```
 
-### skip _(since v2.1)_
+### skip  <Badge text="v2.1+"/>
 
-When a metaInfo property has a `skip` attribute with truthy value it will not be rendered. This attribute helps with e.g. chaining scripts (see [callback attribute](#callback-since-v2-1))
+When a metaInfo property has a `skip` attribute with truthy value it will not be rendered. This attribute helps with e.g. chaining scripts (see [callback attribute](#callback))
 
 ```js
 {
@@ -584,8 +642,8 @@ When a metaInfo property has a `skip` attribute with truthy value it will not be
 ```
 
 ### body
-### pbody _(since v2.1)_
-tags
+### pbody  <Badge text="v2.1+"/>
+
 ::: warning
 VueMeta supports the body and pbody attributes on all metaInfo properties, but its up to you or your framework to support these attributes during SSR
 
@@ -625,7 +683,7 @@ When rendering your template on SSR make sure to pass an object as first argumen
 </body>
 ```
 
-### callback _(since v2.1)_
+### callback <Badge text="v2.1+"/>
 
 :::tip vmid required on SSR
 When using SSR it is required to define a [`vmid`](/api/#tagidkeyname) property for the metaInfo property
@@ -661,4 +719,59 @@ The callback attribute should specificy a function which is called once the corr
     }
   }
 }
+```
 
+## SSR injection methods
+
+Calling [`inject`](#meta-inject) will return an object on which you can call the below methods to return the corresponding template string
+
+### head <Badge text="v2.3+"/>
+- arguments
+  - ln (type `boolean`, default: `true`)
+
+This is a convenience method which will retrieve the template string which should be added to the `head`.
+
+Elements will be printed in the same order as the menu below.
+
+By passing `ln = true` a line break will be added after each element. This could be helpful e.g. during development to get a better overview of the tags added by vue-meta
+
+### bodyPrepend <Badge text="v2.3+"/>
+- arguments
+  - ln (type `boolean`, default: `true`)
+
+This is a convenience method which will retrieve the template string which should be prepended to the body, i.e. listed just after `<body>`.
+
+Elements will be printed in the same order as the menu below.
+
+### bodyAppend <Badge text="v2.3+"/>
+- arguments
+  - ln (type `boolean`, default: `true`)
+
+This is a convenience method which will retrieve the template string which should be appended to the body, i.e. listed just before `</body>`.
+
+Elements will be printed in the same order as the menu below.
+
+### htmlAttrs.text
+- arguments
+  - addSsrAttribute (type: `boolean`, default: `false`)
+
+When `addSsrAttribute: true` then the [`ssrAttribute`](#ssrattribute) will be automatically added so you dont have to do that manually
+
+### headAttrs.text
+### bodyAttrs.text
+
+See the [SSR guide](/guide/ssr.html#inject-metadata-into-page-string) for more info on how to use this
+
+
+### base.text
+### meta.text
+### link.text
+### style.text
+### script.text
+### noscript.text
+- arguments
+  - options (type: `object`, default: `{ ln: false , body: false, pbody: false }`)
+
+The `body` and `pbody` props can be used to support positioning of elements in your template, see [SSR Support](#ssr-support)
+
+By passing `ln: true` a line break will be added after each element. This could be helpful e.g. during development to get a better overview of the tags added by vue-meta
