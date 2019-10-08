@@ -1,5 +1,6 @@
 import { triggerUpdate } from '../client/update'
 import { isUndefined, isFunction } from '../utils/is-type'
+import { find } from '../utils/array'
 import { ensuredPush } from '../utils/ensure'
 import { rootConfigKey } from './constants'
 import { hasMetaInfo } from './meta-helpers'
@@ -46,7 +47,7 @@ export default function createMixin (Vue, options) {
           // use nextTick so the children should be added to $root
           this.$nextTick(() => {
             // find the first child that lists fnOptions
-            const child = $root.$children.find(c => c.$vnode && c.$vnode.fnOptions)
+            const child = find($root.$children, c => c.$vnode && c.$vnode.fnOptions)
             if (child && child.$vnode.fnOptions[options.keyName]) {
               warn(`VueMeta has detected a possible global mixin which adds a ${options.keyName} property to all Vue components on the page. This could cause severe performance issues. If possible, use $meta().addApp to add meta information instead`)
             }
