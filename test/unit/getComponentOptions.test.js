@@ -130,4 +130,37 @@ describe('getComponentOption', () => {
     expect(inMetaInfoBranch(wrapper.vm.$children[1].$children[0])).toBe(true)
     expect(inMetaInfoBranch(wrapper.vm.$children[2])).toBe(false)
   })
+
+  test('retrieves child options even if parent returns null', () => {
+    const localVue = loadVueMetaPlugin({ keyName: 'foo' })
+
+    localVue.component('meta-child', {
+      foo: { bar: 'baz' },
+      render (h) {
+        return h('div', this.$slots.default)
+      }
+    })
+
+    localVue.component('nometa-child', {
+      render (h) {
+        return h('div', this.$slots.default)
+      }
+    })
+
+    const component = localVue.component('parent', {
+      foo: () => {},
+      render: h => h('div', null, [
+        h('meta-child')
+      ])
+    })
+
+    const wrapper = mount(component, { localVue })
+
+    const mergedOption = getComponentOption({ keyName: 'foo' }, wrapper.vm)
+
+    expect(mergedOption).toEqual({ bar: 'baz' })
+    expect(wrapper.vm.$children[0]._vueMeta).toBe(true)
+
+    expect(inMetaInfoBranch(wrapper.vm.$children[0])).toBe(true)
+  })
 })
