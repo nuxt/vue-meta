@@ -135,6 +135,7 @@ export default function createMixin (Vue, options) {
 
       // do not trigger refresh on the server side
       if (this.$isServer) {
+        /* istanbul ignore next */
         return
       }
 
