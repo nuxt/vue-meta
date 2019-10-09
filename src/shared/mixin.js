@@ -19,12 +19,13 @@ export default function createMixin (Vue, options) {
       const rootKey = '$root'
       const $root = this[rootKey]
       const $options = this.$options
+      const devtoolsEnabled = Vue.config.devtools
 
       Object.defineProperty(this, '_hasMetaInfo', {
         configurable: true,
         get () {
           // Show deprecation warning once when devtools enabled
-          if (Vue.config.devtools && !$root[rootConfigKey].deprecationWarningShown) {
+          if (devtoolsEnabled && !$root[rootConfigKey].deprecationWarningShown) {
             warn('VueMeta DeprecationWarning: _hasMetaInfo has been deprecated and will be removed in a future version. Please use hasMetaInfo(vm) instead')
             $root[rootConfigKey].deprecationWarningShown = true
           }
@@ -43,7 +44,7 @@ export default function createMixin (Vue, options) {
         $root[rootConfigKey] = { appId }
         appId++
 
-        if ($root.$options[options.keyName]) {
+        if (devtoolsEnabled && $root.$options[options.keyName]) {
           // use nextTick so the children should be added to $root
           this.$nextTick(() => {
             // find the first child that lists fnOptions
