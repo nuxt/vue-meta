@@ -5,13 +5,18 @@ type Component = ComponentOptions<Vue> | typeof Vue
 type CallbackFn = () => void
 type elements = HTMLElement[]
 
-export interface VueMetaOptions {
+export interface VueMetaOptionsRuntime {
+  refreshOnceOnNavigation?: boolean
+  debounceWait?: number
+  waitOnDestroyed?: boolean
+}
+
+export interface VueMetaOptions extends VueMetaOptionsRuntime {
   keyName: string, // the component option name that vue-meta looks for meta info on.
   attribute: string, // the attribute name vue-meta adds to the tags it observes
   ssrAppId: string, // the app id used for ssr app
   ssrAttribute: string, // the attribute name that lets vue-meta know that meta info has already been server-rendered
   tagIDKeyName: string // the property name that vue-meta uses to determine whether to overwrite or append a tag
-  refreshOnceOnNavigation: boolean
 }
 
 export declare class VueMeta {
@@ -21,17 +26,26 @@ export declare class VueMeta {
   static generate(metaInfo: MetaInfo, options?: Object): MetaInfoSSR
 }
 
+interface RefreshedTags {
+  addedTags: elements
+  removedTags: elements
+}
+
 interface Refreshed {
   vm: Component,
   metaInfo: MetaInfo,
-  tags: {
-    addedTags: elements
-    removedTags: elements
-  }
+  tags: RefreshedTags
+}
+
+interface VueMetaApp {
+  set(metaInfo: MetaInfo): void | RefreshedTags
+  remove(): void
 }
 
 export interface VueMetaPlugin {
   getOptions(): VueMetaOptions
+  setOptions(runtimeOptions: VueMetaOptionsRuntime): VueMetaOptions
+  addApp(appName: string): VueMetaApp
   refresh(): Refreshed
   inject(): MetaInfoSSR
   pause(refresh: true): () => Refreshed
@@ -188,6 +202,10 @@ interface ToTextBooleanArg {
   text(addSrrAttribute?: boolean): string
 }
 
+interface AddLineBreakOption {
+  ln: boolean
+}
+
 interface ToBodyTextOption {
   body: boolean
 }
@@ -197,18 +215,21 @@ interface ToPbodyTextOption {
 }
 
 interface ToBodyText {
-  text(options?: (ToBodyTextOption | ToPbodyTextOption)): string
+  text(options?: (ToBodyTextOption | ToPbodyTextOption | AddLineBreakOption)): string
 }
 
 export interface MetaInfoSSR {
+  head(ln?: boolean): string
+  bodyPrepend(ln?: boolean): string
+  bodyAppend(ln?: boolean): string
   title?: ToText
   htmlAttrs?: ToTextBooleanArg
   headAttrs?: ToText
   bodyAttrs?: ToText
-  base?: ToText
-  meta?: ToText
-  link?: ToText
-  style?: ToText
+  base?: ToBodyText
+  meta?: ToBodyText
+  link?: ToBodyText
+  style?: ToBodyText
   script?: ToBodyText
   noscript?: ToBodyText
 }

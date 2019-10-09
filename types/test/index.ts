@@ -1,5 +1,12 @@
 import Vue, { ComponentOptions } from 'vue'
-import VueMeta, { VueMetaPlugin, VueMetaOptions, MetaInfo, MetaInfoSSR } from '../index'
+import VueMeta, {
+  VueMetaPlugin,
+  VueMetaOptions,
+  VueMetaApp,
+  MetaInfo,
+  MetaInfoSSR,
+  MetaPropertyCharset
+} from '../index'
 
 Vue.use(VueMeta, {
   keyName: 'head'
@@ -66,6 +73,16 @@ if (metaDataSSR.script) {
   metaDataSSR.script.text()
   metaDataSSR.script.text({ body: true })
 }
+
+// add app
+const customApp: VueMetaApp = $meta.addApp('custom-app')
+
+const metaCharset: MetaPropertyCharset = { charset: 'utf-8' }
+const customAppInfo: MetaInfo = {
+  meta: [metaCharset]
+}
+
+customApp.set(customAppInfo)
 
 // pausing & resuming
 let resume

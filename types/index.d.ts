@@ -6,6 +6,7 @@ export default VueMeta
 export {
   VueMetaOptions,
   VueMetaPlugin,
+  VueMetaApp,
   MetaInfo,
   MetaInfoSSR,
   AttributeProperty,

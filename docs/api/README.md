@@ -727,7 +727,7 @@ Calling [`inject`](#meta-inject) will return an object on which you can call the
 
 ### head <Badge text="v2.3+"/>
 - arguments
-  - ln (type `boolean`, default: `true`)
+  - ln (type `boolean`, default: `false`)
 
 This is a convenience method which will retrieve the template string which should be added to the `head`.
 
@@ -737,7 +737,7 @@ By passing `ln = true` a line break will be added after each element. This could
 
 ### bodyPrepend <Badge text="v2.3+"/>
 - arguments
-  - ln (type `boolean`, default: `true`)
+  - ln (type `boolean`, default: `false`)
 
 This is a convenience method which will retrieve the template string which should be prepended to the body, i.e. listed just after `<body>`.
 
@@ -745,7 +745,7 @@ Elements will be printed in the same order as the menu below.
 
 ### bodyAppend <Badge text="v2.3+"/>
 - arguments
-  - ln (type `boolean`, default: `true`)
+  - ln (type `boolean`, default: `false`)
 
 This is a convenience method which will retrieve the template string which should be appended to the body, i.e. listed just before `</body>`.
 
