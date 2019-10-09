@@ -40,13 +40,12 @@ export function getComponentOption (options, component, result) {
     // because Vue caches those internally
     const data = $metaInfo || $options[keyName]
 
-    // ignore data if its not an object, then we keep our previous result
-    if (!isObject(data)) {
-      return result
+    // only merge data with result when its an object
+    // eg it could be a function when metaInfo() returns undefined
+    // dueo to the or statement above
+    if (isObject(data)) {
+      result = merge(result, data, options)
     }
-
-    // merge with existing options
-    result = merge(result, data, options)
   }
 
   // collect & aggregate child options if deep = true
