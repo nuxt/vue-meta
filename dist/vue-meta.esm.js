@@ -1,5 +1,5 @@
 /**
- * vue-meta v2.3.0
+ * vue-meta v2.3.1
  * (c) 2019
  * - Declan de Wet
  * - Sébastien Chopin (@Atinux)
@@ -10,7 +10,7 @@
 
 import deepmerge from 'deepmerge';
 
-var version = "2.3.0";
+var version = "2.3.1";
 
 function _typeof(obj) {
   if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") {
@@ -229,6 +229,63 @@ function batchUpdate(callback, timeout) {
   return batchId;
 }
 
+/*
+ * To reduce build size, this file provides simple polyfills without
+ * overly excessive type checking and without modifying
+ * the global Array.prototype
+ * The polyfills are automatically removed in the commonjs build
+ * Also, only files in client/ & shared/ should use these functions
+ * files in server/ still use normal js function
+ */
+function find(array, predicate, thisArg) {
+  if ( !Array.prototype.find) {
+    // idx needs to be a Number, for..in returns string
+    for (var idx = 0; idx < array.length; idx++) {
+      if (predicate.call(thisArg, array[idx], idx, array)) {
+        return array[idx];
+      }
+    }
+
+    return;
+  }
+
+  return array.find(predicate, thisArg);
+}
+function findIndex(array, predicate, thisArg) {
+  if ( !Array.prototype.findIndex) {
+    // idx needs to be a Number, for..in returns string
+    for (var idx = 0; idx < array.length; idx++) {
+      if (predicate.call(thisArg, array[idx], idx, array)) {
+        return idx;
+      }
+    }
+
+    return -1;
+  }
+
+  return array.findIndex(predicate, thisArg);
+}
+function toArray(arg) {
+  if ( !Array.from) {
+    return Array.prototype.slice.call(arg);
+  }
+
+  return Array.from(arg);
+}
+function includes(array, value) {
+  if ( !Array.prototype.includes) {
+    for (var idx in array) {
+      if (array[idx] === value) {
+        return true;
+      }
+    }
+
+    return false;
+  }
+
+  return array.includes(value);
+}
+
 function ensureIsArray(arg, key) {
   if (!key || !isObject(arg)) {
     return isArray(arg) ? arg : [];
@@ -302,11 +359,12 @@ function createMixin(Vue, options) {
       var rootKey = '$root';
       var $root = this[rootKey];
       var $options = this.$options;
+      var devtoolsEnabled = Vue.config.devtools;
       Object.defineProperty(this, '_hasMetaInfo', {
         configurable: true,
         get: function get() {
           // Show deprecation warning once when devtools enabled
-          if (Vue.config.devtools && !$root[rootConfigKey].deprecationWarningShown) {
+          if (devtoolsEnabled && !$root[rootConfigKey].deprecationWarningShown) {
             warn('VueMeta DeprecationWarning: _hasMetaInfo has been deprecated and will be removed in a future version. Please use hasMetaInfo(vm) instead');
             $root[rootConfigKey].deprecationWarningShown = true;
           }
@@ -326,6 +384,20 @@ function createMixin(Vue, options) {
           appId: appId
         };
         appId++;
+
+        if (devtoolsEnabled && $root.$options[options.keyName]) {
+          // use nextTick so the children should be added to $root
+          this.$nextTick(function () {
+            // find the first child that lists fnOptions
+            var child = find($root.$children, function (c) {
+              return c.$vnode && c.$vnode.fnOptions;
+            });
+
+            if (child && child.$vnode.fnOptions[options.keyName]) {
+              warn("VueMeta has detected a possible global mixin which adds a ".concat(options.keyName, " property to all Vue components on the page. This could cause severe performance issues. If possible, use $meta().addApp to add meta information instead"));
+            }
+          });
+        }
       } // to speed up updates we keep track of branches which have a component with vue-meta info defined
       // if _vueMeta = true it has info, if _vueMeta = false a child has info
 
@@ -369,14 +441,18 @@ function createMixin(Vue, options) {
         $root[rootConfigKey].initialized = this.$isServer;
 
         if (!$root[rootConfigKey].initialized) {
-          ensuredPush($options, 'beforeMount', function () {
-            var $root = this[rootKey]; // if this Vue-app was server rendered, set the appId to 'ssr'
-            // only one SSR app per page is supported
+          if (!$root[rootConfigKey].initializedSsr) {
+            $root[rootConfigKey].initializedSsr = true;
+            ensuredPush($options, 'beforeMount', function () {
+              var $root = this; // if this Vue-app was server rendered, set the appId to 'ssr'
+              // only one SSR app per page is supported
 
-            if ($root.$el && $root.$el.nodeType === 1 && $root.$el.hasAttribute('data-server-rendered')) {
-              $root[rootConfigKey].appId = options.ssrAppId;
-            }
-          }); // we use the mounted hook here as on page load
+              if ($root.$el && $root.$el.nodeType === 1 && $root.$el.hasAttribute('data-server-rendered')) {
+                $root[rootConfigKey].appId = options.ssrAppId;
+              }
+            });
+          } // we use the mounted hook here as on page load
+
 
           ensuredPush($options, 'mounted', function () {
             var $root = this[rootKey];
@@ -422,6 +498,7 @@ function createMixin(Vue, options) {
 
 
       if (this.$isServer) {
+        /* istanbul ignore next */
         return;
       } // no need to add this hooks on server side
 
@@ -444,6 +521,7 @@ function createMixin(Vue, options) {
         return;
       }
 
+      delete this._hasMetaInfo;
       this.$nextTick(function () {
         if (!options.waitOnDestroyed || !_this.$el || !_this.$el.offsetParent) {
           triggerUpdate(options, _this.$root, 'destroyed');
@@ -496,49 +574,6 @@ function getOptions(options) {
   }
 
   return optionsCopy;
-}
-
-/*
- * To reduce build size, this file provides simple polyfills without
- * overly excessive type checking and without modifying
- * the global Array.prototype
- * The polyfills are automatically removed in the commonjs build
- * Also, only files in client/ & shared/ should use these functions
- * files in server/ still use normal js function
- */
-function findIndex(array, predicate, thisArg) {
-  if ( !Array.prototype.findIndex) {
-    // idx needs to be a Number, for..in returns string
-    for (var idx = 0; idx < array.length; idx++) {
-      if (predicate.call(thisArg, array[idx], idx, array)) {
-        return idx;
-      }
-    }
-
-    return -1;
-  }
-
-  return array.findIndex(predicate, thisArg);
-}
-function toArray(arg) {
-  if ( !Array.from) {
-    return Array.prototype.slice.call(arg);
-  }
-
-  return Array.from(arg);
-}
-function includes(array, value) {
-  if ( !Array.prototype.includes) {
-    for (var idx in array) {
-      if (array[idx] === value) {
-        return true;
-      }
-    }
-
-    return false;
-  }
-
-  return array.includes(value);
 }
 
 var serverSequences = [[/&/g, '&amp;'], [/</g, '&lt;'], [/>/g, '&gt;'], [/"/g, '&quot;'], [/'/g, '&#x27;']];
@@ -816,14 +851,13 @@ function getComponentOption(options, component, result) {
     // and set to the computed prop $metaInfo in the mixin
     // using the computed prop should be a small performance increase
     // because Vue caches those internally
-    var data = $metaInfo || $options[keyName]; // ignore data if its not an object, then we keep our previous result
+    var data = $metaInfo || $options[keyName]; // only merge data with result when its an object
+    // eg it could be a function when metaInfo() returns undefined
+    // dueo to the or statement above
 
-    if (!isObject(data)) {
-      return result;
-    } // merge with existing options
-
-
-    result = merge(result, data, options);
+    if (isObject(data)) {
+      result = merge(result, data, options);
+    }
   } // collect & aggregate child options if deep = true
 
 
@@ -1815,8 +1849,8 @@ function install(Vue, options) {
 var index = {
   version: version,
   install: install,
-  generate: function generate$1(metaInfo) {
-    return  generate(metaInfo) ;
+  generate: function generate$1(metaInfo, options) {
+    return  generate(metaInfo, options) ;
   },
   hasMetaInfo: hasMetaInfo
 };

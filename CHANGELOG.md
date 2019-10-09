@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [2.3.1](https://github.com/nuxt/vue-meta/compare/v2.3.0...v2.3.1) (2019-10-09)
+
+
+### Bug Fixes
+
+* accept and pass options as second arg for generate ([2ce5177](https://github.com/nuxt/vue-meta/commit/2ce5177))
+* still traverse children when metainfo doesnt return object ([#469](https://github.com/nuxt/vue-meta/issues/469)) ([35b7099](https://github.com/nuxt/vue-meta/commit/35b7099))
+* try to detect global mixins adding meta info ([#467](https://github.com/nuxt/vue-meta/issues/467)) ([2231ec1](https://github.com/nuxt/vue-meta/commit/2231ec1))
+
 ## [2.3.0](https://github.com/nuxt/vue-meta/compare/v2.3.0-beta.0...v2.3.0) (2019-10-03)
 
 ## [2.3.0-beta.0](https://github.com/nuxt/vue-meta/compare/v2.2.2...v2.3.0-beta.0) (2019-09-17)
