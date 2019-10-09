@@ -1,7 +1,7 @@
 /**
  * @jest-environment node
  */
-import { findIndex, includes, toArray } from '../../src/utils/array'
+import { find, findIndex, includes, toArray } from '../../src/utils/array'
 import { ensureIsArray } from '../../src/utils/ensure'
 import { hasGlobalWindowFn } from '../../src/utils/window'
 
@@ -29,6 +29,17 @@ describe('shared', () => {
   })
 
   /* eslint-disable no-extend-native */
+  test('find polyfill', () => {
+    const _find = Array.prototype.find
+    Array.prototype.find = false
+
+    const arr = [1, 2, 3]
+    expect(find(arr, (v, i) => i === 0)).toBe(1)
+    expect(find(arr, (v, i) => i === 3)).toBe(undefined)
+
+    Array.prototype.find = _find
+  })
+
   test('findIndex polyfill', () => {
     const _findIndex = Array.prototype.findIndex
     Array.prototype.findIndex = false
