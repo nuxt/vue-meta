@@ -691,7 +691,7 @@ When using SSR it is required to define a [`vmid`](/api/#tagidkeyname) property 
 The vmid is needed to resolve the corresponding callback for that element on hydration
 :::
 
-The callback attribute should specificy a function which is called once the corresponding tag has been loaded (i.e. the onload event is triggered). Use this to chain javascript if one depends on the other.
+The callback attribute should specify a function which is called once the corresponding tag has been loaded (i.e. the onload event is triggered). Use this to chain javascript if one depends on the other.
 
 ```js
 {
