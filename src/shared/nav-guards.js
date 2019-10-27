@@ -19,7 +19,7 @@ export function addNavGuards (rootVm) {
   })
 
   router.afterEach(() => {
-    rootVm.$nextTick(function () {
+    rootVm.$nextTick(() => {
       const { metaInfo } = resume(rootVm)
 
       if (metaInfo && isFunction(metaInfo.afterNavigation)) {
