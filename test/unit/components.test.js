@@ -271,6 +271,8 @@ describe('components', () => {
     expect(wrapper.vm.$root._vueMeta.pausing).toBe(true)
 
     guards.after()
+    expect(afterNavigation).not.toHaveBeenCalled()
+    await vmTick(wrapper.vm)
     expect(afterNavigation).toHaveBeenCalled()
   })
 
@@ -306,6 +308,8 @@ describe('components', () => {
     expect(wrapper.vm.$root._vueMeta.pausing).toBe(true)
 
     guards.after()
+    expect(afterNavigation).not.toHaveBeenCalled()
+    await vmTick(wrapper.vm)
     expect(afterNavigation).toHaveBeenCalled()
   })
 
