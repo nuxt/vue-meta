@@ -653,8 +653,7 @@ The `json` attribute in a metaInfo property allows you to render JSON content wi
       json: {
         '@context': 'http://schema.org',
         '@type': 'Organization',
-        name: 'NuxtJS',
-        unsafe: '<p>hello</p>'
+        name: 'NuxtJS'
       }
     }]
   }
