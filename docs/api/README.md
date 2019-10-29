@@ -643,7 +643,7 @@ When a metaInfo property has a `skip` attribute with truthy value it will not be
 
 ### json  <Badge text="v2.1+"/>
 
-The `json` attribute in a metaInfo property allows you to render JSON content within a script tag, while still sanitizing it the keys and values. For Example this can be used to render JSON-LD.
+The `json` attribute in a metaInfo property allows you to render JSON content within a script tag, while still sanitizing it the keys and values. For example this can be used to render JSON-LD.
 
 ```js
 {
