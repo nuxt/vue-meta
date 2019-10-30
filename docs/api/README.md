@@ -641,6 +641,25 @@ When a metaInfo property has a `skip` attribute with truthy value it will not be
 }
 ```
 
+### json  <Badge text="v2.1+"/>
+
+The `json` attribute in a metaInfo property allows you to render JSON content within a script tag, while still sanitizing the keys and values. For example this can be used to render JSON-LD.
+
+```js
+{
+  metaInfo: {
+    script: [{
+      type: 'application/ld+json',
+      json: {
+        '@context': 'http://schema.org',
+        '@type': 'Organization',
+        name: 'NuxtJS'
+      }
+    }]
+  }
+}
+```
+
 ### body
 ### pbody  <Badge text="v2.1+"/>
 
