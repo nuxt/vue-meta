@@ -433,7 +433,7 @@ When passing an array or object to the `json` property the keys and values of th
 {
   metaInfo: {
     script: [{
-      type: 'application/ld+json'
+      type: 'application/ld+json',
       json: {
         '@context': 'http://schema.org',
         unsafe: '<p>hello</p>'
