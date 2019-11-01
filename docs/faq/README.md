@@ -73,4 +73,8 @@ This is not what we want, since the meta `description` needs to be unique for ev
 <meta vmid="description" name="description" content="bar">
 ```
 
+:::tip Note
+Nuxt.js uses `hid` instead of the default `vmid`. See [Nuxt's HTML Head](https://nuxtjs.org/guide/views#html-head) docs for more information.
+:::
+
 While solutions like `react-helmet` manage the occurrence order and merge behaviour for you automatically, it involves a lot more code and is therefore prone to failure in some edge-cases, whereas this method is _almost_ bulletproof because of its versatility; _at the expense of one tradeoff:_ these `vmid` properties will be rendered out in the final markup (`vue-meta` uses these client-side to prevent duplicating or overriding markup). If you are serving your content gzipped, then the slight increase in HTTP payload size is negligible.
