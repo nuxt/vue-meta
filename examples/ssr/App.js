@@ -8,11 +8,27 @@ Vue.use(VueMeta, {
 })
 
 export default function createApp () {
+  const SomeComponent = {
+    name: 'SomeComponent',
+    template: `<div>
+      <p>Some Component</p>
+    </div>`,
+    mounted() {
+      console.log('some mounted')
+    }
+  }
+
   const Home = {
+    name: 'home',
+    components: {
+      SomeComponent
+    },
     template: `<div>
       <router-link to="/about">About</router-link>
 
       <p>Hello World</p>
+
+      <some-component v-once></some-component>
     </div>`,
     metaInfo: {
       title: 'Hello World',
@@ -32,6 +48,7 @@ export default function createApp () {
   }
 
   const About = {
+    name: 'About',
     template: `<div>
       <router-link to="/">Home</router-link>
 

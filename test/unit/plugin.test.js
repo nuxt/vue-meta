@@ -150,7 +150,7 @@ describe('plugin', () => {
     warn.mockRestore()
   })
 
-  test('updates can be pausing and resumed', async () => {
+  test('updates can be paused and resumed', async () => {
     const { batchUpdate: _batchUpdate } = jest.requireActual('../../src/client/update')
     const batchUpdateSpy = batchUpdate.mockImplementation(_batchUpdate)
     // because triggerUpdate & batchUpdate reside in the same file we cant mock them both,
@@ -195,6 +195,7 @@ describe('plugin', () => {
 
     title = 'second title'
     wrapper.setProps({ title })
+    await vmTick(wrapper.vm)
 
     // batchUpdate on normal update
     expect(wrapper.vm.$root._vueMeta.initialized).toBe(true)
@@ -206,6 +207,7 @@ describe('plugin', () => {
     wrapper.vm.$meta().pause()
     title = 'third title'
     wrapper.setProps({ title })
+    await vmTick(wrapper.vm)
 
     // no batchUpdate when pausing
     expect(wrapper.vm.$root._vueMeta.initialized).toBe(true)
@@ -260,6 +262,8 @@ describe('plugin', () => {
 
     title = 'second title'
     wrapper.setProps({ title })
+    await vmTick(wrapper.vm)
+
     jest.advanceTimersByTime(2)
     expect(refreshSpy).not.toHaveBeenCalled()
     jest.advanceTimersByTime(10)

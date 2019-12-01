@@ -72,35 +72,39 @@ describe('components', () => {
     expect(metaInfo.title).toEqual('Goodbye World')
   })
 
-  test('child meta-info removed when child is toggled', () => {
+  test('child meta-info removed when child is toggled', async () => {
     const wrapper = mount(GoodbyeWorld, { localVue: Vue })
 
     let metaInfo = getMetaInfo(wrapper.vm)
     expect(metaInfo.title).toEqual('Hello World')
 
     wrapper.setData({ childVisible: false })
+    await vmTick(wrapper.vm)
 
     metaInfo = getMetaInfo(wrapper.vm)
     expect(metaInfo.title).toEqual('Goodbye World')
 
     wrapper.setData({ childVisible: true })
+    await vmTick(wrapper.vm)
 
     metaInfo = getMetaInfo(wrapper.vm)
     expect(metaInfo.title).toEqual('Hello World')
   })
 
-  test('child meta-info removed when keep-alive child is toggled', () => {
+  test('child meta-info removed when keep-alive child is toggled', async () => {
     const wrapper = mount(KeepAlive, { localVue: Vue })
 
     let metaInfo = getMetaInfo(wrapper.vm)
     expect(metaInfo.title).toEqual('Hello World')
 
     wrapper.setData({ childVisible: false })
+    await vmTick(wrapper.vm)
 
     metaInfo = getMetaInfo(wrapper.vm)
     expect(metaInfo.title).toEqual('Alive World')
 
     wrapper.setData({ childVisible: true })
+    await vmTick(wrapper.vm)
 
     metaInfo = getMetaInfo(wrapper.vm)
     expect(metaInfo.title).toEqual('Hello World')
@@ -230,6 +234,7 @@ describe('components', () => {
     expect(changed).toHaveBeenCalledTimes(1)
 
     wrapper.setData({ childVisible: true })
+    await vmTick(wrapper.vm)
     jest.runAllTimers()
 
     expect(changed).toHaveBeenCalledTimes(2)
