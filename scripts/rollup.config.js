@@ -92,9 +92,9 @@ function rollupConfig({
       // we always provide an arrayMerge, remove default
       '|| defaultArrayMerge' : '',
       // clone is a deprecated option we dont use
-      'options.clone' : 'false',
+      'options.clone ' : 'false ',
       // we dont provide a custom merge
-      'options.customMerge' : 'false',
+      'options.customMerge)' : 'false)',
       // we dont use this helper
       'deepmerge.all = ' : 'false;',
       // we dont use symbols on our objects
