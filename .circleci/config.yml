@@ -110,7 +110,7 @@ workflows:
       - test-e2e-ssr:     { requires: [lint] }
       - test-e2e-browser:
           name:           test-e2e-firefox
-          browserString:  firefox
+          browserString:  firefox/headless
           requires:       [test-e2e-ssr]
       - test-e2e-browser:
           name:           test-e2e-chrome
