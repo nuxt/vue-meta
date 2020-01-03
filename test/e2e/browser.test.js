@@ -62,7 +62,12 @@ describe(browserString, () => {
           }
         }
       }
-    })
+    }, false)
+
+    browser.addCapability('browserstack.console', 'info')
+    browser.addCapability('browserstack.networkLogs', 'true')
+
+    await browser.start()
 
     // browser.setLogLevel(['warn', 'error', 'log', 'info'])
   })
