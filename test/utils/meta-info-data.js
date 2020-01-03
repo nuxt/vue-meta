@@ -118,13 +118,14 @@ const metaInfoData = {
         { src: 'src-prepend', async: true, defer: false, pbody: true },
         { src: 'src2', async: false, defer: true, body: true },
         { src: 'src3', async: false, skip: true },
-        { type: 'application/ld+json',
+        {
+          type: 'application/ld+json',
           json: {
             '@context': 'http://schema.org',
             '@type': 'Organization',
-            'name': 'MyApp',
-            'url': 'https://www.myurl.com',
-            'logo': 'https://www.myurl.com/images/logo.png'
+            name: 'MyApp',
+            url: 'https://www.myurl.com',
+            logo: 'https://www.myurl.com/images/logo.png'
           }
         }
       ],
@@ -280,10 +281,12 @@ const metaInfoData = {
           defaultTest()
 
           if (side === 'client') {
-            expect(attributeMap).toEqual({ bodyAttrs: {
-              foo: { ssr: 'bar' },
-              fizz: { ssr: ['fuzz', 'fozz'] }
-            } })
+            expect(attributeMap).toEqual({
+              bodyAttrs: {
+                foo: { ssr: 'bar' },
+                fizz: { ssr: ['fuzz', 'fozz'] }
+              }
+            })
           }
         }
       }

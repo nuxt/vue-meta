@@ -13,6 +13,7 @@ export function triggerUpdate ({ debounceWait }, rootVm, hookName) {
 
   if (rootVm[rootConfigKey].initialized && !rootVm[rootConfigKey].pausing) {
     // batch potential DOM updates to prevent extraneous re-rendering
+    // eslint-disable-next-line no-void
     batchUpdate(() => void rootVm.$meta().refresh(), debounceWait)
   }
 }

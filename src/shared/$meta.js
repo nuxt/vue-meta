@@ -16,8 +16,8 @@ export default function $meta (options) {
   const $root = this.$root
 
   return {
-    'getOptions': () => getOptions(options),
-    'setOptions': (newOptions) => {
+    getOptions: () => getOptions(options),
+    setOptions: (newOptions) => {
       const refreshNavKey = 'refreshOnceOnNavigation'
       if (newOptions && newOptions[refreshNavKey]) {
         options.refreshOnceOnNavigation = !!newOptions[refreshNavKey]
@@ -37,10 +37,10 @@ export default function $meta (options) {
         options.waitOnDestroyed = !!newOptions[waitOnDestroyedKey]
       }
     },
-    'refresh': () => refresh($root, options),
-    'inject': () => process.server ? inject($root, options) : showWarningNotSupportedInBrowserBundle('inject'),
-    'pause': () => pause($root),
-    'resume': () => resume($root),
-    'addApp': appId => addApp($root, appId, options)
+    refresh: () => refresh($root, options),
+    inject: () => process.server ? inject($root, options) : showWarningNotSupportedInBrowserBundle('inject'),
+    pause: () => pause($root),
+    resume: () => resume($root),
+    addApp: appId => addApp($root, appId, options)
   }
 }

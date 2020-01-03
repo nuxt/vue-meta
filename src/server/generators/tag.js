@@ -50,7 +50,7 @@ export default function tagGenerator (options, type, tags, generatorOptions) {
       }
 
       if (attr === 'callback') {
-        attrs += ` onload="this.__vm_l=1"`
+        attrs += ' onload="this.__vm_l=1"'
         continue
       }
 

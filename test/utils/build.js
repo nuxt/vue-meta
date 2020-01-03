@@ -23,7 +23,7 @@ export function getVueMetaPath (browser) {
   }
 
   process.server = !browser
-  return path.resolve(__dirname, `../../src`)
+  return path.resolve(__dirname, '../../src')
 }
 
 export function webpackRun (config) {
@@ -152,7 +152,7 @@ export function createWebpackConfig (config = {}) {
       new webpack.DefinePlugin({
         'process.env': {
           // make sure our simple polyfills are enabled
-          'NODE_ENV': '"test"'
+          NODE_ENV: '"test"'
         }
       }),
       new CopyWebpackPlugin([
@@ -161,7 +161,7 @@ export function createWebpackConfig (config = {}) {
     ],
     resolve: {
       alias: {
-        'vue': 'vue/dist/vue.esm.js',
+        vue: 'vue/dist/vue.esm.js',
         'vue-meta': getVueMetaPath(true)
       }
     },

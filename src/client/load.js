@@ -25,7 +25,7 @@ export function addCallback (query, callback) {
     query = ''
   }
 
-  callbacks.push([ query, callback ])
+  callbacks.push([query, callback])
 }
 
 export function addCallbacks ({ tagIDKeyName }, type, tags, autoAddListeners) {

@@ -109,8 +109,8 @@ describe('getComponentOption', () => {
 
     const component = localVue.component('parent', {
       render: h => h('div', null, [
-        h('meta-child', null, [ h('nometa-child') ]),
-        h('nometa-child', null, [ h('meta-child') ]),
+        h('meta-child', null, [h('nometa-child')]),
+        h('nometa-child', null, [h('meta-child')]),
         h('nometa-child')
       ])
     })
