@@ -125,12 +125,12 @@ workflows:
       - test-e2e-browser:
           name:           test-e2e-edge
           browserString:  browserstack/local/edge:15
-          requires:       [test-e2e-ie]
+          requires:       [test-e2e-ssr]
           filters:
             branches:     { ignore: /^pull\/.*/ }
       - test-e2e-browser:
           name:           test-e2e-safari
           browserString:  browserstack/local/os x=snow leopard/safari:5.1
-          requires:       [test-e2e-edge]
+          requires:       [test-e2e-ssr]
           filters:
             branches:     { ignore: /^pull\/.*/ }
