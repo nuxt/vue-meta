@@ -1,6 +1,6 @@
 /**
- * vue-meta v2.3.1
- * (c) 2019
+ * vue-meta v2.3.2
+ * (c) 2020
  * - Declan de Wet
  * - Sébastien Chopin (@Atinux)
  * - Pim (@pimlie)
@@ -12,9 +12,9 @@
   typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory() :
   typeof define === 'function' && define.amd ? define(factory) :
   (global = global || self, global.VueMeta = factory());
-}(this, function () { 'use strict';
+}(this, (function () { 'use strict';
 
-  var version = "2.3.1";
+  var version = "2.3.2";
 
   function _typeof(obj) {
     if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") {
@@ -166,6 +166,7 @@
 
     if (rootVm[rootConfigKey].initialized && !rootVm[rootConfigKey].pausing) {
       // batch potential DOM updates to prevent extraneous re-rendering
+      // eslint-disable-next-line no-void
       batchUpdate(function () {
         return void rootVm.$meta().refresh();
       }, debounceWait);
@@ -305,12 +306,14 @@
       next();
     });
     router.afterEach(function () {
-      var _resume = resume(rootVm),
-          metaInfo = _resume.metaInfo;
+      rootVm.$nextTick(function () {
+        var _resume = resume(rootVm),
+            metaInfo = _resume.metaInfo;
 
-      if (metaInfo && isFunction(metaInfo.afterNavigation)) {
-        metaInfo.afterNavigation(metaInfo);
-      }
+        if (metaInfo && isFunction(metaInfo.afterNavigation)) {
+          metaInfo.afterNavigation(metaInfo);
+        }
+      });
     });
   }
 
@@ -655,13 +658,25 @@
     {
       return deepmerge;
     }
-
-    var customMerge = false(key);
-    return typeof customMerge === 'function' ? customMerge : deepmerge;
   }
 
   function getKeys(target) {
     return Object.keys(target);
+  }
+
+  function propertyIsOnObject(object, property) {
+    try {
+      return property in object;
+    } catch (_) {
+      return false;
+    }
+  } // Protects from prototype poisoning and unexpected merging up the prototype chain.
+
+
+  function propertyIsUnsafe(target, key) {
+    return propertyIsOnObject(target, key) // Properties are safe to merge if they don't exist in the target yet,
+    && !(Object.hasOwnProperty.call(target, key) // unsafe if they exist up the prototype chain,
+    && Object.propertyIsEnumerable.call(target, key)); // and also unsafe if they're nonenumerable.
   }
 
   function mergeObject(target, source, options) {
@@ -674,10 +689,14 @@
     }
 
     getKeys(source).forEach(function (key) {
-      if (!options.isMergeableObject(source[key]) || !target[key]) {
-        destination[key] = cloneUnlessOtherwiseSpecified(source[key]);
+      if (propertyIsUnsafe(target, key)) {
+        return;
+      }
+
+      if (propertyIsOnObject(target, key) && options.isMergeableObject(source[key])) {
+        destination[key] = getMergeFunction()(target[key], source[key], options);
       } else {
-        destination[key] = getMergeFunction(key)(target[key], source[key], options);
+        destination[key] = cloneUnlessOtherwiseSpecified(source[key]);
       }
     });
     return destination;
@@ -686,7 +705,10 @@
   function deepmerge(target, source, options) {
     options = options || {};
     options.arrayMerge = options.arrayMerge;
-    options.isMergeableObject = options.isMergeableObject || isMergeableObject;
+    options.isMergeableObject = options.isMergeableObject || isMergeableObject; // cloneUnlessOtherwiseSpecified is added to `options` so that custom arrayMerge()
+    // implementations can use it. The caller may not replace it.
+
+    options.cloneUnlessOtherwiseSpecified = cloneUnlessOtherwiseSpecified;
     var sourceIsArray = Array.isArray(source);
     var targetIsArray = Array.isArray(target);
     var sourceAndTargetTypesMatch = sourceIsArray === targetIsArray;
@@ -1539,10 +1561,10 @@
 
     var $root = this.$root;
     return {
-      'getOptions': function getOptions$1() {
+      getOptions: function getOptions$1() {
         return getOptions(options);
       },
-      'setOptions': function setOptions(newOptions) {
+      setOptions: function setOptions(newOptions) {
         var refreshNavKey = 'refreshOnceOnNavigation';
 
         if (newOptions && newOptions[refreshNavKey]) {
@@ -1566,19 +1588,19 @@
           options.waitOnDestroyed = !!newOptions[waitOnDestroyedKey];
         }
       },
-      'refresh': function refresh$1() {
+      refresh: function refresh$1() {
         return refresh($root, options);
       },
-      'inject': function inject() {
+      inject: function inject() {
         return  showWarningNotSupportedInBrowserBundle('inject');
       },
-      'pause': function pause$1() {
+      pause: function pause$1() {
         return pause($root);
       },
-      'resume': function resume$1() {
+      resume: function resume$1() {
         return resume($root);
       },
-      'addApp': function addApp$1(appId) {
+      addApp: function addApp$1(appId) {
         return addApp($root, appId, options);
       }
     };
@@ -1615,4 +1637,4 @@
 
   return index;
 
-}));
+})));

@@ -1,6 +1,6 @@
 /**
- * vue-meta v2.3.1
- * (c) 2019
+ * vue-meta v2.3.2
+ * (c) 2020
  * - Declan de Wet
  * - Sébastien Chopin (@Atinux)
  * - Pim (@pimlie)
@@ -10,7 +10,7 @@
 
 import deepmerge from 'deepmerge';
 
-var version = "2.3.1";
+var version = "2.3.2";
 
 function _typeof(obj) {
   if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") {
@@ -39,6 +39,40 @@ function _defineProperty(obj, key, value) {
   }
 
   return obj;
+}
+
+function ownKeys(object, enumerableOnly) {
+  var keys = Object.keys(object);
+
+  if (Object.getOwnPropertySymbols) {
+    var symbols = Object.getOwnPropertySymbols(object);
+    if (enumerableOnly) symbols = symbols.filter(function (sym) {
+      return Object.getOwnPropertyDescriptor(object, sym).enumerable;
+    });
+    keys.push.apply(keys, symbols);
+  }
+
+  return keys;
+}
+
+function _objectSpread2(target) {
+  for (var i = 1; i < arguments.length; i++) {
+    var source = arguments[i] != null ? arguments[i] : {};
+
+    if (i % 2) {
+      ownKeys(Object(source), true).forEach(function (key) {
+        _defineProperty(target, key, source[key]);
+      });
+    } else if (Object.getOwnPropertyDescriptors) {
+      Object.defineProperties(target, Object.getOwnPropertyDescriptors(source));
+    } else {
+      ownKeys(Object(source)).forEach(function (key) {
+        Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key));
+      });
+    }
+  }
+
+  return target;
 }
 
 function _toConsumableArray(arr) {
@@ -201,6 +235,7 @@ function triggerUpdate(_ref, rootVm, hookName) {
 
   if (rootVm[rootConfigKey].initialized && !rootVm[rootConfigKey].pausing) {
     // batch potential DOM updates to prevent extraneous re-rendering
+    // eslint-disable-next-line no-void
     batchUpdate(function () {
       return void rootVm.$meta().refresh();
     }, debounceWait);
@@ -340,12 +375,14 @@ function addNavGuards(rootVm) {
     next();
   });
   router.afterEach(function () {
-    var _resume = resume(rootVm),
-        metaInfo = _resume.metaInfo;
+    rootVm.$nextTick(function () {
+      var _resume = resume(rootVm),
+          metaInfo = _resume.metaInfo;
 
-    if (metaInfo && isFunction(metaInfo.afterNavigation)) {
-      metaInfo.afterNavigation(metaInfo);
-    }
+      if (metaInfo && isFunction(metaInfo.afterNavigation)) {
+        metaInfo.afterNavigation(metaInfo);
+      }
+    });
   });
 }
 
@@ -1609,7 +1646,7 @@ function tagGenerator(options, type, tags, generatorOptions) {
       }
 
       if (attr === 'callback') {
-        attrs += " onload=\"this.__vm_l=1\"";
+        attrs += ' onload="this.__vm_l=1"';
         continue;
       } // these form the attribute list for this tag
 
@@ -1710,10 +1747,32 @@ function generateServerInjector(options, metaInfo) {
             }
           }
 
+          if (serverInjector.extraData) {
+            for (var appId in serverInjector.extraData) {
+              var _data = serverInjector.extraData[appId][type];
+
+              if (_data) {
+                for (var _attr in _data) {
+                  attributeData[_attr] = _objectSpread2({}, attributeData[_attr], _defineProperty({}, appId, _data[_attr]));
+                }
+              }
+            }
+          }
+
           return attributeGenerator(options, type, attributeData, arg);
         }
 
         var str = tagGenerator(options, type, serverInjector.data[type], arg);
+
+        if (serverInjector.extraData) {
+          for (var _appId in serverInjector.extraData) {
+            var _data2 = serverInjector.extraData[_appId][type];
+            var extraStr = tagGenerator(options, type, _data2, _objectSpread2({
+              appId: _appId
+            }, arg));
+            str = "".concat(str).concat(extraStr);
+          }
+        }
 
         return str;
       }
@@ -1774,10 +1833,10 @@ function $meta(options) {
 
   var $root = this.$root;
   return {
-    'getOptions': function getOptions$1() {
+    getOptions: function getOptions$1() {
       return getOptions(options);
     },
-    'setOptions': function setOptions(newOptions) {
+    setOptions: function setOptions(newOptions) {
       var refreshNavKey = 'refreshOnceOnNavigation';
 
       if (newOptions && newOptions[refreshNavKey]) {
@@ -1801,19 +1860,19 @@ function $meta(options) {
         options.waitOnDestroyed = !!newOptions[waitOnDestroyedKey];
       }
     },
-    'refresh': function refresh$1() {
+    refresh: function refresh$1() {
       return refresh($root, options);
     },
-    'inject': function inject$1() {
+    inject: function inject$1() {
       return  inject($root, options) ;
     },
-    'pause': function pause$1() {
+    pause: function pause$1() {
       return pause($root);
     },
-    'resume': function resume$1() {
+    resume: function resume$1() {
       return resume($root);
     },
-    'addApp': function addApp$1(appId) {
+    addApp: function addApp$1(appId) {
       return addApp($root, appId, options);
     }
   };

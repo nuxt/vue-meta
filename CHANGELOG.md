@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [2.3.2](https://github.com/nuxt/vue-meta/compare/v2.3.1...v2.3.2) (2020-01-12)
+
+
+### Bug Fixes
+
+* call afterNavigation after nextTick ([#478](https://github.com/nuxt/vue-meta/issues/478)) ([fa12530](https://github.com/nuxt/vue-meta/commit/fa12530b3ec450338c52dea2873f6913ee3abaf0))
+
 ### [2.3.1](https://github.com/nuxt/vue-meta/compare/v2.3.0...v2.3.1) (2019-10-09)
 
 

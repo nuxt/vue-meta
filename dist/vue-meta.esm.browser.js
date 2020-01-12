@@ -1,6 +1,6 @@
 /**
- * vue-meta v2.3.1
- * (c) 2019
+ * vue-meta v2.3.2
+ * (c) 2020
  * - Declan de Wet
  * - Sébastien Chopin (@Atinux)
  * - Pim (@pimlie)
@@ -10,7 +10,7 @@
 
 import deepmerge from 'deepmerge';
 
-var version = "2.3.1";
+var version = "2.3.2";
 
 function _typeof(obj) {
   if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") {
@@ -162,6 +162,7 @@ function triggerUpdate(_ref, rootVm, hookName) {
 
   if (rootVm[rootConfigKey].initialized && !rootVm[rootConfigKey].pausing) {
     // batch potential DOM updates to prevent extraneous re-rendering
+    // eslint-disable-next-line no-void
     batchUpdate(function () {
       return void rootVm.$meta().refresh();
     }, debounceWait);
@@ -301,12 +302,14 @@ function addNavGuards(rootVm) {
     next();
   });
   router.afterEach(function () {
-    var _resume = resume(rootVm),
-        metaInfo = _resume.metaInfo;
+    rootVm.$nextTick(function () {
+      var _resume = resume(rootVm),
+          metaInfo = _resume.metaInfo;
 
-    if (metaInfo && isFunction(metaInfo.afterNavigation)) {
-      metaInfo.afterNavigation(metaInfo);
-    }
+      if (metaInfo && isFunction(metaInfo.afterNavigation)) {
+        metaInfo.afterNavigation(metaInfo);
+      }
+    });
   });
 }
 
@@ -1467,10 +1470,10 @@ function $meta(options) {
 
   var $root = this.$root;
   return {
-    'getOptions': function getOptions$1() {
+    getOptions: function getOptions$1() {
       return getOptions(options);
     },
-    'setOptions': function setOptions(newOptions) {
+    setOptions: function setOptions(newOptions) {
       var refreshNavKey = 'refreshOnceOnNavigation';
 
       if (newOptions && newOptions[refreshNavKey]) {
@@ -1494,19 +1497,19 @@ function $meta(options) {
         options.waitOnDestroyed = !!newOptions[waitOnDestroyedKey];
       }
     },
-    'refresh': function refresh$1() {
+    refresh: function refresh$1() {
       return refresh($root, options);
     },
-    'inject': function inject() {
+    inject: function inject() {
       return  showWarningNotSupportedInBrowserBundle('inject');
     },
-    'pause': function pause$1() {
+    pause: function pause$1() {
       return pause($root);
     },
-    'resume': function resume$1() {
+    resume: function resume$1() {
       return resume($root);
     },
-    'addApp': function addApp$1(appId) {
+    addApp: function addApp$1(appId) {
       return addApp($root, appId, options);
     }
   };
