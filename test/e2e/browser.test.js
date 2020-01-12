@@ -30,6 +30,9 @@ describe(browserString, () => {
         folder,
         port
       },
+      BrowserStackLocal: {
+        localIdentifier: Math.round(99999 * Math.random())
+      },
       extendPage (page) {
         return {
           async navigate (path) {
