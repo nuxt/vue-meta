@@ -88,10 +88,10 @@ The app id for a server side rendered app. You shouldnt have to change this norm
 
 ### tagIDKeyName
 - type `string`
-- default `vmid`
+- default `hid`
 
 The property that tells `vue-meta` to overwrite (instead of append) an item in a tag list.
-For example, if you have two `meta` tag list items that both have `vmid` of 'description',
+For example, if you have two `meta` tag list items that both have `hid` of 'description',
 then vue-meta will overwrite the shallowest one with the deepest one.
 
 ### contentKeyName
@@ -349,7 +349,7 @@ Since `v1.5.0`, you can now set up meta templates that work similar to the title
         // following template options are identical
         // template: '%s - My page',
         template: chunk => `${chunk} - My page`,
-        vmid: 'og:title'
+        hid: 'og:title'
       }
     ]
   }
@@ -460,7 +460,7 @@ You have to disable sanitizers so the content of `innerHTML` won't be escaped. P
 {
   metaInfo: {
     script: [{
-      vmid: 'ldjson-schema',
+      hid: 'ldjson-schema',
       innerHTML: '{ "@context": "http://schema.org" }',
       type: 'application/ld+json'
     }],
@@ -510,7 +510,7 @@ By default, `vue-meta` sanitizes HTML entities in _every_ property. You can disa
   metaInfo: {
     title: '<I will be sanitized>',
     meta: [{
-      vmid: 'description',
+      hid: 'description',
       name: 'description',
       content: '& I will not be <sanitized>'
     }],
@@ -521,7 +521,7 @@ By default, `vue-meta` sanitizes HTML entities in _every_ property. You can disa
 
 ```html
 <title>&lt;I will be sanitized&gt;</title>
-<meta vmid="description" name="description" content="& I will not be <sanitized>">
+<meta hid="description" name="description" content="& I will not be <sanitized>">
 ```
 
 ### __dangerouslyDisableSanitizersByTagID
@@ -531,14 +531,14 @@ By default, `vue-meta` sanitizes HTML entities in _every_ property. You can disa
 By disabling sanitation, you are opening potential vectors for attacks such as SQL injection & Cross-Site Scripting (XSS). Be very careful to not compromise your application.
 :::
 
-Provides same functionality as `__dangerouslyDisableSanitizers` but you can specify which property for which `tagIDKeyName` sanitation should be disabled. It expects an object with the vmid as key and an array with property keys as value:
+Provides same functionality as `__dangerouslyDisableSanitizers` but you can specify which property for which `tagIDKeyName` sanitation should be disabled. It expects an object with the hid as key and an array with property keys as value:
 
 ```js
 {
   metaInfo: {
     title: '<I will be sanitized>',
     meta: [{
-      vmid: 'description',
+      hid: 'description',
       name: 'still-&-sanitized',
       content: '& I will not be <sanitized>'
     }],
@@ -551,7 +551,7 @@ Provides same functionality as `__dangerouslyDisableSanitizers` but you can spec
 
 ```html
 <title>&lt;I will be sanitized&gt;</title>
-<meta vmid="description" name="still-&amp;-sanitized" content="& I will not be <sanitized>">
+<meta hid="description" name="still-&amp;-sanitized" content="& I will not be <sanitized>">
 ```
 
 ### changed
@@ -704,10 +704,10 @@ When rendering your template on SSR make sure to pass an object as first argumen
 
 ### callback <Badge text="v2.1+"/>
 
-:::tip vmid required on SSR
-When using SSR it is required to define a [`vmid`](/api/#tagidkeyname) property for the metaInfo property
+:::tip hid required on SSR
+When using SSR it is required to define a [`hid`](/api/#tagidkeyname) property for the metaInfo property
 
-The vmid is needed to resolve the corresponding callback for that element on hydration
+The hid is needed to resolve the corresponding callback for that element on hydration
 :::
 
 The callback attribute should specify a function which is called once the corresponding tag has been loaded (i.e. the onload event is triggered). Use this to chain javascript if one depends on the other.
@@ -718,7 +718,7 @@ The callback attribute should specify a function which is called once the corres
     return {
       script: [
         {
-          vmid: 'extscript',
+          hid: 'extscript',
           src: '/my-external-script.js',
           callback: () => (this.externalLoaded = true)
         },
