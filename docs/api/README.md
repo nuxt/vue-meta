@@ -503,7 +503,7 @@ If you need to disable sanitation, please always use [__dangerouslyDisableSaniti
 By disabling sanitization, you are opening potential vectors for attacks such as SQL injection & Cross-Site Scripting (XSS). Be very careful to not compromise your application.
 :::
 
-By default, `vue-meta` sanitizes HTML entities in _every_ property. You can disable this behaviour on a per-property basis using `__dangerouslyDisableSantizers`. Just pass it a list of properties you want sanitization to be disabled on:
+By default, `vue-meta` sanitizes HTML entities in _every_ property. You can disable this behaviour on a per-property basis using `__dangerouslyDisableSanitizers`. Just pass it a list of properties you want sanitization to be disabled on:
 
 ```js
 {
