@@ -78,7 +78,7 @@
     "babel-loader": "^8.0.6",
     "babel-plugin-dynamic-import-node": "^2.3.0",
     "browserstack-local": "^1.4.3",
-    "chromedriver": "^79.0.0",
+    "chromedriver": "^80.0.1",
     "codecov": "^3.6.1",
     "copy-webpack-plugin": "^5.1.1",
     "eslint": "^6.8.0",
