@@ -1,7 +1,6 @@
 import { triggerUpdate } from '../client/update'
 import { isUndefined, isFunction } from '../utils/is-type'
 import { find } from '../utils/array'
-import { ensuredPush } from '../utils/ensure'
 import { rootConfigKey } from './constants'
 import { hasMetaInfo } from './meta-helpers'
 import { addNavGuards } from './nav-guards'
@@ -80,11 +79,11 @@ export default function createMixin (Vue, options) {
           // if computed $metaInfo exists, watch it for updates & trigger a refresh
           // when it changes (i.e. automatically handle async actions that affect metaInfo)
           // credit for this suggestion goes to [Sébastien Chopin](https://github.com/Atinux)
-          ensuredPush($options, 'created', function () {
+          this.$on('hook:created', function () {
             this.$watch('$metaInfo', function () {
               triggerUpdate(options, this[rootKey], 'watcher')
             })
-          })
+          });
         }
       }
 
@@ -99,18 +98,18 @@ export default function createMixin (Vue, options) {
           if (!$root[rootConfigKey].initializedSsr) {
             $root[rootConfigKey].initializedSsr = true
 
-            ensuredPush($options, 'beforeMount', function () {
+            this.$on('hook:beforeMount', function () {
               const $root = this
               // if this Vue-app was server rendered, set the appId to 'ssr'
               // only one SSR app per page is supported
               if ($root.$el && $root.$el.nodeType === 1 && $root.$el.hasAttribute('data-server-rendered')) {
                 $root[rootConfigKey].appId = options.ssrAppId
               }
-            })
+            });
           }
 
           // we use the mounted hook here as on page load
-          ensuredPush($options, 'mounted', function () {
+          this.$on('hook:mounted', function () {
             const $root = this[rootKey]
 
             if (!$root[rootConfigKey].initialized) {
@@ -158,9 +157,9 @@ export default function createMixin (Vue, options) {
 
       // no need to add this hooks on server side
       updateOnLifecycleHook.forEach((lifecycleHook) => {
-        ensuredPush($options, lifecycleHook, function () {
+        this.$on(`hook:${lifecycleHook}`, function () {
           triggerUpdate(options, this[rootKey], lifecycleHook)
-        })
+        });
       })
     },
     // TODO: move back into beforeCreate when Vue issue is resolved
