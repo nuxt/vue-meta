@@ -83,7 +83,7 @@ export default function createMixin (Vue, options) {
             this.$watch('$metaInfo', function () {
               triggerUpdate(options, this[rootKey], 'watcher')
             })
-          });
+          })
         }
       }
 
@@ -105,7 +105,7 @@ export default function createMixin (Vue, options) {
               if ($root.$el && $root.$el.nodeType === 1 && $root.$el.hasAttribute('data-server-rendered')) {
                 $root[rootConfigKey].appId = options.ssrAppId
               }
-            });
+            })
           }
 
           // we use the mounted hook here as on page load
@@ -159,7 +159,7 @@ export default function createMixin (Vue, options) {
       updateOnLifecycleHook.forEach((lifecycleHook) => {
         this.$on(`hook:${lifecycleHook}`, function () {
           triggerUpdate(options, this[rootKey], lifecycleHook)
-        });
+        })
       })
     },
     // TODO: move back into beforeCreate when Vue issue is resolved
