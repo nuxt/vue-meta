@@ -70,7 +70,7 @@ This is not what we want, since the meta `description` needs to be unique for ev
 **Output:**
 ```html
 <meta charset="utf-8">
-<meta vmid="description" name="description" content="bar">
+<meta data-vmid="description" name="description" content="bar">
 ```
 
 While solutions like `react-helmet` manage the occurrence order and merge behaviour for you automatically, it involves a lot more code and is therefore prone to failure in some edge-cases, whereas this method is _almost_ bulletproof because of its versatility; _at the expense of one tradeoff:_ these `vmid` properties will be rendered out in the final markup (`vue-meta` uses these client-side to prevent duplicating or overriding markup). If you are serving your content gzipped, then the slight increase in HTTP payload size is negligible.
