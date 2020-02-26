@@ -614,6 +614,8 @@ These attributes define specific features when used in a metaInfo property
 
 When adding a metaInfo property that should be added once without reactivity (thus will never be updated) you can add `once: true` to the property.
 
+> `once` only works reliably during SSR. When using `once` in components, you need to also use `skip` and store a skip status outside of the component scope.
+
 ```js
 {
   metaInfo: {
@@ -622,6 +624,24 @@ When adding a metaInfo property that should be added once without reactivity (th
       rel: 'stylesheet'
       href: 'style.css'
     }]
+  }
+}
+```
+or in combination with `skip`
+```js
+let theJsHasBeenAddedSoSkipIt = false // <-- outside the component scope
+
+export default {
+  ...
+  head() {
+    const skip = theJsHasBeenAddedSoSkipIt
+    theJsHasBeenAddedSoSkipIt = true
+
+    return {
+      script: [
+        { once: true, skip, src: '/file.js' }
+      ]
+    }
   }
 }
 ```
