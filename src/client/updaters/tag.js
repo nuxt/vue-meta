@@ -44,7 +44,10 @@ export default function updateTag (appId, options, type, tags, head, body) {
     }
 
     const newElement = document.createElement(type)
-    newElement.setAttribute(attribute, appId)
+
+    if (!tag.once) {
+      newElement.setAttribute(attribute, appId)
+    }
 
     Object.keys(tag).forEach((attr) => {
       /* istanbul ignore next */
