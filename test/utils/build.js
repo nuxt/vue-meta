@@ -121,7 +121,7 @@ export function createWebpackConfig (config = {}) {
               presets: [
                 ['@babel/preset-env', {
                   useBuiltIns: 'usage',
-                  corejs: 'core-js@2',
+                  corejs: 'core-js@3',
                   targets: { ie: 9, safari: '5.1' }
                 }]
               ]

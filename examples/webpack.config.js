@@ -40,7 +40,7 @@ export default {
             presets: [
               ['@babel/preset-env', {
                 useBuiltIns: 'usage',
-                corejs: '2',
+                corejs: '3',
                 targets: { ie: 9, safari: '5.1' }
               }]
             ]
