@@ -1,5 +1,5 @@
 /**
- * vue-meta v2.3.2
+ * vue-meta v2.3.3
  * (c) 2020
  * - Declan de Wet
  * - Sébastien Chopin (@Atinux)
@@ -10,9 +10,11 @@
 
 import deepmerge from 'deepmerge';
 
-var version = "2.3.2";
+var version = "2.3.3";
 
 function _typeof(obj) {
+  "@babel/helpers - typeof";
+
   if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") {
     _typeof = function (obj) {
       return typeof obj;
@@ -143,7 +145,7 @@ var metaInfoOptionKeys = [defaultInfoKeys[1], defaultInfoKeys[2], 'changed'].con
 var metaInfoAttributeKeys = [defaultInfoKeys[3], defaultInfoKeys[4], defaultInfoKeys[5]]; // HTML elements which support the onload event
 
 var tagsSupportingOnload = ['link', 'style', 'script']; // HTML elements which dont have a head tag (shortened to our needs)
-var tagProperties = ['once', 'template']; // Attributes which should be added with data- prefix
+var tagProperties = ['once', 'skip', 'template']; // Attributes which should be added with data- prefix
 
 var commonDataAttributes = ['body', 'pbody']; // from: https://github.com/kangax/html-minifier/blob/gh-pages/src/htmlminifier.js#L202
 
@@ -248,22 +250,6 @@ function includes(array, value) {
   return array.includes(value);
 }
 
-function ensureIsArray(arg, key) {
-  if (!key || !isObject(arg)) {
-    return isArray(arg) ? arg : [];
-  }
-
-  if (!isArray(arg[key])) {
-    arg[key] = [];
-  }
-
-  return arg;
-}
-function ensuredPush(object, key, el) {
-  ensureIsArray(object, key);
-  object[key].push(el);
-}
-
 function hasMetaInfo(vm) {
   vm = vm || this;
   return vm && (vm[rootConfigKey] === true || isObject(vm[rootConfigKey]));
@@ -320,6 +306,8 @@ function createMixin(Vue, options) {
 
   return {
     beforeCreate: function beforeCreate() {
+      var _this2 = this;
+
       var rootKey = '$root';
       var $root = this[rootKey];
       var $options = this.$options;
@@ -389,7 +377,7 @@ function createMixin(Vue, options) {
           // if computed $metaInfo exists, watch it for updates & trigger a refresh
           // when it changes (i.e. automatically handle async actions that affect metaInfo)
           // credit for this suggestion goes to [Sébastien Chopin](https://github.com/Atinux)
-          ensuredPush($options, 'created', function () {
+          this.$on('hook:created', function () {
             this.$watch('$metaInfo', function () {
               triggerUpdate(options, this[rootKey], 'watcher');
             });
@@ -407,7 +395,7 @@ function createMixin(Vue, options) {
         if (!$root[rootConfigKey].initialized) {
           if (!$root[rootConfigKey].initializedSsr) {
             $root[rootConfigKey].initializedSsr = true;
-            ensuredPush($options, 'beforeMount', function () {
+            this.$on('hook:beforeMount', function () {
               var $root = this; // if this Vue-app was server rendered, set the appId to 'ssr'
               // only one SSR app per page is supported
 
@@ -418,7 +406,7 @@ function createMixin(Vue, options) {
           } // we use the mounted hook here as on page load
 
 
-          ensuredPush($options, 'mounted', function () {
+          this.$on('hook:mounted', function () {
             var $root = this[rootKey];
 
             if (!$root[rootConfigKey].initialized) {
@@ -458,8 +446,38 @@ function createMixin(Vue, options) {
             addNavGuards($root);
           }
         }
-      } // do not trigger refresh on the server side
+      }
 
+      this.$on('hook:destroyed', function () {
+        var _this = this;
+
+        // do not trigger refresh:
+        // - when user configured to not wait for transitions on destroyed
+        // - when the component doesnt have a parent
+        // - doesnt have metaInfo defined
+        if (!this.$parent || !hasMetaInfo(this)) {
+          return;
+        }
+
+        delete this._hasMetaInfo;
+        this.$nextTick(function () {
+          if (!options.waitOnDestroyed || !_this.$el || !_this.$el.offsetParent) {
+            triggerUpdate(options, _this.$root, 'destroyed');
+            return;
+          } // Wait that element is hidden before refreshing meta tags (to support animations)
+
+
+          var interval = setInterval(function () {
+            if (_this.$el && _this.$el.offsetParent !== null) {
+              /* istanbul ignore next line */
+              return;
+            }
+
+            clearInterval(interval);
+            triggerUpdate(options, _this.$root, 'destroyed');
+          }, 50);
+        });
+      }); // do not trigger refresh on the server side
 
       if (this.$isServer) {
         /* istanbul ignore next */
@@ -468,40 +486,9 @@ function createMixin(Vue, options) {
 
 
       updateOnLifecycleHook.forEach(function (lifecycleHook) {
-        ensuredPush($options, lifecycleHook, function () {
+        _this2.$on("hook:".concat(lifecycleHook), function () {
           triggerUpdate(options, this[rootKey], lifecycleHook);
         });
-      });
-    },
-    // TODO: move back into beforeCreate when Vue issue is resolved
-    destroyed: function destroyed() {
-      var _this = this;
-
-      // do not trigger refresh:
-      // - when user configured to not wait for transitions on destroyed
-      // - when the component doesnt have a parent
-      // - doesnt have metaInfo defined
-      if (!this.$parent || !hasMetaInfo(this)) {
-        return;
-      }
-
-      delete this._hasMetaInfo;
-      this.$nextTick(function () {
-        if (!options.waitOnDestroyed || !_this.$el || !_this.$el.offsetParent) {
-          triggerUpdate(options, _this.$root, 'destroyed');
-          return;
-        } // Wait that element is hidden before refreshing meta tags (to support animations)
-
-
-        var interval = setInterval(function () {
-          if (_this.$el && _this.$el.offsetParent !== null) {
-            /* istanbul ignore next line */
-            return;
-          }
-
-          clearInterval(interval);
-          triggerUpdate(options, _this.$root, 'destroyed');
-        }, 50);
       });
     }
   };
@@ -538,6 +525,18 @@ function getOptions(options) {
   }
 
   return optionsCopy;
+}
+
+function ensureIsArray(arg, key) {
+  if (!key || !isObject(arg)) {
+    return isArray(arg) ? arg : [];
+  }
+
+  if (!isArray(arg[key])) {
+    arg[key] = [];
+  }
+
+  return arg;
 }
 
 var clientSequences = [[/&/g, "&"], [/</g, "<"], [/>/g, ">"], [/"/g, "\""], [/'/g, "'"]]; // sanitizes potentially dangerous characters
@@ -1118,7 +1117,11 @@ function updateTag(appId, options, type, tags, head, body) {
     }
 
     var newElement = document.createElement(type);
-    newElement.setAttribute(attribute, appId);
+
+    if (!tag.once) {
+      newElement.setAttribute(attribute, appId);
+    }
+
     Object.keys(tag).forEach(function (attr) {
       /* istanbul ignore next */
       if (includes(tagProperties, attr)) {

@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [2.3.3](https://github.com/nuxt/vue-meta/compare/v2.3.2...v2.3.3) (2020-02-26)
+
+
+### Bug Fixes
+
+* memory leak, use hook events (thanks [#522](https://github.com/nuxt/vue-meta/issues/522)) ([21621e1](https://github.com/nuxt/vue-meta/commit/21621e13f53f45eeef5d75c76ed01c7703ad78b9))
+* support once (with skip) client side (fix [#498](https://github.com/nuxt/vue-meta/issues/498)) ([c74c645](https://github.com/nuxt/vue-meta/commit/c74c645d1881e22569a2ea7ac0c903a4f6ee2243))
+
 ### [2.3.2](https://github.com/nuxt/vue-meta/compare/v2.3.1...v2.3.2) (2020-01-12)
 
 
