@@ -10,9 +10,3 @@ export function ensureIsArray (arg, key) {
   }
   return arg
 }
-
-export function ensuredPush (object, key, el) {
-  ensureIsArray(object, key)
-
-  object[key].push(el)
-}

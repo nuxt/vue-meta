@@ -1,7 +1,6 @@
 import { triggerUpdate } from '../client/update'
 import { isUndefined, isFunction } from '../utils/is-type'
 import { find } from '../utils/array'
-import { ensuredPush } from '../utils/ensure'
 import { rootConfigKey } from './constants'
 import { hasMetaInfo } from './meta-helpers'
 import { addNavGuards } from './nav-guards'
@@ -80,7 +79,7 @@ export default function createMixin (Vue, options) {
           // if computed $metaInfo exists, watch it for updates & trigger a refresh
           // when it changes (i.e. automatically handle async actions that affect metaInfo)
           // credit for this suggestion goes to [Sébastien Chopin](https://github.com/Atinux)
-          ensuredPush($options, 'created', function () {
+          this.$on('hook:created', function () {
             this.$watch('$metaInfo', function () {
               triggerUpdate(options, this[rootKey], 'watcher')
             })
@@ -99,7 +98,7 @@ export default function createMixin (Vue, options) {
           if (!$root[rootConfigKey].initializedSsr) {
             $root[rootConfigKey].initializedSsr = true
 
-            ensuredPush($options, 'beforeMount', function () {
+            this.$on('hook:beforeMount', function () {
               const $root = this
               // if this Vue-app was server rendered, set the appId to 'ssr'
               // only one SSR app per page is supported
@@ -110,7 +109,7 @@ export default function createMixin (Vue, options) {
           }
 
           // we use the mounted hook here as on page load
-          ensuredPush($options, 'mounted', function () {
+          this.$on('hook:mounted', function () {
             const $root = this[rootKey]
 
             if (!$root[rootConfigKey].initialized) {
@@ -150,6 +149,36 @@ export default function createMixin (Vue, options) {
         }
       }
 
+      this.$on('hook:destroyed', function () {
+        // do not trigger refresh:
+        // - when user configured to not wait for transitions on destroyed
+        // - when the component doesnt have a parent
+        // - doesnt have metaInfo defined
+        if (!this.$parent || !hasMetaInfo(this)) {
+          return
+        }
+        delete this._hasMetaInfo
+
+        this.$nextTick(() => {
+          if (!options.waitOnDestroyed || !this.$el || !this.$el.offsetParent) {
+            triggerUpdate(options, this.$root, 'destroyed')
+            return
+          }
+
+          // Wait that element is hidden before refreshing meta tags (to support animations)
+          const interval = setInterval(() => {
+            if (this.$el && this.$el.offsetParent !== null) {
+              /* istanbul ignore next line */
+              return
+            }
+
+            clearInterval(interval)
+
+            triggerUpdate(options, this.$root, 'destroyed')
+          }, 50)
+        })
+      })
+
       // do not trigger refresh on the server side
       if (this.$isServer) {
         /* istanbul ignore next */
@@ -158,39 +187,9 @@ export default function createMixin (Vue, options) {
 
       // no need to add this hooks on server side
       updateOnLifecycleHook.forEach((lifecycleHook) => {
-        ensuredPush($options, lifecycleHook, function () {
+        this.$on(`hook:${lifecycleHook}`, function () {
           triggerUpdate(options, this[rootKey], lifecycleHook)
         })
-      })
-    },
-    // TODO: move back into beforeCreate when Vue issue is resolved
-    destroyed () {
-      // do not trigger refresh:
-      // - when user configured to not wait for transitions on destroyed
-      // - when the component doesnt have a parent
-      // - doesnt have metaInfo defined
-      if (!this.$parent || !hasMetaInfo(this)) {
-        return
-      }
-      delete this._hasMetaInfo
-
-      this.$nextTick(() => {
-        if (!options.waitOnDestroyed || !this.$el || !this.$el.offsetParent) {
-          triggerUpdate(options, this.$root, 'destroyed')
-          return
-        }
-
-        // Wait that element is hidden before refreshing meta tags (to support animations)
-        const interval = setInterval(() => {
-          if (this.$el && this.$el.offsetParent !== null) {
-            /* istanbul ignore next line */
-            return
-          }
-
-          clearInterval(interval)
-
-          triggerUpdate(options, this.$root, 'destroyed')
-        }, 50)
       })
     }
   }
