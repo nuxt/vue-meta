@@ -113,6 +113,7 @@ export const commonDataAttributes = ['body', 'pbody']
 export const booleanHtmlAttributes = [
   'allowfullscreen',
   'amp',
+  'amp-boilerplate',
   'async',
   'autofocus',
   'autoplay',
