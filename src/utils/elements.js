@@ -11,9 +11,9 @@ export function getTag (tags, tag) {
 }
 
 export function getElementsKey ({ body, pbody }) {
-  return body
+  return body === true || body === 'true'
     ? 'body'
-    : (pbody ? 'pbody' : 'head')
+    : (pbody === true || pbody === 'true' ? 'pbody' : 'head')
 }
 
 export function queryElements (parentNode, { appId, attribute, type, tagIDKeyName }, attributes) {
