@@ -20,6 +20,9 @@ new Vue({
     headAttrs: {
       test: true
     },
+    bodyAttrs: {
+      tabIndex: 0
+    },
     meta: [
       { name: 'description', content: 'Hello', vmid: 'test' }
     ],

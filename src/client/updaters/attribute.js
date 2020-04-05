@@ -28,7 +28,7 @@ export default function updateAttribute (appId, options, type, attrs, tag) {
   // remove attributes from the map
   // which have been removed for this appId
   for (const attr in data) {
-    if (data[attr] && appId in data[attr]) {
+    if (data[attr] !== undefined && appId in data[attr]) {
       toUpdate.push(attr)
 
       if (!attrs[attr]) {
@@ -43,7 +43,7 @@ export default function updateAttribute (appId, options, type, attrs, tag) {
     if (!attrData || attrData[appId] !== attrs[attr]) {
       toUpdate.push(attr)
 
-      if (attrs[attr]) {
+      if (attrs[attr] !== undefined) {
         data[attr] = data[attr] || {}
         data[attr][appId] = attrs[attr]
       }
@@ -61,7 +61,7 @@ export default function updateAttribute (appId, options, type, attrs, tag) {
     if (attrValues.length) {
       const attrValue = includes(booleanHtmlAttributes, attr) && attrValues.some(Boolean)
         ? ''
-        : attrValues.filter(Boolean).join(' ')
+        : attrValues.filter(v => v !== undefined).join(' ')
 
       tag.setAttribute(attr, attrValue)
     } else {

@@ -270,8 +270,8 @@ const metaInfoData = {
   },
   bodyAttrs: {
     add: {
-      data: { foo: 'bar', fizz: ['fuzz', 'fozz'] },
-      expect: ['<body foo="bar" fizz="fuzz fozz" data-vue-meta="%7B%22foo%22:%7B%22ssr%22:%22bar%22%7D,%22fizz%22:%7B%22ssr%22:%5B%22fuzz%22,%22fozz%22%5D%7D%7D">'],
+      data: { foo: 'bar', fizz: ['fuzz', 'fozz'], falsy: 0 },
+      expect: ['<body foo="bar" fizz="fuzz fozz" falsy="0" data-vue-meta="%7B%22foo%22:%7B%22ssr%22:%22bar%22%7D,%22fizz%22:%7B%22ssr%22:%5B%22fuzz%22,%22fozz%22%5D%7D,%22falsy%22:%7B%22ssr%22:0%7D%7D">'],
       test (side, defaultTest) {
         return () => {
           if (side === 'client') {
@@ -284,7 +284,8 @@ const metaInfoData = {
             expect(attributeMap).toEqual({
               bodyAttrs: {
                 foo: { ssr: 'bar' },
-                fizz: { ssr: ['fuzz', 'fozz'] }
+                fizz: { ssr: ['fuzz', 'fozz'] },
+                falsy: { ssr: 0 }
               }
             })
           }
@@ -298,7 +299,7 @@ const metaInfoData = {
         return () => {
           defaultTest()
 
-          expect(attributeMap).toEqual({ bodyAttrs: { foo: { ssr: 'baz' }, fizz: {} } })
+          expect(attributeMap).toEqual({ bodyAttrs: { foo: { ssr: 'baz' }, fizz: {}, falsy: {} } })
         }
       }
     },
@@ -309,7 +310,7 @@ const metaInfoData = {
         return () => {
           defaultTest()
 
-          expect(attributeMap).toEqual({ bodyAttrs: { foo: {}, fizz: {} } })
+          expect(attributeMap).toEqual({ bodyAttrs: { foo: {}, fizz: {}, falsy: {} } })
         }
       }
     }
