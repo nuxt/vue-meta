@@ -1,13 +1,13 @@
-import Vue from 'vue'
-import Router from 'vue-router'
+import { createSSRApp } from 'vue'
+import { createRouter, createMemoryHistory } from 'vue-router'
 import VueMeta from '../../'
 
-Vue.use(Router)
+/*Vue.use(Router)
 Vue.use(VueMeta, {
   tagIDKeyName: 'hid'
-})
+})*/
 
-export default function createApp () {
+export default function createMyApp () {
   const Home = {
     template: `<div>
       <router-link to="/about">About</router-link>
@@ -54,16 +54,15 @@ export default function createApp () {
     }
   }
 
-  const router = new Router({
-    mode: 'history',
-    base: '/ssr',
+  const router = createRouter({
+    history: createMemoryHistory('/ssr'),
     routes: [
       { path: '/', component: Home },
       { path: '/about', component: About }
     ]
   })
 
-  const app = new Vue({
+  const app = createSSRApp({
     router,
     metaInfo () {
       return {
@@ -145,13 +144,16 @@ export default function createApp () {
 
       <router-view />
     </div>`
+
   })
 
-  const { set } = app.$meta().addApp('custom')
+  app.use(router)
+
+  /*const { set } = app.$meta().addApp('custom')
   set({
     bodyAttrs: { class: 'custom-app' },
     meta: [{ charset: 'utf-8' }]
-  })
+  })*/
 
   return { app, router }
 }

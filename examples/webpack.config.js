@@ -2,7 +2,7 @@ import fs from 'fs'
 import path from 'path'
 import webpack from 'webpack'
 import WebpackBar from 'webpackbar'
-import VueLoaderPlugin from 'vue-loader/lib/plugin'
+import { VueLoaderPlugin } from 'vue-loader'
 
 const srcDir = path.join(__dirname, '..', 'src')
 
@@ -15,7 +15,7 @@ export default {
 
       if (dir === 'ssr') {
         entries[dir] = path.join(fullDir, 'browser.js')
-      } else {
+      } else if (dir === 'vue-router') {
         const entry = path.join(fullDir, 'app.js')
         if (fs.statSync(fullDir).isDirectory() && fs.existsSync(entry)) {
           entries[dir] = entry
@@ -47,13 +47,24 @@ export default {
           }
         }
       },
-      { test: /\.vue$/, use: 'vue-loader' }
+      {
+        resourceQuery: /blockType=head/,
+        loader: require.resolve('./meta-loader.js')
+      },
+      {
+        test: /\.vue$/,
+        use: 'vue-loader'
+      }
     ]
   },
   resolve: {
     alias: {
-      'vue': 'vue/dist/vue.js',
-      'vue-meta': process.env.NODE_ENV === 'development' ? srcDir : 'vue-meta'
+      // this isn't technically needed, since the default `vue` entry for bundlers
+      // is a simple `export * from '@vue/runtime-dom`. However having this
+      // extra re-export somehow causes webpack to always invalidate the module
+      // on the first HMR update and causes the page to reload.
+      'vue': 'vue/dist/vue.esm.js',
+      'vue-meta': path.resolve(__dirname, './next/')
     }
   },
   // Expose __dirname to allow automatically setting basename.
@@ -67,5 +78,12 @@ export default {
     new webpack.DefinePlugin({
       'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV || 'development')
     })
-  ]
+  ],
+  devServer: {
+    inline: true,
+    hot: true,
+    stats: 'minimal',
+    contentBase: __dirname,
+    overlay: true
+  }
 }

@@ -1,16 +1,18 @@
-import Vue from 'vue'
+import { createApp, defineComponent, reactive, toRefs, h } from 'vue'
 import VueMeta from 'vue-meta'
-import Router from 'vue-router'
+import { createRouter, createWebHistory } from 'vue-router'
+import About from './about.vue'
 
-Vue.use(Router)
-Vue.use(VueMeta, {
+/*Vue.use(VueMeta, {
   refreshOnceOnNavigation: true
-})
+})*/
 
 let metaUpdated = 'no'
-const ChildComponent = {
+const ChildComponent = defineComponent({
   name: 'child-component',
-  props: ['page'],
+  props: {
+    page: String
+  },
   template: `<div>
 <h3>You're looking at the <strong>{{ page }}</strong> page</h3>
 <p>Has metaInfo been updated due to navigation? {{ metaUpdated }}</p>
@@ -26,21 +28,25 @@ const ChildComponent = {
       }
     }
   },
-  data () {
-    return {
+  setup () {
+    const state = reactive({
       date: null,
       metaUpdated
+    })
+
+    return {
+      ...toRefs(state)
     }
   },
-  mounted () {
+  /*mounted () {
     this.interval = setInterval(() => {
       this.date = new Date()
     }, 1000)
   },
   destroyed () {
     clearInterval(this.interval)
-  }
-}
+  }*/
+})
 
 // this wrapper function is not a requirement for vue-router,
 // just a demonstration that render-function style components also work.
@@ -48,25 +54,21 @@ const ChildComponent = {
 function view (page) {
   return {
     name: `section-${page}`,
-    render (h) {
-      return h(ChildComponent, {
-        props: { page }
-      })
+    render () {
+      return h(ChildComponent, { page })
     }
   }
 }
 
-const router = new Router({
-  mode: 'history',
-  base: '/vue-router',
+const router = createRouter({
+  history: createWebHistory('/vue-router'),
   routes: [
-    { path: '/', component: view('home') },
-    { path: '/about', component: view('about') }
+    { name: 'home', path: '/', component: view('home') },
+    { name: 'about', path: '/about', component: About }
   ]
 })
 
 const App = {
-  router,
   template: `
     <div id="app">
       <h1>vue-router</h1>
@@ -80,8 +82,10 @@ const App = {
   `
 }
 
-const app = new Vue(App)
+const app = createApp(App)
+app.use(router)
 
+/*
 const { set, remove } = app.$meta().addApp('custom')
 
 set({
@@ -93,8 +97,8 @@ set({
   ]
 })
 setTimeout(() => remove(), 3000)
-
-app.$mount('#app')
+*/
+app.mount('#app')
 
 /*
 const waitFor = time => new Promise(r => setTimeout(r, time || 1000))

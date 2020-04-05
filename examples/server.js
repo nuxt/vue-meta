@@ -12,7 +12,7 @@ const app = express()
 
 app.use(webpackDevMiddleware(webpack(WebpackConfig), {
   publicPath: '/__build__/',
-  writeToDisk: false,
+  writeToDisk: true,
   stats: {
     colors: true,
     chunks: false
