@@ -69,7 +69,7 @@ export default function createApp () {
       return {
         title: 'Boring Title',
         htmlAttrs: { amp: true },
-        bodyAttrs: { class: 'main-app' },
+        bodyAttrs: { class: 'main-app', tabIndex: 0 },
         meta: [
           {
             skip: this.count < 1,
@@ -106,7 +106,14 @@ export default function createApp () {
             callback: this.loadCallback
           }
         ],
+        noscript: [{
+          innerHTML: "<strong>This website requires JavaScript.</strong>",
+          body: true,
+          hid: 'test'
+        }],
+
         __dangerouslyDisableSanitizersByTagID: {
+          test: ['innerHTML'],
           'ldjson-schema': ['innerHTML']
         }
       }
