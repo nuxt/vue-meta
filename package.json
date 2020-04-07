@@ -97,7 +97,7 @@
     "is-wsl": "^2.1.1",
     "jest": "^25.2.3",
     "jest-environment-jsdom": "^25.2.3",
-    "jest-environment-jsdom-global": "^1.2.1",
+    "jest-environment-jsdom-global": "^2.0.2",
     "jsdom": "^16.2.1",
     "lodash": "^4.17.15",
     "node-env-file": "^0.1.8",
