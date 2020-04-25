@@ -15,6 +15,9 @@ export default function createApp () {
       <p>Hello World</p>
     </div>`,
     metaInfo: {
+      htmlAttrs: {
+        lang: 'en'
+      },
       title: 'Hello World',
       meta: [
         {
