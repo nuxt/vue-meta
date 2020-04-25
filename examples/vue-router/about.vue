@@ -22,7 +22,7 @@ export default {
 
     onMounted(() => console.log(route))
 
-    return { metaUpdated, page: route.value.name }
+    return { metaUpdated, page: route.name }
   }
 }
 </script>

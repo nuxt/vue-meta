@@ -1,11 +1,16 @@
-import { createApp, defineComponent, reactive, toRefs, h } from 'vue'
+import { createApp, defineComponent, reactive, toRefs, h, onMounted } from 'vue'
 import VueMeta from 'vue-meta'
 import { createRouter, createWebHistory } from 'vue-router'
 import About from './about.vue'
+import { createMeta, useMeta } from '../next'
 
 /*Vue.use(VueMeta, {
   refreshOnceOnNavigation: true
 })*/
+
+const meta = createMeta({
+
+})
 
 let metaUpdated = 'no'
 const ChildComponent = defineComponent({
@@ -13,9 +18,13 @@ const ChildComponent = defineComponent({
   props: {
     page: String
   },
-  template: `<div>
-<h3>You're looking at the <strong>{{ page }}</strong> page</h3>
-<p>Has metaInfo been updated due to navigation? {{ metaUpdated }}</p>
+  template: `
+<metainfo>
+  <title>Another Title</title>
+</metainfo>
+<div>
+  <h3>You're looking at the <strong>{{ page }}</strong> page</h3>
+  <p>Has metaInfo been updated due to navigation? {{ metaUpdated }}</p>
 </div>`,
   metaInfo () {
     return {
@@ -28,13 +37,26 @@ const ChildComponent = defineComponent({
       }
     }
   },
+  created () {
+    console.log(this)
+  },
   setup () {
+    const metaData = useMeta({
+    })
+
     const state = reactive({
       date: null,
       metaUpdated
     })
 
+
+    onMounted(function vmMounted() {
+      console.log('MOUNTED', this, arguments)
+    })
+
+
     return {
+      metaData,
       ...toRefs(state)
     }
   },
@@ -68,8 +90,29 @@ const router = createRouter({
   ]
 })
 
+const Metadata = {
+  template: `
+    <teleport to="head">
+      <slot />
+    </teleport>
+
+    <teleport to="body">
+      <slot name="body" />
+    </teleport>
+  `
+}
+
 const App = {
   template: `
+    <metainfo>
+      <title>My Title</title>
+      <meta name="charset" content="utf8" />
+
+      <template v-slot:body>
+        <script>var a = 1</script>
+      </template>
+    </metainfo>
+
     <div id="app">
       <h1>vue-router</h1>
       <router-link to="/">Home</router-link>
@@ -83,8 +126,9 @@ const App = {
 }
 
 const app = createApp(App)
+app.component('metainfo', Metadata)
 app.use(router)
-
+app.use(meta)
 /*
 const { set, remove } = app.$meta().addApp('custom')
 
