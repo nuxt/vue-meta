@@ -85,6 +85,7 @@ function rollupConfig({
       // replaceConfig needs to have some values
       'const polyfill = process.env.NODE_ENV === \'test\'': 'const polyfill = true',
       'process.env.VERSION': `"${version}"`,
+      'process.client' : isBrowserBuild ? 'true' : 'false',
       'process.server' : isBrowserBuild ? 'false' : 'true',
       /* remove unused stuff from deepmerge */
       // remove react stuff from is-mergeable-object
