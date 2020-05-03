@@ -77,6 +77,6 @@ setTimeout(() => {
 
 setTimeout(() => {
   console.log('trigger app 4')
-  const App = Vue.extend({ template: `<div>app 4</div>` })
+  const App = Vue.extend({ template: '<div>app 4</div>' })
   new App().$mount()
 }, 10000)

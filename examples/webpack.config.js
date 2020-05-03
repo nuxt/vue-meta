@@ -4,7 +4,7 @@ import webpack from 'webpack'
 import WebpackBar from 'webpackbar'
 import { VueLoaderPlugin } from 'vue-loader'
 
-const srcDir = path.join(__dirname, '..', 'src')
+// const srcDir = path.join(__dirname, '..', 'src')
 
 export default {
   devtool: 'inline-source-map',
@@ -63,7 +63,7 @@ export default {
       // is a simple `export * from '@vue/runtime-dom`. However having this
       // extra re-export somehow causes webpack to always invalidate the module
       // on the first HMR update and causes the page to reload.
-      'vue': 'vue/dist/vue.esm.js',
+      vue: 'vue/dist/vue.esm-bundler.js',
       'vue-meta': path.resolve(__dirname, './next/')
     }
   },

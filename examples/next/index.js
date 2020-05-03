@@ -1,24 +1,30 @@
-import { markRaw, reactive, computed, onMounted } from 'vue'
+import { markRaw, reactive, onMounted } from 'vue'
+import { defaultMapping } from './config'
 
 const apps = {}
+let appId = 1
 
-export function createMeta () {
-  const id = Symbol()
+export function createMeta ({ config }) {
+  const id = Symbol(`vue-meta-${appId++}`)
 
   const Meta = {
     id,
 
-    install(app) {
+    install (app) {
       let watchersAdded = false
 
+      app.provide('__vueMetaConfig', {
+        ...defaultMapping,
+        ...config
+      })
+
       app.mixin({
-        created() {
+        created () {
           if (this === this.$root) {
-            
             watchersAdded = true
           }
 
-          if (!this.metaData) {
+          if (!this.metaData || watchersAdded) {
             return
           }
 
@@ -33,7 +39,7 @@ export function createMeta () {
             }
           }
 
-          const __meta = markRaw({
+          this.__meta = markRaw({
             depth
           })
           console.log('CREATED', this, this.metaData, depth)
@@ -49,15 +55,14 @@ export function createMeta () {
   return Meta
 }
 
-export function useMeta () {
+export function useMeta (rawMetainfo) {
   onMounted(vmMounted)
 
-  const metaData = reactive([])
-  console.log(this)
+  const metainfo = reactive(rawMetainfo)
 
-  return metaData
+  return metainfo
 }
 
-function vmMounted() {
+function vmMounted () {
   console.log('MOUNTED', this, arguments)
 }

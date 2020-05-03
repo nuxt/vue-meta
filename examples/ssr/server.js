@@ -1,8 +1,8 @@
 import path from 'path'
 import fs from 'fs-extra'
 import template from 'lodash/template'
-const { renderToString } = require('@vue/server-renderer')
 import createApp from './App'
+const { renderToString } = require('@vue/server-renderer')
 
 const templateFile = path.resolve(__dirname, 'app.template.html')
 const templateContent = fs.readFileSync(templateFile, { encoding: 'utf8' })
@@ -18,12 +18,12 @@ export async function renderPage ({ url }) {
   await router.push(url.substr(4))
 
   await router.isReady()
-  /*console.log(router)
+  /* console.log(router)
   const matchedComponents = router.getMatchedComponents()
   // no matched routes, reject with 404
   if (!matchedComponents.length) {
     return reject({ code: 404 })
-  }*/
+  } */
 
   const appHtml = await renderToString(app)
 
@@ -41,7 +41,7 @@ export async function renderPage ({ url }) {
     head: () => {},
     bodyPrepend: () => {},
     bodyAppend: () => {}
-    //...app.$meta().inject()
+    // ...app.$meta().inject()
   })
 
   return pageHtml

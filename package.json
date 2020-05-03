@@ -49,7 +49,7 @@
     "dev": "cd examples && yarn dev && cd ..",
     "docs": "vuepress dev --host 0.0.0.0 --port 3000 docs",
     "docs:build": "vuepress build docs",
-    "lint": "eslint src test",
+    "lint": "eslint src test examples",
     "prerelease": "git checkout master && git pull -r",
     "release": "yarn lint && yarn test && standard-version",
     "test": "yarn test:unit && yarn test:e2e-ssr && yarn test:e2e-browser",

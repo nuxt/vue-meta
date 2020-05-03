@@ -1,27 +1,17 @@
-import { createApp, defineComponent, reactive, toRefs, h, onMounted } from 'vue'
-import VueMeta from 'vue-meta'
+import { createApp, defineComponent, reactive, toRefs, h } from 'vue'
 import { createRouter, createWebHistory } from 'vue-router'
-import About from './about.vue'
+import Metainfo from '../next/Metainfo.vue'
 import { createMeta, useMeta } from '../next'
-
-/*Vue.use(VueMeta, {
-  refreshOnceOnNavigation: true
-})*/
-
-const meta = createMeta({
-
-})
+import About from './about.vue'
 
 let metaUpdated = 'no'
+
 const ChildComponent = defineComponent({
   name: 'child-component',
   props: {
     page: String
   },
   template: `
-<metainfo>
-  <title>Another Title</title>
-</metainfo>
 <div>
   <h3>You're looking at the <strong>{{ page }}</strong> page</h3>
   <p>Has metaInfo been updated due to navigation? {{ metaUpdated }}</p>
@@ -38,41 +28,20 @@ const ChildComponent = defineComponent({
     }
   },
   created () {
-    console.log(this)
+    //console.log(this)
   },
   setup () {
-    const metaData = useMeta({
-    })
-
     const state = reactive({
       date: null,
       metaUpdated
     })
 
-
-    onMounted(function vmMounted() {
-      console.log('MOUNTED', this, arguments)
-    })
-
-
     return {
-      metaData,
       ...toRefs(state)
     }
-  },
-  /*mounted () {
-    this.interval = setInterval(() => {
-      this.date = new Date()
-    }, 1000)
-  },
-  destroyed () {
-    clearInterval(this.interval)
-  }*/
+  }
 })
 
-// this wrapper function is not a requirement for vue-router,
-// just a demonstration that render-function style components also work.
-// See https://github.com/nuxt/vue-meta/issues/9 for more info.
 function view (page) {
   return {
     name: `section-${page}`,
@@ -80,6 +49,86 @@ function view (page) {
       return h(ChildComponent, { page })
     }
   }
+}
+
+const App = {
+  setup () {
+    const metainfo = useMeta({
+      base: { href: '/vue-router', target: '_blank' },
+      charset: 'utf8',
+      title: 'My Title',
+      description: 'The Description',
+      og: {
+        title: 'Og Title',
+        description: 'Bla bla',
+        image: [
+          'https://picsum.photos/600/400/?image=80',
+          'https://picsum.photos/600/400/?image=82'
+        ]
+      },
+      twitter: {
+        title: 'Twitter Title'
+      },
+      noscript: [
+        '<!-- // A code comment -->',
+        { tag: 'link', rel: 'stylesheet', href: 'style.css' }
+      ],
+      otherNoscript: {
+        tag: 'noscript',
+        'data-test': 'hello',
+        content: [
+          '<!-- // Another code comment -->',
+          { tag: 'link', rel: 'stylesheet', href: 'style2.css' }
+        ]
+      },
+      body: 'body-script1.js',
+      script: [
+        '<!--[if IE]>',
+        { src: 'head-script1.js' },
+        '<![endif]>',
+        { src: 'body-script2.js', target: 'body' },
+        { src: 'body-script3.js', target: '#put-it-here' }
+      ],
+      esi: {
+        content: [{
+          tag: 'choose',
+          content: [{
+            tag: 'when',
+            test: '$(HTTP_COOKIE{group})=="Advanced"',
+            content: [{
+              tag: 'include',
+              src: 'http://www.example.com/advanced.html'
+            }]
+          }]
+        }]
+      }
+    })
+
+    setTimeout(() => (metainfo.title = 'My Updated Title'), 2000)
+
+    return {
+      metainfo
+    }
+  },
+  template: `
+    <metainfo :metainfo="metainfo">
+      <template v-slot:base="{ content, metainfo }">http://nuxt.dev:3000{{ content }}</template>
+      <template v-slot:title="{ content, metainfo }">{{ content }} - {{ metainfo.description }} - Hello</template>
+      <template v-slot:og(title)="{ content, metainfo, og }">
+        {{ content }} - {{ og.description }} - {{ metainfo.description }} - Hello Again
+      </template>
+    </metainfo>
+
+    <div id="app">
+      <h1>vue-router</h1>
+      <router-link to="/">Home</router-link>
+      <!-- router-link to="/about">About</router-link -->
+      <transition name="page" mode="out-in">
+        <router-view></router-view>
+      </transition>
+      <p>Inspect Element to see the meta info</p>
+    </div>
+  `
 }
 
 const router = createRouter({
@@ -90,45 +139,27 @@ const router = createRouter({
   ]
 })
 
-const Metadata = {
-  template: `
-    <teleport to="head">
-      <slot />
-    </teleport>
-
-    <teleport to="body">
-      <slot name="body" />
-    </teleport>
-  `
-}
-
-const App = {
-  template: `
-    <metainfo>
-      <title>My Title</title>
-      <meta name="charset" content="utf8" />
-
-      <template v-slot:body>
-        <script>var a = 1</script>
-      </template>
-    </metainfo>
-
-    <div id="app">
-      <h1>vue-router</h1>
-      <router-link to="/">Home</router-link>
-      <router-link to="/about">About</router-link>
-      <transition name="page" mode="out-in">
-        <router-view></router-view>
-      </transition>
-      <p>Inspect Element to see the meta info</p>
-    </div>
-  `
-}
+const meta = createMeta({
+  config: {
+    esi: {
+      group: true,
+      namespaced: true,
+      contentAttributes: [
+        'src',
+        'test',
+        'text'
+      ]
+    }
+  }
+})
 
 const app = createApp(App)
-app.component('metainfo', Metadata)
+app.component('metainfo', Metainfo)
 app.use(router)
 app.use(meta)
+app.mount('#app')
+
+// old stuff:
 /*
 const { set, remove } = app.$meta().addApp('custom')
 
@@ -142,8 +173,6 @@ set({
 })
 setTimeout(() => remove(), 3000)
 */
-app.mount('#app')
-
 /*
 const waitFor = time => new Promise(r => setTimeout(r, time || 1000))
 const o = {

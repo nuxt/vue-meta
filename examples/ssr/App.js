@@ -1,11 +1,10 @@
 import { createSSRApp } from 'vue'
 import { createRouter, createMemoryHistory } from 'vue-router'
-import VueMeta from '../../'
 
-/*Vue.use(Router)
+/* Vue.use(Router)
 Vue.use(VueMeta, {
   tagIDKeyName: 'hid'
-})*/
+}) */
 
 export default function createMyApp () {
   const Home = {
@@ -116,7 +115,7 @@ export default function createMyApp () {
         users: process.server ? [] : window.users
       }
     },
-    mounted() {
+    mounted () {
       const { set, remove } = this.$meta().addApp('client-only')
       set({
         bodyAttrs: { class: 'client-only' }
@@ -149,11 +148,11 @@ export default function createMyApp () {
 
   app.use(router)
 
-  /*const { set } = app.$meta().addApp('custom')
+  /* const { set } = app.$meta().addApp('custom')
   set({
     bodyAttrs: { class: 'custom-app' },
     meta: [{ charset: 'utf-8' }]
-  })*/
+  }) */
 
   return { app, router }
 }

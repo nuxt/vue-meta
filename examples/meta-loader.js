@@ -5,12 +5,12 @@ const {
   processIf,
   getBaseTransformPreset,
   createObjectExpression,
-  createObjectProperty,
+  createObjectProperty
 } = require('@vue/compiler-core')
 
 const { parse } = require('@vue/compiler-dom')
 
-function headTransform(node, context) {
+function headTransform (node, context) {
   console.log('NODE', node)
   if (node.type === 1 /* NodeTypes.ELEMENT */) {
     return () => {
@@ -24,7 +24,7 @@ function headTransform(node, context) {
         node.children.length === 1 ? node.children[0] : 'null'
       )
 
-      //options.properties.push(option)
+      // options.properties.push(option)
     }
   }
 }
@@ -32,7 +32,7 @@ function headTransform(node, context) {
 module.exports = function (source, map) {
   // TODO: add options
   const ast = parse(source)
-//console.log('AST', ast)
+  // console.log('AST', ast)
 
   const [nodeTransforms, directiveTransforms] = getBaseTransformPreset({
     prefixIdentifiers: true
@@ -49,7 +49,7 @@ module.exports = function (source, map) {
 
   const result = generate(ast, { mode: 'module' })
 
-console.log(result.code)
+  console.log(result.code)
 
   this.callback(null, `
 import { computed } from 'vue'

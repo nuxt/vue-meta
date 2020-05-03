@@ -3,12 +3,13 @@
   <p>Has metaInfo been updated due to navigation? {{ metaUpdated }}</p>
 </template>
 
+<script>
+/*
 <head type="template">
   <title v-if="title">{{ title }}</title>
   <meta v-for="meta in metas" :name="meta.name" :content="meta.content" />
 </head>
-
-<script>
+*/
 import { ref, onMounted } from 'vue'
 import { useRoute } from 'vue-router'
 
