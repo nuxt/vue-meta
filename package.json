@@ -81,7 +81,7 @@
     "chromedriver": "^80.0.1",
     "codecov": "^3.6.5",
     "copy-webpack-plugin": "^5.1.1",
-    "eslint": "^6.8.0",
+    "eslint": "^7.0.0",
     "eslint-config-standard": "^14.1.1",
     "eslint-plugin-import": "^2.20.1",
     "eslint-plugin-jest": "^23.8.2",
