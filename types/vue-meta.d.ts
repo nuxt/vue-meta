@@ -166,7 +166,8 @@ export interface NoScriptProperty extends MetaDataProperty {
 
 export interface MetaInfo {
   title?: string
-  titleTemplate?: string | ((titleChunk: string) => string)
+  titleTemplate?: string | ((titleChunk: string) => string),
+  titleChunk?: string,
 
   htmlAttrs?: AttributeProperty
   headAttrs?: AttributeProperty
