@@ -155,9 +155,11 @@ export function createWebpackConfig (config = {}) {
           NODE_ENV: '"test"'
         }
       }),
-      new CopyWebpackPlugin([
-        { from: path.join(path.dirname(config.entry), 'static') }
-      ])
+      new CopyWebpackPlugin({
+        patterns: [
+          { from: path.join(path.dirname(config.entry), 'static') }
+        ]
+      })
     ],
     resolve: {
       alias: {
