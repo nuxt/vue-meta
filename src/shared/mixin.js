@@ -11,6 +11,7 @@ let appId = 1
 export default function createMixin (Vue, options) {
   // for which Vue lifecycle hooks should the metaInfo be refreshed
   const updateOnLifecycleHook = ['activated', 'deactivated', 'beforeMount']
+  let wasServerRendered = false
 
   // watch for client side component updates
   return {
@@ -19,6 +20,12 @@ export default function createMixin (Vue, options) {
       const $root = this[rootKey]
       const $options = this.$options
       const devtoolsEnabled = Vue.config.devtools
+
+      if (this === $root) {
+        this.$on('hook:beforeMount', function () {
+          wasServerRendered = this.$el && this.$el.nodeType === 1 && this.$el.hasAttribute('data-server-rendered')
+        })
+      }
 
       Object.defineProperty(this, '_hasMetaInfo', {
         configurable: true,
@@ -99,10 +106,10 @@ export default function createMixin (Vue, options) {
             $root[rootConfigKey].initializedSsr = true
 
             this.$on('hook:beforeMount', function () {
-              const $root = this
+              const $root = this[rootKey]
               // if this Vue-app was server rendered, set the appId to 'ssr'
               // only one SSR app per page is supported
-              if ($root.$el && $root.$el.nodeType === 1 && $root.$el.hasAttribute('data-server-rendered')) {
+              if (wasServerRendered) {
                 $root[rootConfigKey].appId = options.ssrAppId
               }
             })
