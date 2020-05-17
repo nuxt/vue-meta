@@ -2,7 +2,7 @@ import { h } from 'vue'
 import { getConfigKey } from './config'
 
 export function renderMeta (ctx, key, data, config) {
-  console.info('renderMeta', key, data, config)
+  // console.info('renderMeta', key, data, config)
 
   if (config.group) {
     return renderGroup(ctx, key, data, config)
@@ -12,7 +12,7 @@ export function renderMeta (ctx, key, data, config) {
 }
 
 export function renderGroup (ctx, key, data, config) {
-  console.info('renderGroup', key, data, config)
+  // console.info('renderGroup', key, data, config)
 
   if (Array.isArray(data)) {
     config.contentAttributes = getConfigKey([key, config.tag], 'contentAttributes', config)
@@ -107,10 +107,10 @@ export function renderTag (ctx, key, data, config = {}, groupConfig = {}) {
     ? `${groupConfig.tagNamespace}:${tag}`
     : tag
 
-  console.info('FINAL TAG', finalTag)
-  console.log('      ATTRIBUTES', attributes)
-  console.log('      CONTENT', content)
-  // console.log(data, attributes, config)
+  // console.info('FINAL TAG', finalTag)
+  // console.log('      ATTRIBUTES', attributes)
+  // console.log('      CONTENT', content)
+  // // console.log(data, attributes, config)
 
   if (hasChilds) {
     for (const child of content) {

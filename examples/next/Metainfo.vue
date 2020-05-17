@@ -48,7 +48,7 @@ export default {
       targets[target].push(vnodes)
       continue
     }
-console.log('TARGETS', targets)
+// console.log('TARGETS', targets)
     return Object.keys(targets).map(target => {
       return h(Teleport, { to: target }, targets[target])
     })

@@ -1,10 +1,10 @@
-import { createApp, defineComponent, reactive, toRefs, h } from 'vue'
+import { createApp, defineComponent, reactive, inject, markRaw, toRefs, h, customRef, watch, watchEffect } from 'vue'
 import { createRouter, createWebHistory } from 'vue-router'
 import Metainfo from '../next/Metainfo.vue'
 import { createMeta, useMeta } from '../next'
 import About from './about.vue'
 
-let metaUpdated = 'no'
+const metaUpdated = 'no'
 
 const ChildComponent = defineComponent({
   name: 'child-component',
@@ -16,19 +16,8 @@ const ChildComponent = defineComponent({
   <h3>You're looking at the <strong>{{ page }}</strong> page</h3>
   <p>Has metaInfo been updated due to navigation? {{ metaUpdated }}</p>
 </div>`,
-  metaInfo () {
-    return {
-      title: `${this.page} - ${this.date && this.date.toTimeString()}`,
-      bodyAttrs: {
-        class: 'child-component'
-      },
-      afterNavigation () {
-        metaUpdated = 'yes'
-      }
-    }
-  },
   created () {
-    //console.log(this)
+    // console.log(this)
   },
   setup () {
     const state = reactive({
@@ -36,7 +25,16 @@ const ChildComponent = defineComponent({
       metaUpdated
     })
 
+    const metainfo = useMeta({
+      charset: 'utf16',
+      description: 'Description 2',
+      og: {
+        title: 'Og Title 2'
+      }
+    })
+
     return {
+      metainfo,
       ...toRefs(state)
     }
   }
@@ -53,7 +51,7 @@ function view (page) {
 
 const App = {
   setup () {
-    const metainfo = useMeta({
+    /* const metainfo = useMeta({
       base: { href: '/vue-router', target: '_blank' },
       charset: 'utf8',
       title: 'My Title',
@@ -104,7 +102,24 @@ const App = {
       }
     })
 
-    setTimeout(() => (metainfo.title = 'My Updated Title'), 2000)
+    setTimeout(() => (metainfo.title = 'My Updated Title'), 2000) */
+
+    const meta = useMeta({
+      charset: 'utf8',
+      title: 'Title 1',
+      og: {
+        title: 'Og Title 1'
+      }
+    })
+
+    setTimeout(() => (meta.charset = 'utf17'), 2000)
+    setTimeout(() => (meta.og = { title: 'Updated Og Title 1' }), 3000) // TODO: fix
+
+    const metainfo = inject('metainfo')
+
+    watch(metainfo, (newValue, oldValue) => {
+      console.log('UPDATE', newValue)
+    })
 
     return {
       metainfo
@@ -131,15 +146,21 @@ const App = {
   `
 }
 
-const router = createRouter({
-  history: createWebHistory('/vue-router'),
-  routes: [
-    { name: 'home', path: '/', component: view('home') },
-    { name: 'about', path: '/about', component: About }
-  ]
-})
+function decisionMaker5000000 (options) {
+  let theChosenOne
+
+  for (const option of options) {
+    if (!theChosenOne || theChosenOne.vm.id < option.vm.id) {
+      theChosenOne = option
+    }
+  }
+
+  console.log(theChosenOne.value)
+  return theChosenOne.value
+}
 
 const meta = createMeta({
+  resolver: decisionMaker5000000,
   config: {
     esi: {
       group: true,
@@ -151,6 +172,14 @@ const meta = createMeta({
       ]
     }
   }
+})
+
+const router = createRouter({
+  history: createWebHistory('/vue-router'),
+  routes: [
+    { name: 'home', path: '/', component: view('home') },
+    { name: 'about', path: '/about', component: About }
+  ]
 })
 
 const app = createApp(App)
