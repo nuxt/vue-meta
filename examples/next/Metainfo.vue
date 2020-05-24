@@ -10,17 +10,12 @@ export default {
     }
   },
   setup() {
-    const mapping = inject('__vueMetaConfig')
-
-    return {
-      mapping
-    }
   },
   render() {
     const targets = {}
 
     for (const key in this.metainfo) {
-      const config = this.mapping[key] || {}
+      const config = this.$metaInfo.config[key] || {}
 
       const vnodes = renderMeta(this, key, this.metainfo[key], config)
       let target = (key !== 'base' && this.metainfo[key].target) || config.target || 'head'
