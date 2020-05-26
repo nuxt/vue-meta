@@ -2,6 +2,22 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [2.3.4](https://github.com/nuxt/vue-meta/compare/v2.3.3...v2.3.4) (2020-05-26)
+
+
+### Features
+
+* add amp-boilerplate as boolean attribute (resolves: [#530](https://github.com/nuxt/vue-meta/issues/530)) ([#531](https://github.com/nuxt/vue-meta/issues/531)) ([bb45319](https://github.com/nuxt/vue-meta/commit/bb453195747058d90862d2db20d6a538ef04811f))
+
+
+### Bug Fixes
+
+* also set ssrAppId for first Vue app when ssrAttribute exists ([4cb5724](https://github.com/nuxt/vue-meta/commit/4cb57240da0fc486e63997d03d78b0639f9c2aa1))
+* also set ssrAppId for first Vue app when ssrAttribute exists ([#563](https://github.com/nuxt/vue-meta/issues/563)) ([4664df2](https://github.com/nuxt/vue-meta/commit/4664df2b1f4c972f883aa6f217a110243c8bc0c6))
+* auto install plugin in browser ([32fdb20](https://github.com/nuxt/vue-meta/commit/32fdb2001a5cb0b595c9db67d1b5a75da7f85902))
+* improve ssr detection when 1st metaInfo component isnt root ([a41b9a7](https://github.com/nuxt/vue-meta/commit/a41b9a73c0b90cf39d9c93fa66fe3e7d59494f77))
+* support falsy values in eg body attributes (fix: [#535](https://github.com/nuxt/vue-meta/issues/535)) ([1ef4108](https://github.com/nuxt/vue-meta/commit/1ef41080e72f6a3c745199ff2be1c20e69ba1157))
+
 ### [2.3.3](https://github.com/nuxt/vue-meta/compare/v2.3.2...v2.3.3) (2020-02-26)
 
 

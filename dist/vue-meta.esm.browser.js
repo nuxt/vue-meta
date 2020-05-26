@@ -1,5 +1,5 @@
 /**
- * vue-meta v2.3.3
+ * vue-meta v2.3.4
  * (c) 2020
  * - Declan de Wet
  * - Sébastien Chopin (@Atinux)
@@ -10,7 +10,7 @@
 
 import deepmerge from 'deepmerge';
 
-var version = "2.3.3";
+var version = "2.3.4";
 
 function _typeof(obj) {
   "@babel/helpers - typeof";
@@ -26,6 +26,78 @@ function _typeof(obj) {
   }
 
   return _typeof(obj);
+}
+
+function _unsupportedIterableToArray(o, minLen) {
+  if (!o) return;
+  if (typeof o === "string") return _arrayLikeToArray(o, minLen);
+  var n = Object.prototype.toString.call(o).slice(8, -1);
+  if (n === "Object" && o.constructor) n = o.constructor.name;
+  if (n === "Map" || n === "Set") return Array.from(o);
+  if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen);
+}
+
+function _arrayLikeToArray(arr, len) {
+  if (len == null || len > arr.length) len = arr.length;
+
+  for (var i = 0, arr2 = new Array(len); i < len; i++) arr2[i] = arr[i];
+
+  return arr2;
+}
+
+function _createForOfIteratorHelper(o) {
+  if (typeof Symbol === "undefined" || o[Symbol.iterator] == null) {
+    if (Array.isArray(o) || (o = _unsupportedIterableToArray(o))) {
+      var i = 0;
+
+      var F = function () {};
+
+      return {
+        s: F,
+        n: function () {
+          if (i >= o.length) return {
+            done: true
+          };
+          return {
+            done: false,
+            value: o[i++]
+          };
+        },
+        e: function (e) {
+          throw e;
+        },
+        f: F
+      };
+    }
+
+    throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.");
+  }
+
+  var it,
+      normalCompletion = true,
+      didErr = false,
+      err;
+  return {
+    s: function () {
+      it = o[Symbol.iterator]();
+    },
+    n: function () {
+      var step = it.next();
+      normalCompletion = step.done;
+      return step;
+    },
+    e: function (e) {
+      didErr = true;
+      err = e;
+    },
+    f: function () {
+      try {
+        if (!normalCompletion && it.return != null) it.return();
+      } finally {
+        if (didErr) throw err;
+      }
+    }
+  };
 }
 
 /**
@@ -149,7 +221,7 @@ var tagProperties = ['once', 'skip', 'template']; // Attributes which should be 
 
 var commonDataAttributes = ['body', 'pbody']; // from: https://github.com/kangax/html-minifier/blob/gh-pages/src/htmlminifier.js#L202
 
-var booleanHtmlAttributes = ['allowfullscreen', 'amp', 'async', 'autofocus', 'autoplay', 'checked', 'compact', 'controls', 'declare', 'default', 'defaultchecked', 'defaultmuted', 'defaultselected', 'defer', 'disabled', 'enabled', 'formnovalidate', 'hidden', 'indeterminate', 'inert', 'ismap', 'itemscope', 'loop', 'multiple', 'muted', 'nohref', 'noresize', 'noshade', 'novalidate', 'nowrap', 'open', 'pauseonexit', 'readonly', 'required', 'reversed', 'scoped', 'seamless', 'selected', 'sortable', 'truespeed', 'typemustmatch', 'visible'];
+var booleanHtmlAttributes = ['allowfullscreen', 'amp', 'amp-boilerplate', 'async', 'autofocus', 'autoplay', 'checked', 'compact', 'controls', 'declare', 'default', 'defaultchecked', 'defaultmuted', 'defaultselected', 'defer', 'disabled', 'enabled', 'formnovalidate', 'hidden', 'indeterminate', 'inert', 'ismap', 'itemscope', 'loop', 'multiple', 'muted', 'nohref', 'noresize', 'noshade', 'novalidate', 'nowrap', 'open', 'pauseonexit', 'readonly', 'required', 'reversed', 'scoped', 'seamless', 'selected', 'sortable', 'truespeed', 'typemustmatch', 'visible'];
 
 var batchId = null;
 function triggerUpdate(_ref, rootVm, hookName) {
@@ -250,6 +322,48 @@ function includes(array, value) {
   return array.includes(value);
 }
 
+var querySelector = function querySelector(arg, el) {
+  return (el || document).querySelectorAll(arg);
+};
+function getTag(tags, tag) {
+  if (!tags[tag]) {
+    tags[tag] = document.getElementsByTagName(tag)[0];
+  }
+
+  return tags[tag];
+}
+function getElementsKey(_ref) {
+  var body = _ref.body,
+      pbody = _ref.pbody;
+  return body ? 'body' : pbody ? 'pbody' : 'head';
+}
+function queryElements(parentNode, _ref2, attributes) {
+  var appId = _ref2.appId,
+      attribute = _ref2.attribute,
+      type = _ref2.type,
+      tagIDKeyName = _ref2.tagIDKeyName;
+  attributes = attributes || {};
+  var queries = ["".concat(type, "[").concat(attribute, "=\"").concat(appId, "\"]"), "".concat(type, "[data-").concat(tagIDKeyName, "]")].map(function (query) {
+    for (var key in attributes) {
+      var val = attributes[key];
+      var attributeValue = val && val !== true ? "=\"".concat(val, "\"") : '';
+      query += "[data-".concat(key).concat(attributeValue, "]");
+    }
+
+    return query;
+  });
+  return toArray(querySelector(queries.join(', '), parentNode));
+}
+function removeElementsByAppId(_ref3, appId) {
+  var attribute = _ref3.attribute;
+  toArray(querySelector("[".concat(attribute, "=\"").concat(appId, "\"]"))).map(function (el) {
+    return el.remove();
+  });
+}
+function removeAttribute(el, attributeName) {
+  el.removeAttribute(attributeName);
+}
+
 function hasMetaInfo(vm) {
   vm = vm || this;
   return vm && (vm[rootConfigKey] === true || isObject(vm[rootConfigKey]));
@@ -302,7 +416,8 @@ function addNavGuards(rootVm) {
 var appId = 1;
 function createMixin(Vue, options) {
   // for which Vue lifecycle hooks should the metaInfo be refreshed
-  var updateOnLifecycleHook = ['activated', 'deactivated', 'beforeMount']; // watch for client side component updates
+  var updateOnLifecycleHook = ['activated', 'deactivated', 'beforeMount'];
+  var wasServerRendered = false; // watch for client side component updates
 
   return {
     beforeCreate: function beforeCreate() {
@@ -323,9 +438,25 @@ function createMixin(Vue, options) {
 
           return hasMetaInfo(this);
         }
-      }); // Add a marker to know if it uses metaInfo
+      });
+
+      if (this === $root) {
+        $root.$once('hook:beforeMount', function () {
+          wasServerRendered = this.$el && this.$el.nodeType === 1 && this.$el.hasAttribute('data-server-rendered'); // In most cases when you have a SSR app it will be the first app thats gonna be
+          // initiated, if we cant detect the data-server-rendered attribute from Vue but we
+          // do see our own ssrAttribute then _assume_ the Vue app with appId 1 is the ssr app
+          // attempted fix for #404 & #562, but we rly need to refactor how we pass appIds from
+          // ssr to the client
+
+          if (!wasServerRendered && $root[rootConfigKey] && $root[rootConfigKey].appId === 1) {
+            var htmlTag = getTag({}, 'html');
+            wasServerRendered = htmlTag && htmlTag.hasAttribute(options.ssrAttribute);
+          }
+        });
+      } // Add a marker to know if it uses metaInfo
       // _vnode is used to know that it's attached to a real component
       // useful if we use some mixin to add some meta tags (like nuxt-i18n)
+
 
       if (isUndefined($options[options.keyName]) || $options[options.keyName] === null) {
         return;
@@ -396,10 +527,10 @@ function createMixin(Vue, options) {
           if (!$root[rootConfigKey].initializedSsr) {
             $root[rootConfigKey].initializedSsr = true;
             this.$on('hook:beforeMount', function () {
-              var $root = this; // if this Vue-app was server rendered, set the appId to 'ssr'
+              var $root = this[rootKey]; // if this Vue-app was server rendered, set the appId to 'ssr'
               // only one SSR app per page is supported
 
-              if ($root.$el && $root.$el.nodeType === 1 && $root.$el.hasAttribute('data-server-rendered')) {
+              if (wasServerRendered) {
                 $root[rootConfigKey].appId = options.ssrAppId;
               }
             });
@@ -409,37 +540,39 @@ function createMixin(Vue, options) {
           this.$on('hook:mounted', function () {
             var $root = this[rootKey];
 
-            if (!$root[rootConfigKey].initialized) {
-              // used in triggerUpdate to check if a change was triggered
-              // during initialization
-              $root[rootConfigKey].initializing = true; // refresh meta in nextTick so all child components have loaded
-
-              this.$nextTick(function () {
-                var _$root$$meta$refresh = $root.$meta().refresh(),
-                    tags = _$root$$meta$refresh.tags,
-                    metaInfo = _$root$$meta$refresh.metaInfo; // After ssr hydration (identifier by tags === false) check
-                // if initialized was set to null in triggerUpdate. That'd mean
-                // that during initilazation changes where triggered which need
-                // to be applied OR a metaInfo watcher was triggered before the
-                // current hook was called
-                // (during initialization all changes are blocked)
+            if ($root[rootConfigKey].initialized) {
+              return;
+            } // used in triggerUpdate to check if a change was triggered
+            // during initialization
 
 
-                if (tags === false && $root[rootConfigKey].initialized === null) {
-                  this.$nextTick(function () {
-                    return triggerUpdate(options, $root, 'init');
-                  });
-                }
+            $root[rootConfigKey].initializing = true; // refresh meta in nextTick so all child components have loaded
 
-                $root[rootConfigKey].initialized = true;
-                delete $root[rootConfigKey].initializing; // add the navigation guards if they havent been added yet
-                // they are needed for the afterNavigation callback
+            this.$nextTick(function () {
+              var _$root$$meta$refresh = $root.$meta().refresh(),
+                  tags = _$root$$meta$refresh.tags,
+                  metaInfo = _$root$$meta$refresh.metaInfo; // After ssr hydration (identifier by tags === false) check
+              // if initialized was set to null in triggerUpdate. That'd mean
+              // that during initilazation changes where triggered which need
+              // to be applied OR a metaInfo watcher was triggered before the
+              // current hook was called
+              // (during initialization all changes are blocked)
 
-                if (!options.refreshOnceOnNavigation && metaInfo.afterNavigation) {
-                  addNavGuards($root);
-                }
-              });
-            }
+
+              if (tags === false && $root[rootConfigKey].initialized === null) {
+                this.$nextTick(function () {
+                  return triggerUpdate(options, $root, 'init');
+                });
+              }
+
+              $root[rootConfigKey].initialized = true;
+              delete $root[rootConfigKey].initializing; // add the navigation guards if they havent been added yet
+              // they are needed for the afterNavigation callback
+
+              if (!options.refreshOnceOnNavigation && metaInfo.afterNavigation) {
+                addNavGuards($root);
+              }
+            });
           }); // add the navigation guards if requested
 
           if (options.refreshOnceOnNavigation) {
@@ -838,48 +971,6 @@ function getComponentOption(options, component, result) {
   return result;
 }
 
-var querySelector = function querySelector(arg, el) {
-  return (el || document).querySelectorAll(arg);
-};
-function getTag(tags, tag) {
-  if (!tags[tag]) {
-    tags[tag] = document.getElementsByTagName(tag)[0];
-  }
-
-  return tags[tag];
-}
-function getElementsKey(_ref) {
-  var body = _ref.body,
-      pbody = _ref.pbody;
-  return body ? 'body' : pbody ? 'pbody' : 'head';
-}
-function queryElements(parentNode, _ref2, attributes) {
-  var appId = _ref2.appId,
-      attribute = _ref2.attribute,
-      type = _ref2.type,
-      tagIDKeyName = _ref2.tagIDKeyName;
-  attributes = attributes || {};
-  var queries = ["".concat(type, "[").concat(attribute, "=\"").concat(appId, "\"]"), "".concat(type, "[data-").concat(tagIDKeyName, "]")].map(function (query) {
-    for (var key in attributes) {
-      var val = attributes[key];
-      var attributeValue = val && val !== true ? "=\"".concat(val, "\"") : '';
-      query += "[data-".concat(key).concat(attributeValue, "]");
-    }
-
-    return query;
-  });
-  return toArray(querySelector(queries.join(', '), parentNode));
-}
-function removeElementsByAppId(_ref3, appId) {
-  var attribute = _ref3.attribute;
-  toArray(querySelector("[".concat(attribute, "=\"").concat(appId, "\"]"))).map(function (el) {
-    return el.remove();
-  });
-}
-function removeAttribute(el, attributeName) {
-  el.removeAttribute(attributeName);
-}
-
 var callbacks = [];
 function isDOMComplete(d) {
   return (d || document).readyState === 'complete';
@@ -1010,7 +1101,7 @@ function updateAttribute(appId, options, type, attrs, tag) {
   // which have been removed for this appId
 
   for (var attr in data) {
-    if (data[attr] && appId in data[attr]) {
+    if (data[attr] !== undefined && appId in data[attr]) {
       toUpdate.push(attr);
 
       if (!attrs[attr]) {
@@ -1025,7 +1116,7 @@ function updateAttribute(appId, options, type, attrs, tag) {
     if (!attrData || attrData[appId] !== attrs[_attr]) {
       toUpdate.push(_attr);
 
-      if (attrs[_attr]) {
+      if (attrs[_attr] !== undefined) {
         data[_attr] = data[_attr] || {};
         data[_attr][appId] = attrs[_attr];
       }
@@ -1042,7 +1133,9 @@ function updateAttribute(appId, options, type, attrs, tag) {
     }
 
     if (attrValues.length) {
-      var attrValue = includes(booleanHtmlAttributes, _attr2) && attrValues.some(Boolean) ? '' : attrValues.filter(Boolean).join(' ');
+      var attrValue = includes(booleanHtmlAttributes, _attr2) && attrValues.some(Boolean) ? '' : attrValues.filter(function (v) {
+        return v !== undefined;
+      }).join(' ');
       tag.setAttribute(_attr2, attrValue);
     } else {
       removeAttribute(tag, _attr2);
@@ -1313,29 +1406,20 @@ function setMetaInfo(rootVm, appId, options, metaInfo) {
 function removeMetaInfo(rootVm, appId, options) {
   if (rootVm && rootVm.$el) {
     var tags = {};
-    var _iteratorNormalCompletion = true;
-    var _didIteratorError = false;
-    var _iteratorError = undefined;
+
+    var _iterator = _createForOfIteratorHelper(metaInfoAttributeKeys),
+        _step;
 
     try {
-      for (var _iterator = metaInfoAttributeKeys[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+      for (_iterator.s(); !(_step = _iterator.n()).done;) {
         var type = _step.value;
         var tagName = type.substr(0, 4);
         updateAttribute(appId, options, type, {}, getTag(tags, tagName));
       }
     } catch (err) {
-      _didIteratorError = true;
-      _iteratorError = err;
+      _iterator.e(err);
     } finally {
-      try {
-        if (!_iteratorNormalCompletion && _iterator.return != null) {
-          _iterator.return();
-        }
-      } finally {
-        if (_didIteratorError) {
-          throw _iteratorError;
-        }
-      }
+      _iterator.f();
     }
 
     return removeElementsByAppId(options, appId);
@@ -1536,6 +1620,14 @@ function install(Vue, options) {
   };
 
   Vue.mixin(createMixin(Vue, options));
+}
+
+{
+  // automatic install
+  if (!isUndefined(window) && !isUndefined(window.Vue)) {
+    /* istanbul ignore next */
+    install(window.Vue);
+  }
 }
 
 var index = {
