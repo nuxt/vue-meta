@@ -66,8 +66,7 @@ export default function createApp () {
     ]
   })
 
-  const app = new Vue({
-    router,
+  const App = ({
     metaInfo () {
       return {
         title: 'Boring Title',
@@ -155,6 +154,11 @@ export default function createApp () {
 
       <router-view />
     </div>`
+  })
+
+  const app = new Vue({
+    router,
+    render: h => h(App)
   })
 
   const { set } = app.$meta().addApp('custom')

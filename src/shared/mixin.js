@@ -1,6 +1,7 @@
 import { triggerUpdate } from '../client/update'
 import { isUndefined, isFunction } from '../utils/is-type'
 import { find } from '../utils/array'
+import { getTag } from '../utils/elements'
 import { rootConfigKey } from './constants'
 import { hasMetaInfo } from './meta-helpers'
 import { addNavGuards } from './nav-guards'
@@ -21,12 +22,6 @@ export default function createMixin (Vue, options) {
       const $options = this.$options
       const devtoolsEnabled = Vue.config.devtools
 
-      if (this === $root) {
-        this.$on('hook:beforeMount', function () {
-          wasServerRendered = this.$el && this.$el.nodeType === 1 && this.$el.hasAttribute('data-server-rendered')
-        })
-      }
-
       Object.defineProperty(this, '_hasMetaInfo', {
         configurable: true,
         get () {
@@ -38,6 +33,22 @@ export default function createMixin (Vue, options) {
           return hasMetaInfo(this)
         }
       })
+
+      if (this === $root) {
+        $root.$once('hook:beforeMount', function () {
+          wasServerRendered = this.$el && this.$el.nodeType === 1 && this.$el.hasAttribute('data-server-rendered')
+
+          // In most cases when you have a SSR app it will be the first app thats gonna be
+          // initiated, if we cant detect the data-server-rendered attribute from Vue but we
+          // do see our own ssrAttribute then _assume_ the Vue app with appId 1 is the ssr app
+          // attempted fix for #404 & #562, but we rly need to refactor how we pass appIds from
+          // ssr to the client
+          if (!wasServerRendered && $root[rootConfigKey] && $root[rootConfigKey].appId === 1) {
+            const htmlTag = getTag({}, 'html')
+            wasServerRendered = htmlTag && htmlTag.hasAttribute(options.ssrAttribute)
+          }
+        })
+      }
 
       // Add a marker to know if it uses metaInfo
       // _vnode is used to know that it's attached to a real component
@@ -107,6 +118,7 @@ export default function createMixin (Vue, options) {
 
             this.$on('hook:beforeMount', function () {
               const $root = this[rootKey]
+
               // if this Vue-app was server rendered, set the appId to 'ssr'
               // only one SSR app per page is supported
               if (wasServerRendered) {
@@ -119,35 +131,37 @@ export default function createMixin (Vue, options) {
           this.$on('hook:mounted', function () {
             const $root = this[rootKey]
 
-            if (!$root[rootConfigKey].initialized) {
-              // used in triggerUpdate to check if a change was triggered
-              // during initialization
-              $root[rootConfigKey].initializing = true
-
-              // refresh meta in nextTick so all child components have loaded
-              this.$nextTick(function () {
-                const { tags, metaInfo } = $root.$meta().refresh()
-
-                // After ssr hydration (identifier by tags === false) check
-                // if initialized was set to null in triggerUpdate. That'd mean
-                // that during initilazation changes where triggered which need
-                // to be applied OR a metaInfo watcher was triggered before the
-                // current hook was called
-                // (during initialization all changes are blocked)
-                if (tags === false && $root[rootConfigKey].initialized === null) {
-                  this.$nextTick(() => triggerUpdate(options, $root, 'init'))
-                }
-
-                $root[rootConfigKey].initialized = true
-                delete $root[rootConfigKey].initializing
-
-                // add the navigation guards if they havent been added yet
-                // they are needed for the afterNavigation callback
-                if (!options.refreshOnceOnNavigation && metaInfo.afterNavigation) {
-                  addNavGuards($root)
-                }
-              })
+            if ($root[rootConfigKey].initialized) {
+              return
             }
+
+            // used in triggerUpdate to check if a change was triggered
+            // during initialization
+            $root[rootConfigKey].initializing = true
+
+            // refresh meta in nextTick so all child components have loaded
+            this.$nextTick(function () {
+              const { tags, metaInfo } = $root.$meta().refresh()
+
+              // After ssr hydration (identifier by tags === false) check
+              // if initialized was set to null in triggerUpdate. That'd mean
+              // that during initilazation changes where triggered which need
+              // to be applied OR a metaInfo watcher was triggered before the
+              // current hook was called
+              // (during initialization all changes are blocked)
+              if (tags === false && $root[rootConfigKey].initialized === null) {
+                this.$nextTick(() => triggerUpdate(options, $root, 'init'))
+              }
+
+              $root[rootConfigKey].initialized = true
+              delete $root[rootConfigKey].initializing
+
+              // add the navigation guards if they havent been added yet
+              // they are needed for the afterNavigation callback
+              if (!options.refreshOnceOnNavigation && metaInfo.afterNavigation) {
+                addNavGuards($root)
+              }
+            })
           })
           // add the navigation guards if requested
           if (options.refreshOnceOnNavigation) {
