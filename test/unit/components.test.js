@@ -514,28 +514,28 @@ describe('components', () => {
   })
 
   test('can enable option refreshOnceOnNavigation runtime', () => {
-    const guards = {}
+    const guards = { before: [], after: [] }
     const wrapper = mount(HelloWorld, {
       localVue: Vue,
       mocks: {
         $router: {
           beforeEach (fn) {
-            guards.before = fn
+            guards.before.push(fn)
           },
           afterEach (fn) {
-            guards.after = fn
+            guards.after.push(fn)
           }
         }
       }
     })
 
-    expect(guards.before).toBeUndefined()
-    expect(guards.after).toBeUndefined()
+    expect(guards.before).toEqual([expect.any(Function)])
+    expect(guards.after).toEqual([])
 
     wrapper.vm.$meta().setOptions({ refreshOnceOnNavigation: true })
 
-    expect(guards.before).not.toBeUndefined()
-    expect(guards.after).not.toBeUndefined()
+    expect(guards.before).toEqual([expect.any(Function), expect.any(Function)])
+    expect(guards.after).toEqual([expect.any(Function)])
   })
 
   test('destroyed hook calls triggerUpdate delayed', async () => {

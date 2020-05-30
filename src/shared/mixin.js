@@ -13,6 +13,8 @@ export default function createMixin (Vue, options) {
   // for which Vue lifecycle hooks should the metaInfo be refreshed
   const updateOnLifecycleHook = ['activated', 'deactivated', 'beforeMount']
   let wasServerRendered = false
+  let wasRedirectedOnLoad = false
+  let removeRedirectListener
 
   // watch for client side component updates
   return {
@@ -35,6 +37,13 @@ export default function createMixin (Vue, options) {
       })
 
       if (this === $root) {
+        if ($root.$router) {
+          removeRedirectListener = $root.$router.beforeEach((to, from, next) => {
+            wasRedirectedOnLoad = true
+            next()
+          })
+        }
+
         $root.$once('hook:beforeMount', function () {
           wasServerRendered = this.$el && this.$el.nodeType === 1 && this.$el.hasAttribute('data-server-rendered')
 
@@ -149,7 +158,7 @@ export default function createMixin (Vue, options) {
               // to be applied OR a metaInfo watcher was triggered before the
               // current hook was called
               // (during initialization all changes are blocked)
-              if (tags === false && $root[rootConfigKey].initialized === null) {
+              if ((tags === false && $root[rootConfigKey].initialized === null) || wasRedirectedOnLoad) {
                 this.$nextTick(() => triggerUpdate(options, $root, 'init'))
               }
 
@@ -160,6 +169,10 @@ export default function createMixin (Vue, options) {
               // they are needed for the afterNavigation callback
               if (!options.refreshOnceOnNavigation && metaInfo.afterNavigation) {
                 addNavGuards($root)
+              }
+
+              if (removeRedirectListener) {
+                removeRedirectListener()
               }
             })
           })
