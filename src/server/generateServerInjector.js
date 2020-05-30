@@ -9,7 +9,7 @@ import { titleGenerator, attributeGenerator, tagGenerator } from './generators'
  * @return {Object} - the new injector
  */
 
-export default function generateServerInjector (options, metaInfo) {
+export default function generateServerInjector (options, metaInfo, globalInjectOptions) {
   const serverInjector = {
     data: metaInfo,
     extraData: undefined,
@@ -23,15 +23,16 @@ export default function generateServerInjector (options, metaInfo) {
       // only call title for the head
       return (opts.body || opts.pbody ? '' : m.title.text(opts)) +
         m.meta.text(opts) +
+        m.base.text(opts) +
         m.link.text(opts) +
         m.style.text(opts) +
         m.script.text(opts) +
         m.noscript.text(opts)
     },
     injectors: {
-      head: ln => serverInjector.callInjectors({ ln }),
-      bodyPrepend: ln => serverInjector.callInjectors({ ln, pbody: true }),
-      bodyAppend: ln => serverInjector.callInjectors({ ln, body: true })
+      head: ln => serverInjector.callInjectors({ ...globalInjectOptions, ln }),
+      bodyPrepend: ln => serverInjector.callInjectors({ ...globalInjectOptions, ln, pbody: true }),
+      bodyAppend: ln => serverInjector.callInjectors({ ...globalInjectOptions, ln, body: true })
     }
   }
 
@@ -41,9 +42,17 @@ export default function generateServerInjector (options, metaInfo) {
     }
 
     serverInjector.injectors[type] = {
-      text (arg) {
+      text (injectOptions) {
+        const addSsrAttribute = injectOptions === true
+
+        injectOptions = {
+          addSsrAttribute,
+          ...globalInjectOptions,
+          ...injectOptions
+        }
+
         if (type === 'title') {
-          return titleGenerator(options, type, serverInjector.data[type], arg)
+          return titleGenerator(options, type, serverInjector.data[type], injectOptions)
         }
 
         if (metaInfoAttributeKeys.includes(type)) {
@@ -51,9 +60,10 @@ export default function generateServerInjector (options, metaInfo) {
 
           const data = serverInjector.data[type]
           if (data) {
+            const appId = injectOptions.isSpa ? '1' : options.ssrAppId
             for (const attr in data) {
               attributeData[attr] = {
-                [options.ssrAppId]: data[attr]
+                [appId]: data[attr]
               }
             }
           }
@@ -72,15 +82,15 @@ export default function generateServerInjector (options, metaInfo) {
             }
           }
 
-          return attributeGenerator(options, type, attributeData, arg)
+          return attributeGenerator(options, type, attributeData, injectOptions)
         }
 
-        let str = tagGenerator(options, type, serverInjector.data[type], arg)
+        let str = tagGenerator(options, type, serverInjector.data[type], injectOptions)
 
         if (serverInjector.extraData) {
           for (const appId in serverInjector.extraData) {
             const data = serverInjector.extraData[appId][type]
-            const extraStr = tagGenerator(options, type, data, { appId, ...arg })
+            const extraStr = tagGenerator(options, type, data, { appId, ...injectOptions })
             str = `${str}${extraStr}`
           }
         }

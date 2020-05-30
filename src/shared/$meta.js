@@ -38,7 +38,7 @@ export default function $meta (options) {
       }
     },
     refresh: () => refresh($root, options),
-    inject: () => process.server ? inject($root, options) : showWarningNotSupportedInBrowserBundle('inject'),
+    inject: injectOptions => process.server ? inject($root, options, injectOptions) : showWarningNotSupportedInBrowserBundle('inject'),
     pause: () => pause($root),
     resume: () => resume($root),
     addApp: appId => addApp($root, appId, options)

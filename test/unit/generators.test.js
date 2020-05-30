@@ -135,7 +135,7 @@ describe('extra tests', () => {
     expect(meta.bodyPrepend(true)).toBe('<script data-vue-meta="test-app" src="/script.js" data-pbody="true"></script>\n')
     expect(meta.bodyAppend()).toBe('<script data-vue-meta="ssr" src="/script.js" data-body="true"></script>')
 
-    expect(meta.htmlAttrs.text()).toBe('lang="en" data-vue-meta="%7B%22lang%22:%7B%22ssr%22:%22en%22%7D%7D"')
+    expect(meta.htmlAttrs.text({ ln: true })).toBe('lang="en" data-vue-meta="%7B%22lang%22:%7B%22ssr%22:%22en%22%7D%7D"')
     expect(meta.bodyAttrs.text()).toBe('class="base-class extra-class" data-vue-meta="%7B%22class%22:%7B%22ssr%22:%22base-class%22,%22test-app%22:%22extra-class%22%7D%7D"')
   })
 })

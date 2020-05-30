@@ -190,11 +190,15 @@ Updates the current metadata with new metadata.
 Useful when updating metadata as the result of an asynchronous action that resolves after the initial render takes place.
 
 ### $meta().inject
+- arguments
+  - injectOptions (type: `object`) <Badge text="v2.4+"/>
 - returns [`metaInfo`](/api/#metaInfo-properties)
 
 :::tip SSR only
 `inject` is available in the server plugin only and is not available on the client
 :::
+
+You can pass an object to inject with global inject options. See [SSR injection method arguments](/api/#noscript-text) for a list of available options.
 
 It returns a special `metaInfo` object where all keys have an object as value which contains a `text()` method for returning html code
 
@@ -809,7 +813,9 @@ See the [SSR guide](/guide/ssr.html#inject-metadata-into-page-string) for more i
 ### script.text
 ### noscript.text
 - arguments
-  - options (type: `object`, default: `{ ln: false , body: false, pbody: false }`)
+  - options (type: `object`, default: `{ isSpa: false, ln: false , body: false, pbody: false }`)
+
+Set `isSpa: true` if you generate a SPA on server side and want to use the default appId `1` instead of [ssrAppId](/api/#ssrappid)
 
 The `body` and `pbody` props can be used to support positioning of elements in your template, see [SSR Support](#ssr-support)
 
