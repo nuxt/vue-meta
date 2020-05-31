@@ -4,7 +4,7 @@ import { defaultOptions } from '../../src/shared/constants'
 
 jest.mock('../../src/client/update')
 jest.mock('../../package.json', () => ({
-  version: 'test-version'
+  version: 'test-version',
 }))
 
 describe('plugin', () => {
@@ -56,8 +56,8 @@ describe('plugin', () => {
     const Component = Vue.component('test-component', {
       template: '<div>Test</div>',
       [defaultOptions.keyName]: {
-        title: 'Hello World'
-      }
+        title: 'Hello World',
+      },
     })
 
     const { vm } = mount(Component, { localVue: Vue })
@@ -86,8 +86,8 @@ describe('plugin', () => {
     const Component = Vue.component('test-component', {
       template: '<div>Test</div>',
       [defaultOptions.keyName]: {
-        title: 'Hello World'
-      }
+        title: 'Hello World',
+      },
     })
 
     Vue.config.devtools = true
@@ -107,8 +107,8 @@ describe('plugin', () => {
     const Component = Vue.component('test-component', {
       template: '<div>Test</div>',
       [defaultOptions.keyName]: {
-        title: 'Hello World'
-      }
+        title: 'Hello World',
+      },
     })
 
     const { vm } = mount(Component, { localVue: Vue })
@@ -122,13 +122,15 @@ describe('plugin', () => {
   test('can use generate export with options', () => {
     process.server = true
     const rawInfo = {
-      meta: [{ charset: 'utf-8' }]
+      meta: [{ charset: 'utf-8' }],
     }
 
     const metaInfo = VueMetaPlugin.generate(rawInfo, {
-      ssrAppId: 'my-test-app-id'
+      ssrAppId: 'my-test-app-id',
     })
-    expect(metaInfo.meta.text()).toBe('<meta data-vue-meta="my-test-app-id" charset="utf-8">')
+    expect(metaInfo.meta.text()).toBe(
+      '<meta data-vue-meta="my-test-app-id" charset="utf-8">'
+    )
 
     // no error on not provided metaInfo types
     expect(metaInfo.script.text()).toBe('')
@@ -139,50 +141,56 @@ describe('plugin', () => {
     const warn = jest.spyOn(console, 'warn').mockImplementation(() => {})
 
     const rawInfo = {
-      meta: [{ charset: 'utf-8' }]
+      meta: [{ charset: 'utf-8' }],
     }
 
     const metaInfo = VueMetaPlugin.generate(rawInfo)
     expect(metaInfo).toBeUndefined()
     expect(warn).toHaveBeenCalledTimes(1)
-    expect(warn).toHaveBeenCalledWith('generate is not supported in browser builds')
+    expect(warn).toHaveBeenCalledWith(
+      'generate is not supported in browser builds'
+    )
 
     warn.mockRestore()
   })
 
   test('updates can be paused and resumed', async () => {
-    const { batchUpdate: _batchUpdate } = jest.requireActual('../../src/client/update')
+    const { batchUpdate: _batchUpdate } = jest.requireActual(
+      '../../src/client/update'
+    )
     const batchUpdateSpy = batchUpdate.mockImplementation(_batchUpdate)
     // because triggerUpdate & batchUpdate reside in the same file we cant mock them both,
     // so just recreate the triggerUpdate fn by copying its implementation
-    const triggerUpdateSpy = triggerUpdate.mockImplementation((options, vm, hookName) => {
-      if (vm.$root._vueMeta.initialized && !vm.$root._vueMeta.pausing) {
-        // batch potential DOM updates to prevent extraneous re-rendering
-        batchUpdateSpy(() => vm.$meta().refresh())
+    const triggerUpdateSpy = triggerUpdate.mockImplementation(
+      (options, vm, hookName) => {
+        if (vm.$root._vueMeta.initialized && !vm.$root._vueMeta.pausing) {
+          // batch potential DOM updates to prevent extraneous re-rendering
+          batchUpdateSpy(() => vm.$meta().refresh())
+        }
       }
-    })
+    )
 
     const Component = Vue.component('test-component', {
-      metaInfo () {
+      metaInfo() {
         return {
-          title: this.title
+          title: this.title,
         }
       },
       props: {
         title: {
           type: String,
-          default: ''
-        }
+          default: '',
+        },
       },
-      template: '<div>Test</div>'
+      template: '<div>Test</div>',
     })
 
     let title = 'first title'
     const wrapper = mount(Component, {
       localVue: Vue,
       propsData: {
-        title
-      }
+        title,
+      },
     })
 
     // no batchUpdate on initialization
@@ -223,7 +231,9 @@ describe('plugin', () => {
   test('updates are batched by default', async () => {
     jest.useFakeTimers()
 
-    const { batchUpdate: _batchUpdate } = jest.requireActual('../../src/client/update')
+    const { batchUpdate: _batchUpdate } = jest.requireActual(
+      '../../src/client/update'
+    )
     const batchUpdateSpy = batchUpdate.mockImplementation(_batchUpdate)
     const refreshSpy = jest.fn()
     // because triggerUpdate & batchUpdate reside in the same file we cant mock them both,
@@ -236,26 +246,26 @@ describe('plugin', () => {
     })
 
     const Component = Vue.component('test-component', {
-      metaInfo () {
+      metaInfo() {
         return {
-          title: this.title
+          title: this.title,
         }
       },
       props: {
         title: {
           type: String,
-          default: ''
-        }
+          default: '',
+        },
       },
-      template: '<div>Test</div>'
+      template: '<div>Test</div>',
     })
 
     let title = 'first title'
     const wrapper = mount(Component, {
       localVue: Vue,
       propsData: {
-        title
-      }
+        title,
+      },
     })
     await vmTick(wrapper.vm)
     jest.clearAllMocks()

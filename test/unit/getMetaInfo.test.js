@@ -3,7 +3,13 @@ import _getMetaInfo from '../../src/shared/getMetaInfo'
 import { loadVueMetaPlugin } from '../utils'
 import { defaultOptions } from '../../src/shared/constants'
 
-const getMetaInfo = component => _getMetaInfo(defaultOptions, getComponentMetaInfo(defaultOptions, component), [], component)
+const getMetaInfo = component =>
+  _getMetaInfo(
+    defaultOptions,
+    getComponentMetaInfo(defaultOptions, component),
+    [],
+    component
+  )
 
 describe('getMetaInfo', () => {
   let Vue
@@ -27,7 +33,7 @@ describe('getMetaInfo', () => {
       script: [],
       noscript: [],
       __dangerouslyDisableSanitizers: [],
-      __dangerouslyDisableSanitizersByTagID: {}
+      __dangerouslyDisableSanitizersByTagID: {},
     })
   })
 
@@ -35,10 +41,8 @@ describe('getMetaInfo', () => {
     const component = new Vue({
       metaInfo: {
         title: 'Hello',
-        meta: [
-          { charset: 'utf-8' }
-        ]
-      }
+        meta: [{ charset: 'utf-8' }],
+      },
     })
 
     expect(getMetaInfo(component)).toEqual({
@@ -48,16 +52,14 @@ describe('getMetaInfo', () => {
       htmlAttrs: {},
       headAttrs: {},
       bodyAttrs: {},
-      meta: [
-        { charset: 'utf-8' }
-      ],
+      meta: [{ charset: 'utf-8' }],
       base: [],
       link: [],
       style: [],
       script: [],
       noscript: [],
       __dangerouslyDisableSanitizers: [],
-      __dangerouslyDisableSanitizersByTagID: {}
+      __dangerouslyDisableSanitizersByTagID: {},
     })
   })
 
@@ -65,8 +67,8 @@ describe('getMetaInfo', () => {
     const component = new Vue({
       metaInfo: {
         title: 'Hello',
-        base: { href: 'href' }
-      }
+        base: { href: 'href' },
+      },
     })
 
     expect(getMetaInfo(component)).toEqual({
@@ -77,15 +79,13 @@ describe('getMetaInfo', () => {
       headAttrs: {},
       bodyAttrs: {},
       meta: [],
-      base: [
-        { href: 'href' }
-      ],
+      base: [{ href: 'href' }],
       link: [],
       style: [],
       script: [],
       noscript: [],
       __dangerouslyDisableSanitizers: [],
-      __dangerouslyDisableSanitizersByTagID: {}
+      __dangerouslyDisableSanitizersByTagID: {},
     })
   })
 
@@ -97,15 +97,15 @@ describe('getMetaInfo', () => {
           {
             vmid: 'a',
             property: 'a',
-            content: 'a'
+            content: 'a',
           },
           {
             vmid: 'a',
             property: 'a',
-            content: 'b'
-          }
-        ]
-      }
+            content: 'b',
+          },
+        ],
+      },
     })
 
     expect(getMetaInfo(component)).toEqual({
@@ -119,8 +119,8 @@ describe('getMetaInfo', () => {
         {
           vmid: 'a',
           property: 'a',
-          content: 'a'
-        }
+          content: 'a',
+        },
       ],
       base: [],
       link: [],
@@ -128,7 +128,7 @@ describe('getMetaInfo', () => {
       script: [],
       noscript: [],
       __dangerouslyDisableSanitizers: [],
-      __dangerouslyDisableSanitizersByTagID: {}
+      __dangerouslyDisableSanitizersByTagID: {},
     })
   })
 
@@ -137,10 +137,8 @@ describe('getMetaInfo', () => {
       metaInfo: {
         title: 'Hello',
         titleTemplate: '%s World',
-        meta: [
-          { charset: 'utf-8' }
-        ]
-      }
+        meta: [{ charset: 'utf-8' }],
+      },
     })
 
     expect(getMetaInfo(component)).toEqual({
@@ -150,16 +148,14 @@ describe('getMetaInfo', () => {
       htmlAttrs: {},
       headAttrs: {},
       bodyAttrs: {},
-      meta: [
-        { charset: 'utf-8' }
-      ],
+      meta: [{ charset: 'utf-8' }],
       base: [],
       link: [],
       style: [],
       script: [],
       noscript: [],
       __dangerouslyDisableSanitizers: [],
-      __dangerouslyDisableSanitizersByTagID: {}
+      __dangerouslyDisableSanitizersByTagID: {},
     })
   })
 
@@ -170,10 +166,8 @@ describe('getMetaInfo', () => {
       metaInfo: {
         title: 'Hello',
         titleTemplate,
-        meta: [
-          { charset: 'utf-8' }
-        ]
-      }
+        meta: [{ charset: 'utf-8' }],
+      },
     })
 
     expect(getMetaInfo(component)).toEqual({
@@ -183,16 +177,14 @@ describe('getMetaInfo', () => {
       htmlAttrs: {},
       headAttrs: {},
       bodyAttrs: {},
-      meta: [
-        { charset: 'utf-8' }
-      ],
+      meta: [{ charset: 'utf-8' }],
       base: [],
       link: [],
       style: [],
       script: [],
       noscript: [],
       __dangerouslyDisableSanitizers: [],
-      __dangerouslyDisableSanitizersByTagID: {}
+      __dangerouslyDisableSanitizersByTagID: {},
     })
   })
 
@@ -205,15 +197,13 @@ describe('getMetaInfo', () => {
       metaInfo: {
         title: 'Hello',
         titleTemplate,
-        meta: [
-          { charset: 'utf-8' }
-        ]
+        meta: [{ charset: 'utf-8' }],
       },
-      data () {
+      data() {
         return {
-          helloWorldText: 'Function World'
+          helloWorldText: 'Function World',
         }
-      }
+      },
     })
 
     expect(getMetaInfo(component)).toEqual({
@@ -223,16 +213,14 @@ describe('getMetaInfo', () => {
       htmlAttrs: {},
       headAttrs: {},
       bodyAttrs: {},
-      meta: [
-        { charset: 'utf-8' }
-      ],
+      meta: [{ charset: 'utf-8' }],
       base: [],
       link: [],
       style: [],
       script: [],
       noscript: [],
       __dangerouslyDisableSanitizers: [],
-      __dangerouslyDisableSanitizersByTagID: {}
+      __dangerouslyDisableSanitizersByTagID: {},
     })
   })
 
@@ -245,10 +233,10 @@ describe('getMetaInfo', () => {
             vmid: 'og:title',
             property: 'og:title',
             content: 'Test title',
-            template: '%s - My page'
-          }
-        ]
-      }
+            template: '%s - My page',
+          },
+        ],
+      },
     })
 
     const expectedMetaInfo = {
@@ -263,8 +251,8 @@ describe('getMetaInfo', () => {
           vmid: 'og:title',
           property: 'og:title',
           content: 'Test title - My page',
-          template: true
-        }
+          template: true,
+        },
       ],
       base: [],
       link: [],
@@ -272,7 +260,7 @@ describe('getMetaInfo', () => {
       script: [],
       noscript: [],
       __dangerouslyDisableSanitizers: [],
-      __dangerouslyDisableSanitizersByTagID: {}
+      __dangerouslyDisableSanitizersByTagID: {},
     }
 
     expect(getMetaInfo(component)).toEqual(expectedMetaInfo)
@@ -288,10 +276,10 @@ describe('getMetaInfo', () => {
             vmid: 'og:title',
             property: 'og:title',
             content: 'Test title',
-            template: chunk => `${chunk} - My page`
-          }
-        ]
-      }
+            template: chunk => `${chunk} - My page`,
+          },
+        ],
+      },
     })
 
     const expectedMetaInfo = {
@@ -306,8 +294,8 @@ describe('getMetaInfo', () => {
           vmid: 'og:title',
           property: 'og:title',
           content: 'Test title - My page',
-          template: true
-        }
+          template: true,
+        },
       ],
       base: [],
       link: [],
@@ -315,7 +303,7 @@ describe('getMetaInfo', () => {
       script: [],
       noscript: [],
       __dangerouslyDisableSanitizers: [],
-      __dangerouslyDisableSanitizersByTagID: {}
+      __dangerouslyDisableSanitizersByTagID: {},
     }
 
     expect(getMetaInfo(component)).toEqual(expectedMetaInfo)
@@ -330,10 +318,10 @@ describe('getMetaInfo', () => {
           {
             vmid: 'og:title',
             property: 'og:title',
-            content: 'Test title'
-          }
-        ]
-      }
+            content: 'Test title',
+          },
+        ],
+      },
     })
 
     expect(getMetaInfo(component)).toEqual({
@@ -347,8 +335,8 @@ describe('getMetaInfo', () => {
         {
           vmid: 'og:title',
           property: 'og:title',
-          content: 'Test title'
-        }
+          content: 'Test title',
+        },
       ],
       base: [],
       link: [],
@@ -356,7 +344,7 @@ describe('getMetaInfo', () => {
       script: [],
       noscript: [],
       __dangerouslyDisableSanitizers: [],
-      __dangerouslyDisableSanitizersByTagID: {}
+      __dangerouslyDisableSanitizersByTagID: {},
     })
   })
 
@@ -369,10 +357,10 @@ describe('getMetaInfo', () => {
             vmid: 'og:title',
             property: 'og:title',
             content: 'Test title',
-            template: null
-          }
-        ]
-      }
+            template: null,
+          },
+        ],
+      },
     })
 
     expect(getMetaInfo(component)).toEqual({
@@ -386,8 +374,8 @@ describe('getMetaInfo', () => {
         {
           vmid: 'og:title',
           property: 'og:title',
-          content: 'Test title'
-        }
+          content: 'Test title',
+        },
       ],
       base: [],
       link: [],
@@ -395,7 +383,7 @@ describe('getMetaInfo', () => {
       script: [],
       noscript: [],
       __dangerouslyDisableSanitizers: [],
-      __dangerouslyDisableSanitizersByTagID: {}
+      __dangerouslyDisableSanitizersByTagID: {},
     })
   })
 
@@ -408,10 +396,10 @@ describe('getMetaInfo', () => {
             vmid: 'og:title',
             property: 'og:title',
             content: 'Test title',
-            template: false
-          }
-        ]
-      }
+            template: false,
+          },
+        ],
+      },
     })
 
     expect(getMetaInfo(component)).toEqual({
@@ -425,8 +413,8 @@ describe('getMetaInfo', () => {
         {
           vmid: 'og:title',
           property: 'og:title',
-          content: 'Test title'
-        }
+          content: 'Test title',
+        },
       ],
       base: [],
       link: [],
@@ -434,7 +422,7 @@ describe('getMetaInfo', () => {
       script: [],
       noscript: [],
       __dangerouslyDisableSanitizers: [],
-      __dangerouslyDisableSanitizersByTagID: {}
+      __dangerouslyDisableSanitizersByTagID: {},
     })
   })
 
@@ -447,10 +435,10 @@ describe('getMetaInfo', () => {
           {
             vmid: 'og:title',
             property: 'og:title',
-            content: 'An important title!'
-          }
-        ]
-      }
+            content: 'An important title!',
+          },
+        ],
+      },
     })
 
     const component = new Vue({
@@ -460,12 +448,12 @@ describe('getMetaInfo', () => {
             vmid: 'og:title',
             property: 'og:title',
             content: 'Test title',
-            template: chunk => `${chunk} - My page`
-          }
-        ]
+            template: chunk => `${chunk} - My page`,
+          },
+        ],
       },
       el: document.createElement('div'),
-      render: h => h('div', null, [h('merge-child')])
+      render: h => h('div', null, [h('merge-child')]),
     })
 
     const expectedMetaInfo = {
@@ -480,8 +468,8 @@ describe('getMetaInfo', () => {
           vmid: 'og:title',
           property: 'og:title',
           content: 'An important title! - My page',
-          template: true
-        }
+          template: true,
+        },
       ],
       base: [],
       link: [],
@@ -489,7 +477,7 @@ describe('getMetaInfo', () => {
       script: [],
       noscript: [],
       __dangerouslyDisableSanitizers: [],
-      __dangerouslyDisableSanitizersByTagID: {}
+      __dangerouslyDisableSanitizersByTagID: {},
     }
 
     expect(getMetaInfo(component)).toEqual(expectedMetaInfo)
@@ -505,10 +493,10 @@ describe('getMetaInfo', () => {
           {
             vmid: 'og:title',
             property: 'og:title',
-            template: chunk => `${chunk} - My page`
-          }
-        ]
-      }
+            template: chunk => `${chunk} - My page`,
+          },
+        ],
+      },
     })
 
     const component = new Vue({
@@ -518,12 +506,12 @@ describe('getMetaInfo', () => {
             vmid: 'og:title',
             property: 'og:title',
             content: 'Test title',
-            template: chunk => `${chunk} - SHOULD NEVER HAPPEN`
-          }
-        ]
+            template: chunk => `${chunk} - SHOULD NEVER HAPPEN`,
+          },
+        ],
       },
       el: document.createElement('div'),
-      render: h => h('div', null, [h('merge-child')])
+      render: h => h('div', null, [h('merge-child')]),
     })
 
     const expectedMetaInfo = {
@@ -538,8 +526,8 @@ describe('getMetaInfo', () => {
           vmid: 'og:title',
           property: 'og:title',
           content: 'Test title - My page',
-          template: true
-        }
+          template: true,
+        },
       ],
       base: [],
       link: [],
@@ -547,7 +535,7 @@ describe('getMetaInfo', () => {
       script: [],
       noscript: [],
       __dangerouslyDisableSanitizers: [],
-      __dangerouslyDisableSanitizersByTagID: {}
+      __dangerouslyDisableSanitizersByTagID: {},
     }
 
     expect(getMetaInfo(component)).toEqual(expectedMetaInfo)
@@ -564,10 +552,10 @@ describe('getMetaInfo', () => {
             vmid: 'og:title',
             property: 'og:title',
             content: 'An important title!',
-            template: chunk => `${chunk} - My page`
-          }
-        ]
-      }
+            template: chunk => `${chunk} - My page`,
+          },
+        ],
+      },
     })
 
     const component = new Vue({
@@ -577,12 +565,12 @@ describe('getMetaInfo', () => {
             vmid: 'og:title',
             property: 'og:title',
             content: 'Test title',
-            template: chunk => `${chunk} - SHOULD NEVER HAPPEN`
-          }
-        ]
+            template: chunk => `${chunk} - SHOULD NEVER HAPPEN`,
+          },
+        ],
       },
       el: document.createElement('div'),
-      render: h => h('div', null, [h('merge-child')])
+      render: h => h('div', null, [h('merge-child')]),
     })
 
     const expectedMetaInfo = {
@@ -597,8 +585,8 @@ describe('getMetaInfo', () => {
           vmid: 'og:title',
           property: 'og:title',
           content: 'An important title! - My page',
-          template: true
-        }
+          template: true,
+        },
       ],
       base: [],
       link: [],
@@ -606,7 +594,7 @@ describe('getMetaInfo', () => {
       script: [],
       noscript: [],
       __dangerouslyDisableSanitizers: [],
-      __dangerouslyDisableSanitizersByTagID: {}
+      __dangerouslyDisableSanitizersByTagID: {},
     }
 
     expect(getMetaInfo(component)).toEqual(expectedMetaInfo)
@@ -623,10 +611,10 @@ describe('getMetaInfo', () => {
             vmid: 'og:title',
             property: 'og:title',
             content: 'An important title!',
-            template: chunk => `${chunk} - My page`
-          }
-        ]
-      }
+            template: chunk => `${chunk} - My page`,
+          },
+        ],
+      },
     })
 
     const component = new Vue({
@@ -635,12 +623,12 @@ describe('getMetaInfo', () => {
           {
             vmid: 'og:title',
             property: 'og:title',
-            content: 'Test title'
-          }
-        ]
+            content: 'Test title',
+          },
+        ],
       },
       el: document.createElement('div'),
-      render: h => h('div', null, [h('merge-child')])
+      render: h => h('div', null, [h('merge-child')]),
     })
 
     const expectedMetaInfo = {
@@ -655,8 +643,8 @@ describe('getMetaInfo', () => {
           vmid: 'og:title',
           property: 'og:title',
           content: 'An important title! - My page',
-          template: true
-        }
+          template: true,
+        },
       ],
       base: [],
       link: [],
@@ -664,7 +652,7 @@ describe('getMetaInfo', () => {
       script: [],
       noscript: [],
       __dangerouslyDisableSanitizers: [],
-      __dangerouslyDisableSanitizersByTagID: {}
+      __dangerouslyDisableSanitizersByTagID: {},
     }
 
     expect(getMetaInfo(component)).toEqual(expectedMetaInfo)
@@ -673,9 +661,9 @@ describe('getMetaInfo', () => {
 
   test('no errors when metaInfo returns nothing', () => {
     const component = new Vue({
-      metaInfo () {},
+      metaInfo() {},
       el: document.createElement('div'),
-      render: h => h('div', null, [])
+      render: h => h('div', null, []),
     })
 
     expect(getMetaInfo(component)).toEqual({
@@ -692,7 +680,7 @@ describe('getMetaInfo', () => {
       script: [],
       noscript: [],
       __dangerouslyDisableSanitizers: [],
-      __dangerouslyDisableSanitizersByTagID: {}
+      __dangerouslyDisableSanitizersByTagID: {},
     })
   })
 
@@ -702,34 +690,34 @@ describe('getMetaInfo', () => {
       metaInfo: {
         title: undefined,
         bodyAttrs: {
-          class: undefined
+          class: undefined,
         },
         meta: [
           {
             vmid: 'og:title',
-            content: undefined
-          }
-        ]
-      }
+            content: undefined,
+          },
+        ],
+      },
     })
 
     const component = new Vue({
       metaInfo: {
         title: 'Hello',
         bodyAttrs: {
-          class: 'class'
+          class: 'class',
         },
         meta: [
           {
             vmid: 'og:title',
             property: 'og:title',
             content: 'Test title',
-            template: chunk => `${chunk} - My page`
-          }
-        ]
+            template: chunk => `${chunk} - My page`,
+          },
+        ],
       },
       el: document.createElement('div'),
-      render: h => h('div', null, [h('merge-child')])
+      render: h => h('div', null, [h('merge-child')]),
     })
 
     expect(getMetaInfo(component)).toEqual({
@@ -737,7 +725,7 @@ describe('getMetaInfo', () => {
       titleChunk: 'Hello',
       titleTemplate: '%s',
       bodyAttrs: {
-        class: 'class'
+        class: 'class',
       },
       headAttrs: {},
       htmlAttrs: {},
@@ -746,8 +734,8 @@ describe('getMetaInfo', () => {
           vmid: 'og:title',
           property: 'og:title',
           content: 'Test title - My page',
-          template: true
-        }
+          template: true,
+        },
       ],
       base: [],
       link: [],
@@ -755,7 +743,7 @@ describe('getMetaInfo', () => {
       script: [],
       noscript: [],
       __dangerouslyDisableSanitizers: [],
-      __dangerouslyDisableSanitizersByTagID: {}
+      __dangerouslyDisableSanitizersByTagID: {},
     })
   })
 
@@ -767,10 +755,10 @@ describe('getMetaInfo', () => {
         meta: [
           {
             vmid: 'og:title',
-            content: null
-          }
-        ]
-      }
+            content: null,
+          },
+        ],
+      },
     })
 
     const component = new Vue({
@@ -781,12 +769,12 @@ describe('getMetaInfo', () => {
             vmid: 'og:title',
             property: 'og:title',
             content: 'Test title',
-            template: chunk => `${chunk} - My page`
-          }
-        ]
+            template: chunk => `${chunk} - My page`,
+          },
+        ],
       },
       el: document.createElement('div'),
-      render: h => h('div', null, [h('merge-child')])
+      render: h => h('div', null, [h('merge-child')]),
     })
 
     expect(getMetaInfo(component)).toEqual({
@@ -803,7 +791,7 @@ describe('getMetaInfo', () => {
       script: [],
       noscript: [],
       __dangerouslyDisableSanitizers: [],
-      __dangerouslyDisableSanitizersByTagID: {}
+      __dangerouslyDisableSanitizersByTagID: {},
     })
   })
 
@@ -812,19 +800,19 @@ describe('getMetaInfo', () => {
       render: h => h('div'),
       metaInfo: {
         bodyAttrs: {
-          class: ['foo']
-        }
-      }
+          class: ['foo'],
+        },
+      },
     })
 
     const component = new Vue({
       metaInfo: {
         bodyAttrs: {
-          class: ['bar']
-        }
+          class: ['bar'],
+        },
       },
       el: document.createElement('div'),
-      render: h => h('div', null, [h('merge-child')])
+      render: h => h('div', null, [h('merge-child')]),
     })
 
     expect(getMetaInfo(component)).toEqual({
@@ -834,7 +822,7 @@ describe('getMetaInfo', () => {
       htmlAttrs: {},
       headAttrs: {},
       bodyAttrs: {
-        class: ['bar', 'foo']
+        class: ['bar', 'foo'],
       },
       meta: [],
       base: [],
@@ -843,7 +831,7 @@ describe('getMetaInfo', () => {
       script: [],
       noscript: [],
       __dangerouslyDisableSanitizers: [],
-      __dangerouslyDisableSanitizersByTagID: {}
+      __dangerouslyDisableSanitizersByTagID: {},
     })
   })
 
@@ -853,9 +841,9 @@ describe('getMetaInfo', () => {
     const component = new Vue({
       metaInfo: {
         htmlAttrs: {
-          amp: undefined
-        }
-      }
+          amp: undefined,
+        },
+      },
     })
 
     expect(getMetaInfo(component)).toEqual({
@@ -872,10 +860,12 @@ describe('getMetaInfo', () => {
       script: [],
       noscript: [],
       __dangerouslyDisableSanitizers: [],
-      __dangerouslyDisableSanitizersByTagID: {}
+      __dangerouslyDisableSanitizersByTagID: {},
     })
 
     expect(warn).toHaveBeenCalledTimes(1)
-    expect(warn).toHaveBeenCalledWith(expect.stringMatching('the value undefined'))
+    expect(warn).toHaveBeenCalledWith(
+      expect.stringMatching('the value undefined')
+    )
   })
 })

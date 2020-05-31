@@ -4,7 +4,12 @@ import { loadVueMetaPlugin } from '../utils'
 import { defaultOptions } from '../../src/shared/constants'
 import { serverSequences } from '../../src/shared/escaping'
 
-const getMetaInfo = (component, escapeSequences) => _getMetaInfo(defaultOptions, getComponentMetaInfo(defaultOptions, component), escapeSequences)
+const getMetaInfo = (component, escapeSequences) =>
+  _getMetaInfo(
+    defaultOptions,
+    getComponentMetaInfo(defaultOptions, component),
+    escapeSequences
+  )
 
 describe('escaping', () => {
   let Vue
@@ -17,8 +22,8 @@ describe('escaping', () => {
         htmlAttrs: { key: 1 },
         title: 'Hello & Goodbye',
         script: [{ innerHTML: 'Hello & Goodbye' }],
-        __dangerouslyDisableSanitizers: ['script']
-      }
+        __dangerouslyDisableSanitizers: ['script'],
+      },
     })
 
     expect(getMetaInfo(component, [[/&/g, '&amp;']])).toEqual({
@@ -26,7 +31,7 @@ describe('escaping', () => {
       titleChunk: 'Hello & Goodbye',
       titleTemplate: '%s',
       htmlAttrs: {
-        key: 1
+        key: 1,
       },
       headAttrs: {},
       bodyAttrs: {},
@@ -37,15 +42,15 @@ describe('escaping', () => {
       script: [{ innerHTML: 'Hello & Goodbye' }],
       noscript: [],
       __dangerouslyDisableSanitizers: ['script'],
-      __dangerouslyDisableSanitizersByTagID: {}
+      __dangerouslyDisableSanitizersByTagID: {},
     })
   })
 
   test('null title is left as it is', () => {
     const component = new Vue({
       metaInfo: {
-        title: null
-      }
+        title: null,
+      },
     })
 
     expect(getMetaInfo(component, [[/&/g, '&amp;']])).toEqual({
@@ -62,7 +67,7 @@ describe('escaping', () => {
       script: [],
       noscript: [],
       __dangerouslyDisableSanitizers: [],
-      __dangerouslyDisableSanitizersByTagID: {}
+      __dangerouslyDisableSanitizersByTagID: {},
     })
   })
 
@@ -72,10 +77,10 @@ describe('escaping', () => {
         title: 'Hello',
         script: [
           { vmid: 'yescape', innerHTML: 'Hello & Goodbye' },
-          { vmid: 'noscape', innerHTML: 'Hello & Goodbye' }
+          { vmid: 'noscape', innerHTML: 'Hello & Goodbye' },
         ],
-        __dangerouslyDisableSanitizersByTagID: { noscape: ['innerHTML'] }
-      }
+        __dangerouslyDisableSanitizersByTagID: { noscape: ['innerHTML'] },
+      },
     })
 
     expect(getMetaInfo(component, [[/&/g, '&amp;']])).toEqual({
@@ -91,11 +96,11 @@ describe('escaping', () => {
       style: [],
       script: [
         { innerHTML: 'Hello &amp; Goodbye', vmid: 'yescape' },
-        { innerHTML: 'Hello & Goodbye', vmid: 'noscape' }
+        { innerHTML: 'Hello & Goodbye', vmid: 'noscape' },
       ],
       noscript: [],
       __dangerouslyDisableSanitizers: [],
-      __dangerouslyDisableSanitizersByTagID: { noscape: ['innerHTML'] }
+      __dangerouslyDisableSanitizersByTagID: { noscape: ['innerHTML'] },
     })
   })
 
@@ -105,12 +110,13 @@ describe('escaping', () => {
         script: [
           {
             json: {
-              perfectlySave: '</script><p class="unsafe">This is safe</p><script>',
-              '</script>unsafeKey': 'This is also still safe'
-            }
-          }
-        ]
-      }
+              perfectlySave:
+                '</script><p class="unsafe">This is safe</p><script>',
+              '</script>unsafeKey': 'This is also still safe',
+            },
+          },
+        ],
+      },
     })
 
     expect(getMetaInfo(component, serverSequences)).toEqual({
@@ -127,14 +133,15 @@ describe('escaping', () => {
       script: [
         {
           json: {
-            perfectlySave: '&lt;/script&gt;&lt;p class=&quot;unsafe&quot;&gt;This is safe&lt;/p&gt;&lt;script&gt;',
-            '&lt;/script&gt;unsafeKey': 'This is also still safe'
-          }
-        }
+            perfectlySave:
+              '&lt;/script&gt;&lt;p class=&quot;unsafe&quot;&gt;This is safe&lt;/p&gt;&lt;script&gt;',
+            '&lt;/script&gt;unsafeKey': 'This is also still safe',
+          },
+        },
       ],
       noscript: [],
       __dangerouslyDisableSanitizers: [],
-      __dangerouslyDisableSanitizersByTagID: {}
+      __dangerouslyDisableSanitizersByTagID: {},
     })
   })
 })

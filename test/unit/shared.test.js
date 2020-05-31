@@ -20,9 +20,9 @@ describe('shared', () => {
     const componentMock = {
       _vueMeta: {
         initialized: true,
-        pausing: false
+        pausing: false,
       },
-      $meta: () => ({ refresh })
+      $meta: () => ({ refresh }),
     }
 
     triggerUpdate({ debounceWait: 0 }, componentMock, 'test')

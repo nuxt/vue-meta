@@ -15,7 +15,10 @@ describe(browserString, () => {
   const folder = path.resolve(__dirname, '..', 'fixtures/basic/.vue-meta/')
 
   beforeAll(async () => {
-    if (browserString.includes('browserstack') && browserString.includes('local')) {
+    if (
+      browserString.includes('browserstack') &&
+      browserString.includes('local')
+    ) {
       const envFile = path.resolve(__dirname, '..', '..', '.env-browserstack')
       if (fs.existsSync(envFile)) {
         env(envFile)
@@ -24,48 +27,52 @@ describe(browserString, () => {
 
     const port = await getPort()
 
-    browser = await createBrowser(browserString, {
-      folder,
-      staticServer: {
+    browser = await createBrowser(
+      browserString,
+      {
         folder,
-        port
-      },
-      /* BrowserStackLocal: {
+        staticServer: {
+          folder,
+          port,
+        },
+        /* BrowserStackLocal: {
         localIdentifier: Math.round(99999 * Math.random())
       }, */
-      extendPage (page) {
-        return {
-          async navigate (path) {
-            await page.runAsyncScript((path) => {
-              return new Promise((resolve) => {
-                const oldTitle = document.title
+        extendPage(page) {
+          return {
+            async navigate(path) {
+              await page.runAsyncScript(path => {
+                return new Promise(resolve => {
+                  const oldTitle = document.title
 
-                // local firefox has sometimes not updated the title
-                // even when the DOM is supposed to be fully updated
-                const waitTitleChanged = function () {
-                  setTimeout(function () {
-                    if (oldTitle !== document.title) {
-                      resolve()
-                    } else {
-                      waitTitleChanged()
-                    }
-                  }, 50)
-                }
+                  // local firefox has sometimes not updated the title
+                  // even when the DOM is supposed to be fully updated
+                  const waitTitleChanged = function () {
+                    setTimeout(function () {
+                      if (oldTitle !== document.title) {
+                        resolve()
+                      } else {
+                        waitTitleChanged()
+                      }
+                    }, 50)
+                  }
 
-                window.$vueMeta.$once('routeChanged', waitTitleChanged)
-                window.$vueMeta.$router.push(path)
-              })
-            }, path)
-          },
-          routeData () {
-            return page.runScript(() => ({
-              path: window.$vueMeta.$route.path,
-              query: window.$vueMeta.$route.query
-            }))
+                  window.$vueMeta.$once('routeChanged', waitTitleChanged)
+                  window.$vueMeta.$router.push(path)
+                })
+              }, path)
+            },
+            routeData() {
+              return page.runScript(() => ({
+                path: window.$vueMeta.$route.path,
+                query: window.$vueMeta.$route.query,
+              }))
+            },
           }
-        }
-      }
-    }, false)
+        },
+      },
+      false
+    )
 
     browser.addCapability('browserstack.console', 'info')
     browser.addCapability('browserstack.networkLogs', 'true')
@@ -86,7 +93,9 @@ describe(browserString, () => {
 
     page = await browser.page(url)
 
-    expect(await page.getAttribute('html', 'data-vue-meta-server-rendered')).toBe(null)
+    expect(
+      await page.getAttribute('html', 'data-vue-meta-server-rendered')
+    ).toBe(null)
     expect(await page.getAttribute('html', 'lang')).toBe('en')
     expect(await page.getAttribute('html', 'amp')).toBe('')
     expect(await page.getAttribute('html', 'allowfullscreen')).toBe(null)
@@ -110,13 +119,17 @@ describe(browserString, () => {
     expect(await page.getElementCount('body noscript:first-child')).toBe(1)
     expect(await page.getElementCount('body noscript:last-child')).toBe(1)
 
-    expect(await page.runScript(() => {
-      return window.loadTest
-    })).toBe('loaded')
+    expect(
+      await page.runScript(() => {
+        return window.loadTest
+      })
+    ).toBe('loaded')
 
-    expect(await page.runScript(() => {
-      return window.loadCallback
-    })).toBe('yes')
+    expect(
+      await page.runScript(() => {
+        return window.loadCallback
+      })
+    ).toBe('yes')
   })
 
   test('/about', async () => {

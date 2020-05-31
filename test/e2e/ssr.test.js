@@ -18,7 +18,9 @@ describe('basic browser with ssr page', () => {
     expect(htmlTag).toContain(' lang="en" ')
     expect(htmlTag).toContain(' amp ')
     expect(htmlTag).not.toContain('allowfullscreen')
-    expect(html.match(/<title[^>]*>(.*?)<\/title>/)[1]).toBe('Home | Vue Meta Test')
+    expect(html.match(/<title[^>]*>(.*?)<\/title>/)[1]).toBe(
+      'Home | Vue Meta Test'
+    )
     expect(html.match(/<meta/g).length).toBe(2)
     expect(html.match(/<meta/g).length).toBe(2)
 

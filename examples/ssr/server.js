@@ -12,7 +12,7 @@ const compiled = template(templateContent, { interpolate: /{{([\s\S]+?)}}/g })
 
 process.server = true
 
-export async function renderPage ({ url }) {
+export async function renderPage({ url }) {
   const { app, router } = await createApp()
 
   await router.push(url.substr(4))
@@ -30,17 +30,17 @@ export async function renderPage ({ url }) {
   const pageHtml = compiled({
     app: appHtml,
     htmlAttrs: {
-      text: () => {}
+      text: () => {},
     },
     headAttrs: {
-      text: () => {}
+      text: () => {},
     },
     bodyAttrs: {
-      text: () => {}
+      text: () => {},
     },
     head: () => {},
     bodyPrepend: () => {},
-    bodyAppend: () => {}
+    bodyAppend: () => {},
     // ...app.$meta().inject()
   })
 

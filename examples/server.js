@@ -10,18 +10,20 @@ import { renderPage } from './ssr/server'
 
 const app = express()
 
-app.use(webpackDevMiddleware(webpack(WebpackConfig), {
-  publicPath: '/__build__/',
-  writeToDisk: true,
-  stats: {
-    colors: true,
-    chunks: false
-  }
-}))
+app.use(
+  webpackDevMiddleware(webpack(WebpackConfig), {
+    publicPath: '/__build__/',
+    writeToDisk: true,
+    stats: {
+      colors: true,
+      chunks: false,
+    },
+  })
+)
 
 fs.readdirSync(__dirname)
   .filter(file => file !== 'ssr')
-  .forEach((file) => {
+  .forEach(file => {
     if (fs.statSync(path.join(__dirname, file)).isDirectory()) {
       app.use(rewrite(`/${file}/*`, `/${file}/index.html`))
     }

@@ -6,18 +6,18 @@ Vue.use(VueMeta)
 Vue.component('foo', {
   template: '<p>Foo component</p>',
   metaInfo: {
-    title: 'Keep me Foo'
-  }
+    title: 'Keep me Foo',
+  },
 })
 
 new Vue({
-  data () {
+  data() {
     return { showFoo: false }
   },
   methods: {
-    show () {
+    show() {
       this.showFoo = !this.showFoo
-    }
+    },
   },
   template: `
     <div id="app">
@@ -29,6 +29,6 @@ new Vue({
     </div>
   `,
   metaInfo: () => ({
-    title: 'Keep-alive'
-  })
+    title: 'Keep-alive',
+  }),
 }).$mount('#app')

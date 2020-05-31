@@ -2,7 +2,7 @@ import { pTick, createDOM } from '../utils'
 
 const onLoadAttribute = {
   k: 'onload',
-  v: 'this.__vm_l=1'
+  v: 'this.__vm_l=1',
 }
 
 const getLoadAttribute = () => `${onLoadAttribute.k}="${onLoadAttribute.v}"`
@@ -84,7 +84,9 @@ describe('load callbacks', () => {
   })
 
   test('addCallbacks', () => {
-    const addListeners = jest.spyOn(document, 'querySelectorAll').mockReturnValue(false)
+    const addListeners = jest
+      .spyOn(document, 'querySelectorAll')
+      .mockReturnValue(false)
 
     const config = { tagIDKeyName: 'test-id' }
 
@@ -92,7 +94,7 @@ describe('load callbacks', () => {
       { [config.tagIDKeyName]: 'test1', callback: false },
       { [config.tagIDKeyName]: false, callback: () => {} },
       { [config.tagIDKeyName]: 'test1', callback: () => {} },
-      { [config.tagIDKeyName]: 'test2', callback: () => {} }
+      { [config.tagIDKeyName]: 'test2', callback: () => {} },
     ]
 
     load.addCallbacks(config, 'link', tags)
@@ -101,20 +103,27 @@ describe('load callbacks', () => {
     load.applyCallbacks({ matches })
 
     expect(matches).toHaveBeenCalledTimes(2)
-    expect(matches).toHaveBeenCalledWith(`link[data-${config.tagIDKeyName}="test1"][${getLoadAttribute()}]`)
-    expect(matches).toHaveBeenCalledWith(`link[data-${config.tagIDKeyName}="test2"][${getLoadAttribute()}]`)
+    expect(matches).toHaveBeenCalledWith(
+      `link[data-${config.tagIDKeyName}="test1"][${getLoadAttribute()}]`
+    )
+    expect(matches).toHaveBeenCalledWith(
+      `link[data-${config.tagIDKeyName}="test2"][${getLoadAttribute()}]`
+    )
 
     expect(addListeners).not.toHaveBeenCalled()
   })
 
   test('addCallbacks (auto add listeners)', () => {
-    const addListeners = jest.spyOn(document, 'querySelectorAll').mockReturnValue(false)
+    const addListeners = jest
+      .spyOn(document, 'querySelectorAll')
+      .mockReturnValue(false)
 
-    const config = { tagIDKeyName: 'test-id', loadCallbackAttribute: 'test-load' }
+    const config = {
+      tagIDKeyName: 'test-id',
+      loadCallbackAttribute: 'test-load',
+    }
 
-    const tags = [
-      { [config.tagIDKeyName]: 'test1', callback: () => {} }
-    ]
+    const tags = [{ [config.tagIDKeyName]: 'test1', callback: () => {} }]
 
     load.addCallbacks(config, 'style', tags, true)
 
@@ -122,7 +131,9 @@ describe('load callbacks', () => {
     load.applyCallbacks({ matches })
 
     expect(matches).toHaveBeenCalledTimes(1)
-    expect(matches).toHaveBeenCalledWith(`style[data-${config.tagIDKeyName}="test1"][${getLoadAttribute()}]`)
+    expect(matches).toHaveBeenCalledWith(
+      `style[data-${config.tagIDKeyName}="test1"][${getLoadAttribute()}]`
+    )
 
     expect(addListeners).toHaveBeenCalled()
   })
@@ -188,9 +199,11 @@ describe('load callbacks', () => {
 
     const el = document.createElement('script')
     const addEventListener = el.addEventListener.bind(el)
-    const addEventListenerSpy = jest.spyOn(el, 'addEventListener').mockImplementation((...args) => {
-      return addEventListener(...args)
-    })
+    const addEventListenerSpy = jest
+      .spyOn(el, 'addEventListener')
+      .mockImplementation((...args) => {
+        return addEventListener(...args)
+      })
     el.setAttribute(onLoadAttribute.k, onLoadAttribute.v)
     document.body.appendChild(el)
 

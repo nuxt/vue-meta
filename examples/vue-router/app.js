@@ -1,7 +1,15 @@
-import { createApp, defineComponent, reactive, inject, toRefs, h, watch } from 'vue'
+import {
+  createApp,
+  defineComponent,
+  getCurrentInstance,
+  reactive,
+  inject,
+  toRefs,
+  h,
+  watch,
+} from 'vue'
 import { createRouter, createWebHistory } from 'vue-router'
-import Metainfo from '../next/Metainfo.vue'
-import { createMeta, useMeta } from '../next'
+import { createManager, useMeta, useMetainfo } from '../../src'
 // import About from './about.vue'
 
 const metaUpdated = 'no'
@@ -9,47 +17,48 @@ const metaUpdated = 'no'
 const ChildComponent = defineComponent({
   name: 'child-component',
   props: {
-    page: String
+    page: String,
   },
   template: `
 <div>
   <h3>You're looking at the <strong>{{ page }}</strong> page</h3>
   <p>Has metaInfo been updated due to navigation? {{ metaUpdated }}</p>
 </div>`,
-  setup (props) {
+  setup(props) {
     const state = reactive({
       date: null,
-      metaUpdated
+      metaUpdated,
     })
 
     const title = props.page[0].toUpperCase() + props.page.slice(1)
-
+    console.log('ChildComponent Setup')
     useMeta({
       charset: 'utf16',
       title,
       description: 'Description ' + props.page,
       og: {
-        title: 'Og Title ' + props.page
-      }
+        title: 'Og Title ' + props.page,
+      },
     })
 
     return {
-      ...toRefs(state)
+      ...toRefs(state),
     }
-  }
+  },
 })
 
-function view (page) {
+function view(page) {
   return {
     name: `section-${page}`,
-    render () {
+    render() {
       return h(ChildComponent, { page })
-    }
+    },
   }
 }
 
 const App = {
-  setup () {
+  setup() {
+    // console.log('App', getCurrentInstance())
     const { meta } = useMeta({
       base: { href: '/vue-router', target: '_blank' },
       charset: 'utf8',
@@ -60,23 +69,23 @@ const App = {
         description: 'Bla bla',
         image: [
           'https://picsum.photos/600/400/?image=80',
-          'https://picsum.photos/600/400/?image=82'
-        ]
+          'https://picsum.photos/600/400/?image=82',
+        ],
       },
       twitter: {
-        title: 'Twitter Title'
+        title: 'Twitter Title',
       },
       noscript: [
         '<!-- // A code comment -->',
-        { tag: 'link', rel: 'stylesheet', href: 'style.css' }
+        { tag: 'link', rel: 'stylesheet', href: 'style.css' },
       ],
       otherNoscript: {
         tag: 'noscript',
         'data-test': 'hello',
         content: [
           '<!-- // Another code comment -->',
-          { tag: 'link', rel: 'stylesheet', href: 'style2.css' }
-        ]
+          { tag: 'link', rel: 'stylesheet', href: 'style2.css' },
+        ],
       },
       body: 'body-script1.js',
       script: [
@@ -84,26 +93,32 @@ const App = {
         { src: 'head-script1.js' },
         '<![endif]-->',
         { src: 'body-script2.js', target: 'body' },
-        { src: 'body-script3.js', target: '#put-it-here' }
+        { src: 'body-script3.js', target: '#put-it-here' },
       ],
       esi: {
-        content: [{
-          tag: 'choose',
-          content: [{
-            tag: 'when',
-            test: '$(HTTP_COOKIE{group})=="Advanced"',
-            content: [{
-              tag: 'include',
-              src: 'http://www.example.com/advanced.html'
-            }]
-          }]
-        }]
-      }
+        content: [
+          {
+            tag: 'choose',
+            content: [
+              {
+                tag: 'when',
+                test: '$(HTTP_COOKIE{group})=="Advanced"',
+                content: [
+                  {
+                    tag: 'include',
+                    src: 'http://www.example.com/advanced.html',
+                  },
+                ],
+              },
+            ],
+          },
+        ],
+      },
     })
 
     setTimeout(() => (meta.title = 'My Updated Title'), 2000)
 
-    const metainfo = inject('metainfo')
+    const metainfo = useMetainfo()
 
     window.$metainfo = metainfo
 
@@ -112,7 +127,7 @@ const App = {
     })
 
     return {
-      metainfo
+      metainfo,
     }
   },
   template: `
@@ -133,56 +148,60 @@ const App = {
       </transition>
       <p>Inspect Element to see the meta info</p>
     </div>
-  `
+  `,
 }
 
-function decisionMaker5000000 (key, options, currentValue) {
+function decisionMaker5000000(key, pathSegments, getOptions, getCurrentValue) {
   let theChosenOne
 
+  const options = getOptions()
+
   for (const option of options) {
-    if (!theChosenOne || theChosenOne.context.uid < option.context.uid) {
+    if (!theChosenOne || theChosenOne.context.vm.uid < option.context.vm.uid) {
       theChosenOne = option
     }
   }
 
-  console.log(key, currentValue, options.map(({ value }) => value))
+  console.log(
+    key,
+    getCurrentValue(),
+    options.map(({ value }) => value)
+  )
   console.log(theChosenOne.value)
   return theChosenOne.value
 }
 
-const meta = createMeta({
+const metaManager = createManager({
   resolver: decisionMaker5000000,
   config: {
     esi: {
       group: true,
       namespaced: true,
-      contentAttributes: [
-        'src',
-        'test',
-        'text'
-      ]
-    }
-  }
+      contentAttributes: ['src', 'test', 'text'],
+    },
+  },
 })
+
+useMeta(
+  {
+    og: {
+      something: 'test',
+    },
+  },
+  metaManager
+)
 
 const router = createRouter({
   history: createWebHistory('/vue-router'),
   routes: [
     { name: 'home', path: '/', component: view('home') },
-    { name: 'about', path: '/about', component: view('about') }
-  ]
-})
-
-useMeta({
-  og: {
-    something: 'test'
-  }
+    { name: 'about', path: '/about', component: view('about') },
+  ],
 })
 
 const app = createApp(App)
-app.component('metainfo', Metainfo)
 app.use(router)
-app.use(meta)
+app.use(metaManager)
 app.mount('#app')
 
 // old stuff:

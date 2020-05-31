@@ -3,14 +3,15 @@ import { defaultOptions } from '../../src/shared/constants'
 import metaInfoData from '../utils/meta-info-data'
 import { titleGenerator } from '../../src/server/generators'
 
-const generateServerInjector = metaInfo => _generateServerInjector(defaultOptions, metaInfo).injectors
+const generateServerInjector = metaInfo =>
+  _generateServerInjector(defaultOptions, metaInfo).injectors
 
 describe('generators', () => {
   for (const type in metaInfoData) {
     const typeTests = metaInfoData[type]
 
     const testCases = {
-      add: (tags) => {
+      add: tags => {
         let html = tags.text()
 
         // ssr only returns the attributes, convert to full tag
@@ -18,14 +19,14 @@ describe('generators', () => {
           html = `<${type.substr(0, 4)} ${html}>`
         }
 
-        typeTests.add.expect.forEach((expected) => {
+        typeTests.add.expect.forEach(expected => {
           expect(html).toContain(expected)
         })
-      }
+      },
     }
 
     describe(`${type} type tests`, () => {
-      Object.keys(typeTests).forEach((action) => {
+      Object.keys(typeTests).forEach(action => {
         const testInfo = typeTests[action]
 
         // return when no test case available
@@ -98,7 +99,9 @@ describe('extra tests', () => {
 
     expect(scriptTags.text()).toBe('')
     expect(scriptTags.text({ body: true })).toBe('')
-    expect(scriptTags.text({ pbody: true })).toBe('<script data-vue-meta="ssr" src="/script.js" data-pbody="true"></script>')
+    expect(scriptTags.text({ pbody: true })).toBe(
+      '<script data-vue-meta="ssr" src="/script.js" data-pbody="true"></script>'
+    )
   })
 
   test('script append body', () => {
@@ -106,7 +109,9 @@ describe('extra tests', () => {
     const { script: scriptTags } = generateServerInjector({ script: tags })
 
     expect(scriptTags.text()).toBe('')
-    expect(scriptTags.text({ body: true })).toBe('<script data-vue-meta="ssr" src="/script.js" data-body="true"></script>')
+    expect(scriptTags.text({ body: true })).toBe(
+      '<script data-vue-meta="ssr" src="/script.js" data-body="true"></script>'
+    )
     expect(scriptTags.text({ pbody: true })).toBe('')
   })
 
@@ -115,11 +120,11 @@ describe('extra tests', () => {
       title: 'hello',
       htmlAttrs: { lang: 'en' },
       bodyAttrs: { class: 'base-class' },
-      script: [{ src: '/script.js', body: true }]
+      script: [{ src: '/script.js', body: true }],
     }
     const extraInfo = {
       bodyAttrs: { class: 'extra-class' },
-      script: [{ src: '/script.js', pbody: true }]
+      script: [{ src: '/script.js', pbody: true }],
     }
 
     const serverInjector = _generateServerInjector(defaultOptions, baseInfo)
@@ -128,14 +133,26 @@ describe('extra tests', () => {
     const meta = serverInjector.injectors
 
     expect(meta.script.text()).toBe('')
-    expect(meta.script.text({ body: true })).toBe('<script data-vue-meta="ssr" src="/script.js" data-body="true"></script>')
-    expect(meta.script.text({ pbody: true })).toBe('<script data-vue-meta="test-app" src="/script.js" data-pbody="true"></script>')
+    expect(meta.script.text({ body: true })).toBe(
+      '<script data-vue-meta="ssr" src="/script.js" data-body="true"></script>'
+    )
+    expect(meta.script.text({ pbody: true })).toBe(
+      '<script data-vue-meta="test-app" src="/script.js" data-pbody="true"></script>'
+    )
 
     expect(meta.head(true)).toBe('<title>hello</title>\n')
-    expect(meta.bodyPrepend(true)).toBe('<script data-vue-meta="test-app" src="/script.js" data-pbody="true"></script>\n')
-    expect(meta.bodyAppend()).toBe('<script data-vue-meta="ssr" src="/script.js" data-body="true"></script>')
+    expect(meta.bodyPrepend(true)).toBe(
+      '<script data-vue-meta="test-app" src="/script.js" data-pbody="true"></script>\n'
+    )
+    expect(meta.bodyAppend()).toBe(
+      '<script data-vue-meta="ssr" src="/script.js" data-body="true"></script>'
+    )
 
-    expect(meta.htmlAttrs.text()).toBe('lang="en" data-vue-meta="%7B%22lang%22:%7B%22ssr%22:%22en%22%7D%7D"')
-    expect(meta.bodyAttrs.text()).toBe('class="base-class extra-class" data-vue-meta="%7B%22class%22:%7B%22ssr%22:%22base-class%22,%22test-app%22:%22extra-class%22%7D%7D"')
+    expect(meta.htmlAttrs.text()).toBe(
+      'lang="en" data-vue-meta="%7B%22lang%22:%7B%22ssr%22:%22en%22%7D%7D"'
+    )
+    expect(meta.bodyAttrs.text()).toBe(
+      'class="base-class extra-class" data-vue-meta="%7B%22class%22:%7B%22ssr%22:%22base-class%22,%22test-app%22:%22extra-class%22%7D%7D"'
+    )
   })
 })

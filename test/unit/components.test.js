@@ -1,7 +1,13 @@
 import { getComponentMetaInfo } from '../../src/shared/getComponentOption'
 import _getMetaInfo from '../../src/shared/getMetaInfo'
 import { triggerUpdate, batchUpdate } from '../../src/client/update'
-import { mount, createWrapper, loadVueMetaPlugin, vmTick, clearClientAttributeMap } from '../utils'
+import {
+  mount,
+  createWrapper,
+  loadVueMetaPlugin,
+  vmTick,
+  clearClientAttributeMap,
+} from '../utils'
 import { defaultOptions } from '../../src/shared/constants'
 
 import GoodbyeWorld from '../components/goodbye-world.vue'
@@ -9,11 +15,12 @@ import HelloWorld from '../components/hello-world.vue'
 import KeepAlive from '../components/keep-alive.vue'
 import Changed from '../components/changed.vue'
 
-const getMetaInfo = component => _getMetaInfo(defaultOptions, getComponentMetaInfo(defaultOptions, component))
+const getMetaInfo = component =>
+  _getMetaInfo(defaultOptions, getComponentMetaInfo(defaultOptions, component))
 
 jest.mock('../../src/client/update')
 jest.mock('../../src/utils/window', () => ({
-  hasGlobalWindow: false
+  hasGlobalWindow: false,
 }))
 
 describe('components', () => {
@@ -30,21 +37,21 @@ describe('components', () => {
     elements = {
       html: document.createElement('html'),
       head: document.createElement('head'),
-      body: document.createElement('body')
+      body: document.createElement('body'),
     }
 
     elements.html.appendChild(elements.head)
     elements.html.appendChild(elements.body)
 
     document._getElementsByTagName = document.getElementsByTagName
-    jest.spyOn(document, 'getElementsByTagName').mockImplementation((tag) => {
+    jest.spyOn(document, 'getElementsByTagName').mockImplementation(tag => {
       if (elements[tag]) {
         return [elements[tag]]
       }
 
       return document._getElementsByTagName(tag)
     })
-    jest.spyOn(document, 'querySelectorAll').mockImplementation((query) => {
+    jest.spyOn(document, 'querySelectorAll').mockImplementation(query => {
       return elements.html.querySelectorAll(query)
     })
   })
@@ -52,16 +59,22 @@ describe('components', () => {
   afterEach(() => {
     jest.clearAllMocks()
 
-    elements.html.getAttributeNames().forEach(name => elements.html.removeAttribute(name))
+    elements.html
+      .getAttributeNames()
+      .forEach(name => elements.html.removeAttribute(name))
     elements.head.childNodes.forEach(child => child.remove())
-    elements.head.getAttributeNames().forEach(name => elements.head.removeAttribute(name))
+    elements.head
+      .getAttributeNames()
+      .forEach(name => elements.head.removeAttribute(name))
     elements.body.childNodes.forEach(child => child.remove())
-    elements.body.getAttributeNames().forEach(name => elements.body.removeAttribute(name))
+    elements.body
+      .getAttributeNames()
+      .forEach(name => elements.body.removeAttribute(name))
 
     clearClientAttributeMap()
   })
 
-  test('meta-info refreshed on component\'s data change', () => {
+  test("meta-info refreshed on component's data change", () => {
     const wrapper = mount(HelloWorld, { localVue: Vue })
 
     let metaInfo = getMetaInfo(wrapper.vm)
@@ -134,7 +147,9 @@ describe('components', () => {
     HelloWorld.metaInfo = metaInfo
 
     expect(warn).toHaveBeenCalledTimes(1)
-    expect(warn).toHaveBeenCalledWith('This vue app/component has no vue-meta configuration')
+    expect(warn).toHaveBeenCalledWith(
+      'This vue app/component has no vue-meta configuration'
+    )
 
     warn.mockRestore()
   })
@@ -151,7 +166,7 @@ describe('components', () => {
       const { set } = this.$meta().addApp('inject-test-app')
       set({
         htmlAttrs: { lang: 'nl' },
-        meta: [{ name: 'description', content: 'test-description' }]
+        meta: [{ name: 'description', content: 'test-description' }],
       })
     }
 
@@ -160,8 +175,12 @@ describe('components', () => {
     const metaInfo = wrapper.vm.$meta().inject()
     expect(metaInfo.title.text()).toEqual('<title>Hello World</title>')
 
-    expect(metaInfo.htmlAttrs.text()).toEqual('lang="en nl" data-vue-meta="%7B%22lang%22:%7B%22ssr%22:%22en%22,%22inject-test-app%22:%22nl%22%7D%7D"')
-    expect(metaInfo.meta.text()).toEqual('<meta data-vue-meta="ssr" charset="utf-8"><meta data-vue-meta="inject-test-app" name="description" content="test-description">')
+    expect(metaInfo.htmlAttrs.text()).toEqual(
+      'lang="en nl" data-vue-meta="%7B%22lang%22:%7B%22ssr%22:%22en%22,%22inject-test-app%22:%22nl%22%7D%7D"'
+    )
+    expect(metaInfo.meta.text()).toEqual(
+      '<meta data-vue-meta="ssr" charset="utf-8"><meta data-vue-meta="inject-test-app" name="description" content="test-description">'
+    )
 
     delete HelloWorld.created
   })
@@ -170,15 +189,19 @@ describe('components', () => {
     HelloWorld.created = function () {
       const { set } = this.$meta().addApp('inject-test-app')
       set({
-        meta: [{ skip: true, name: 'description', content: 'test-description' }],
-        script: [{
-          once: true,
-          callback: true,
-          async: false,
-          json: {
-            a: 1
-          }
-        }]
+        meta: [
+          { skip: true, name: 'description', content: 'test-description' },
+        ],
+        script: [
+          {
+            once: true,
+            callback: true,
+            async: false,
+            json: {
+              a: 1,
+            },
+          },
+        ],
       })
     }
 
@@ -186,8 +209,12 @@ describe('components', () => {
 
     const metaInfo = wrapper.vm.$meta().inject()
 
-    expect(metaInfo.meta.text()).toEqual('<meta data-vue-meta="ssr" charset="utf-8">')
-    expect(metaInfo.script.text()).toEqual('<script onload="this.__vm_l=1">{"a":1}</script>')
+    expect(metaInfo.meta.text()).toEqual(
+      '<meta data-vue-meta="ssr" charset="utf-8">'
+    )
+    expect(metaInfo.script.text()).toEqual(
+      '<script onload="this.__vm_l=1">{"a":1}</script>'
+    )
 
     delete HelloWorld.created
   })
@@ -202,9 +229,9 @@ describe('components', () => {
 
     const Component = Vue.extend({
       metaInfo: { title: 'Test' },
-      render (h) {
+      render(h) {
         return h('div', null, 'Test')
-      }
+      },
     })
 
     const vm = new Component().$mount(el)
@@ -249,7 +276,7 @@ describe('components', () => {
     const afterNavigation = jest.fn()
     const component = Vue.component('nav-component', {
       render: h => h('div'),
-      metaInfo: { afterNavigation }
+      metaInfo: { afterNavigation },
     })
 
     const guards = {}
@@ -257,14 +284,14 @@ describe('components', () => {
       localVue: Vue,
       mocks: {
         $router: {
-          beforeEach (fn) {
+          beforeEach(fn) {
             guards.before = fn
           },
-          afterEach (fn) {
+          afterEach(fn) {
             guards.after = fn
-          }
-        }
-      }
+          },
+        },
+      },
     })
 
     await vmTick(wrapper.vm)
@@ -286,7 +313,7 @@ describe('components', () => {
     const afterNavigation = jest.fn()
     const component = Vue.component('nav-component', {
       render: h => h('div'),
-      metaInfo: { afterNavigation }
+      metaInfo: { afterNavigation },
     })
 
     const guards = {}
@@ -294,14 +321,14 @@ describe('components', () => {
       localVue: Vue,
       mocks: {
         $router: {
-          beforeEach (fn) {
+          beforeEach(fn) {
             guards.before = fn
           },
-          afterEach (fn) {
+          afterEach(fn) {
             guards.after = fn
-          }
-        }
-      }
+          },
+        },
+      },
     })
 
     await vmTick(wrapper.vm)
@@ -334,27 +361,27 @@ describe('components', () => {
     // this component uses a computed prop to simulate a non-synchronous
     // metaInfo update like you would have with a Vuex mutation
     const Component = Vue.extend({
-      metaInfo () {
+      metaInfo() {
         return {
           htmlAttrs: {
-            theme: this.theme
-          }
+            theme: this.theme,
+          },
         }
       },
-      data () {
+      data() {
         return {
-          hiddenTheme: 'light'
+          hiddenTheme: 'light',
         }
       },
       computed: {
-        theme () {
+        theme() {
           return this.hiddenTheme
-        }
+        },
       },
-      beforeMount () {
+      beforeMount() {
         this.hiddenTheme = 'dark'
       },
-      render: h => h('div')
+      render: h => h('div'),
     })
 
     const vm = new Component().$mount(el)
@@ -385,27 +412,27 @@ describe('components', () => {
     document.body.appendChild(el)
 
     const Component = Vue.extend({
-      data () {
+      data() {
         return {
-          hiddenTheme: 'light'
+          hiddenTheme: 'light',
         }
       },
       computed: {
-        theme () {
+        theme() {
           return this.hiddenTheme
-        }
+        },
       },
-      mounted () {
+      mounted() {
         this.hiddenTheme = 'dark'
       },
       render: h => h('div'),
-      metaInfo () {
+      metaInfo() {
         return {
           htmlAttrs: {
-            theme: this.theme
-          }
+            theme: this.theme,
+          },
         }
-      }
+      },
     })
 
     const vm = new Component().$mount(el)
@@ -431,7 +458,7 @@ describe('components', () => {
       // are really removed
       const { set, remove } = this.$meta().addApp('my-bogus-app')
       set({
-        meta: [{ name: 'og:description', content: 'test-description' }]
+        meta: [{ name: 'og:description', content: 'test-description' }],
       })
       remove()
 
@@ -439,12 +466,12 @@ describe('components', () => {
       app.set({
         htmlAttrs: { lang: 'nl' },
         meta: [{ name: 'description', content: 'test-description' }],
-        script: [{ innerHTML: 'var test = true;' }]
+        script: [{ innerHTML: 'var test = true;' }],
       })
     }
 
     const wrapper = mount(HelloWorld, {
-      localVue: Vue
+      localVue: Vue,
     })
 
     wrapper.vm.$meta().refresh()
@@ -452,21 +479,28 @@ describe('components', () => {
     expect(html.getAttribute('lang')).toEqual('en nl')
     expect(Array.from(html.querySelectorAll('meta')).length).toBe(2)
     expect(Array.from(html.querySelectorAll('script')).length).toBe(1)
-    expect(Array.from(html.querySelectorAll('[data-vue-meta="my-test-app"]')).length).toBe(2)
+    expect(
+      Array.from(html.querySelectorAll('[data-vue-meta="my-test-app"]')).length
+    ).toBe(2)
 
     app.remove()
 
     // add another app to make sure on client data is immediately added
     const anotherApp = wrapper.vm.$meta().addApp('another-test-app')
     anotherApp.set({
-      meta: [{ name: 'og:description', content: 'test-description' }]
+      meta: [{ name: 'og:description', content: 'test-description' }],
     })
 
     expect(html.getAttribute('lang')).toEqual('en')
     expect(Array.from(html.querySelectorAll('meta')).length).toBe(2)
     expect(Array.from(html.querySelectorAll('script')).length).toBe(0)
-    expect(Array.from(html.querySelectorAll('[data-vue-meta="my-test-app"]')).length).toBe(0)
-    expect(Array.from(html.querySelectorAll('[data-vue-meta="another-test-app"]')).length).toBe(1)
+    expect(
+      Array.from(html.querySelectorAll('[data-vue-meta="my-test-app"]')).length
+    ).toBe(0)
+    expect(
+      Array.from(html.querySelectorAll('[data-vue-meta="another-test-app"]'))
+        .length
+    ).toBe(1)
 
     wrapper.destroy()
     delete HelloWorld.created
@@ -477,7 +511,10 @@ describe('components', () => {
     html.setAttribute(defaultOptions.ssrAttribute, 'true')
 
     body.setAttribute('foo', 'bar')
-    body.setAttribute('data-vue-meta', '%7B%22foo%22:%7B%22ssr%22:%22bar%22%7D%7D')
+    body.setAttribute(
+      'data-vue-meta',
+      '%7B%22foo%22:%7B%22ssr%22:%22bar%22%7D%7D'
+    )
 
     const el = document.createElement('div')
     el.setAttribute('id', 'app')
@@ -488,10 +525,10 @@ describe('components', () => {
       metaInfo: {
         title: 'Test',
         bodyAttrs: {
-          foo: 'bar'
-        }
+          foo: 'bar',
+        },
       },
-      render: h => h('div', null, 'Test')
+      render: h => h('div', null, 'Test'),
     })
 
     const vm = new Component().$mount(el)
@@ -500,7 +537,9 @@ describe('components', () => {
 
     wrapper.vm.$meta().refresh()
     expect(body.getAttribute('foo')).toBe('bar')
-    expect(body.getAttribute('data-vue-meta')).toBe('%7B%22foo%22:%7B%22ssr%22:%22bar%22%7D%7D')
+    expect(body.getAttribute('data-vue-meta')).toBe(
+      '%7B%22foo%22:%7B%22ssr%22:%22bar%22%7D%7D'
+    )
 
     wrapper.vm.$meta().refresh()
     expect(body.getAttribute('foo')).toBe('bar')
@@ -519,14 +558,14 @@ describe('components', () => {
       localVue: Vue,
       mocks: {
         $router: {
-          beforeEach (fn) {
+          beforeEach(fn) {
             guards.before = fn
           },
-          afterEach (fn) {
+          afterEach(fn) {
             guards.after = fn
-          }
-        }
-      }
+          },
+        },
+      },
     })
 
     expect(guards.before).toBeUndefined()
@@ -540,8 +579,13 @@ describe('components', () => {
 
   test('destroyed hook calls triggerUpdate delayed', async () => {
     jest.useFakeTimers()
-    const wrapper = mount(HelloWorld, { localVue: Vue, parentComponent: { render: h => h('div') } })
-    const spy = jest.spyOn(wrapper.vm.$el, 'offsetParent', 'get').mockReturnValue(true)
+    const wrapper = mount(HelloWorld, {
+      localVue: Vue,
+      parentComponent: { render: h => h('div') },
+    })
+    const spy = jest
+      .spyOn(wrapper.vm.$el, 'offsetParent', 'get')
+      .mockReturnValue(true)
 
     wrapper.destroy()
 
@@ -553,19 +597,30 @@ describe('components', () => {
     jest.advanceTimersByTime(51)
 
     expect(triggerUpdate).toHaveBeenCalledTimes(2)
-    expect(triggerUpdate).toHaveBeenCalledWith(expect.any(Object), expect.any(Object), 'destroyed')
+    expect(triggerUpdate).toHaveBeenCalledWith(
+      expect.any(Object),
+      expect.any(Object),
+      'destroyed'
+    )
   })
 
   test('destroyed hook calls triggerUpdate immediately when waitOnDestroyed: false', async () => {
     jest.useFakeTimers()
 
-    const wrapper = mount(HelloWorld, { localVue: Vue, parentComponent: { render: h => h('div') } })
+    const wrapper = mount(HelloWorld, {
+      localVue: Vue,
+      parentComponent: { render: h => h('div') },
+    })
     wrapper.vm.$meta().setOptions({ waitOnDestroyed: false })
     wrapper.destroy()
 
     await vmTick(wrapper.vm)
 
     expect(triggerUpdate).toHaveBeenCalledTimes(2)
-    expect(triggerUpdate).toHaveBeenCalledWith(expect.any(Object), expect.any(Object), 'destroyed')
+    expect(triggerUpdate).toHaveBeenCalledWith(
+      expect.any(Object),
+      expect.any(Object),
+      'destroyed'
+    )
   })
 })

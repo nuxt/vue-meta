@@ -6,7 +6,7 @@ Vue.use(VueMeta, {
   tagIDKeyName: 'hid'
 }) */
 
-export default function createMyApp () {
+export default function createMyApp() {
   const Home = {
     template: `<div>
       <router-link to="/about">About</router-link>
@@ -19,15 +19,15 @@ export default function createMyApp () {
         {
           hid: 'og:title',
           name: 'og:title',
-          content: 'Hello World'
+          content: 'Hello World',
         },
         {
           hid: 'description',
           name: 'description',
-          content: 'Hello World'
-        }
-      ]
-    }
+          content: 'Hello World',
+        },
+      ],
+    },
   }
 
   const About = {
@@ -42,28 +42,28 @@ export default function createMyApp () {
         {
           hid: 'og:title',
           name: 'og:title',
-          content: 'About World'
+          content: 'About World',
         },
         {
           hid: 'description',
           name: 'description',
-          content: 'About World'
-        }
-      ]
-    }
+          content: 'About World',
+        },
+      ],
+    },
   }
 
   const router = createRouter({
     history: createMemoryHistory('/ssr'),
     routes: [
       { path: '/', component: Home },
-      { path: '/about', component: About }
-    ]
+      { path: '/about', component: About },
+    ],
   })
 
   const app = createSSRApp({
     router,
-    metaInfo () {
+    metaInfo() {
       return {
         title: 'Boring Title',
         htmlAttrs: { amp: true },
@@ -74,59 +74,63 @@ export default function createMyApp () {
             hid: 'og:title',
             name: 'og:title',
             template: chunk => `${chunk} - My Site`,
-            content: 'Default Title'
+            content: 'Default Title',
           },
           {
             hid: 'description',
             name: 'description',
-            content: 'Say something'
-          }
+            content: 'Say something',
+          },
         ],
         script: [
           {
             hid: 'ldjson-schema',
             type: 'application/ld+json',
-            innerHTML: '{ "@context": "http://www.schema.org", "@type": "Organization" }'
-          }, {
+            innerHTML:
+              '{ "@context": "http://www.schema.org", "@type": "Organization" }',
+          },
+          {
             type: 'application/ld+json',
             innerHTML: '{ "body": "yes" }',
-            body: true
-          }, {
+            body: true,
+          },
+          {
             hid: 'my-async-script-with-load-callback',
             src: '/user-1.js',
             body: true,
             defer: true,
-            callback: this.loadCallback
-          }, {
+            callback: this.loadCallback,
+          },
+          {
             skip: this.count < 1,
             src: '/user-2.js',
             body: true,
-            callback: this.loadCallback
-          }
+            callback: this.loadCallback,
+          },
         ],
         __dangerouslyDisableSanitizersByTagID: {
-          'ldjson-schema': ['innerHTML']
-        }
+          'ldjson-schema': ['innerHTML'],
+        },
       }
     },
-    data () {
+    data() {
       return {
         count: 0,
-        users: process.server ? [] : window.users
+        users: process.server ? [] : window.users,
       }
     },
-    mounted () {
+    mounted() {
       const { set, remove } = this.$meta().addApp('client-only')
       set({
-        bodyAttrs: { class: 'client-only' }
+        bodyAttrs: { class: 'client-only' },
       })
 
       setTimeout(() => remove(), 3000)
     },
     methods: {
-      loadCallback () {
+      loadCallback() {
         this.count++
-      }
+      },
     },
     template: `
     <div id="app">
@@ -142,8 +146,7 @@ export default function createMyApp () {
       </ul>
 
       <router-view />
-    </div>`
-
+    </div>`,
   })
 
   app.use(router)

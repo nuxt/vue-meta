@@ -11,22 +11,25 @@ const renderer = createRenderer()
 
 export { default as getPort } from 'get-port'
 
-export function _import (moduleName) {
+export function _import(moduleName) {
   return import(moduleName).then(m => m.default || m)
 }
 
 export const useDist = stdEnv.test && stdEnv.ci
 
-export function getVueMetaPath (browser) {
+export function getVueMetaPath(browser) {
   if (useDist) {
-    return path.resolve(__dirname, `../..${browser ? '/dist/vue-meta.min.js' : ''}`)
+    return path.resolve(
+      __dirname,
+      `../..${browser ? '/dist/vue-meta.min.js' : ''}`
+    )
   }
 
   process.server = !browser
   return path.resolve(__dirname, '../../src')
 }
 
-export function webpackRun (config) {
+export function webpackRun(config) {
   const compiler = webpack(config)
 
   return new Promise((resolve, reject) => {
@@ -40,7 +43,7 @@ export function webpackRun (config) {
   })
 }
 
-export async function buildFixture (fixture, config = {}) {
+export async function buildFixture(fixture, config = {}) {
   if (!fixture) {
     throw new Error('buildFixture should be called with a fixture name')
   }
@@ -67,10 +70,15 @@ export async function buildFixture (fixture, config = {}) {
   const createApp = await _import(path.resolve(fixturePath, 'server'))
   const vueApp = await createApp()
 
-  const templateFile = await fs.readFile(path.resolve(fixturePath, '..', 'app.template.html'), { encoding: 'utf8' })
+  const templateFile = await fs.readFile(
+    path.resolve(fixturePath, '..', 'app.template.html'),
+    { encoding: 'utf8' }
+  )
   const compiled = template(templateFile, { interpolate: /{{([\s\S]+?)}}/g })
 
-  const assets = webpackStats.assets.filter(asset => !asset.name.includes('load-test'))
+  const assets = webpackStats.assets.filter(
+    asset => !asset.name.includes('load-test')
+  )
 
   const headAssets = assets
     .filter(asset => asset.name.includes('chunk'))
@@ -94,11 +102,11 @@ export async function buildFixture (fixture, config = {}) {
     appFile,
     webpackStats,
     html,
-    metaInfo
+    metaInfo,
   }
 }
 
-export function createWebpackConfig (config = {}) {
+export function createWebpackConfig(config = {}) {
   const publicPath = '.vue-meta'
 
   return {
@@ -108,7 +116,7 @@ export function createWebpackConfig (config = {}) {
       path: path.join(path.dirname(config.entry), publicPath),
       filename: '[name].js',
       chunkFilename: '[id].chunk.js',
-      publicPath: `/${publicPath}/`
+      publicPath: `/${publicPath}/`,
     },
     module: {
       rules: [
@@ -119,22 +127,25 @@ export function createWebpackConfig (config = {}) {
             loader: 'babel-loader',
             options: {
               presets: [
-                ['@babel/preset-env', {
-                  useBuiltIns: 'usage',
-                  corejs: 'core-js@3',
-                  targets: { ie: 9, safari: '5.1' }
-                }]
-              ]
-            }
-          }
+                [
+                  '@babel/preset-env',
+                  {
+                    useBuiltIns: 'usage',
+                    corejs: 'core-js@3',
+                    targets: { ie: 9, safari: '5.1' },
+                  },
+                ],
+              ],
+            },
+          },
         },
-        { test: /\.vue$/, use: 'vue-loader' }
-      ]
+        { test: /\.vue$/, use: 'vue-loader' },
+      ],
     },
     // Expose __dirname to allow automatically setting basename.
     context: __dirname,
     node: {
-      __dirname: true
+      __dirname: true,
     },
     optimization: {
       splitChunks: {
@@ -142,29 +153,29 @@ export function createWebpackConfig (config = {}) {
           vendor: {
             test: /[\\/]node_modules[\\/]/,
             name: 'vendor',
-            chunks: 'all'
-          }
-        }
-      }
+            chunks: 'all',
+          },
+        },
+      },
     },
     plugins: [
       new VueLoaderPlugin(),
       new webpack.DefinePlugin({
         'process.env': {
           // make sure our simple polyfills are enabled
-          NODE_ENV: '"test"'
-        }
+          NODE_ENV: '"test"',
+        },
       }),
       new CopyWebpackPlugin([
-        { from: path.join(path.dirname(config.entry), 'static') }
-      ])
+        { from: path.join(path.dirname(config.entry), 'static') },
+      ]),
     ],
     resolve: {
       alias: {
         vue: 'vue/dist/vue.esm.js',
-        'vue-meta': getVueMetaPath(true)
-      }
+        'vue-meta': getVueMetaPath(true),
+      },
     },
-    ...config
+    ...config,
   }
 }

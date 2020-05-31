@@ -15,7 +15,10 @@ describe('getComponentOption', () => {
 
   test('fetches the given option from the given component', () => {
     const component = new Vue({ someOption: { foo: 'bar' } })
-    const mergedOption = getComponentOption({ keyName: 'someOption' }, component)
+    const mergedOption = getComponentOption(
+      { keyName: 'someOption' },
+      component
+    )
     expect(mergedOption.foo).toBeDefined()
     expect(mergedOption.foo).toEqual('bar')
   })
@@ -23,14 +26,14 @@ describe('getComponentOption', () => {
   test('calls a function as computed prop, injecting the component as context', () => {
     const component = new Vue({
       name: 'Foobar',
-      someFunc () {
+      someFunc() {
         return { opt: this.name }
       },
       computed: {
-        $metaInfo () {
+        $metaInfo() {
           return this.$options.someFunc()
-        }
-      }
+        },
+      },
     })
 
     const mergedOption = getComponentOption({ keyName: 'someFunc' }, component)
@@ -41,11 +44,14 @@ describe('getComponentOption', () => {
 
   test('fetches deeply nested component options and merges them', () => {
     const localVue = loadVueMetaPlugin({ keyName: 'foo' })
-    localVue.component('merge-child', { render: h => h('div'), foo: { bar: 'baz' } })
+    localVue.component('merge-child', {
+      render: h => h('div'),
+      foo: { bar: 'baz' },
+    })
 
     const component = localVue.component('parent', {
       foo: { fizz: 'buzz' },
-      render: h => h('div', null, [h('merge-child')])
+      render: h => h('div', null, [h('merge-child')]),
     })
 
     const wrapper = mount(component, { localVue })
@@ -96,23 +102,24 @@ describe('getComponentOption', () => {
 
     localVue.component('meta-child', {
       foo: { bar: 'baz' },
-      render (h) {
+      render(h) {
         return h('div', this.$slots.default)
-      }
+      },
     })
 
     localVue.component('nometa-child', {
-      render (h) {
+      render(h) {
         return h('div', this.$slots.default)
-      }
+      },
     })
 
     const component = localVue.component('parent', {
-      render: h => h('div', null, [
-        h('meta-child', null, [h('nometa-child')]),
-        h('nometa-child', null, [h('meta-child')]),
-        h('nometa-child')
-      ])
+      render: h =>
+        h('div', null, [
+          h('meta-child', null, [h('nometa-child')]),
+          h('nometa-child', null, [h('meta-child')]),
+          h('nometa-child'),
+        ]),
     })
 
     const wrapper = mount(component, { localVue })
@@ -136,22 +143,20 @@ describe('getComponentOption', () => {
 
     localVue.component('meta-child', {
       foo: { bar: 'baz' },
-      render (h) {
+      render(h) {
         return h('div', this.$slots.default)
-      }
+      },
     })
 
     localVue.component('nometa-child', {
-      render (h) {
+      render(h) {
         return h('div', this.$slots.default)
-      }
+      },
     })
 
     const component = localVue.component('parent', {
       foo: () => {},
-      render: h => h('div', null, [
-        h('meta-child')
-      ])
+      render: h => h('div', null, [h('meta-child')]),
     })
 
     const wrapper = mount(component, { localVue })
