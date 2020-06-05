@@ -38,12 +38,15 @@ export default function createMixin (Vue, options) {
         $root.$once('hook:beforeMount', function () {
           wasServerRendered = this.$el && this.$el.nodeType === 1 && this.$el.hasAttribute('data-server-rendered')
 
-          // In most cases when you have a SSR app it will be the first app thats gonna be
-          // initiated, if we cant detect the data-server-rendered attribute from Vue but we
-          // do see our own ssrAttribute then _assume_ the Vue app with appId 1 is the ssr app
-          // attempted fix for #404 & #562, but we rly need to refactor how we pass appIds from
-          // ssr to the client
-          if (!wasServerRendered && $root[rootConfigKey] && $root[rootConfigKey].appId === 1) {
+          // The Vue Meteor SSR doesn't have `$this.el()` in this stage
+          // Fixes the 500 error with `document is not defined` message
+          if (typeof document !== 'undefined' &&
+            // In most cases when you have a SSR app it will be the first app thats gonna be
+            // initiated, if we cant detect the data-server-rendered attribute from Vue but we
+            // do see our own ssrAttribute then _assume_ the Vue app with appId 1 is the ssr app
+            // attempted fix for #404 & #562, but we rly need to refactor how we pass appIds from
+            // ssr to the client
+            !wasServerRendered && $root[rootConfigKey] && $root[rootConfigKey].appId === 1) {
             const htmlTag = getTag({}, 'html')
             wasServerRendered = htmlTag && htmlTag.hasAttribute(options.ssrAttribute)
           }
