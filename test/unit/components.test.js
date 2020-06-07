@@ -150,7 +150,7 @@ describe('components', () => {
   test('meta-info can be rendered with inject (spa)', () => {
     const wrapper = mount(HelloWorld, { localVue: Vue })
 
-    const metaInfo = wrapper.vm.$meta().inject({ isSpa: true, ln: true })
+    const metaInfo = wrapper.vm.$meta().inject({ isSSR: false, ln: true })
     expect(metaInfo.title.text()).toEqual('<title>Hello World</title>\n')
     expect(metaInfo.meta.text()).toContain('<meta data-vue-meta="1" charset="utf-8">\n')
   })

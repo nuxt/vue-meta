@@ -60,7 +60,7 @@ export default function generateServerInjector (options, metaInfo, globalInjectO
 
           const data = serverInjector.data[type]
           if (data) {
-            const appId = injectOptions.isSpa ? '1' : options.ssrAppId
+            const appId = injectOptions.isSSR === false ? '1' : options.ssrAppId
             for (const attr in data) {
               attributeData[attr] = {
                 [appId]: data[attr]

@@ -813,9 +813,9 @@ See the [SSR guide](/guide/ssr.html#inject-metadata-into-page-string) for more i
 ### script.text
 ### noscript.text
 - arguments
-  - options (type: `object`, default: `{ isSpa: false, ln: false , body: false, pbody: false }`)
+  - options (type: `object`, default: `{ isSSR: true, ln: false , body: false, pbody: false }`)
 
-Set `isSpa: true` if you generate a SPA on server side and want to use the default appId `1` instead of [ssrAppId](/api/#ssrappid)
+Set `isSSR: false` if you generate a SPA on server side and want to use the default appId `1` instead of [ssrAppId](/api/#ssrappid)
 
 The `body` and `pbody` props can be used to support positioning of elements in your template, see [SSR Support](#ssr-support)
 
