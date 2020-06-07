@@ -16,7 +16,7 @@ import {
  */
 export default function tagGenerator (options, type, tags, generatorOptions) {
   const { ssrAppId, attribute, tagIDKeyName } = options || {}
-  const { appId, body = false, pbody = false, ln = false } = generatorOptions || {}
+  const { appId, isSSR = true, body = false, pbody = false, ln = false } = generatorOptions || {}
 
   const dataAttributes = [tagIDKeyName, ...commonDataAttributes]
 
@@ -40,7 +40,7 @@ export default function tagGenerator (options, type, tags, generatorOptions) {
       return tagsStr
     }
 
-    let attrs = tag.once ? '' : ` ${attribute}="${appId || ssrAppId}"`
+    let attrs = tag.once ? '' : ` ${attribute}="${appId || (isSSR === false ? '1' : ssrAppId)}"`
 
     // build a string containing all attributes of this tag
     for (const attr in tag) {

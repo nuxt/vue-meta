@@ -7,7 +7,7 @@ import { booleanHtmlAttributes } from '../../shared/constants'
  * @param  {Object} data - the attributes to generate
  * @return {Object} - the attribute generator
  */
-export default function attributeGenerator (options, type, data, addSrrAttribute) {
+export default function attributeGenerator (options, type, data, { addSsrAttribute }) {
   const { attribute, ssrAttribute } = options || {}
   let attributeStr = ''
 
@@ -32,7 +32,7 @@ export default function attributeGenerator (options, type, data, addSrrAttribute
     attributeStr += `${attribute}="${encodeURI(JSON.stringify(data))}"`
   }
 
-  if (type === 'htmlAttrs' && addSrrAttribute) {
+  if (type === 'htmlAttrs' && addSsrAttribute) {
     return `${ssrAttribute}${attributeStr ? ' ' : ''}${attributeStr}`
   }
 
