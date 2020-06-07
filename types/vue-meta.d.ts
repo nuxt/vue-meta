@@ -33,7 +33,7 @@ interface RefreshedTags {
 
 interface Refreshed {
   vm: Component,
-  metaInfo: MetaInfo,
+  metaInfo: MetaInfoOutput,
   tags: RefreshedTags
 }
 
@@ -166,7 +166,7 @@ export interface NoScriptProperty extends MetaDataProperty {
 
 export interface MetaInfo {
   title?: string
-  titleTemplate?: string | ((titleChunk: string) => string)
+  titleTemplate?: string | ((titleChunk: string) => string),
 
   htmlAttrs?: AttributeProperty
   headAttrs?: AttributeProperty
@@ -188,8 +188,12 @@ export interface MetaInfo {
     [key: string]: string[]
   }
 
-  changed?: <T extends MetaInfo>(newInfo: T, addedTags: elements, removedTags: elements) => void
-  afterNavigation?: <T extends MetaInfo>(newInfo: T) => void
+  changed?: <T extends MetaInfoOutput>(newInfo: T, addedTags: elements, removedTags: elements) => void
+  afterNavigation?: <T extends MetaInfoOutput>(newInfo: T) => void
+}
+
+export interface MetaInfoOutput extends MetaInfo {
+  titleChunk?: string
 }
 
 export type MetaInfoComputed = () => MetaInfo
