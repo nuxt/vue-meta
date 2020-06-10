@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.4.0](https://github.com/nuxt/vue-meta/compare/v2.3.4...v2.4.0) (2020-06-10)
+
+
+### Features
+
+* add support for global inject options ([#568](https://github.com/nuxt/vue-meta/issues/568)) ([8b02eb2](https://github.com/nuxt/vue-meta/commit/8b02eb2ac6693b07caeb76efab106af1d4b92988))
+
 ### [2.3.4](https://github.com/nuxt/vue-meta/compare/v2.3.3...v2.3.4) (2020-05-26)
 
 

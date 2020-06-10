@@ -1,5 +1,5 @@
 /**
- * vue-meta v2.3.4
+ * vue-meta v2.4.0
  * (c) 2020
  * - Declan de Wet
  * - Sébastien Chopin (@Atinux)
@@ -10,7 +10,7 @@
 
 import deepmerge from 'deepmerge';
 
-var version = "2.3.4";
+var version = "2.4.0";
 
 function _typeof(obj) {
   "@babel/helpers - typeof";
@@ -110,9 +110,12 @@ function _nonIterableSpread() {
   throw new TypeError("Invalid attempt to spread non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.");
 }
 
-function _createForOfIteratorHelper(o) {
+function _createForOfIteratorHelper(o, allowArrayLike) {
+  var it;
+
   if (typeof Symbol === "undefined" || o[Symbol.iterator] == null) {
-    if (Array.isArray(o) || (o = _unsupportedIterableToArray(o))) {
+    if (Array.isArray(o) || (it = _unsupportedIterableToArray(o)) || allowArrayLike && o && typeof o.length === "number") {
+      if (it) o = it;
       var i = 0;
 
       var F = function () {};
@@ -138,8 +141,7 @@ function _createForOfIteratorHelper(o) {
     throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.");
   }
 
-  var it,
-      normalCompletion = true,
+  var normalCompletion = true,
       didErr = false,
       err;
   return {
@@ -1625,10 +1627,12 @@ function refresh(rootVm, options) {
  * @return {Object} - the attribute generator
  */
 
-function attributeGenerator(options, type, data, addSrrAttribute) {
-  var _ref = options || {},
-      attribute = _ref.attribute,
-      ssrAttribute = _ref.ssrAttribute;
+function attributeGenerator(options, type, data, _ref) {
+  var addSsrAttribute = _ref.addSsrAttribute;
+
+  var _ref2 = options || {},
+      attribute = _ref2.attribute,
+      ssrAttribute = _ref2.ssrAttribute;
 
   var attributeStr = '';
 
@@ -1650,7 +1654,7 @@ function attributeGenerator(options, type, data, addSrrAttribute) {
     attributeStr += "".concat(attribute, "=\"").concat(encodeURI(JSON.stringify(data)), "\"");
   }
 
-  if (type === 'htmlAttrs' && addSrrAttribute) {
+  if (type === 'htmlAttrs' && addSsrAttribute) {
     return "".concat(ssrAttribute).concat(attributeStr ? ' ' : '').concat(attributeStr);
   }
 
@@ -1691,6 +1695,8 @@ function tagGenerator(options, type, tags, generatorOptions) {
 
   var _ref2 = generatorOptions || {},
       appId = _ref2.appId,
+      _ref2$isSSR = _ref2.isSSR,
+      isSSR = _ref2$isSSR === void 0 ? true : _ref2$isSSR,
       _ref2$body = _ref2.body,
       body = _ref2$body === void 0 ? false : _ref2$body,
       _ref2$pbody = _ref2.pbody,
@@ -1720,7 +1726,7 @@ function tagGenerator(options, type, tags, generatorOptions) {
       return tagsStr;
     }
 
-    var attrs = tag.once ? '' : " ".concat(attribute, "=\"").concat(appId || ssrAppId, "\""); // build a string containing all attributes of this tag
+    var attrs = tag.once ? '' : " ".concat(attribute, "=\"").concat(appId || (isSSR === false ? '1' : ssrAppId), "\""); // build a string containing all attributes of this tag
 
     for (var attr in tag) {
       // these attributes are treated as children on the tag
@@ -1775,7 +1781,7 @@ function tagGenerator(options, type, tags, generatorOptions) {
  * @return {Object} - the new injector
  */
 
-function generateServerInjector(options, metaInfo) {
+function generateServerInjector(options, metaInfo, globalInjectOptions) {
   var serverInjector = {
     data: metaInfo,
     extraData: undefined,
@@ -1786,25 +1792,25 @@ function generateServerInjector(options, metaInfo) {
     callInjectors: function callInjectors(opts) {
       var m = this.injectors; // only call title for the head
 
-      return (opts.body || opts.pbody ? '' : m.title.text(opts)) + m.meta.text(opts) + m.link.text(opts) + m.style.text(opts) + m.script.text(opts) + m.noscript.text(opts);
+      return (opts.body || opts.pbody ? '' : m.title.text(opts)) + m.meta.text(opts) + m.base.text(opts) + m.link.text(opts) + m.style.text(opts) + m.script.text(opts) + m.noscript.text(opts);
     },
     injectors: {
       head: function head(ln) {
-        return serverInjector.callInjectors({
+        return serverInjector.callInjectors(_objectSpread2(_objectSpread2({}, globalInjectOptions), {}, {
           ln: ln
-        });
+        }));
       },
       bodyPrepend: function bodyPrepend(ln) {
-        return serverInjector.callInjectors({
+        return serverInjector.callInjectors(_objectSpread2(_objectSpread2({}, globalInjectOptions), {}, {
           ln: ln,
           pbody: true
-        });
+        }));
       },
       bodyAppend: function bodyAppend(ln) {
-        return serverInjector.callInjectors({
+        return serverInjector.callInjectors(_objectSpread2(_objectSpread2({}, globalInjectOptions), {}, {
           ln: ln,
           body: true
-        });
+        }));
       }
     }
   };
@@ -1815,9 +1821,14 @@ function generateServerInjector(options, metaInfo) {
     }
 
     serverInjector.injectors[type] = {
-      text: function text(arg) {
+      text: function text(injectOptions) {
+        var addSsrAttribute = injectOptions === true;
+        injectOptions = _objectSpread2(_objectSpread2({
+          addSsrAttribute: addSsrAttribute
+        }, globalInjectOptions), injectOptions);
+
         if (type === 'title') {
-          return titleGenerator(options, type, serverInjector.data[type], arg);
+          return titleGenerator(options, type, serverInjector.data[type], injectOptions);
         }
 
         if (metaInfoAttributeKeys.includes(type)) {
@@ -1825,34 +1836,36 @@ function generateServerInjector(options, metaInfo) {
           var data = serverInjector.data[type];
 
           if (data) {
+            var appId = injectOptions.isSSR === false ? '1' : options.ssrAppId;
+
             for (var attr in data) {
-              attributeData[attr] = _defineProperty({}, options.ssrAppId, data[attr]);
+              attributeData[attr] = _defineProperty({}, appId, data[attr]);
             }
           }
 
           if (serverInjector.extraData) {
-            for (var appId in serverInjector.extraData) {
-              var _data = serverInjector.extraData[appId][type];
+            for (var _appId in serverInjector.extraData) {
+              var _data = serverInjector.extraData[_appId][type];
 
               if (_data) {
                 for (var _attr in _data) {
-                  attributeData[_attr] = _objectSpread2(_objectSpread2({}, attributeData[_attr]), {}, _defineProperty({}, appId, _data[_attr]));
+                  attributeData[_attr] = _objectSpread2(_objectSpread2({}, attributeData[_attr]), {}, _defineProperty({}, _appId, _data[_attr]));
                 }
               }
             }
           }
 
-          return attributeGenerator(options, type, attributeData, arg);
+          return attributeGenerator(options, type, attributeData, injectOptions);
         }
 
-        var str = tagGenerator(options, type, serverInjector.data[type], arg);
+        var str = tagGenerator(options, type, serverInjector.data[type], injectOptions);
 
         if (serverInjector.extraData) {
-          for (var _appId in serverInjector.extraData) {
-            var _data2 = serverInjector.extraData[_appId][type];
+          for (var _appId2 in serverInjector.extraData) {
+            var _data2 = serverInjector.extraData[_appId2][type];
             var extraStr = tagGenerator(options, type, _data2, _objectSpread2({
-              appId: _appId
-            }, arg));
+              appId: _appId2
+            }, injectOptions));
             str = "".concat(str).concat(extraStr);
           }
         }
@@ -1879,7 +1892,7 @@ function generateServerInjector(options, metaInfo) {
  * @return {Object} - server meta info with `toString` methods
  */
 
-function inject(rootVm, options) {
+function inject(rootVm, options, injectOptions) {
   // make sure vue-meta was initiated
   if (!rootVm[rootConfigKey]) {
     showWarningNotSupported();
@@ -1890,7 +1903,7 @@ function inject(rootVm, options) {
   var rawInfo = getComponentMetaInfo(options, rootVm);
   var metaInfo = getMetaInfo(options, rawInfo, serverSequences, rootVm); // generate server injector
 
-  var serverInjector = generateServerInjector(options, metaInfo); // add meta info from additional apps
+  var serverInjector = generateServerInjector(options, metaInfo, injectOptions); // add meta info from additional apps
 
   var appsMetaInfo = getAppsMetaInfo();
 
@@ -1946,8 +1959,8 @@ function $meta(options) {
     refresh: function refresh$1() {
       return refresh($root, options);
     },
-    inject: function inject$1() {
-      return  inject($root, options) ;
+    inject: function inject$1(injectOptions) {
+      return  inject($root, options, injectOptions) ;
     },
     pause: function pause$1() {
       return pause($root);
