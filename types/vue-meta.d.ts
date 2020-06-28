@@ -77,6 +77,12 @@ export interface MetaPropertyEquiv extends MetaDataProperty {
   template?: (chunk: string) => string
 }
 
+export interface MetaPropertyTrueEquiv extends MetaDataProperty {
+  'http-equiv': string,
+  content: string,
+  template?: (chunk: string) => string
+}
+
 export interface MetaPropertyName extends MetaDataProperty {
   name: string,
   content: string,
@@ -177,7 +183,7 @@ export interface MetaInfo {
     href: string
   }
 
-  meta?: (MetaPropertyCharset | MetaPropertyEquiv | MetaPropertyName | MetaPropertyMicrodata | MetaPropertyProperty)[]
+  meta?: (MetaPropertyCharset | MetaPropertyEquiv | MetaPropertyTrueEquiv | MetaPropertyName | MetaPropertyMicrodata | MetaPropertyProperty)[]
   link?: (LinkPropertyBase | LinkPropertyHref | LinkPropertyHrefCallback)[]
   style?: StyleProperty[]
   script?: (ScriptPropertyText | ScriptPropertySrc | ScriptPropertySrcCallback | ScriptPropertyJson)[]
