@@ -101,7 +101,7 @@
     "jsdom": "^16.2.2",
     "lodash": "^4.17.15",
     "node-env-file": "^0.1.8",
-    "puppeteer-core": "^3.3.0",
+    "puppeteer-core": "^5.2.1",
     "rimraf": "^3.0.2",
     "rollup": "^2.15.0",
     "rollup-plugin-babel": "^4.4.0",
