@@ -20,4 +20,4 @@ Proceed to the [Vue-Storefront documentation](https://docs.vuestorefront.io/)
 
 ## Factor
 
-Proceed to the [Factor documentation](https://factor.dev/guide/meta)
+Proceed to the [Factor documentation](https://factor.dev/docs/metainfo)
