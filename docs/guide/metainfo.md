@@ -5,7 +5,7 @@ You can define a `[keyName]` property in any of your components, by default this
 See the [API](/api) for a list of recognised `metaInfo` properties
 
 ::: tip Note
-Altough we talk about the `metaInfo` variable on this page, please note that the keyName is [configurable](/api/#keyname) and could be different in your case. E.g. [Nuxt.js](https://nuxtjs.org/api/pages-head#the-head-method) uses `head` as keyName
+Altough we talk about the `metaInfo` variable on this page, please note that the `keyName` is [configurable](/api/#keyname) and could be different in your case. E.g. [Nuxt.js](https://nuxtjs.org/api/pages-head#the-head-method) uses `head` as `keyName`
 :::
 
 **App.vue:**
