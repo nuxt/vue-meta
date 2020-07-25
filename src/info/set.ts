@@ -1,9 +1,9 @@
 import { isPlainObject, hasOwn } from '@vue/shared'
+import { ActiveNode, MetaContext, PathSegments, ShadowNode } from '../types'
 import { shadow, active } from './globals'
 import { resolveActive } from './resolve'
-import { ActiveNode, MetaContext, PathSegments, ShadowNode } from '../types'
 
-export function set(
+export function set (
   context: MetaContext,
   key: string,
   value: any,
@@ -54,7 +54,7 @@ export function set(
   resolveActive(context, key, pathSegments, shadowParent, activeParent)
 }
 
-export function setByObject(
+export function setByObject (
   context: MetaContext,
   value: any,
   shadowParent: ShadowNode = shadow,
@@ -70,14 +70,14 @@ export function setByObject(
     if (isPlainObject(shadowParent[key])) {
       setByObject(context, {}, shadowParent[key], activeParent[key], [
         ...pathSegments,
-        key,
+        key
       ])
       continue
     }
 
     set(context, key, undefined, shadowParent, activeParent, [
       ...pathSegments,
-      key,
+      key
     ])
   }
 
@@ -85,7 +85,7 @@ export function setByObject(
   for (const key in value) {
     set(context, key, value[key], shadowParent, activeParent, [
       ...pathSegments,
-      key,
+      key
     ])
   }
 }

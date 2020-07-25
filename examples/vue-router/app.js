@@ -6,10 +6,10 @@ import {
   inject,
   toRefs,
   h,
-  watch,
+  watch
 } from 'vue'
 import { createRouter, createWebHistory } from 'vue-router'
-import { createManager, useMeta, useMetainfo } from '../../src'
+import { createManager, useMeta, useMetainfo } from 'vue-meta'
 // import About from './about.vue'
 
 const metaUpdated = 'no'
@@ -17,47 +17,47 @@ const metaUpdated = 'no'
 const ChildComponent = defineComponent({
   name: 'child-component',
   props: {
-    page: String,
+    page: String
   },
   template: `
 <div>
   <h3>You're looking at the <strong>{{ page }}</strong> page</h3>
   <p>Has metaInfo been updated due to navigation? {{ metaUpdated }}</p>
 </div>`,
-  setup(props) {
+  setup (props) {
     const state = reactive({
       date: null,
-      metaUpdated,
+      metaUpdated
     })
 
     const title = props.page[0].toUpperCase() + props.page.slice(1)
     console.log('ChildComponent Setup')
-    useMeta({
+    /* useMeta({
       charset: 'utf16',
       title,
       description: 'Description ' + props.page,
       og: {
         title: 'Og Title ' + props.page,
       },
-    })
+    }) */
 
     return {
-      ...toRefs(state),
+      ...toRefs(state)
     }
-  },
+  }
 })
 
-function view(page) {
+function view (page) {
   return {
     name: `section-${page}`,
-    render() {
+    render () {
       return h(ChildComponent, { page })
-    },
+    }
   }
 }
 
 const App = {
-  setup() {
+  setup () {
     // console.log('App', getCurrentInstance())
     const { meta } = useMeta({
       base: { href: '/vue-router', target: '_blank' },
@@ -69,69 +69,69 @@ const App = {
         description: 'Bla bla',
         image: [
           'https://picsum.photos/600/400/?image=80',
-          'https://picsum.photos/600/400/?image=82',
-        ],
+          'https://picsum.photos/600/400/?image=82'
+        ]
       },
       twitter: {
-        title: 'Twitter Title',
+        title: 'Twitter Title'
       },
       noscript: [
-        '<!-- // A code comment -->',
-        { tag: 'link', rel: 'stylesheet', href: 'style.css' },
+        //'<!-- // A code comment -->',
+        { tag: 'link', rel: 'stylesheet', href: 'style.css' }
       ],
       otherNoscript: {
         tag: 'noscript',
         'data-test': 'hello',
-        content: [
-          '<!-- // Another code comment -->',
-          { tag: 'link', rel: 'stylesheet', href: 'style2.css' },
-        ],
+        children: [
+          //'<!-- // Another code comment -->',
+          { tag: 'link', rel: 'stylesheet', href: 'style2.css' }
+        ]
       },
       body: 'body-script1.js',
       script: [
-        '<!--[if IE]>',
+        //'<!--[if IE]>',
         { src: 'head-script1.js' },
-        '<![endif]-->',
-        { src: 'body-script2.js', target: 'body' },
-        { src: 'body-script3.js', target: '#put-it-here' },
+        //'<![endif]-->',
+        { src: 'body-script2.js', to: 'body' },
+        { src: 'body-script3.js', to: '#put-it-here' }
       ],
       esi: {
-        content: [
+        children: [
           {
             tag: 'choose',
-            content: [
+            children: [
               {
                 tag: 'when',
                 test: '$(HTTP_COOKIE{group})=="Advanced"',
-                content: [
+                children: [
                   {
                     tag: 'include',
-                    src: 'http://www.example.com/advanced.html',
-                  },
-                ],
-              },
-            ],
-          },
-        ],
-      },
+                    src: 'http://www.example.com/advanced.html'
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
     })
 
     setTimeout(() => (meta.title = 'My Updated Title'), 2000)
 
-    const metainfo = useMetainfo()
+    const metadata = useMetainfo()
 
-    window.$metainfo = metainfo
+    window.$metainfo = metadata
 
-    watch(metainfo, (newValue, oldValue) => {
+    watch(metadata, (newValue, oldValue) => {
       console.log('UPDATE', newValue)
     })
 
     return {
-      metainfo,
+      metadata
     }
   },
   template: `
-    <metainfo :metainfo="metainfo">
+    <metainfo :metainfo="metadata">
       <template v-slot:base="{ content, metainfo }">http://nuxt.dev:3000{{ content }}</template>
       <template v-slot:title="{ content, metainfo }">{{ content }} - {{ metainfo.description }} - Hello</template>
       <template v-slot:og(title)="{ content, metainfo, og }">
@@ -148,10 +148,10 @@ const App = {
       </transition>
       <p>Inspect Element to see the meta info</p>
     </div>
-  `,
+  `
 }
 
-function decisionMaker5000000(key, pathSegments, getOptions, getCurrentValue) {
+function decisionMaker5000000 (key, pathSegments, getOptions, getCurrentValue) {
   let theChosenOne
 
   const options = getOptions()
@@ -177,26 +177,26 @@ const metaManager = createManager({
     esi: {
       group: true,
       namespaced: true,
-      contentAttributes: ['src', 'test', 'text'],
-    },
-  },
+      attributes: ['src', 'test', 'text']
+    }
+  }
 })
 
-useMeta(
+/* useMeta(
   {
     og: {
       something: 'test',
     },
   },
   metaManager
-)
+) */
 
 const router = createRouter({
   history: createWebHistory('/vue-router'),
   routes: [
     { name: 'home', path: '/', component: view('home') },
-    { name: 'about', path: '/about', component: view('about') },
-  ],
+    { name: 'about', path: '/about', component: view('about') }
+  ]
 })
 
 const app = createApp(App)

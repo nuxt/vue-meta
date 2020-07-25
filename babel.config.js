@@ -1,4 +1,16 @@
 module.exports = {
+  presets: [
+    ["@babel/preset-env", {
+      useBuiltIns: 'usage',
+      corejs: 3,
+      targets: {
+        ie: 9
+      }
+    }]
+  ],
+  plugins: [
+    "dynamic-import-node"
+  ],
   env: {
     test: {
       plugins: [
@@ -10,7 +22,8 @@ module.exports = {
           targets: {
             node: 'current'
           }
-        }]
+        }],
+       '@babel/preset-typescript'
       ],
     }
   }

@@ -5,12 +5,12 @@ const {
   processIf,
   getBaseTransformPreset,
   createObjectExpression,
-  createObjectProperty,
+  createObjectProperty
 } = require('@vue/compiler-core')
 
 const { parse } = require('@vue/compiler-dom')
 
-function headTransform(node, context) {
+function headTransform (node, context) {
   console.log('NODE', node)
   if (node.type === 1 /* NodeTypes.ELEMENT */) {
     return () => {
@@ -35,13 +35,13 @@ module.exports = function (source, map) {
   // console.log('AST', ast)
 
   const [nodeTransforms, directiveTransforms] = getBaseTransformPreset({
-    prefixIdentifiers: true,
+    prefixIdentifiers: true
   })
 
   transform(ast, {
     prefixIdentifiers: true,
     nodeTransforms: [...nodeTransforms, headTransform],
-    directiveTransforms,
+    directiveTransforms
   })
 
   const result = generate(ast, { mode: 'module' })

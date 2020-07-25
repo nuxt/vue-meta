@@ -16,14 +16,14 @@ app.use(
     writeToDisk: true,
     stats: {
       colors: true,
-      chunks: false,
-    },
+      chunks: false
+    }
   })
 )
 
 fs.readdirSync(__dirname)
   .filter(file => file !== 'ssr')
-  .forEach(file => {
+  .forEach((file) => {
     if (fs.statSync(path.join(__dirname, file)).isDirectory()) {
       app.use(rewrite(`/${file}/*`, `/${file}/index.html`))
     }

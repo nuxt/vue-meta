@@ -2,7 +2,7 @@ import { hasOwn } from '@vue/shared'
 import { clone } from '../utils'
 import { ActiveNode, MetaContext, PathSegments, ShadowNode } from '../types'
 
-export function resolveActive(
+export function resolveActive (
   context: MetaContext,
   key: string,
   pathSegments: PathSegments,

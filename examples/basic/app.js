@@ -15,24 +15,24 @@ new Vue({
     titleTemplate: '%s | Vue Meta Examples',
     htmlAttrs: {
       lang: 'en',
-      amp: undefined,
+      amp: undefined
     },
     headAttrs: {
-      test: true,
+      test: true
     },
     meta: [{ name: 'description', content: 'Hello', vmid: 'test' }],
     script: [
       {
         innerHTML:
           '{ "@context": "http://www.schema.org", "@type": "Organization" }',
-        type: 'application/ld+json',
+        type: 'application/ld+json'
       },
       {
         innerHTML: '{ "body": "yes" }',
         body: true,
-        type: 'application/ld+json',
-      },
+        type: 'application/ld+json'
+      }
     ],
-    __dangerouslyDisableSanitizers: ['script'],
-  }),
+    __dangerouslyDisableSanitizers: ['script']
+  })
 }).$mount('#app')

@@ -1,0 +1,18 @@
+{
+  "extends": [
+    "@nuxtjs/eslint-config-typescript"
+  ],
+  "globals": {
+    "__DEV__": true
+  },
+  "overrides": [
+    {
+      "files": [
+        "examples/**"
+      ],
+      "rules": {
+        "no-console": "off",
+      }
+    }
+  ]
+}

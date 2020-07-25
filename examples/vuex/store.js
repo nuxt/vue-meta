@@ -14,54 +14,54 @@ export default new Vuex.Store({
       title: '',
       content: '',
       slug: '',
-      published: false,
+      published: false
     },
     posts: [
       {
         slug: 'a-sample-blog-post',
         title: 'A Sample Blog Post',
         content: 'This is the blog post content',
-        published: true,
+        published: true
       },
       {
         slug: 'an-unpublished-blog-post',
         title: 'An Unpublished Blog Post',
         content: 'This is the blog post content',
-        published: false,
+        published: false
       },
       {
         slug: 'another-blog-post',
         title: 'Another Blog Post',
         content: 'This is the blog post content',
-        published: true,
-      },
-    ],
+        published: true
+      }
+    ]
   },
 
   // GETTERS
   getters: {
-    post(state) {
+    post (state) {
       return state.post
     },
-    publishedPosts(state) {
+    publishedPosts (state) {
       return state.posts.filter(post => post.published)
     },
-    publishedPostsCount(state, getters) {
+    publishedPostsCount (state, getters) {
       return getters.publishedPosts.length
-    },
+    }
   },
 
   // MUTATIONS
   mutations: {
-    getPost(state, { slug }) {
+    getPost (state, { slug }) {
       state.post = state.posts.find(post => post.slug === slug)
-    },
+    }
   },
 
   // ACTIONS
   actions: {
-    getPost({ commit }, payload) {
+    getPost ({ commit }, payload) {
       commit('getPost', payload)
-    },
-  },
+    }
+  }
 })

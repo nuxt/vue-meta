@@ -8,12 +8,12 @@ export interface MetainfoProps {
   metainfo: MetainfoActive
 }
 
-export function addVnode(targets: any, target: string, vnode: VNode) {
-  if (!targets[target]) {
-    targets[target] = []
+export function addVnode (teleports: any, to: string, vnode: VNode) {
+  if (!teleports[to]) {
+    teleports[to] = []
   }
 
-  targets[target].push(vnode)
+  teleports[to].push(vnode)
 }
 
 export const MetainfoImpl = defineComponent({
@@ -21,12 +21,12 @@ export const MetainfoImpl = defineComponent({
   props: {
     metainfo: {
       type: Object as PropType<MetainfoActive>,
-      required: true,
-    },
+      required: true
+    }
   },
-  setup({ metainfo }, { slots }) {
+  setup ({ metainfo }, { slots }) {
     return () => {
-      const targets: any = {}
+      const teleports: any = {}
 
       const manager = getCurrentManager()
 
@@ -39,26 +39,29 @@ export const MetainfoImpl = defineComponent({
           metainfo[key],
           config
         )
-        let defaultTarget =
-          (key !== 'base' && metainfo[key].target) || config.target || 'head'
+        console.log('RENDERED VNODES', vnodes)
+        const defaultTo =
+          (key !== 'base' && metainfo[key].to) || config.to || 'head'
 
         if (isArray(vnodes)) {
-          for (const { target, vnode } of vnodes) {
-            addVnode(targets, target || defaultTarget, vnode)
+          for (const { to, vnode } of vnodes) {
+            console.log('VNODE 1', vnode)
+            addVnode(teleports, to || defaultTo, vnode)
           }
           continue
         }
 
-        const { target, vnode } = vnodes
-        addVnode(targets, target || defaultTarget, vnode)
+        const { to, vnode } = vnodes
+        console.log('VNODE 2', vnode)
+        addVnode(teleports, to || defaultTo, vnode)
       }
 
-      // console.log('TARGETS', targets)
-      return Object.keys(targets).map(target => {
-        return h(Teleport, { to: target }, targets[target])
+      console.log('TARGETS', teleports)
+      return Object.keys(teleports).map((to) => {
+        return h(Teleport, { to }, teleports[to])
       })
     }
-  },
+  }
 })
 
 export const Metainfo = (MetainfoImpl as any) as {

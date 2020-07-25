@@ -24,18 +24,18 @@ export interface SlotScopeProperties {
 
 export type RenderedMetainfoNode = {
   vnode: VNode
-  target?: string
+  to?: string
 }
 
 export type RenderedMetainfo = Array<RenderedMetainfoNode>
 
-export function renderMeta(
+export function renderMeta (
   context: RenderContext,
   key: string,
   data: TODO,
   config: TODO
 ): RenderedMetainfo | RenderedMetainfoNode {
-  // console.info('renderMeta', key, data, config)
+  console.info('renderMeta', key, data, config)
 
   if (config.group) {
     return renderGroup(context, key, data, config)
@@ -44,33 +44,32 @@ export function renderMeta(
   return renderTag(context, key, data, config)
 }
 
-export function renderGroup(
+export function renderGroup (
   context: RenderContext,
   key: string,
   data: TODO,
   config: TODO
 ): RenderedMetainfo | RenderedMetainfoNode {
-  // console.info('renderGroup', key, data, config)
+  console.info('renderGroup', key, data, config)
 
   if (isArray(data)) {
-    config.contentAttributes = getConfigKey(
-      [key, config.tag],
-      'contentAttributes',
-      config
-    )
-    return data.map(_data => renderTag(context, key, _data, config)).flat()
+    if (__DEV__) {
+      // eslint-disable-next-line no-console
+      console.warn('Specifying an array for group properties isnt supported as we didnt found a use-case for this yet. If you have one, please create an issue on the vue-meta repo')
+    }
+    // config.attributes = getConfigKey([key, config.tag], 'attributes', config)
+    return []
   }
 
   return Object.keys(data)
-    .map(childKey => {
+    .map((childKey) => {
       const groupConfig: GroupConfig = {
         group: key,
-        data,
+        data
       }
 
       if (config.namespaced) {
-        groupConfig.tagNamespace =
-          config.namespaced === true ? key : config.namespaced
+        groupConfig.tagNamespace = config.namespaced === true ? key : config.namespaced
       } else if (config.namespacedAttribute) {
         const namespace =
           config.namespacedAttribute === true ? key : config.namespacedAttribute
@@ -84,31 +83,37 @@ export function renderGroup(
     .flat()
 }
 
-export function renderTag(
+export function renderTag (
   context: RenderContext,
   key: string,
   data: TODO,
   config: TODO = {},
   groupConfig?: GroupConfig
 ): RenderedMetainfo | RenderedMetainfoNode {
+  console.info('renderTag', key, data, config, groupConfig)
+
+  /* TODO: not needed I think
   if (!config.group && isArray(data)) {
-    data = { content: data }
-  }
+    data = { children: data }
+  } */
 
   let content, hasChilds
 
   if (isArray(data)) {
     return data
-      .map(child => {
+      .map((child) => {
         return renderTag(context, key, child, config, groupConfig)
       })
       .flat()
-  } else if (data.content && isArray(data.content)) {
-    content = data.content.map((child: string | TODO) => {
-      if (typeof child === 'string') {
-        return child
+  } else if (data.children && isArray(data.children)) {
+    content = data.children.map((child: string | TODO) => {
+      const data = renderTag(context, key, child, config, groupConfig)
+
+      if (isArray(data)) {
+        return data.map(({ vnode }) => vnode)
       }
-      return renderTag(context, key, child, config, groupConfig)
+
+      return data.vnode
     })
     hasChilds = true
   } else {
@@ -125,36 +130,35 @@ export function renderTag(
     attributes = { ...data }
 
     delete attributes.tag
-    delete attributes.content
-    delete attributes.target
+    delete attributes.children
+    delete attributes.to
   } else {
     attributes = {}
   }
 
   if (hasChilds) {
-    content = getSlotContent(context, slotName, content, config, data)
+    content = getSlotContent(context, slotName, content, data)
   } else {
-    const contentAttributes = getConfigKey(tag, 'contentAttributes', config)
-
-    if (contentAttributes) {
+    const tagAttributes = getConfigKey([tag, config.tag], 'attributes', config)
+    console.log('tagAttributes', tagAttributes, config, tag)
+    if (tagAttributes) {
       if (!config.nameless) {
-        const nameAttribute = getConfigKey(tag, 'nameAttribute', config)
-        if (nameAttribute) {
-          attributes[nameAttribute] = fullName
+        const keyAttribute = getConfigKey([tag, config.tag], 'keyAttribute', config)
+        if (keyAttribute) {
+          attributes[keyAttribute] = fullName
         }
       }
 
-      const contentAttribute = config.contentAttribute || contentAttributes[0]
-      attributes[contentAttribute] = getSlotContent(
+      const valueAttribute = config.valueAttribute || tagAttributes[0]
+      attributes[valueAttribute] = getSlotContent(
         context,
         slotName,
-        attributes[contentAttribute] || content,
-        config,
+        attributes[valueAttribute] || content,
         groupConfig
       )
       content = undefined
     } else {
-      content = getSlotContent(context, slotName, content, config, data)
+      content = getSlotContent(context, slotName, content, data)
     }
   }
 
@@ -170,11 +174,8 @@ export function renderTag(
 
   if (hasChilds) {
     for (const child of content) {
-      if (typeof child === 'string') {
-        continue
-      }
-
       if (child.type === finalTag) {
+        // TODO: what was this about again?!?!?!?!
         return content
       }
 
@@ -185,36 +186,35 @@ export function renderTag(
   const vnode = h(finalTag, attributes, content)
 
   return {
-    target: data.target,
-    vnode,
+    to: data.to,
+    vnode
   }
 }
 
-export function getSlotContent(
+export function getSlotContent (
   { metainfo, slots }: RenderContext,
   slotName: string,
   content: any,
-  config: TODO,
   groupConfig?: GroupConfig
 ): TODO {
-  if (!slots[slotName]) {
+  if (!slots || !slots[slotName]) {
     return content
   }
 
   const slotProps: SlotScopeProperties = {
     content,
-    metainfo,
+    metainfo
   }
 
   if (groupConfig && groupConfig.group) {
     slotProps[groupConfig.group] = groupConfig.data
   }
 
-  content = slots[slotName](slotProps)
+  const slotContent = slots[slotName](slotProps)
 
-  if (content.length) {
-    return content[0].children
+  if (slotContent && slotContent.length) {
+    return slotContent[0].children
   }
 
-  return ''
+  return content
 }

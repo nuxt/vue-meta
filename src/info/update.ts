@@ -1,8 +1,8 @@
+import { MetaContext, PathSegments, ShadowNode, ActiveNode } from '../types'
 import { shadow, active } from './globals'
 import { set } from './set'
-import { MetaContext, PathSegments, ShadowNode, ActiveNode } from '../types'
 
-export function update(
+export function update (
   context: MetaContext,
   pathSegments: PathSegments,
   key: string,

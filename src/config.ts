@@ -4,10 +4,10 @@ import { TODO } from './types'
 
 export interface ConfigOption {
   tag?: string
-  target?: string
+  to?: string
   group?: boolean
-  nameAttribute?: string
-  contentAttribute?: string
+  keyAttribute?: string
+  valueAttribute?: string
   nameless?: boolean
   namespaced?: boolean
   namespacedAttribute?: boolean
@@ -16,64 +16,59 @@ export interface ConfigOption {
 const defaultMapping: { [key: string]: ConfigOption } = {
   body: {
     tag: 'script',
-    target: 'body',
+    to: 'body'
   },
   base: {
-    contentAttribute: 'href',
+    valueAttribute: 'href'
   },
   charset: {
     tag: 'meta',
     nameless: true,
-    contentAttribute: 'charset',
+    valueAttribute: 'charset'
   },
   description: {
-    tag: 'meta',
+    tag: 'meta'
   },
   og: {
     group: true,
     namespacedAttribute: true,
     tag: 'meta',
-    nameAttribute: 'property',
+    keyAttribute: 'property'
   },
   twitter: {
     group: true,
     namespacedAttribute: true,
-    tag: 'meta',
-  },
+    tag: 'meta'
+  }
 }
 
 export { defaultMapping }
 
-export function hasConfig(name: string): boolean {
+export function hasConfig (name: string): boolean {
   return !!tags[name] || !!defaultMapping[name]
 }
 
-export function getConfigKey(
-  name: string | Array<string>,
+export function getConfigKey (
+  tagOrName: string | Array<string>,
   key: string,
-  config: TODO,
-  dontLog?: boolean
+  config: TODO
 ): any {
-  if (!dontLog) {
-    // console.log('getConfigKey', name, key, getConfigKey(name, key, config, true), config)
-  }
-
   if (config && key in config) {
     return config[key]
   }
 
-  if (isArray(name)) {
-    for (const _name of name) {
-      if (_name && _name in tags) {
-        return tags[_name][key]
+  if (isArray(tagOrName)) {
+    for (const name of tagOrName) {
+      if (name && name in tags) {
+        return tags[name][key]
       }
     }
 
     return
   }
 
-  if (name in tags) {
-    const tag = tags[name]
+  if (tagOrName in tags) {
+    const tag = tags[tagOrName]
     return tag[key]
   }
 }

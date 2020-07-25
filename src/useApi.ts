@@ -7,7 +7,7 @@ import { MetaContext, MetainfoActive, MetainfoInput } from './types'
 
 let contextCounter: number = 0
 
-export function useMeta(obj: MetainfoInput, manager?: Manager) {
+export function useMeta (obj: MetainfoInput, manager?: Manager) {
   const vm = getCurrentInstance()
   if (vm) {
     console.log(vm)
@@ -17,16 +17,15 @@ export function useMeta(obj: MetainfoInput, manager?: Manager) {
   if (!manager) {
     // oopsydoopsy
     throw new Error('No manager or current instance')
-    return
   }
 
   const context: MetaContext = {
     id: PolySymbol(`context ${contextCounter++}`),
     vm,
-    manager,
+    manager
   }
 
-  let unmount = <T extends Function = () => any>() => remove(context)
+  const unmount = <T extends Function = () => any>() => remove(context)
   if (vm) {
     onUnmounted(unmount)
   }
@@ -37,20 +36,20 @@ export function useMeta(obj: MetainfoInput, manager?: Manager) {
 
   setByObject(context, obj)
 
-  const handler = /*#__PURE__*/ createHandler(context)
+  const handler = /* #__PURE__ */ createHandler(context)
   const meta = createProxy(obj, handler)
 
   return {
     meta,
-    unmount,
+    unmount
   }
 }
 
-export function useMetainfo(): MetainfoActive {
+export function useMetainfo (): MetainfoActive {
   return inject(metaInfoKey)!
 }
 
-export function getCurrentManager(): Manager {
+export function getCurrentManager (): Manager {
   const vm = getCurrentInstance()!
   return vm.appContext.config.globalProperties.$metaManager
 }

@@ -16,21 +16,21 @@ export type Manager = {
   install(app: App): void
 }
 
-export function createManager(options: TODO = {}): Manager {
+export function createManager (options: TODO = {}): Manager {
   const { resolver = deepestResolver } = options
 
   // TODO: validate resolver
 
   const manager: Manager = {
     resolver: {
-      setup(context: MetaContext) {
+      setup (context: MetaContext) {
         if (!resolver || isFunction(resolver)) {
           return
         }
 
         resolver.setup(context)
       },
-      resolve(key: string, pathSegments: PathSegments, getShadow, getActive) {
+      resolve (key: string, pathSegments: PathSegments, getShadow, getActive) {
         if (!resolver) {
           return
         }
@@ -40,15 +40,15 @@ export function createManager(options: TODO = {}): Manager {
         }
 
         return resolver.resolve(key, pathSegments, getShadow, getActive)
-      },
+      }
     },
     config: {
       ...defaultMapping,
-      ...options.config,
+      ...options.config
     },
-    install(app: App) {
+    install (app: App) {
       applyMetaPlugin(app, this)
-    },
+    }
   }
 
   return manager

@@ -1,22 +1,28 @@
+/*
+ * This is a fixed config for real HTML tags
+ *
+ * TODO: we probably dont need all attributes
+ */
+
 export interface TagConfig {
-  nameAttribute?: string
-  contentAttributes: boolean | Array<string>
+  keyAttribute?: string
+  attributes: boolean | Array<string>
   [key: string]: any
 }
 
 const tags: { [key: string]: TagConfig } = {
   title: {
-    contentAttributes: false,
+    attributes: false
   },
   base: {
-    contentAttributes: ['href', 'target'],
+    attributes: ['href', 'target']
   },
   meta: {
-    nameAttribute: 'name',
-    contentAttributes: ['content', 'name', 'http-equiv', 'charset'],
+    keyAttribute: 'name',
+    attributes: ['content', 'name', 'http-equiv', 'charset']
   },
   link: {
-    contentAttributes: [
+    attributes: [
       'href',
       'crossorigin',
       'rel',
@@ -29,14 +35,14 @@ const tags: { [key: string]: TagConfig } = {
       'imagesrcset',
       'imagesizes',
       'as',
-      'color',
-    ],
+      'color'
+    ]
   },
   style: {
-    contentAttributes: ['media'],
+    attributes: ['media']
   },
   script: {
-    contentAttributes: [
+    attributes: [
       'src',
       'type',
       'nomodule',
@@ -44,12 +50,12 @@ const tags: { [key: string]: TagConfig } = {
       'defer',
       'crossorigin',
       'integrity',
-      'referrerpolicy',
-    ],
+      'referrerpolicy'
+    ]
   },
   noscript: {
-    contentAttributes: false,
-  },
+    attributes: false
+  }
 }
 
 export { tags }

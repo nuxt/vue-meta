@@ -6,7 +6,7 @@ Vue.use(VueMeta)
 window.users = []
 
 new Vue({
-  metaInfo() {
+  metaInfo () {
     return {
       title: 'Async Callback',
       titleTemplate: '%s | Vue Meta Examples',
@@ -16,56 +16,56 @@ new Vue({
           vmid: 'potatoes',
           src: '/user-3.js',
           async: true,
-          callback: this.updateCounter,
+          callback: this.updateCounter
         },
         {
           skip: this.count < 1,
           vmid: 'vegetables',
           src: '/user-2.js',
           async: true,
-          callback: this.updateCounter,
+          callback: this.updateCounter
         },
         {
           vmid: 'meat',
           src: '/user-1.js',
           async: true,
-          callback: el => this.loadCallback(el.getAttribute('data-vmid')),
+          callback: el => this.loadCallback(el.getAttribute('data-vmid'))
         },
-        ...this.scripts,
-      ],
+        ...this.scripts
+      ]
     }
   },
-  data() {
+  data () {
     return {
       count: 0,
       scripts: [],
-      users: window.users,
+      users: window.users
     }
   },
   watch: {
-    count(val) {
+    count (val) {
       if (val === 3) {
         this.addScript()
       }
-    },
+    }
   },
   methods: {
-    updateCounter() {
+    updateCounter () {
       this.count++
     },
-    addScript() {
+    addScript () {
       this.scripts.push({
         src: '/user-4.js',
         callback: () => {
           this.updateCounter()
-        },
+        }
       })
     },
-    loadCallback(vmid) {
+    loadCallback (vmid) {
       if (vmid === 'meat') {
         this.updateCounter()
       }
-    },
+    }
   },
   template: `
     <div id="app">
@@ -84,5 +84,5 @@ new Vue({
         </ul>
       </div>
     </div>
-  `,
+  `
 }).$mount('#app')

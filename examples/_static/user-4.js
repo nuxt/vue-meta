@@ -10,14 +10,14 @@ window.users.push({
     zipcode: '53919-4257',
     geo: {
       lat: '29.4572',
-      lng: '-164.2990',
-    },
+      lng: '-164.2990'
+    }
   },
   phone: '493-170-9623 x156',
   website: 'kale.biz',
   company: {
     name: 'Robel-Corkery',
     catchPhrase: 'Multi-tiered zero tolerance productivity',
-    bs: 'transition cutting-edge web services',
-  },
+    bs: 'transition cutting-edge web services'
+  }
 })

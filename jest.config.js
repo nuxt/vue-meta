@@ -14,7 +14,7 @@ module.exports = {
   coverageDirectory: './coverage',
 
   collectCoverageFrom: [
-    '**/src/**/*.js'
+    '**/src/**/*.[tj]s'
   ],
 
   coveragePathIgnorePatterns: [
@@ -30,7 +30,7 @@ module.exports = {
   ],
 
   transform: {
-    '^.+\\.js$': 'babel-jest',
+    '^.+\\.[tj]s$': 'babel-jest',
     '.*\\.(vue)$': 'vue-jest'
   },
 
@@ -38,5 +38,9 @@ module.exports = {
     'ts',
     'js',
     'json'
-  ]
+  ],
+  
+  globals: {
+    __DEV__: true
+  }
 }

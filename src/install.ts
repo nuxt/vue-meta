@@ -10,7 +10,7 @@ declare module '@vue/runtime-core' {
   }
 }
 
-export function applyMetaPlugin(app: App, manager: Manager) {
+export function applyMetaPlugin (app: App, manager: Manager) {
   app.component('Metainfo', Metainfo)
 
   app.config.globalProperties.$metaManager = manager

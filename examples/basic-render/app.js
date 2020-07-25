@@ -8,17 +8,17 @@ Vue.component('child', {
   props: {
     page: {
       type: String,
-      default: '',
-    },
-  },
-  render(h) {
-    return h('h3', null, this.page)
-  },
-  metaInfo() {
-    return {
-      title: this.page,
+      default: ''
     }
   },
+  render (h) {
+    return h('h3', null, this.page)
+  },
+  metaInfo () {
+    return {
+      title: this.page
+    }
+  }
 })
 
 new Vue({
@@ -28,5 +28,5 @@ new Vue({
       <p>Inspect Element to see the meta info</p>
       <child page="This is a prop"></child>
     </div>
-  `,
+  `
 }).$mount('#app')

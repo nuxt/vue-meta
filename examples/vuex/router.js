@@ -13,6 +13,6 @@ export default new Router({
   base: '/vuex',
   routes: [
     { path: '/', component: Home },
-    { path: '/posts/:slug', component: Post },
-  ],
+    { path: '/posts/:slug', component: Post }
+  ]
 })
