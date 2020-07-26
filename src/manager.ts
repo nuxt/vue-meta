@@ -1,30 +1,23 @@
 import { App } from 'vue'
 import { isFunction } from '@vue/shared'
-import { defaultMapping } from './config'
+import { Config } from './config'
 import { applyMetaPlugin } from './install'
 import * as deepestResolver from './resolvers/deepest'
-import { TODO, ActiveResolverObject, MetaContext, PathSegments } from './types'
-
-export type ManagerOptions = {
-  install(app: App): void
-}
+import { ManagerResolverObject, ActiveResolverObject, MetaContext, PathSegments } from './types'
 
 export type Manager = {
-  readonly config: TODO
+  readonly config: Config
 
-  resolver: ActiveResolverObject
+  resolver: ManagerResolverObject
   install(app: App): void
 }
 
-export function createManager (options: TODO = {}): Manager {
-  const { resolver = deepestResolver } = options
-
+export function createManager (config: Config, resolver: ActiveResolverObject = deepestResolver): Manager {
   // TODO: validate resolver
-
   const manager: Manager = {
     resolver: {
       setup (context: MetaContext) {
-        if (!resolver || isFunction(resolver)) {
+        if (!resolver || !resolver.setup || isFunction(resolver)) {
           return
         }
 
@@ -42,10 +35,7 @@ export function createManager (options: TODO = {}): Manager {
         return resolver.resolve(key, pathSegments, getShadow, getActive)
       }
     },
-    config: {
-      ...defaultMapping,
-      ...options.config
-    },
+    config,
     install (app: App) {
       applyMetaPlugin(app, this)
     }

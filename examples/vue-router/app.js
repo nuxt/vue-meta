@@ -9,7 +9,7 @@ import {
   watch
 } from 'vue'
 import { createRouter, createWebHistory } from 'vue-router'
-import { createManager, useMeta, useMetainfo } from 'vue-meta'
+import { defaultConfig, createManager, useMeta, useMetainfo } from 'vue-meta'
 // import About from './about.vue'
 
 const metaUpdated = 'no'
@@ -76,22 +76,18 @@ const App = {
         title: 'Twitter Title'
       },
       noscript: [
-        //'<!-- // A code comment -->',
         { tag: 'link', rel: 'stylesheet', href: 'style.css' }
       ],
       otherNoscript: {
         tag: 'noscript',
         'data-test': 'hello',
         children: [
-          //'<!-- // Another code comment -->',
           { tag: 'link', rel: 'stylesheet', href: 'style2.css' }
         ]
       },
       body: 'body-script1.js',
       script: [
-        //'<!--[if IE]>',
         { src: 'head-script1.js' },
-        //'<![endif]-->',
         { src: 'body-script2.js', to: 'body' },
         { src: 'body-script3.js', to: '#put-it-here' }
       ],
@@ -120,22 +116,57 @@ const App = {
 
     const metadata = useMetainfo()
 
-    window.$metainfo = metadata
+    window.$metadata = metadata
 
     watch(metadata, (newValue, oldValue) => {
       console.log('UPDATE', newValue)
     })
+
+    /* let i = 0
+    const walk = (data, path = []) => {
+      for (const key in data) {
+        const newPath = [...path, key]
+        if (typeof data[key] === 'object') {
+          walk(data[key], newPath)
+        } else {
+          console.log(newPath.join('.'))
+        }
+        i++
+        if (i > 50) {
+          break
+        }
+      }
+    }
+    setTimeout(() => walk(metadata), 1000) */
 
     return {
       metadata
     }
   },
   template: `
-    <metainfo :metainfo="metadata">
+    <metainfo :metainfo="metadata" :body-class="'theme-dark'" :html-lang="['en','nl']" html-amp>
       <template v-slot:base="{ content, metainfo }">http://nuxt.dev:3000{{ content }}</template>
       <template v-slot:title="{ content, metainfo }">{{ content }} - {{ metainfo.description }} - Hello</template>
       <template v-slot:og(title)="{ content, metainfo, og }">
         {{ content }} - {{ og.description }} - {{ metainfo.description }} - Hello Again
+      </template>
+
+      <script src="lalala1.js"></script>
+      <script src="lalala2.js"></script>
+
+      <template v-slot:head="{ metainfo }">
+        <!--[if IE]>
+        // -> Reactivity is not supported by Vue, all comments are ignored
+        <script :src="metainfo.script[0].src" ></script>
+        // -> but a static file should work
+        <script src="lalala3.js" ></script>
+        // -> altho Vue probably strips comments in production builds (but can be configged afaik)
+        <![endif]-->
+        <script :src="metainfo.script[0].src" ></script>
+      </template>
+
+      <template v-slot:body>
+        <script src="lalala4.js"></script>
       </template>
     </metainfo>
 
@@ -172,15 +203,13 @@ function decisionMaker5000000 (key, pathSegments, getOptions, getCurrentValue) {
 }
 
 const metaManager = createManager({
-  resolver: decisionMaker5000000,
-  config: {
-    esi: {
-      group: true,
-      namespaced: true,
-      attributes: ['src', 'test', 'text']
-    }
+  ...defaultConfig,
+  esi: {
+    group: true,
+    namespaced: true,
+    attributes: ['src', 'test', 'text']
   }
-})
+}, decisionMaker5000000)
 
 /* useMeta(
   {

@@ -35,6 +35,11 @@ export interface ActiveResolverObject {
   resolve: ActiveResolverMethod
 }
 
+export interface ManagerResolverObject {
+  setup: ActiveResolverSetup
+  resolve: ActiveResolverMethod
+}
+
 export interface ShadowNode {
   [key: string]: TODO
 }

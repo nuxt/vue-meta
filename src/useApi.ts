@@ -10,7 +10,6 @@ let contextCounter: number = 0
 export function useMeta (obj: MetainfoInput, manager?: Manager) {
   const vm = getCurrentInstance()
   if (vm) {
-    console.log(vm)
     manager = vm.appContext.config.globalProperties.$metaManager
   }
 
@@ -30,9 +29,7 @@ export function useMeta (obj: MetainfoInput, manager?: Manager) {
     onUnmounted(unmount)
   }
 
-  if (manager.resolver.setup) {
-    manager.resolver.setup(context)
-  }
+  manager.resolver.setup(context)
 
   setByObject(context, obj)
 

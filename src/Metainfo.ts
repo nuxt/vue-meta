@@ -1,5 +1,5 @@
-import { h, defineComponent, Teleport, PropType, VNode, VNodeProps } from 'vue'
-import { isArray } from '@vue/shared'
+import { h, watchEffect, defineComponent, Teleport, PropType, VNode, VNodeProps } from 'vue'
+import { isArray, isFunction } from '@vue/shared'
 import { renderMeta } from './render'
 import { getCurrentManager } from './useApi'
 import { MetainfoActive } from './types'
@@ -8,9 +8,14 @@ export interface MetainfoProps {
   metainfo: MetainfoActive
 }
 
-export function addVnode (teleports: any, to: string, vnode: VNode) {
+export function addVnode (teleports: any, to: string, vnode: VNode | Array<VNode>) {
   if (!teleports[to]) {
     teleports[to] = []
+  }
+
+  if (isArray(vnode)) {
+    teleports[to].push(...vnode)
+    return
   }
 
   teleports[to].push(vnode)
@@ -18,13 +23,44 @@ export function addVnode (teleports: any, to: string, vnode: VNode) {
 
 export const MetainfoImpl = defineComponent({
   name: 'Metainfo',
+  inheritAttrs: false,
   props: {
     metainfo: {
       type: Object as PropType<MetainfoActive>,
       required: true
     }
   },
-  setup ({ metainfo }, { slots }) {
+  setup ({ metainfo }, { attrs, slots }) {
+    const tags: { [key: string]: Element } = {}
+
+    watchEffect(() => {
+      const attributes = Object.keys(attrs)
+
+      for (const tagName of ['html', 'head', 'body']) {
+        const tagAttrs = attributes.filter(attr => attr.startsWith(tagName + '-'))
+
+        if (!tagAttrs.length) {
+          continue
+        }
+
+        if (!tags[tagName]) {
+          const foundTag = document.querySelector(tagName)
+
+          if (foundTag) {
+            tags[tagName] = foundTag
+          }
+        }
+
+        const tag: Element = tags[tagName]
+
+        for (const tagAttr of tagAttrs) {
+          const attr: string = tagAttr.slice(5)
+
+          tag.setAttribute(attr, `${attrs[tagAttr] || ''}`)
+        }
+      }
+    })
+
     return () => {
       const teleports: any = {}
 
@@ -39,24 +75,28 @@ export const MetainfoImpl = defineComponent({
           metainfo[key],
           config
         )
-        console.log('RENDERED VNODES', vnodes)
+
         const defaultTo =
           (key !== 'base' && metainfo[key].to) || config.to || 'head'
 
         if (isArray(vnodes)) {
           for (const { to, vnode } of vnodes) {
-            console.log('VNODE 1', vnode)
             addVnode(teleports, to || defaultTo, vnode)
           }
           continue
         }
 
         const { to, vnode } = vnodes
-        console.log('VNODE 2', vnode)
         addVnode(teleports, to || defaultTo, vnode)
       }
 
-      console.log('TARGETS', teleports)
+      for (const tag of ['default', 'head', 'body']) {
+        const slotFn = slots[tag]
+        if (isFunction(slotFn)) {
+          addVnode(teleports, tag === 'default' ? 'head' : tag, slotFn({ metainfo }))
+        }
+      }
+
       return Object.keys(teleports).map((to) => {
         return h(Teleport, { to }, teleports[to])
       })
