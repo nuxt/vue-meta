@@ -1,19 +1,6 @@
-export interface ConfigOption {
-  tag?: string
-  to?: string
-  group?: boolean
-  keyAttribute?: string
-  valueAttribute?: string
-  nameless?: boolean
-  namespaced?: boolean
-  namespacedAttribute?: boolean
-}
+import { Config } from '../types'
 
-export interface Config {
-  [key: string]: ConfigOption
-}
-
-const defaultConfig: Config = {
+export const defaultConfig: Config = {
   body: {
     tag: 'script',
     to: 'body'
@@ -39,7 +26,14 @@ const defaultConfig: Config = {
     group: true,
     namespacedAttribute: true,
     tag: 'meta'
+  },
+  htmlAttrs: {
+    attributesFor: 'html'
+  },
+  headAttrs: {
+    attributesFor: 'head'
+  },
+  bodyAttrs: {
+    attributesFor: 'body'
   }
 }
-
-export { defaultConfig }

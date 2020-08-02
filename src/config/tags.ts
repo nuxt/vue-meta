@@ -6,6 +6,7 @@
 
 export interface TagConfig {
   keyAttribute?: string
+  contentAsAttribute?: boolean | string
   attributes: boolean | Array<string>
   [key: string]: any
 }
@@ -15,13 +16,16 @@ const tags: { [key: string]: TagConfig } = {
     attributes: false
   },
   base: {
+    contentAsAttribute: true,
     attributes: ['href', 'target']
   },
   meta: {
+    contentAsAttribute: true,
     keyAttribute: 'name',
     attributes: ['content', 'name', 'http-equiv', 'charset']
   },
   link: {
+    contentAsAttribute: true,
     attributes: [
       'href',
       'crossorigin',

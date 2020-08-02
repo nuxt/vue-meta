@@ -1,7 +1,14 @@
 import { h, VNode } from 'vue'
-import { isArray } from '@vue/shared'
-import { getConfigKey } from './config'
+import { isArray, isString } from '@vue/shared'
+import { getConfigByKey } from './config'
 import { TODO } from './types'
+
+const cachedElements: {
+  [key: string]: {
+    el: Element,
+    attrs: Array<string>,
+  }
+} = {}
 
 export interface RenderContext {
   slots: any
@@ -34,8 +41,12 @@ export function renderMeta (
   key: string,
   data: TODO,
   config: TODO
-): RenderedMetainfo | RenderedMetainfoNode {
+): void | RenderedMetainfo | RenderedMetainfoNode {
   console.info('renderMeta', key, data, config)
+
+  if (config.attributesFor) {
+    return renderAttributes(context, key, data, config)
+  }
 
   if (config.group) {
     return renderGroup(context, key, data, config)
@@ -92,12 +103,8 @@ export function renderTag (
 ): RenderedMetainfo | RenderedMetainfoNode {
   console.info('renderTag', key, data, config, groupConfig)
 
-  /* TODO: not needed I think
-  if (!config.group && isArray(data)) {
-    data = { children: data }
-  } */
-
-  let content, hasChilds
+  const contentAttributes = ['content', 'json', 'rawContent']
+  const getConfig = (key: string) => getConfigByKey([tag, config.tag], key, config)
 
   if (isArray(data)) {
     return data
@@ -105,7 +112,19 @@ export function renderTag (
         return renderTag(context, key, child, config, groupConfig)
       })
       .flat()
+  }
+
+  const { tag = config.tag || key } = data
+
+  let content
+  let hasChilds: boolean = false
+  let isRaw: boolean = false
+
+  if (isString(data)) {
+    content = data
   } else if (data.children && isArray(data.children)) {
+    hasChilds = true
+
     content = data.children.map((child: string | TODO) => {
       const data = renderTag(context, key, child, config, groupConfig)
 
@@ -115,12 +134,23 @@ export function renderTag (
 
       return data.vnode
     })
-    hasChilds = true
   } else {
-    content = data
-  }
+    let i = 0
+    for (const contentAttribute of contentAttributes) {
+      if (!content && data[contentAttribute]) {
+        if (i === 1) {
+          content = JSON.stringify(data[contentAttribute])
+        } else {
+          content = data[contentAttribute]
+        }
 
-  const { tag = config.tag || key } = data
+        isRaw = i > 1
+        break
+      }
+
+      i++
+    }
+  }
 
   const fullName = (groupConfig && groupConfig.fullName) || key
   const slotName = (groupConfig && groupConfig.slotName) || key
@@ -132,33 +162,44 @@ export function renderTag (
     delete attributes.tag
     delete attributes.children
     delete attributes.to
-  } else {
+
+    // cleanup all content attributes
+    for (const attr of contentAttributes) {
+      delete attributes[attr]
+    }
+  } else if (!attributes) {
     attributes = {}
   }
 
   if (hasChilds) {
     content = getSlotContent(context, slotName, content, data)
   } else {
-    const tagAttributes = getConfigKey([tag, config.tag], 'attributes', config)
-    console.log('tagAttributes', tagAttributes, config, tag)
-    if (tagAttributes) {
+    const contentAsAttribute = getConfig('contentAsAttribute')
+    let valueAttribute = config.valueAttribute
+
+    if (!valueAttribute && contentAsAttribute) {
+      const tagAttributes = getConfig('attributes')
+      valueAttribute = isString(contentAsAttribute) ? contentAsAttribute : tagAttributes[0]
+    }
+
+    if (!valueAttribute) {
+      content = getSlotContent(context, slotName, content, data)
+    } else {
       if (!config.nameless) {
-        const keyAttribute = getConfigKey([tag, config.tag], 'keyAttribute', config)
+        const keyAttribute = getConfig('keyAttribute')
         if (keyAttribute) {
           attributes[keyAttribute] = fullName
         }
       }
 
-      const valueAttribute = config.valueAttribute || tagAttributes[0]
       attributes[valueAttribute] = getSlotContent(
         context,
         slotName,
         attributes[valueAttribute] || content,
         groupConfig
       )
+
       content = undefined
-    } else {
-      content = getSlotContent(context, slotName, content, data)
     }
   }
 
@@ -172,22 +213,57 @@ export function renderTag (
   // console.log('      CONTENT', content)
   // // console.log(data, attributes, config)
 
-  if (hasChilds) {
-    for (const child of content) {
-      if (child.type === finalTag) {
-        // TODO: what was this about again?!?!?!?!
-        return content
-      }
+  let vnode
 
-      break
-    }
+  if (isRaw) {
+    attributes.innerHTML = content
+    vnode = h(finalTag, attributes)
+  } else {
+    vnode = h(finalTag, attributes, content)
   }
-
-  const vnode = h(finalTag, attributes, content)
 
   return {
     to: data.to,
     vnode
+  }
+}
+
+export function renderAttributes (
+  context: RenderContext,
+  key: string,
+  data: TODO,
+  config: TODO = {}
+): void {
+  console.info('renderAttributes', key, data, config)
+
+  const { attributesFor } = config
+
+  if (!cachedElements[attributesFor]) {
+    const el = document.querySelector(attributesFor)
+
+    if (el) {
+      cachedElements[attributesFor] = {
+        el,
+        attrs: []
+      }
+    }
+  }
+
+  const { el, attrs } = cachedElements[attributesFor]
+
+  for (const attr in data) {
+    const content = getSlotContent(context, `${key}(${attr})`, data[attr], data)
+
+    el.setAttribute(attr, `${content || ''}`)
+
+    if (!attrs.includes(attr)) {
+      attrs.push(attr)
+    }
+  }
+
+  const attrsToRemove = attrs.filter(attr => !data[attr])
+  for (const attr of attrsToRemove) {
+    el.removeAttribute(attr)
   }
 }
 

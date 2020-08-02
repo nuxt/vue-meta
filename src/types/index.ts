@@ -8,6 +8,22 @@ export type Immutable<T> = {
 export type TODO = any
 export type PathSegments = Array<string>
 
+export interface ConfigOption {
+  tag?: string
+  to?: string
+  group?: boolean
+  keyAttribute?: string
+  valueAttribute?: string
+  nameless?: boolean
+  namespaced?: boolean
+  namespacedAttribute?: boolean
+  attributesFor?: string
+}
+
+export interface Config {
+  [key: string]: ConfigOption
+}
+
 export interface MetainfoInput {
   [key: string]: TODO
 }

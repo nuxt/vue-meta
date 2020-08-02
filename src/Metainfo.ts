@@ -1,7 +1,7 @@
-import { h, watchEffect, defineComponent, Teleport, PropType, VNode, VNodeProps } from 'vue'
+import { h, defineComponent, Teleport, VNode, VNodeProps } from 'vue'
 import { isArray, isFunction } from '@vue/shared'
 import { renderMeta } from './render'
-import { getCurrentManager } from './useApi'
+import { useMetainfo, getCurrentManager } from './useApi'
 import { MetainfoActive } from './types'
 
 export interface MetainfoProps {
@@ -24,42 +24,8 @@ export function addVnode (teleports: any, to: string, vnode: VNode | Array<VNode
 export const MetainfoImpl = defineComponent({
   name: 'Metainfo',
   inheritAttrs: false,
-  props: {
-    metainfo: {
-      type: Object as PropType<MetainfoActive>,
-      required: true
-    }
-  },
-  setup ({ metainfo }, { attrs, slots }) {
-    const tags: { [key: string]: Element } = {}
-
-    watchEffect(() => {
-      const attributes = Object.keys(attrs)
-
-      for (const tagName of ['html', 'head', 'body']) {
-        const tagAttrs = attributes.filter(attr => attr.startsWith(tagName + '-'))
-
-        if (!tagAttrs.length) {
-          continue
-        }
-
-        if (!tags[tagName]) {
-          const foundTag = document.querySelector(tagName)
-
-          if (foundTag) {
-            tags[tagName] = foundTag
-          }
-        }
-
-        const tag: Element = tags[tagName]
-
-        for (const tagAttr of tagAttrs) {
-          const attr: string = tagAttr.slice(5)
-
-          tag.setAttribute(attr, `${attrs[tagAttr] || ''}`)
-        }
-      }
-    })
+  setup (_, { slots }) {
+    const metainfo = useMetainfo()
 
     return () => {
       const teleports: any = {}
@@ -75,6 +41,10 @@ export const MetainfoImpl = defineComponent({
           metainfo[key],
           config
         )
+
+        if (!vnodes) {
+          continue
+        }
 
         const defaultTo =
           (key !== 'base' && metainfo[key].to) || config.to || 'head'

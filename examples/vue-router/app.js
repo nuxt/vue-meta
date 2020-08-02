@@ -86,8 +86,18 @@ const App = {
         ]
       },
       body: 'body-script1.js',
+      htmlAttrs: {
+        amp: true,
+        lang: ['en', 'nl']
+      },
+      bodyAttrs: {
+        class: ['theme-dark']
+      },
       script: [
         { src: 'head-script1.js' },
+        { json: { '@context': 'http://schema.org', unsafe: '<p>hello</p>' } },
+        { content: 'window.a = "<br/>"; </script><script>alert(\'asdasd\');' },
+        { rawContent: 'window.b = "<br/>"; </script><script> alert(\'123321\');' },
         { src: 'body-script2.js', to: 'body' },
         { src: 'body-script3.js', to: '#put-it-here' }
       ],
@@ -113,6 +123,7 @@ const App = {
     })
 
     setTimeout(() => (meta.title = 'My Updated Title'), 2000)
+    setTimeout(() => (meta.htmlAttrs.amp = undefined), 2000)
 
     const metadata = useMetainfo()
 
@@ -144,7 +155,7 @@ const App = {
     }
   },
   template: `
-    <metainfo :metainfo="metadata" :body-class="'theme-dark'" :html-lang="['en','nl']" html-amp>
+    <metainfo>
       <template v-slot:base="{ content, metainfo }">http://nuxt.dev:3000{{ content }}</template>
       <template v-slot:title="{ content, metainfo }">{{ content }} - {{ metainfo.description }} - Hello</template>
       <template v-slot:og(title)="{ content, metainfo, og }">

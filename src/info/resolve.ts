@@ -12,7 +12,7 @@ export function resolveActive (
   let value
 
   if (shadowParent[key].length > 1) {
-    // Is this useful? Idea is to prevent the user from messing with these options by mistake
+    // Is using freeze useful? Idea is to prevent the user from messing with these options by mistake
     const getShadow = () => Object.freeze(clone(shadowParent[key]))
     const getActive = () => Object.freeze(clone(activeParent[key]))
 

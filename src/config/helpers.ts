@@ -1,12 +1,12 @@
 import { isArray } from '@vue/shared'
-import { Config } from './default'
+import { Config } from '../types'
 import { tags } from './tags'
 
 export function hasConfig (name: string, config: Config): boolean {
   return !!config[name] || !!tags[name]
 }
 
-export function getConfigKey (
+export function getConfigByKey (
   tagOrName: string | Array<string>,
   key: string,
   config: Config

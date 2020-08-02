@@ -1,9 +1,8 @@
 import { App } from 'vue'
 import { isFunction } from '@vue/shared'
-import { Config } from './config'
 import { applyMetaPlugin } from './install'
 import * as deepestResolver from './resolvers/deepest'
-import { ManagerResolverObject, ActiveResolverObject, MetaContext, PathSegments } from './types'
+import { Config, ManagerResolverObject, ActiveResolverObject, MetaContext, PathSegments } from './types'
 
 export type Manager = {
   readonly config: Config
