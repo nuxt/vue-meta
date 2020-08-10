@@ -1,6 +1,6 @@
 import { hasOwn } from '@vue/shared'
 import { clone } from '../utils'
-import { ActiveNode, MetaContext, PathSegments, ShadowNode } from '../types'
+import { ActiveNode, GetActiveNode, MetaContext, PathSegments, ShadowNode, GetShadowNodes } from '../types'
 
 export function resolveActive (
   context: MetaContext,
@@ -13,8 +13,8 @@ export function resolveActive (
 
   if (shadowParent[key].length > 1) {
     // Is using freeze useful? Idea is to prevent the user from messing with these options by mistake
-    const getShadow = () => Object.freeze(clone(shadowParent[key]))
-    const getActive = () => Object.freeze(clone(activeParent[key]))
+    const getShadow: GetShadowNodes = () => Object.freeze(clone(shadowParent[key]))
+    const getActive: GetActiveNode = () => Object.freeze(clone(activeParent[key]))
 
     value = context.manager.resolver.resolve(
       key,

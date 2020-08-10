@@ -34,7 +34,7 @@ export interface MetainfoActive {
 
 export type MetaContext = {
   id: string | symbol
-  vm?: ComponentInternalInstance | null
+  vm?: ComponentInternalInstance
   manager: Manager
 }
 
@@ -42,8 +42,8 @@ export type ActiveResolverSetup = (context: MetaContext) => void
 export type ActiveResolverMethod = (
   key: string,
   pathSegments: PathSegments,
-  shadow: ShadowNode,
-  active: ActiveNode
+  shadow: GetShadowNodes,
+  active: GetActiveNode
 ) => any
 
 export interface ActiveResolverObject {
@@ -62,4 +62,12 @@ export interface ShadowNode {
 
 export interface ActiveNode {
   [key: string]: TODO
+}
+
+export interface GetShadowNodes {
+  (): Array<ShadowNode>
+}
+
+export interface GetActiveNode {
+  (): ActiveNode
 }

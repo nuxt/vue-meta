@@ -22,7 +22,7 @@ app.use(
 )
 
 fs.readdirSync(__dirname)
-  .filter(file => file !== 'ssr')
+  .filter(file => file[0] !== '_' && file !== 'ssr')
   .forEach((file) => {
     if (fs.statSync(path.join(__dirname, file)).isDirectory()) {
       app.use(rewrite(`/${file}/*`, `/${file}/index.html`))
@@ -31,6 +31,21 @@ fs.readdirSync(__dirname)
 
 app.use(express.static(path.join(__dirname, '_static')))
 app.use(express.static(__dirname))
+
+app.use((req, res, next) => {
+  // Return empty css/javascript files if the file didnt exists
+  // statically. This means we can test/load any js file in
+  // the examples without errors in the browser
+  if (req.url.endsWith('.js')) {
+    res.setHeader('Content-Type', 'application/javascript')
+    res.send('')
+    next()
+  } else if (req.url.endsWith('.css')) {
+    res.setHeader('Content-Type', 'text/css')
+    res.send('')
+    next()
+  }
+})
 
 app.use(async (req, res, next) => {
   if (!req.url.startsWith('/ssr')) {

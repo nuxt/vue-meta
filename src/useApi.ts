@@ -20,7 +20,7 @@ export function useMeta (obj: MetainfoInput, manager?: Manager) {
 
   const context: MetaContext = {
     id: PolySymbol(`context ${contextCounter++}`),
-    vm,
+    vm: vm || undefined,
     manager
   }
 

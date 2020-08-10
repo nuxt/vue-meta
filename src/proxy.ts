@@ -7,17 +7,11 @@ interface Target extends MetainfoInput {
   __vm_proxy?: any // eslint-disable-line camelcase
 }
 
-export function createProxy (
-  target: Target,
-  handler: ProxyHandler<object>
-): Target {
+export function createProxy (target: Target, handler: ProxyHandler<object>): Target {
   return markRaw(new Proxy(target, handler))
 }
 
-export function createHandler (
-  context: MetaContext,
-  pathSegments: PathSegments = []
-): ProxyHandler<object> {
+export function createHandler (context: MetaContext, pathSegments: PathSegments = []): ProxyHandler<object> {
   return {
     get (target: object, key: string, receiver: object) {
       const value = Reflect.get(target, key, receiver)

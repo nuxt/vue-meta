@@ -42,7 +42,7 @@ export function renderMeta (
   data: TODO,
   config: TODO
 ): void | RenderedMetainfo | RenderedMetainfoNode {
-  console.info('renderMeta', key, data, config)
+  // console.info('renderMeta', key, data, config)
 
   if (config.attributesFor) {
     return renderAttributes(context, key, data, config)
@@ -61,7 +61,7 @@ export function renderGroup (
   data: TODO,
   config: TODO
 ): RenderedMetainfo | RenderedMetainfoNode {
-  console.info('renderGroup', key, data, config)
+  // console.info('renderGroup', key, data, config)
 
   if (isArray(data)) {
     if (__DEV__) {
@@ -101,7 +101,7 @@ export function renderTag (
   config: TODO = {},
   groupConfig?: GroupConfig
 ): RenderedMetainfo | RenderedMetainfoNode {
-  console.info('renderTag', key, data, config, groupConfig)
+  // console.info('renderTag', key, data, config, groupConfig)
 
   const contentAttributes = ['content', 'json', 'rawContent']
   const getConfig = (key: string) => getConfigByKey([tag, config.tag], key, config)
@@ -234,7 +234,7 @@ export function renderAttributes (
   data: TODO,
   config: TODO = {}
 ): void {
-  console.info('renderAttributes', key, data, config)
+  // console.info('renderAttributes', key, data, config)
 
   const { attributesFor } = config
 

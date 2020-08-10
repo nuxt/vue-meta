@@ -1,9 +1,7 @@
 import {
   createApp,
   defineComponent,
-  getCurrentInstance,
   reactive,
-  inject,
   toRefs,
   h,
   watch
@@ -20,10 +18,11 @@ const ChildComponent = defineComponent({
     page: String
   },
   template: `
-<div>
-  <h3>You're looking at the <strong>{{ page }}</strong> page</h3>
-  <p>Has metaInfo been updated due to navigation? {{ metaUpdated }}</p>
-</div>`,
+  <div>
+    <h3>You're looking at the <strong>{{ page }}</strong> page</h3>
+    <p>Has metaInfo been updated due to navigation? {{ metaUpdated }}</p>
+  </div>
+  `,
   setup (props) {
     const state = reactive({
       date: null,

@@ -1,8 +1,8 @@
 import { App } from 'vue'
 import { isFunction } from '@vue/shared'
 import { applyMetaPlugin } from './install'
-import * as deepestResolver from './resolvers/deepest'
-import { Config, ManagerResolverObject, ActiveResolverObject, MetaContext, PathSegments } from './types'
+// import * as deepestResolver from './resolvers/deepest'
+import { Config, ManagerResolverObject, GetActiveNode, ActiveResolverObject, MetaContext, PathSegments, GetShadowNodes } from './types'
 
 export type Manager = {
   readonly config: Config
@@ -11,7 +11,7 @@ export type Manager = {
   install(app: App): void
 }
 
-export function createManager (config: Config, resolver: ActiveResolverObject = deepestResolver): Manager {
+export function createManager (config: Config, resolver: ActiveResolverObject): Manager {
   // TODO: validate resolver
   const manager: Manager = {
     resolver: {
@@ -22,7 +22,7 @@ export function createManager (config: Config, resolver: ActiveResolverObject = 
 
         resolver.setup(context)
       },
-      resolve (key: string, pathSegments: PathSegments, getShadow, getActive) {
+      resolve (key: string, pathSegments: PathSegments, getShadow: GetShadowNodes, getActive: GetActiveNode) {
         if (!resolver) {
           return
         }

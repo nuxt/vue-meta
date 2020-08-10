@@ -1,4 +1,4 @@
-import { isPlainObject, hasOwn } from '@vue/shared'
+import { isPlainObject, /**/ hasOwn } from '@vue/shared'
 import { ActiveNode, MetaContext, PathSegments, ShadowNode } from '../types'
 import { shadow, active } from './globals'
 import { resolveActive } from './resolve'
@@ -15,7 +15,7 @@ export function set (
     // shadow & active should always be in sync
     // if not we have bigger fish to fry
     if (!shadowParent[key]) {
-      shadowParent[key] = {}
+      shadowParent[key] = []
       activeParent[key] = {}
     }
 
@@ -26,7 +26,7 @@ export function set (
       activeParent[key],
       pathSegments
     )
-  }
+  }/**/
 
   let idx = -1
   if (!shadowParent[key]) {
@@ -34,7 +34,7 @@ export function set (
   } else {
     // check if we already have a value listed for this element for this context
     idx = shadowParent[key].findIndex(
-      ({ context: $context }: { context: MetaContext }) => $context === context
+      ({ context: shadowContext }: { context: MetaContext }) => shadowContext === context
     )
   }
 
@@ -68,12 +68,13 @@ export function setByObject (
     }
 
     if (isPlainObject(shadowParent[key])) {
+      console.log('HERERER')
       setByObject(context, {}, shadowParent[key], activeParent[key], [
         ...pathSegments,
         key
       ])
       continue
-    }
+    } /**/
 
     set(context, key, undefined, shadowParent, activeParent, [
       ...pathSegments,
