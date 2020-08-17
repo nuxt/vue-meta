@@ -28,7 +28,13 @@
       htmlAttrs: {
         lang: 'en',
         amp: true
-      }
+      },
+      meta: [
+        {
+          name: 'description',
+          content: 'Welcome to my example app!'
+        }
+      ]
     }
   }
 </script>
