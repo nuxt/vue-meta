@@ -37,7 +37,7 @@ metaInfo() {
 },
 data() {
   return {
-    this.cssTexts: []
+    cssTexts: []
   }
 },
 mounted() {
