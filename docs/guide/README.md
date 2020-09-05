@@ -14,7 +14,7 @@ For the latest version in the v1.x branch you can use:<br/>
 
 Or you can replace `1` with the full version number you wish to use.
 
-If you include vue-meta after Vue it will install automatically
+If you include `vue-meta` after Vue it will install automatically
 
 **Unminified (suggested only for dev):**
 ```html
@@ -41,7 +41,7 @@ $ npm i vue-meta
 
 :::warning Using a framework?
 
-If you use a framework like Nuxt.js or Gridsome, vue-meta comes pre-installed and this step is most likely **not** required. Consult the [documentation](/guide/frameworks.html) of your framework for more information
+If you use a framework like Nuxt.js or Gridsome, `vue-meta` comes pre-installed and this step is most likely **not** required. Consult the [documentation](/guide/frameworks.html) of your framework for more information
 :::
 
 If you add `vue-meta` with a package manager, you will need to install the `vue-meta` plugin manually:
