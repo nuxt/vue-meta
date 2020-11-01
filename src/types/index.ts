@@ -1,5 +1,4 @@
 import { ComponentInternalInstance } from 'vue'
-import { Manager } from '../manager'
 
 export type Immutable<T> = {
   readonly [P in keyof T]: Immutable<T[P]>
@@ -28,6 +27,11 @@ export interface MetainfoInput {
   [key: string]: TODO
 }
 
+export interface MetainfoProxy extends MetainfoInput {
+  // Should be a symbol, but: https://github.com/microsoft/TypeScript/issues/1863
+  __vm_proxy?: any // eslint-disable-line camelcase
+}
+
 export interface MetainfoActive {
   [key: string]: TODO
 }
@@ -35,7 +39,14 @@ export interface MetainfoActive {
 export type MetaContext = {
   id: string | symbol
   vm?: ComponentInternalInstance
-  manager: Manager
+  resolve: ActiveResolverMethod
+  active: Object
+  shadow: Object
+}
+
+export type MetaProxy = {
+  meta: MetainfoProxy
+  unmount: TODO
 }
 
 export type ActiveResolverSetup = (context: MetaContext) => void

@@ -1,13 +1,10 @@
 import { markRaw } from 'vue'
 import { isObject } from '@vue/shared'
-import { update } from './info/update'
-import { MetaContext, MetainfoInput, PathSegments } from './types'
+import { MetaContext, MetainfoInput, MetainfoProxy, PathSegments } from '../types'
+import { update } from './update'
+import { remove } from './remove'
 
-interface Target extends MetainfoInput {
-  __vm_proxy?: any // eslint-disable-line camelcase
-}
-
-export function createProxy (target: Target, handler: ProxyHandler<object>): Target {
+export function createProxy (target: MetainfoInput, handler: ProxyHandler<object>): MetainfoProxy {
   return markRaw(new Proxy(target, handler))
 }
 
@@ -16,7 +13,7 @@ export function createHandler (context: MetaContext, pathSegments: PathSegments 
     get (target: object, key: string, receiver: object) {
       const value = Reflect.get(target, key, receiver)
 
-      if (!isObject(value)) {
+      if (!isObject(value) || key === '__vm_proxy') {
         return value
       }
 
@@ -30,11 +27,20 @@ export function createHandler (context: MetaContext, pathSegments: PathSegments 
       return value.__vm_proxy
     },
     set (
-      target: object, // eslint-disable-line @typescript-eslint/no-unused-vars
+      target: { [key: string]: any }, // eslint-disable-line @typescript-eslint/no-unused-vars
       key: string,
-      value: unknown
+      value: any
     ): boolean {
       update(context, pathSegments, key, value)
+      // target[key] = value
+      return true
+    },
+    deleteProperty (
+      target: { [key: string]: any },
+      prop: string
+    ) {
+      remove(context, pathSegments, prop)
+      delete target[prop]
       return true
     }
   }

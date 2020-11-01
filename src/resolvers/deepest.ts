@@ -18,9 +18,12 @@ export function setup (context: DeepestResolverMetaContext): void {
     let { vm } = context
 
     do {
-      depth++
-      vm = vm.parent
-    } while (vm && vm !== vm.root)
+      if (vm.parent) {
+        depth++
+
+        vm = vm.parent
+      }
+    } while (vm && vm.parent && vm !== vm.root)
   }
 
   context.depth = depth
@@ -50,7 +53,6 @@ export function resolve (
   )
 
   if (resolvedOption) {
-    console.log(resolvedOption.value)
     return resolvedOption.value
   }
 }

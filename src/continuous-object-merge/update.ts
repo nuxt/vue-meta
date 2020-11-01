@@ -1,5 +1,4 @@
 import { MetaContext, PathSegments, ShadowNode, ActiveNode } from '../types'
-import { shadow, active } from './globals'
 import { set } from './set'
 
 export function update (
@@ -8,12 +7,14 @@ export function update (
   key: string,
   value: any
 ) {
-  let shadowParent: ShadowNode = shadow
+  const { active, shadow } = context
+
   let activeParent: ActiveNode = active
+  let shadowParent: ShadowNode = shadow
 
   for (const segment of pathSegments) {
-    shadowParent = shadowParent[segment]
     activeParent = activeParent[segment]
+    shadowParent = shadowParent[segment]
   }
 
   set(context, key, value, shadowParent, activeParent)

@@ -66,7 +66,7 @@ export function renderGroup (
   if (isArray(data)) {
     if (__DEV__) {
       // eslint-disable-next-line no-console
-      console.warn('Specifying an array for group properties isnt supported as we didnt found a use-case for this yet. If you have one, please create an issue on the vue-meta repo')
+      console.warn('Specifying an array for group properties isnt supported mostly as we didnt found a use-case for this yet. If you have one, please create an issue on the vue-meta repo')
     }
     // config.attributes = getConfigKey([key, config.tag], 'attributes', config)
     return []

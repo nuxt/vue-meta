@@ -1,7 +1,6 @@
 import { App } from 'vue'
 import { Metainfo } from './Metainfo'
 import { metaInfoKey } from './symbols'
-import { active } from './info/globals'
 import { Manager } from './manager'
 
 declare module '@vue/runtime-core' {
@@ -10,7 +9,7 @@ declare module '@vue/runtime-core' {
   }
 }
 
-export function applyMetaPlugin (app: App, manager: Manager) {
+export function applyMetaPlugin (app: App, manager: Manager, active: Object) {
   app.component('Metainfo', Metainfo)
 
   app.config.globalProperties.$metaManager = manager

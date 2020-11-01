@@ -94,12 +94,32 @@ const App = {
       },
       script: [
         { src: 'head-script1.js' },
-        { json: { '@context': 'http://schema.org', unsafe: '<p>hello</p>' } },
-        { content: 'window.a = "<br/>"; </script><script>alert(\'asdasd\');' },
-        { rawContent: 'window.b = "<br/>"; </script><script> alert(\'123321\');' },
+        // TODO 'head-script2.js',
+        // TODO { json: { '@context': 'http://schema.org', unsafe: '<p>hello</p>' } },
+        // TODO { content: 'window.a = "<br/>"; </script><script>alert(\'asdasd\');' },
+        // TODO { rawContent: 'window.b = "<br/>"; </script><script> alert(\'123321\');' },
         { src: 'body-script2.js', to: 'body' },
         { src: 'body-script3.js', to: '#put-it-here' }
       ],
+      esi: {
+        children: [
+          {
+            tag: 'choose',
+            children: [
+              {
+                tag: 'when',
+                test: '$(HTTP_COOKIE{group})=="Advanced"',
+                children: [
+                  {
+                    tag: 'include',
+                    src: 'http://www.example.com/advanced.html'
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
       esi: {
         children: [
           {
@@ -161,22 +181,24 @@ const App = {
         {{ content }} - {{ og.description }} - {{ metainfo.description }} - Hello Again
       </template>
 
-      <script src="lalala1.js"></script>
-      <script src="lalala2.js"></script>
+      <!-- // TODO: Using script triggers [Vue warn]: Template compilation error: Tags with side effect (<script> and <style>) are ignored in client component templates. -->
+      <component is="script">window.users = []</component>
+      <component is="script" src="user-1.js"></component>
+      <component is="script" src="user-2.js"></component>
 
       <template v-slot:head="{ metainfo }">
         <!--[if IE]>
-        // -> Reactivity is not supported by Vue, all comments are ignored
-        <script :src="metainfo.script[0].src" ></script>
+        // -> Reactivity is not supported by Vue in comments, all comments are ignored
+        <component is="script" :src="metainfo.script[0].src" ></component>
         // -> but a static file should work
-        <script src="lalala3.js" ></script>
+        <script src="user-3.js" ></script>
         // -> altho Vue probably strips comments in production builds (but can be configged afaik)
         <![endif]-->
-        <script :src="metainfo.script[0].src" ></script>
+        <component is="script" :src="metainfo.script[0].src" ></component>
       </template>
 
       <template v-slot:body>
-        <script src="lalala4.js"></script>
+        <component is="script" src="user-4.js"></component>
       </template>
     </metainfo>
 

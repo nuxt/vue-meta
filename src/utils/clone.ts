@@ -10,6 +10,7 @@ export function clone (v: any): any {
     const res: any = {}
 
     for (const key in v) {
+      // never clone the context
       if (key === 'context') {
         res[key] = v[key]
       } else {

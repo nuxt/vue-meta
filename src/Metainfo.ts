@@ -31,6 +31,9 @@ export const MetainfoImpl = defineComponent({
       const teleports: any = {}
 
       const manager = getCurrentManager()
+      if (!manager) {
+        return
+      }
 
       for (const key in metainfo) {
         const config = manager.config[key] || {}

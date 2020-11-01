@@ -79,6 +79,43 @@ describe('render', () => {
     expect(res.vnode.props).toMatchObject({ name: 'DescriptionTest2', content: 'my description 2' })
   })
 
+  test('render key-object element with json', () => {
+    const context = {}
+    const key = 'JsonTest'
+    const data = { json: ['content'] }
+    const config = {
+      tag: 'script'
+    }
+
+    const res = render.renderMeta(context, key, data, config)
+    // console.log('RES', res)
+
+    expect(res.to).toBeUndefined()
+    expect(res.vnode).toMatchObject({ __v_isVNode: true })
+
+    expect(res.vnode.type).toEqual('script')
+    expect(res.vnode.props).toMatchObject({})
+    expect(res.vnode.children).toEqual('["content"]')
+  })
+
+  test('render key-object element with raw content', () => {
+    const context = {}
+    const key = 'RawTest'
+    const data = { rawContent: '<p>One JS please!</p>' }
+    const config = {
+      tag: 'noscript'
+    }
+
+    const res = render.renderMeta(context, key, data, config)
+    // console.log('RES', res)
+
+    expect(res.to).toBeUndefined()
+    expect(res.vnode).toMatchObject({ __v_isVNode: true })
+
+    expect(res.vnode.type).toEqual('noscript')
+    expect(res.vnode.props).toMatchObject({ innerHTML: '<p>One JS please!</p>' })
+  })
+
   test('render array<key-string> elements', () => {
     const context = {}
     const key = 'kal-el'
@@ -428,5 +465,49 @@ describe('render', () => {
       content: data,
       metainfo: context.metainfo
     })
+  })
+
+  test('render attributes (add + remove)', () => {
+    const key = 'bodyAttrs'
+    const data = { class: 'theme-dark' }
+
+    const config = {
+      attributesFor: 'body'
+    }
+
+    const setAttribute = jest.fn()
+    const removeAttribute = jest.fn()
+
+    const doc = jest.spyOn(document, 'querySelector').mockReturnValue({
+      setAttribute,
+      removeAttribute
+    })
+
+    const context = {}
+
+    const res = render.renderMeta(context, key, data, config)
+    // console.log('RES', res)
+
+    expect(res).toBeUndefined()
+
+    expect(doc).toHaveBeenCalledTimes(1)
+    expect(doc).toHaveBeenCalledWith('body')
+
+    expect(setAttribute).toHaveBeenCalledTimes(1)
+    expect(setAttribute).toHaveBeenCalledWith('class', 'theme-dark')
+
+    const dataUpdate = { 'data-content': ['a', 'b'] }
+    render.renderMeta(context, key, dataUpdate, config)
+
+    expect(doc).toHaveBeenCalledTimes(1)
+    expect(doc).toHaveBeenCalledWith('body')
+
+    expect(setAttribute).toHaveBeenCalledTimes(2)
+    expect(setAttribute).toHaveBeenCalledWith('data-content', 'a,b')
+
+    expect(removeAttribute).toHaveBeenCalledTimes(1)
+    expect(removeAttribute).toHaveBeenCalledWith('class')
+
+    doc.mockRestore()
   })
 })

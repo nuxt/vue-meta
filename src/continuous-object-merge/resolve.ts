@@ -11,18 +11,20 @@ export function resolveActive (
 ) {
   let value
 
-  if (shadowParent[key].length > 1) {
+  const shadowLength = shadowParent[key] ? shadowParent[key].length : 0
+
+  if (shadowLength > 1) {
     // Is using freeze useful? Idea is to prevent the user from messing with these options by mistake
     const getShadow: GetShadowNodes = () => Object.freeze(clone(shadowParent[key]))
     const getActive: GetActiveNode = () => Object.freeze(clone(activeParent[key]))
 
-    value = context.manager.resolver.resolve(
+    value = context.resolve(
       key,
       pathSegments,
       getShadow,
       getActive
     )
-  } else if (shadowParent[key].length) {
+  } else if (shadowLength) {
     value = shadowParent[key][0].value
   }
 
