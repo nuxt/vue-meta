@@ -2,5 +2,8 @@
   "title": "vue-meta",
   "url": "https://vue-meta.nuxtjs.org/",
   "github": "nuxt/vue-meta",
-  "logo": "logo.png"
+  "logo": {
+    "light": "/logo.png",
+    "dark": "/logo-dark.png"
+  }
 }

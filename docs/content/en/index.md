@@ -5,13 +5,12 @@ position: 1
 fullscreen: true
 description: HTML Metadata manager for Vue.js
 category: ''
-footer:
-  MIT License | Created by Declan de Wet, currently developed with ❤ by Nuxt.js core-team & contributors
 ---
 
 <header class="flex flex-col items-center">
 
-![](/icon.png)
+<img src="/icon.png" alt="" class="light-img">
+<img src="/icon-dark.png" alt="" class="dark-img">
 
 # vue-meta
 
