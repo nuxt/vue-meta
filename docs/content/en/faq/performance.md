@@ -1,4 +1,9 @@
-# Any performance considerations?
+---
+title: Any performance considerations?
+description: 'HTML Metadata manager for Vue.js'
+position: 31
+category: FAQ
+---
 
 Short answer, no
 
@@ -6,11 +11,15 @@ On the client, `vue-meta` batches DOM updates using [`requestAnimationFrame`](ht
 
 Thanks to batch updating, the update will only occurr once - even if the correct metadata has already been compiled by the server. If you don't want this behaviour, see below.
 
-:::tip Improvements since v2.0
-Previous versions of vue-meta injected lifecycle hooks from the global mixin on all components on the page. Also when refreshing metadata it checked all components on the page
+<alert type="info">
+
+**Improvements since v2.0**
+
+Previous versions of vue-meta injected lifecycle hooks from the global mixin on all components on the page. Also when refreshing metadata it checked all components on the page.
 
 Since v2.0 runtime performance should be improved due to:
 - the global mixin injects just a `beforeCreate` lifecycle hook, other hooks are only added for components which define `metaInfo`
 - we track component branches with `vue-meta` components which means that when refreshing metadata we can skip branches without `metaInfo`
 
-:::
+
+</alert>

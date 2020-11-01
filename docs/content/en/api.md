@@ -1,14 +1,13 @@
 ---
-sidebar: auto
+title: Reference
+description: 'HTML Metadata manager for Vue.js'
+position: 40
+category: API
 ---
-
-# API Reference
 
 ## Plugin properties
 
-:::tip
-VueMeta exports a Vue plugin as default export. This section describes the properties of that default export
-:::
+<alert type="info">VueMeta exports a Vue plugin as default export. This section describes the properties of that default export</alert>
 
 ### version
 - type `string`
@@ -26,17 +25,17 @@ The method used by Vue to install the plugin
 
 A helper function which returns true when the Vue component passed as argument has metaInfo defined
 
-### generate <Badge text="v2.2+"/>
+### generate
+<badge>v2.2+</badge>
 
-::: warning
-This method is not available in the browser builds
-:::
+<alert type="warning">This method is not available in the browser builds</alert>
+
 - arguments:
   - metaInfo
   - options (optional)
 - returns `metaInfo`
 
-This method is similar to [`$meta.inject()`](/api/#meta-inject) but works without the need for a Vue instance
+This method is similar to [`$meta.inject()`](/api#meta-inject) but works without the need for a Vue instance
 
 ```js
 import VueMeta from 'vue-meta'
@@ -106,24 +105,29 @@ The key name for the content-holding property
 
 The key name for possible meta templates
 
-### refreshOnceOnNavigation <Badge text="runtime" type="yellow" />
+### refreshOnceOnNavigation
+<badge>runtime</badge>
 - type `boolean`
 - default `false`
 
 When `true` then `vue-meta` will pause updates once page navigation starts and resumes updates when navigation finishes (resuming also triggers an update).
 This could both be a performance improvement as a possible fix for 'flickering' when you are e.g. replacing stylesheets
 
-:::tip
-Its not supported to disable `refreshOnceOnNavigation` once enabled
-:::
+<alert type="info">
 
-### debounceWait <Badge text="v2.3+"/><Badge text="runtime" type="yellow" />
+Its not supported to disable `refreshOnceOnNavigation` once enabled
+
+</alert>
+
+### debounceWait
+<badge>v2.3+</badge><badge>runtime</badge>
 - type `number`
 - default `10`
 
 A timeout is used to debounce updates so vue-meta won't be updating the meta info immediately, this option determines how long updates are debounced
 
-### waitOnDestroyed <Badge text="v2.3+"/><Badge text="runtime" type="yellow" />
+### waitOnDestroyed
+<badge>v2.3+</badge><badge>runtime</badge>
 - type `boolean`
 - default `true`
 
@@ -135,27 +139,32 @@ To support transitions, vue-meta sets an interval to wait until the DOM element 
 
 The `vue-meta` plugin injects a `$meta()` function in the Vue prototype which provides the following methods
 
-:::tip Note
+<alert type="info">
+
 `$meta()` is a function so we only need to insert it once in the `Vue.prototype`, but still use `this` to reference the component it was called from
-:::
+
+</alert>
 
 ### $meta().getOptions
-- returns [`pluginOptions`](/api/#plugin-options)
+- returns [`pluginOptions`](/api#plugin-options)
 
 Could be used by third-party libraries who wish to interact with `vue-meta`
 
-### $meta().setOptions <Badge text="v2.3+"/>
+### $meta().setOptions
+<badge>v2.3+</badge>
 - arguments:
   - options (type `object`)
-- returns [`pluginOptions`](/api/#plugin-options)
+- returns [`pluginOptions`](/api#plugin-options)
 
-You can toggle some plugin options during runtime by calling this method. Only [plugin options](/api/#plugin-options) marked <Badge text="runtime" type="yellow" /> can be changed
+You can toggle some plugin options during runtime by calling this method. Only [plugin options](/api#plugin-options) marke
+ <badge>runtime</badge> can be changed
 
 ```js
 vm.$meta().setOptions({ debounceWait: 50 })
 ```
 
-### $meta().addApp <Badge text="v2.3+"/>
+### $meta().addApp
+<badge>v2.3+</badge>
 - arguments:
   - appName (type: `string`)
 - returns app object `{ set, remove }`
@@ -184,21 +193,26 @@ The function is called addApp because the added metaInfo is treated exactly the 
 ```
 
 ### $meta().refresh
-- returns [`metaInfo`](/api/#metaInfo-properties)
+- returns [`metaInfo`](/api#metaInfo-properties)
 
 Updates the current metadata with new metadata.
 Useful when updating metadata as the result of an asynchronous action that resolves after the initial render takes place.
 
 ### $meta().inject
 - arguments
-  - injectOptions (type: `object`) <Badge text="v2.4+"/>
-- returns [`metaInfo`](/api/#metaInfo-properties)
+  - injectOptions (type: `object`)
+  <badge>v2.4+</badge>
+- returns [`metaInfo`](/api#metaInfo-properties)
 
-:::tip SSR only
+<alert type="info">
+
+**SSR only**
+
 `inject` is available in the server plugin only and is not available on the client
-:::
 
-You can pass an object to inject with global inject options. See [SSR injection method arguments](/api/#noscript-text) for a list of available options.
+</alert>
+
+You can pass an object to inject with global inject options. See [SSR injection method arguments](/api#noscript-text) for a list of available options.
 
 It returns a special `metaInfo` object where all keys have an object as value which contains a `text()` method for returning html code
 
@@ -206,27 +220,30 @@ See [Rendering with renderToString](/guide/ssr.html#simple-rendering-with-render
 
 #### Passing arguments to `text()`
 
-In some cases you can pass an argument to the text method. E.g. to [automatically add the ssrAttribute on ssr](/faq/prevent-initial.html) or [render properties in the body](/api/#ssr-support)
+In some cases you can pass an argument to the text method. E.g. to [automatically add the ssrAttribute on ssr](/faq/prevent-initial) or [render properties in the body](/api#ssr-support)
 
 ### $meta().pause
 - arguments:
   - refresh (type `boolean`, default `false`)
 - returns `resume()`
 
-Pauses global metadata updates until either the returned resume method is called or [resume](/api/#meta-resume)
+Pauses global metadata updates until either the returned resume method is called or [resume](/api#meta-resume)
 
 ### $meta().resume
 - arguments:
   - refresh (type `boolean`, default `false`)
-- returns [`metaInfo`](/api/#metaInfo-properties) (optional)
+- returns [`metaInfo`](/api#metaInfo-properties) (optional)
 
-Resumes metadata updates after they have been paused. If `refresh` is `true` it immediately initiates a metadata update by calling [refresh](/api/#meta-refresh)
+Resumes metadata updates after they have been paused. If `refresh` is `true` it immediately initiates a metadata update by calling [refresh](/api#meta-refresh)
 
 ## metaInfo properties
 
-::: tip Note
-The documentation below uses `metaInfo` as `keyName` in the examples, please note that this is [configurable](/api/#keyname) and could be different in your case
-:::
+
+<alert type="info">
+
+The documentation below uses `metaInfo` as `keyName` in the examples, please note that this is [configurable](/api#keyname) and could be different in your case
+
+</alert>
 
 ### title
 - type `string`
@@ -425,13 +442,15 @@ Each item in the array maps to a newly-created `<script>` element, where object 
 <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js" async defer></script>
 ```
 
-#### Add JSON data <Badge text="v2.1+"/>
+#### Add JSON data
+<badge>v2.1+</badge>
 
 If you wish to use a JSON variable within a script tag (e.g. for JSON-LD), you can directly pass your variable by using the `json` property.
 
-::: tip
+
+<alert type="info">
 When passing an array or object to the `json` property the keys and values of the variable will still be sanitized to prevent XSS
-:::
+</alert>
 
 ```js
 {
@@ -456,9 +475,11 @@ When passing an array or object to the `json` property the keys and values of th
 
 #### Add other raw data
 
-::: warning
-You have to disable sanitizers so the content of `innerHTML` won't be escaped. Please see [__dangerouslyDisableSanitizersByTagID](/api/#dangerouslydisablesanitizersbytagid)  for more info on related risks
-:::
+<alert type="warning">
+
+You have to disable sanitizers so the content of `innerHTML` won't be escaped. Please see [__dangerouslyDisableSanitizersByTagID](/api#dangerouslydisablesanitizersbytagid)  for more info on related risks
+
+</alert>
 
 ```js
 {
@@ -501,11 +522,14 @@ Each item in the array maps to a newly-created `<noscript>` element, where objec
 ### __dangerouslyDisableSanitizers
 - type `Array<string>`
 
-::: danger
-If you need to disable sanitation, please always use [__dangerouslyDisableSanitizersByTagID](/api/#dangerouslydisablesanitizers) when possible
+
+<alert type="warning">
+
+If you need to disable sanitation, please always use [__dangerouslyDisableSanitizersByTagID](/api#dangerouslydisablesanitizers) when possible
 
 By disabling sanitization, you are opening potential vectors for attacks such as SQL injection & Cross-Site Scripting (XSS). Be very careful to not compromise your application.
-:::
+
+</alert>
 
 By default, `vue-meta` sanitizes HTML entities in _every_ property. You can disable this behaviour on a per-property basis using `__dangerouslyDisableSanitizers`. Just pass it a list of properties you want sanitization to be disabled on:
 
@@ -531,9 +555,11 @@ By default, `vue-meta` sanitizes HTML entities in _every_ property. You can disa
 ### __dangerouslyDisableSanitizersByTagID
 - type `object`
 
-::: warning
+<alert type="warning">
+
 By disabling sanitation, you are opening potential vectors for attacks such as SQL injection & Cross-Site Scripting (XSS). Be very careful to not compromise your application.
-:::
+
+</alert>
 
 Provides same functionality as `__dangerouslyDisableSanitizers` but you can specify which property for which `tagIDKeyName` sanitation should be disabled. It expects an object with the vmid as key and an array with property keys as value:
 
@@ -566,7 +592,7 @@ A callback function which is called whenever the `metaInfo` updates / changes.
 The callback receives the following arguments:
 - **newInfo**
   - type `object`<br/>
-  The updated [`metaInfo`](/api/#metaInfo-properties) object
+  The updated [`metaInfo`](/api#metaInfo-properties) object
 - **addedTags**
   - type `Array<HTMLElement>`<br/>
   List of elements that were added
@@ -590,12 +616,12 @@ The callback receives the following arguments:
 A callback function which is called when `vue-meta` has updated the metadata after navigation occurred.
 This can be used to track page views with the updated document title etc.
 
-Adding a `afterNavigation` callback behaves the same as when [refreshOnceOnNavigation](/api/#refreshonceonnavigation) is `true`
+Adding a `afterNavigation` callback behaves the same as when [refreshOnceOnNavigation](/api#refreshonceonnavigation) is `true`
 
 The callback receives the following arguments:
 - **newInfo**
   - type `object`<br/>
-  The updated [`metaInfo`](/api/#metaInfo-properties) object
+  The updated [`metaInfo`](/api#metaInfo-properties) object
 
 ```js
 {
@@ -650,7 +676,8 @@ export default {
 }
 ```
 
-### skip  <Badge text="v2.1+"/>
+### skip 
+<badge>v2.1+</badge>
 
 When a metaInfo property has a `skip` attribute with truthy value it will not be rendered. This attribute helps with e.g. chaining scripts (see [callback attribute](#callback))
 
@@ -665,7 +692,8 @@ When a metaInfo property has a `skip` attribute with truthy value it will not be
 }
 ```
 
-### json  <Badge text="v2.1+"/>
+### json 
+<badge>v2.1+</badge>
 
 The `json` attribute in a metaInfo property allows you to render JSON content within a script tag, while still sanitizing the keys and values. For example this can be used to render JSON-LD.
 
@@ -685,13 +713,16 @@ The `json` attribute in a metaInfo property allows you to render JSON content wi
 ```
 
 ### body
-### pbody  <Badge text="v2.1+"/>
+### pbody 
+<badge>v2.1+</badge>
 
-::: warning
+<alert type="warning">
+
 VueMeta supports the body and pbody attributes on all metaInfo properties, but its up to you or your framework to support these attributes during SSR
 
 Using these body attributes without SSR support could result in hydration errors / re-rendering or missing tags.
-:::
+
+</alert>
 
 You can filter tags to be included in the `<body>` instead of the `<head>` to e.g. force delayed execution of a script.
 
@@ -726,13 +757,16 @@ When rendering your template on SSR make sure to pass an object as first argumen
 </body>
 ```
 
-### callback <Badge text="v2.1+"/>
+### callback
+<badge>v2.1+</badge>
 
-:::tip vmid required on SSR
-When using SSR it is required to define a [`vmid`](/api/#tagidkeyname) property for the metaInfo property
+<alert type="info">
 
-The vmid is needed to resolve the corresponding callback for that element on hydration
-:::
+**vmid required on SSR**
+
+When using SSR it is required to define a [`vmid`](/api#tagidkeyname) property for the metaInfo property. The vmid is needed to resolve the corresponding callback for that element on hydration
+
+</alert>
 
 The callback attribute should specify a function which is called once the corresponding tag has been loaded (i.e. the onload event is triggered). Use this to chain javascript if one depends on the other.
 
@@ -768,7 +802,8 @@ The callback attribute should specify a function which is called once the corres
 
 Calling [`inject`](#meta-inject) will return an object on which you can call the below methods to return the corresponding template string
 
-### head <Badge text="v2.3+"/>
+### head
+<badge>v2.3+</badge>
 - arguments
   - ln (type `boolean`, default: `false`)
 
@@ -778,7 +813,8 @@ Elements will be printed in the same order as the menu below.
 
 By passing `ln = true` a line break will be added after each element. This could be helpful e.g. during development to get a better overview of the tags added by vue-meta
 
-### bodyPrepend <Badge text="v2.3+"/>
+### bodyPrepend
+<badge>v2.3+</badge>
 - arguments
   - ln (type `boolean`, default: `false`)
 
@@ -786,7 +822,8 @@ This is a convenience method which will retrieve the template string which shoul
 
 Elements will be printed in the same order as the menu below.
 
-### bodyAppend <Badge text="v2.3+"/>
+### bodyAppend
+<badge>v2.3+</badge>
 - arguments
   - ln (type `boolean`, default: `false`)
 
@@ -815,7 +852,7 @@ See the [SSR guide](/guide/ssr.html#inject-metadata-into-page-string) for more i
 - arguments
   - options (type: `object`, default: `{ isSSR: true, ln: false , body: false, pbody: false }`)
 
-Set `isSSR: false` if you generate a SPA on server side and want to use the default appId `1` instead of [ssrAppId](/api/#ssrappid)
+Set `isSSR: false` if you generate a SPA on server side and want to use the default appId `1` instead of [ssrAppId](/api#ssrappid)
 
 The `body` and `pbody` props can be used to support positioning of elements in your template, see [SSR Support](#ssr-support)
 

@@ -1,14 +1,19 @@
-# How to prevent update on page load
+---
+title: How to prevent update on page load
+description: 'HTML Metadata manager for Vue.js'
+position: 32
+category: FAQ
+---
 
 In your template call the text method of `htmlAttrs` with `true` as first argument:
-```
+```html
 <html {{ htmlAttrs.text(true) }}>
 ...
 ```
 
-Or manually add the [`data-vue-meta-server-rendered`](/api/#ssrattribute) attribute to the `<html>` tag on the server-side:
+Or manually add the [`data-vue-meta-server-rendered`](/api#ssrattribute) attribute to the `<html>` tag on the server-side:
 
-```
+```html
 <html data-vue-meta-server-rendered <%= meta.htmlAttrs.text() %>>
 ...
 ```

@@ -1,4 +1,9 @@
-# How is `metaInfo` resolved?
+---
+title: How is metaInfo resolved?
+description: 'HTML Metadata manager for Vue.js'
+position: 30
+category: FAQ
+---
 
 You can define a `metaInfo` property on any component in the tree. Child components that have `metaInfo` will recursively merge their `metaInfo` into the parent context, overwriting any duplicate properties. To better illustrate, consider this component hierarchy:
 

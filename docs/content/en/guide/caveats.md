@@ -1,15 +1,19 @@
-# Caveats
-
+---
+title: Caveats
+description: 'HTML Metadata manager for Vue.js'
+position: 22
+category: Usage
+---
 ## Reactive variables in template functions
 
 _Corresponding issue_: [#322](https://github.com/nuxt/vue-meta/issues/322)
 
-Both [title](/api/#titletemplate) as [meta](/api/#content-templates) support using template function.
+Both [title](/api#titletemplate) and [meta](/api#content-templates) support using template function.
 Due to how Vue determines reactivity it is not possible to use reactive variables directly in template functions
 
 ```js
 {
-  // this wont work
+  // this won't work
   metaInfo() {
     return {
       titleTemplate: chunk => (
@@ -44,9 +48,11 @@ You need to assign the reactive variable to a local variable first for this to w
 
 _Corresponding issue_: [#404](https://github.com/nuxt/vue-meta/issues/404)
 
-:::tip
+<alert type="info">
+
 Please read [Multiple Vue apps support](/guide/multiple-apps.html#ssr) as a prerequisite
-:::
+
+</alert>
 
 To optimize performance, VueMeta will only initialize for a Vue app when it finds a `metaInfo` property on any of the loaded components. That means if you render all your components by passing the component instance directly to the render function, Vue will only know of these components once the app gets mounted (see snippet below). And this means VueMeta is unable to find any `metaInfo` when it looks if its need to initialize in the `beforeCreate` hook and the appId will not be changed to the [ssrAppId](/api#ssrappid)
 

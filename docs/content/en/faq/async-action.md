@@ -1,4 +1,9 @@
-# How to use async data in metaInfo?
+---
+title: How to use async data in metaInfo?
+description: 'HTML Metadata manager for Vue.js'
+position: 34
+category: FAQ
+---
 
 `vue-meta` will do this for you automatically when your component state changes.
 

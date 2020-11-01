@@ -1,4 +1,9 @@
-# Frameworks
+---
+title: Frameworks
+description: 'HTML Metadata manager for Vue.js'
+position: 13
+category: Getting started
+---
 
 If you are using a framework which uses `vue-meta`, please make sure to consult their documentation first
 

@@ -1,4 +1,9 @@
-# Server Side Rendering
+---
+title: Server side rendering
+description: 'HTML Metadata manager for Vue.js'
+position: 12
+category: Getting started
+---
 
 If you have an isomorphic/universal web application, you'll likely want to render your metadata on the server side as well. Here's how.
 
@@ -6,8 +11,7 @@ If you have an isomorphic/universal web application, you'll likely want to rende
 
 You'll need to expose the results of the `$meta` method that `vue-meta` adds to the Vue instance to the bundle render context before you can begin injecting your metadata. You'll need to do this in your server entry file:
 
-**server-entry.js:**
-```js
+```js{}[server-entry.js]
 import app from './app'
 
 const router = app.$router
@@ -24,9 +28,7 @@ export default (context) => {
 
 Probably the easiest method to wrap your head around is if your Vue server markup is rendered out as a string using `renderToString`:
 
-**server.js:**
-
-```js
+```js{}[server.js]
 app.get('*', (req, res) => {
   const context = { url: req.url }
   renderer.renderToString(context, (error, html) => {
@@ -79,14 +81,13 @@ If you are using a separate template file, edit your head tag with
 </head>
 ```
 
-Notice the use of `{{{` to avoid double escaping. Be extremely cautious when you use `{{{` with [`__dangerouslyDisableSanitizersByTagID`](/api/#dangerouslydisablesanitizersbytagid).
+Notice the use of `{{{` to avoid double escaping. Be extremely cautious when you use `{{{` with [`__dangerouslyDisableSanitizersByTagID`](/api#dangerouslydisablesanitizersbytagid).
 
 ## Inject metadata into page stream
 
 A little more complex, but well worth it, is to instead stream your response. `vue-meta` supports streaming with no effort (on it's part :stuck_out_tongue_winking_eye:) thanks to Vue's clever `bundleRenderer` context injection:
 
-**server.js**
-```js
+```js{}[server.js]
 app.get('*', (req, res) => {
   const context = { url: req.url }
   const renderStream = renderer.renderToStream(context)

@@ -120,8 +120,6 @@
     "vue-router": "^3.3.2",
     "vue-server-renderer": "^2.6.11",
     "vue-template-compiler": "^2.6.11",
-    "vuepress": "^1.5.1",
-    "vuepress-theme-vue": "^1.1.0",
     "webpack": "^4.43.0"
   }
 }

@@ -1,16 +1,24 @@
-# Multiple Vue apps support
+---
+title: Multiple Vue apps support
+description: 'HTML Metadata manager for Vue.js'
+position: 23
+category: Usage
+---
 
 VueMeta includes basic support for using multiple Vue-apps which each adds their own metaInfo properties to the same html page.
 
-To keep track of which tag has been added by which Vue app, VueMeta stores an unique `appId` in the [data-vue-meta](/api/#attribute) attribute.
+To keep track of which tag has been added by which Vue app, VueMeta stores an unique `appId` in the [data-vue-meta](/api#attribute) attribute.
 
-::: danger
+
+<alert type="warning">
+
 Currently VueMeta only supports adding tags for multiple apps.
 
-Adding [html](/api/#htmlattrs), [head](/api/#headattrs) or [body](/api/#bodyattrs) attributes is **not** supported. These will always be set to the values of the last app which triggered a metaInfo update.
+Adding [html](/api#htmlattrs), [head](/api#headattrs) or [body](/api#bodyattrs) attributes is **not** supported. These will always be set to the values of the last app which triggered a metaInfo update.
 
 Therefore it is recommended you should only set those attributes from one of your Vue apps
-:::
+
+</alert>
 
 ## Client
 
@@ -24,11 +32,13 @@ On hydration VueMeta will check if the Vue app was server-rendered and if so set
 
 ## `vmid` support
 
-::: warning
-Support for cross-app vmid's might be insufficient for real world applications.
-:::
+<alert type="warning">
 
-It is possible to use cross app [vmid](/api/#tagidkeyname)'s with two important caveats:
+Support for cross-app vmid's might be insufficient for real world applications.
+
+</alert>
+
+It is possible to use cross app [vmid](/api#tagidkeyname)'s with two important caveats:
 
 - _The value of the last updated app is used_<br/>
 Cross app vmid's only work on the client. This is implemented through the use of querySelectors, not by merging metaInfo objects. This means the last app which was refreshed determines the value that is used
