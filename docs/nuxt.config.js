@@ -8,6 +8,6 @@ export default theme({
     '@nuxtjs/google-analytics'
   ],
   googleAnalytics: {
-    id: 'UA-88662854-1',
-  },
+    id: 'UA-88662854-1'
+  }
 })
