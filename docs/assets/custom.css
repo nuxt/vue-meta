@@ -11,3 +11,7 @@ aside > div > ul {
     padding-left: 0.5rem !important;
   }
 }
+
+.prose pre code::after {
+  @apply absolute;
+}
