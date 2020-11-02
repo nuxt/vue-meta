@@ -10,7 +10,7 @@
 <script>
 export default {
   props: {
-    color: { type: String, default: "primary" },
-  },
-};
+    color: { type: String, default: 'primary' }
+  }
+}
 </script>
