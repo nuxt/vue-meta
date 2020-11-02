@@ -1,0 +1,13 @@
+li a[href="/"] {
+  @apply -ml-2 mb-2 text-gray-500 uppercase tracking-wider font-bold text-sm;
+
+  @screen lg {
+     @apply text-xs;
+  }
+}
+
+aside > div > ul {
+  @screen lg {
+    padding-left: 0.5rem !important;
+  }
+}
