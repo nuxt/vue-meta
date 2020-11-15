@@ -33,8 +33,6 @@ export function set (
       activeParent[key],
       pathSegments
     )
-  } else if (isArray(value)) {
-
   }
 
   let idx = -1
@@ -83,7 +81,6 @@ export function set (
   }
 
   // Step 3: Update the active data
-
   resolveActive(context, key, pathSegments, shadowParent, activeParent)
 }
 

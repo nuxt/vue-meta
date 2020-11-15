@@ -21,7 +21,16 @@ export function createHandler (context: MetaContext, pathSegments: PathSegments 
         const keyPath: PathSegments = [...pathSegments, key]
 
         const handler = /* #__PURE__ */ createHandler(context, keyPath)
-        value.__vm_proxy = createProxy(value, handler)
+        Object.defineProperty(
+          value,
+          '__vm_proxy',
+          {
+            configurable: false,
+            enumerable: false,
+            writable: false,
+            value: createProxy(value, handler)
+          }
+        )
       }
 
       return value.__vm_proxy
@@ -31,17 +40,25 @@ export function createHandler (context: MetaContext, pathSegments: PathSegments 
       key: string,
       value: any
     ): boolean {
-      update(context, pathSegments, key, value)
-      // target[key] = value
-      return true
+      const success = Reflect.set(target, key, value)
+
+      if (success) {
+        update(context, pathSegments, key, value)
+      }
+
+      return success
     },
     deleteProperty (
       target: { [key: string]: any },
       prop: string
     ) {
-      remove(context, pathSegments, prop)
-      delete target[prop]
-      return true
+      const success = Reflect.deleteProperty(target, prop)
+
+      if (success) {
+        remove(context, pathSegments, prop)
+      }
+
+      return success
     }
   }
 }

@@ -1,4 +1,4 @@
-import { hasOwn } from '@vue/shared'
+import { hasOwn, isArray } from '@vue/shared'
 import { clone } from '../utils'
 import { ActiveNode, GetActiveNode, MetaContext, PathSegments, ShadowNode, GetShadowNodes } from '../types'
 
@@ -11,12 +11,19 @@ export function resolveActive (
 ) {
   let value
 
-  const shadowLength = shadowParent[key] ? shadowParent[key].length : 0
+  const isUpdatingArrayKey = isArray(activeParent)
+
+  let shadowLength
+  if (isUpdatingArrayKey) {
+    shadowLength = shadowParent ? shadowParent.length : 0
+  } else {
+    shadowLength = shadowParent[key] ? shadowParent[key].length : 0
+  }
 
   if (shadowLength > 1) {
     // Is using freeze useful? Idea is to prevent the user from messing with these options by mistake
-    const getShadow: GetShadowNodes = () => Object.freeze(clone(shadowParent[key]))
-    const getActive: GetActiveNode = () => Object.freeze(clone(activeParent[key]))
+    const getShadow: GetShadowNodes = () => Object.freeze(clone(isUpdatingArrayKey ? shadowParent : shadowParent[key]))
+    const getActive: GetActiveNode = () => Object.freeze(clone(isUpdatingArrayKey ? activeParent : activeParent[key]))
 
     value = context.resolve(
       key,
@@ -30,6 +37,18 @@ export function resolveActive (
 
   if (value === undefined) {
     delete activeParent[key]
+  } else if (isUpdatingArrayKey) {
+    // set new values
+    for (const k in value) {
+      activeParent[k] = value[k]
+    }
+
+    // delete old values
+    for (const k in activeParent) {
+      if (!(k in value)) {
+        delete activeParent[k]
+      }
+    }
   } else if (!hasOwn(activeParent, key) || activeParent[key] !== value) {
     activeParent[key] = value
   }
