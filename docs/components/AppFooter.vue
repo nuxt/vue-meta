@@ -17,7 +17,7 @@
       </div>
     </div>
     <div
-      class="h-full w-full container mx-auto px-4 lg:px-8 flex items-center justify-between"
+      class="h-full w-full container mx-auto px-4 lg:px-8 flex items-center justify-between text-xs md:text-sm"
     >
       MIT License | Created by Declan de Wet, currently developed with ❤ by
       Nuxt.js core-team & contributors
@@ -28,9 +28,12 @@
 <script>
 export default {
   computed: {
-    availableLocales() {
-      return this.$i18n.locales.filter((i) => i.code !== this.$i18n.locale);
-    },
+    availableLocales () {
+      return this.$i18n.locales.filter(i => i.code !== this.$i18n.locale)
+    }
   },
-};
+  mounted () {
+    console.log('loaded')
+  }
+}
 </script>

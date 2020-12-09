@@ -1,3 +1,4 @@
+li a[href="/api"],
 li a[href="/"] {
   @apply -ml-2 mb-2 text-gray-500 uppercase tracking-wider font-bold text-sm;
 

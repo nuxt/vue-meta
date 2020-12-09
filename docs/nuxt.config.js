@@ -9,6 +9,7 @@ export default theme({
     dir: '.vuepress/dist'
   },
   buildModules: [
+    path.resolve(__dirname, './modules/local-components.js'),
     '@nuxtjs/google-analytics'
   ],
   googleAnalytics: {

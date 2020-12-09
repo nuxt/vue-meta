@@ -1,8 +1,8 @@
 ---
-title: Reference
+title: API Reference
 description: 'HTML Metadata manager for Vue.js'
-position: 40
-category: API
+position: 2
+category: ''
 ---
 
 ## Plugin properties
@@ -106,7 +106,7 @@ The key name for the content-holding property
 The key name for possible meta templates
 
 ### refreshOnceOnNavigation
-<color-badge color="orange">runtime</color-badge>
+<badge color="orange">runtime</badge>
 - type `boolean`
 - default `false`
 
@@ -120,14 +120,14 @@ Its not supported to disable `refreshOnceOnNavigation` once enabled
 </alert>
 
 ### debounceWait
-<badge>v2.3+</badge><color-badge color="orange">runtime</color-badge>
+<badge>v2.3+</badge><badge color="orange">runtime</badge>
 - type `number`
 - default `10`
 
 A timeout is used to debounce updates so vue-meta won't be updating the meta info immediately, this option determines how long updates are debounced
 
 ### waitOnDestroyed
-<badge>v2.3+</badge><color-badge color="orange">runtime</color-badge>
+<badge>v2.3+</badge><badge color="orange">runtime</badge>
 - type `boolean`
 - default `true`
 
@@ -157,7 +157,7 @@ Could be used by third-party libraries who wish to interact with `vue-meta`
 - returns [`pluginOptions`](/api#plugin-options)
 
 You can toggle some plugin options during runtime by calling this method. Only [plugin options](/api#plugin-options) marke
- <color-badge color="orange">runtime</color-badge> can be changed
+ <badge color="orange">runtime</badge> can be changed
 
 ```js
 vm.$meta().setOptions({ debounceWait: 50 })
