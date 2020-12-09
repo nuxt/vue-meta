@@ -1,6 +1,8 @@
 <template functional>
   <span
-    :class="`bg-${props.color}-100 dark:bg-${props.color}-900 text-${props.color}-500`"
+    :class="
+      props.secondary ? 'bg-orange-100 dark:bg-orange-900 text-orange-500' : 'bg-primary-100 dark:bg-primary-900 text-primary-500'
+    "
     class="inline-flex items-center px-3 py-1 leading-5 rounded-full text-base tracking-tight"
   >
     <slot />
@@ -10,7 +12,7 @@
 <script>
 export default {
   props: {
-    color: { type: String, default: 'primary' }
+    secondary: { type: Boolean, default: false }
   }
 }
 </script>
