@@ -1,4 +1,9 @@
-# Frameworks
+---
+title: Framework
+description: 'Manage HTML metadata in Vue.js components with SSR support for Nuxt.js!'
+position: 5
+category: Guide
+---
 
 If you are using a framework which uses `vue-meta`, please make sure to consult their documentation first
 

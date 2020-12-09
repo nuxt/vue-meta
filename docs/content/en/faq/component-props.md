@@ -1,9 +1,13 @@
-# How to use component props or data
+---
+title: How to use component props or data
+description: 'Manage HTML metadata in Vue.js components with SSR support for Nuxt.js!'
+position: 11
+category: Faq
+---
 
 Easy. Instead of defining `metaInfo` as an object, define it as a function and access `this` as usual:
 
-**Post.vue:**
-```html
+```html{}[Post.vue]
 <template>
   <div>
     <h1>{{ title }}</h1>
@@ -31,8 +35,7 @@ Easy. Instead of defining `metaInfo` as an object, define it as a function and a
 </script>
 ```
 
-**PostContainer.vue:**
-```html
+```html{}[PostContainer.vue]
 <template>
   <div>
     <post :title="title"></post>

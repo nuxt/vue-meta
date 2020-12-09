@@ -108,18 +108,16 @@ If you wish to create your app even more quickly, take a look at the following f
 - [Vue-Storefront](https://github.com/DivanteLtd/vue-storefront) - PWA for eCommerce
 - [Factor JS](https://github.com/fiction-com/factor) - Extension-first VueJS platform for front-end developers.
 
-## How to translate documentation
+## How to contribute to the documentation
 
-Thanks for your interest in translating the documentation. As our docs are based on VuePress, we recommend to have a look at their docs about [internationalization](https://vuepress.vuejs.org/guide/i18n.html#site-level-i18n-config) as well
+Thanks for your interest in translating the documentation. As our docs are based on NuxtContent, we recommend to have a look at their docs about [internationalization](https://content.nuxtjs.org/) as well.
 
 Here are the steps you will need to take:
-- Clone this repository
+- Fork this repository
 - Create a new branch
 - Browse to `/docs/`
 - Create a folder with the language code you will add a translation for (eg `/zh/`)
-- Copy all `*.md` files and the folders `api`, `faq`, and `guide` to that folder
 - Translate the copied files in your language folder
-- Edit `.vuepress/config.yml` and add a config section for your locale in both `locales` as `themeConfig.locales`
 - Test your translation by running the docs dev server with `yarn docs`
 - Create a pull request with your changes
 - Receive eternal gratefulness from your fellow language speakers :heart:

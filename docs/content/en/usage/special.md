@@ -1,18 +1,31 @@
-# Special cases
+---
+title: Special cases
+description: 'Manage HTML metadata in Vue.js components with SSR support for Nuxt.js!'
+position: 7
+category: Usage
+---
 
-::: tip Read first
-Understanding [How is metaInfo resolved?](/faq/#concatenate-metadata) is probably a prerequisite for these cases
-:::
+<alert type="info">
+
+  Read first
+  
+  Understanding [How is metaInfo resolved?](/faq/metainfo#concatenate-metadata) is probably a prerequisite for these cases
+  
+</alert>
 
 ## Remove parent property by child
 
 If a child returns `null` as content value then the parent metaInfo property with the same `vmid` will be ignored
 
-:::tip Content value
-With content value we mean the following value of a `metaInfo` property:
-- the value of a key for `object` types as [`htmlAttrs`](/api/#htmlattrs)
-- the value of `[contentKeyName]` or `innerHTML` keys for `collection` types as [`meta`](/api/#meta)
-:::
+<alert type="info">
+
+  Content value
+
+  With content value we mean the following value of a `metaInfo` property:
+  - the value of a key for `object` types as [`htmlAttrs`](/api/metainfo-properties#htmlattrs)
+  - the value of `[contentKeyName]` or `innerHTML` keys for `collection` types as [`meta`](/api/metainfo-properties#meta)
+
+</alert>
 
 The following might be a bit far-fetched, but its just an example
 ```js
@@ -52,11 +65,15 @@ mounted() {
 
 If you wish to use a child property conditionally and use the parents' property as default value, make sure the child returns `undefined` as content value
 
-:::tip Content value
-With content value we mean the following value of a `metaInfo` property:
-- the value of a key for `object` types as [`htmlAttrs`](/api/#htmlattrs)
-- the value of `[contentKeyName]` or `innerHTML` keys for `collection` types as [`meta`](/api/#meta)
-:::
+<alert type="info">
+
+  Content value
+ 
+  With content value we mean the following value of a `metaInfo` property:
+  - the value of a key for `object` types as [`htmlAttrs`](/api/metainfo-properties#htmlattrs)
+  - the value of `[contentKeyName]` or `innerHTML` keys for `collection` types as [`meta`](/api/metainfo-properties#meta)
+
+</alert>
 
 The below example will still show a description when the GET in the child fails
 ```js
@@ -103,6 +120,10 @@ methods: {
 
 <sup>*</sup><small>Except for the special values `undefined` and `null`, see above</small>
 
-:::tip Note
-Prior to `v2.0` any attribute key with `undefined` as value was rendered as Boolean attribute. This has been removed as bundlers often remove object properties with an `undefined` value as given `a = {}` then `a.a === undefined`
-:::
+<alert type="info">
+  
+  Note
+  
+  Prior to `v2.0` any attribute key with `undefined` as value was rendered as Boolean attribute. This has been removed as bundlers often remove object properties with an `undefined` value as given `a = {}` then `a.a === undefined`
+
+</alert>

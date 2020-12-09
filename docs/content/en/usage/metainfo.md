@@ -1,15 +1,23 @@
-# Defining `metaInfo`
+---
+title: Defining metainfo
+description: 'Manage HTML metadata in Vue.js components with SSR support for Nuxt.js!'
+position: 6
+category: Usage
+---
 
 You can define a `[keyName]` property in any of your components, by default this is `metaInfo`.
 
-See the [API](/api) for a list of recognised `metaInfo` properties
+See the [API](/api/metainfo-properties) for a list of recognised `metaInfo` properties
 
-::: tip Note
-Although we talk about the `metaInfo` variable on this page, please note that the `keyName` is [configurable](/api/#keyname) and could be different in your case. E.g. [Nuxt.js](https://nuxtjs.org/api/pages-head#the-head-method) uses `head` as `keyName`
-:::
+<alert type="info">
+  
+  Note
+  
+  Although we talk about the `metaInfo` variable on this page, please note that the `keyName` is [configurable](/api/plugin-options#keyname) and could be different in your case. E.g. [Nuxt.js](https://nuxtjs.org/api/pages-head#the-head-method) uses `head` as `keyName`
 
-**App.vue:**
-```html
+</alert>
+
+```html{}[App.vue]
 <template>
   <div id="app">
     <router-view></router-view>
@@ -29,8 +37,7 @@ Although we talk about the `metaInfo` variable on this page, please note that th
 </script>
 ```
 
-**Home.vue**
-```html
+```html{}[Home.vue]
 <template>
   <div id="page">
     <h1>Home Page</h1>
@@ -49,8 +56,7 @@ Although we talk about the `metaInfo` variable on this page, please note that th
 </script>
 ```
 
-**About.vue**
-```html
+```html{}[About.vue]
 <template>
   <div id="page">
     <h1>About Page</h1>

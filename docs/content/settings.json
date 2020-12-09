@@ -1,0 +1,10 @@
+{
+  "title": "nuxt vue-meta module",
+  "url": "",
+  "logo": {
+    "light": "/logo-light.svg",
+    "dark": "/logo-dark.svg"
+  },
+  "github": "nuxt/content",
+  "twitter": "@nuxt_js"
+}

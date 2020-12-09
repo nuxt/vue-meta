@@ -1,4 +1,9 @@
-# How is `metaInfo` resolved?
+---
+title: How is metaInfo resolved?
+description: 'Manage HTML metadata in Vue.js components with SSR support for Nuxt.js!'
+position: 9
+category: Faq
+---
 
 You can define a `metaInfo` property on any component in the tree. Child components that have `metaInfo` will recursively merge their `metaInfo` into the parent context, overwriting any duplicate properties. To better illustrate, consider this component hierarchy:
 
