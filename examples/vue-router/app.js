@@ -7,7 +7,7 @@ import {
   watch
 } from 'vue'
 import { createRouter, createWebHistory } from 'vue-router'
-import { defaultConfig, createManager, useMeta, useMetainfo } from 'vue-meta'
+import { defaultConfig, createManager, useMeta, useMetainfo, resolveOption } from 'vue-meta'
 // import About from './about.vue'
 
 const metaUpdated = 'no'
@@ -31,18 +31,17 @@ const ChildComponent = defineComponent({
 
     const title = props.page[0].toUpperCase() + props.page.slice(1)
     console.log('ChildComponent Setup')
-    /* useMeta({
+
+    useMeta({
       charset: 'utf16',
       title,
       description: 'Description ' + props.page,
       og: {
         title: 'Og Title ' + props.page,
       },
-    }) */
+    })
 
-    return {
-      ...toRefs(state)
-    }
+    return toRefs(state)
   }
 })
 
@@ -101,7 +100,7 @@ const App = {
         { src: 'body-script2.js', to: 'body' },
         { src: 'body-script3.js', to: '#put-it-here' }
       ],
-      esi: {
+      /* esi: {
         children: [
           {
             tag: 'choose',
@@ -138,7 +137,7 @@ const App = {
             ]
           }
         ]
-      }
+      } */
     })
 
     setTimeout(() => (meta.title = 'My Updated Title'), 2000)
@@ -206,33 +205,24 @@ const App = {
       <h1>vue-router</h1>
       <router-link to="/">Home</router-link>
       <router-link to="/about">About</router-link>
-      <transition name="page" mode="out-in">
-        <router-view></router-view>
-      </transition>
+
+      <router-view v-slot="{ Component }">
+        <transition name="page" mode="out-in">
+          <component :is="Component" />
+        </transition>
+      </router-view>
+
       <p>Inspect Element to see the meta info</p>
     </div>
   `
 }
 
-function decisionMaker5000000 (key, pathSegments, getOptions, getCurrentValue) {
-  let theChosenOne
-
-  const options = getOptions()
-
-  for (const option of options) {
-    if (!theChosenOne || theChosenOne.context.vm.uid < option.context.vm.uid) {
-      theChosenOne = option
-    }
+const decisionMaker5000000 = resolveOption((prevValue, context) => {
+  const { uid = 0 } = context.vm || {}
+  if (!prevValue || prevValue < uid) {
+    return uid
   }
-
-  console.log(
-    key,
-    getCurrentValue(),
-    options.map(({ value }) => value)
-  )
-  console.log(theChosenOne.value)
-  return theChosenOne.value
-}
+})
 
 const metaManager = createManager({
   ...defaultConfig,
@@ -243,14 +233,14 @@ const metaManager = createManager({
   }
 }, decisionMaker5000000)
 
-/* useMeta(
+useMeta(
   {
     og: {
       something: 'test',
     },
   },
   metaManager
-) */
+) /**/
 
 const router = createRouter({
   history: createWebHistory('/vue-router'),
@@ -264,58 +254,3 @@ const app = createApp(App)
 app.use(router)
 app.use(metaManager)
 app.mount('#app')
-
-// old stuff:
-/*
-const { set, remove } = app.$meta().addApp('custom')
-
-set({
-  bodyAttrs: {
-    class: 'custom-app'
-  },
-  meta: [
-    { charset: 'utf=8' }
-  ]
-})
-setTimeout(() => remove(), 3000)
-*/
-/*
-const waitFor = time => new Promise(r => setTimeout(r, time || 1000))
-const o = {
-  meta: [{ a: 1 }]
-}
-const ob = Vue.observable(o)
-
-const root = new Vue({
-  beforeCreate() {
-    this.meta = ob.meta
-
-    this.$options.computed = this.$options.computed || {}
-    this.$options.computed['$ob'] = () => {
-      return { meta: this.meta }
-    }
-  },
-  created() {
-    console.log('HERE')
-    this.$watch('$ob', (a, b) => {
-      console.log('WATCHER', this.$ob.meta[0].a, a.meta[0].a, b.meta[0].a, diff(a, b))
-    }, { deep: true })
-  },
-  render(h) {
-    return h('div', null, 'test')
-  }
-})
-
-async function main () {
-  root.$mount('#app')
-  console.log(root)
-  await waitFor(500)
-
-  root.meta[0].a = 2
-  await waitFor(100)
-
-  ob.meta[0].a = 3
-  await waitFor(100)
-}
-main()
-/**/

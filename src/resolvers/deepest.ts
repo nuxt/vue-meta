@@ -1,17 +1,12 @@
-import {
-  // ActiveNode,
-  /* ActiveResolverSetup, ActiveResolverMethod, */ MetaContext,
-  PathSegments,
-  ShadowNode,
-  GetActiveNode,
-  GetShadowNodes
-} from '../types'
+import { ResolveContext, ResolveMethod } from '../object-merge'
+import { MetaContext } from '../types'
+import { resolveOption } from '.'
 
-interface DeepestResolverMetaContext extends MetaContext {
-  depth?: number
+type MergeContextDeepest = MetaContext & {
+  depth: number
 }
 
-export function setup (context: DeepestResolverMetaContext): void {
+export function setup (context: MergeContextDeepest): void {
   let depth: number = 0
 
   if (context.vm) {
@@ -29,30 +24,9 @@ export function setup (context: DeepestResolverMetaContext): void {
   context.depth = depth
 }
 
-export function resolve (
-  key: string,
-  _pathSegments: PathSegments,
-  getOptions: GetShadowNodes,
-  getCurrentValue: GetActiveNode
-): any {
-  let resolvedOption: ShadowNode | void
-
-  const options = getOptions()
-
-  for (const option of options) {
-    if (!resolvedOption || resolvedOption.context.depth < option.context.depth) {
-      resolvedOption = option
-    }
+export const resolve: ResolveMethod = resolveOption((acc: any, context: ResolveContext) => {
+  const { depth } = (context as unknown as MergeContextDeepest)
+  if (!acc || depth > acc) {
+    return acc
   }
-
-  console.log(
-    'DEEPEST.RESOLVE',
-    key,
-    getCurrentValue(),
-    options.map(({ value }) => value)
-  )
-
-  if (resolvedOption) {
-    return resolvedOption.value
-  }
-}
+})

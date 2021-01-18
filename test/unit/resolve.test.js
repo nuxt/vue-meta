@@ -1,79 +1,63 @@
 import { isArray, isPlainObject } from '@vue/shared'
-import { createProxy, createHandler, setByObject, remove } from '../../src/continuous-object-merge'
+import { createMergedObject } from '../../src/object-merge'
 
-describe('resolve', () => {
-  let active, shadow
-  let context1, context2
+const resolve = (options) => {
+  // console.log('RESOLVE\n', options)
 
-  beforeEach(() => {
-    active = {}
-    shadow = {}
-
-    const resolve = (_key, _pathSegments, getOptions, _getCurrentValue) => {
-      const options = getOptions()
-      console.log('RESOLVE', options)
-
-      const hasArrayOption = options.some(option => isArray(option.value))
-      if (hasArrayOption) {
-        const groupedOptions = {}
-        for (const option of options) {
-          console.log('OPTION', option)
-          if (!isArray(option.value)) {
-            continue
-          }
-
-          for (const value of option.value) {
-            if (isPlainObject(value) && 'vmid' in value) {
-              groupedOptions[value.vmid] = value
-            }
-          }
-        }
-        console.log(groupedOptions)
-        const values = []
-        for (const option of options) {
-          if (!isArray(option.value)) {
-            continue
-          }
-
-          for (const value of option.value) {
-            if (!isPlainObject(value) || !('vmid' in value)) {
-              values.push(value)
-            } else if (groupedOptions[value.vmid]) {
-              values.push(groupedOptions[value.vmid])
-              delete groupedOptions[value.vmid]
-            }
-          }
-        }
-        console.log('VALUES', values)
-        return values
+  const hasArrayOption = options.some(option => isArray(option))
+  if (hasArrayOption) {
+    const groupedOptions = {}
+    for (const option of options) {
+      if (!isArray(option)) {
+        continue
       }
 
-      return options[options.length - 1].value
+      for (const value of option) {
+        if (isPlainObject(value) && 'vmid' in value) {
+          groupedOptions[value.vmid] = value
+        }
+      }
     }
 
-    context1 = { active, shadow, resolve }
-    context2 = { active, shadow, resolve }
-  })
+    // console.log('GROUPED OPTIONS', groupedOptions)
+    const values = []
+    for (const option of options) {
+      if (!isArray(option)) {
+        continue
+      }
 
+      for (const value of option) {
+        if (!isPlainObject(value) || !('vmid' in value)) {
+          values.push(value)
+        } else if (groupedOptions[value.vmid]) {
+          values.push(groupedOptions[value.vmid])
+          delete groupedOptions[value.vmid]
+        }
+      }
+    }
+
+    // console.log('WILL USE THESE VALUES', values)
+    return values
+  }
+
+  return options[options.length - 1]
+}
+
+describe('resolve', () => {
   test('resolve (string)', () => {
-    const target1 = {
+    const source1 = {
       str: 'string value 1'
     }
 
-    const target2 = {
+    const source2 = {
       str: 'string value 2'
     }
 
-    // Set initial value
-    setByObject(context1, target1)
+    const { active, addSource, delSource } = createMergedObject(resolve)
 
-    // Init proxy
-    const handler1 = createHandler(context1)
-    /* const proxy1 = */ createProxy(target1, handler1)
-
-    setByObject(context2, target2)
-    const handler2 = createHandler(context2)
-    const proxy2 = createProxy(target2, handler2)
+    // Set initial value & init proxy
+    addSource(source1)
+    const proxy2 = addSource(source2, null, true /* do an initial compute/walk of all sources */)
 
     expect(active.str).toBe('string value 2')
 
@@ -81,39 +65,33 @@ describe('resolve', () => {
 
     expect(active.str).toBe('test')
 
-    remove(context2)
+    delSource(proxy2)
 
     expect(active.str).toBe('string value 1')
 
-    remove(context1)
+    delSource(source1)
 
     expect(active.str).toBeUndefined()
-    expect(shadow.str.length).toBe(0)
   })
 
   test('resolve (object)', () => {
-    const target1 = {
+    const source1 = {
       obj: {
         key: 'object value 1'
       }
     }
 
-    const target2 = {
+    const source2 = {
       obj: {
         key: 'object value 2'
       }
     }
 
-    // Set initial value
-    setByObject(context1, target1)
+    const { active, addSource, delSource } = createMergedObject(resolve)
 
-    // Init proxy
-    const handler1 = createHandler(context1)
-    /* const proxy1 = */ createProxy(target1, handler1)
-
-    setByObject(context2, target2)
-    const handler2 = createHandler(context2)
-    const proxy2 = createProxy(target2, handler2)
+    // Set initial value & init proxy
+    const proxy1 = addSource(source1)
+    const proxy2 = addSource(source2, null, true /* do an initial compute/walk of all sources */)
 
     expect(active.obj.key).toBe('object value 2')
 
@@ -124,42 +102,35 @@ describe('resolve', () => {
     proxy2.obj = { key: 'test again' }
 
     expect(active.obj.key).toBe('test again')
-    expect(shadow.obj.key.length).toBe(2)
 
-    remove(context2)
+    delSource(source2)
 
     expect(active.obj.key).toBe('object value 1')
 
-    remove(context1)
+    delSource(proxy1)
 
-    // TODO: should we clean up the obj ref too?
-    expect(active.obj).toEqual({})
-
-    expect(active.obj.key).toBeUndefined()
-    expect(shadow.obj.key.length).toBe(0)
+    expect(active.obj).toBeUndefined()
+    expect(active).toEqual({})
   })
 
   test('resolve (array)', () => {
-    const target1 = {
+    const source1 = {
       arr: [
         'array value 1'
       ]
     }
 
-    const target2 = {
+    const source2 = {
       arr: [
         'array value 2'
       ]
     }
 
-    // Set initial value & init proxy
-    setByObject(context1, target1)
-    const handler1 = createHandler(context1)
-    const proxy1 = createProxy(target1, handler1)
+    const { active, sources, addSource, delSource } = createMergedObject(resolve)
 
-    setByObject(context2, target2)
-    const handler2 = createHandler(context2)
-    const proxy2 = createProxy(target2, handler2)
+    // Set initial value & init proxy
+    const proxy1 = addSource(source1)
+    const proxy2 = addSource(source2, null, true /* do an initial compute/walk of all sources */)
 
     expect(active.arr).toEqual(['array value 1', 'array value 2'])
 
@@ -170,49 +141,49 @@ describe('resolve', () => {
     proxy1.arr = ['test 1']
 
     expect(active.arr).toEqual(['test 1', 'test 2'])
-    expect(shadow.arr.length).toBe(2)
+    expect(sources.length).toBe(2)
 
-    remove(context1)
+    delSource(source1)
 
     expect(active.arr).toEqual(['test 2'])
 
     delete proxy2.arr
 
-    // TODO: should we clean up the obj ref too?
     expect(active.arr).toBeUndefined()
-    expect(shadow.arr.length).toBe(0)
+    expect(sources.length).toBe(1)
+
+    proxy2.arr = ['test again 2.1']
+    expect(active.arr).toEqual(['test again 2.1'])
 
     proxy1.arr = ['test again 1']
-    expect(active.arr).toEqual(['test again 1'])
+    addSource(proxy1, null, true)
+    expect(active.arr).toEqual(['test again 2.1', 'test again 1'])
 
     proxy2.arr = []
-    proxy2.arr[0] = 'test again 2'
-    expect(active.arr).toEqual(['test again 1', 'test again 2'])
+    proxy2.arr[0] = 'test again 2.2'
+    expect(active.arr).toEqual(['test again 2.2', 'test again 1'])
   })
 
   test('resolve (collection)', () => {
-    const target1 = {
+    const source1 = {
       arr: [
         { key: 'collection value 1.1' },
         { vmid: 'a', key: 'collection value 1.2' }
       ]
     }
 
-    const target2 = {
+    const source2 = {
       arr: [
         { vmid: 'a', key: 'collection value 2.1' },
         { vmid: 'b', key: 'collection value 2.2' }
       ]
     }
 
-    // Set initial value & init proxy
-    setByObject(context1, target1)
-    const handler1 = createHandler(context1)
-    const proxy1 = createProxy(target1, handler1)
+    const { active, sources, addSource, delSource } = createMergedObject(resolve)
 
-    setByObject(context2, target2)
-    const handler2 = createHandler(context2)
-    const proxy2 = createProxy(target2, handler2)
+    // Set initial value & init proxy
+    const proxy1 = addSource(source1)
+    const proxy2 = addSource(source2, null, true /* do an initial compute/walk of all sources */)
 
     expect(active.arr).toEqual([
       { key: 'collection value 1.1' },
@@ -225,7 +196,7 @@ describe('resolve', () => {
 
     expect(active.arr).toEqual([
       { key: 'test 1.1' },
-      { vmid: 'a', key: 'test 1.2' }, // TODO: this is WRONG, should be collection value 2.1 => setting a prop in a collection needs to trigger the resolveActive for the parent array
+      { vmid: 'a', key: 'collection value 2.1' },
       { vmid: 'b', key: 'collection value 2.2' }
     ])
 
@@ -241,10 +212,11 @@ describe('resolve', () => {
       { vmid: 'c', key: 'collection value 2.2' }
     ])
 
-    expect(shadow.arr.length).toBe(2)
+    expect(sources.length).toBe(2)
 
-    remove(context1)
+    delSource(proxy1)
 
+    expect(sources.length).toBe(1)
     expect(active.arr).toEqual([
       { vmid: 'b', key: 'collection value 2.1' },
       { vmid: 'c', key: 'collection value 2.2' }
@@ -252,18 +224,21 @@ describe('resolve', () => {
 
     delete proxy2.arr
 
-    // TODO: should we clean up the obj ref too?
     expect(active.arr).toBeUndefined()
-    expect(shadow.arr.length).toBe(0)
+    expect(active).toEqual({})
 
-    proxy1.arr = [{ vmid: 'a', key: 'test again 1' }]
+    const proxy3 = addSource({ arr: [{ vmid: 'a', key: 'test again 1' }] }, null, true)
+
+    expect(sources.length).toBe(2)
     expect(active.arr).toEqual([{ vmid: 'a', key: 'test again 1' }])
 
-    // TODO: fix
-    proxy2.arr = []
-    proxy2.arr[0] = { vmid: 'a', value: 'test again 2' }
-    expect(active.arr).toEqual([
-      { vmid: 'a', key: 'test again 2' }
-    ])
+    expect(sources[0]).toBe(proxy2)
+    expect(sources[1]).toBe(proxy3)
+
+    proxy2.arr = [{ vmid: 'a', key: 'test again 2' }]
+
+    // This is still test again 1 because proxy3 is added after proxy2,
+    // and the resolve method returns the last value
+    expect(active.arr).toEqual([{ vmid: 'a', key: 'test again 1' }])
   })
 })

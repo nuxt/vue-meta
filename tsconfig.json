@@ -1,5 +1,4 @@
 {
-  "include": ["src/global.d.ts", "src/**/*.ts", "__tests__/**/*.ts"],
   "compilerOptions": {
     "baseUrl": ".",
     "rootDir": ".",
@@ -27,5 +26,10 @@
     "jsx": "preserve",
     "lib": ["esnext", "dom"],
     "types": ["jest", "node"]
-  }
+  },
+  "include": [
+    "src/global.d.ts",
+    "src/**/*.ts",
+    "__tests__/**/*.ts"
+  ],
 }

@@ -14,7 +14,7 @@ module.exports = {
   coverageDirectory: './coverage',
 
   collectCoverageFrom: [
-    '**/src/**/*.[tj]s'
+    'src/**/*.[tj]s'
   ],
 
   coveragePathIgnorePatterns: [

@@ -1,35 +1,30 @@
-import { App, markRaw, reactive, onUnmounted, ComponentInternalInstance } from 'vue'
+import { App, reactive, onUnmounted, ComponentInternalInstance } from 'vue'
 import { isFunction } from '@vue/shared'
-import { createProxy, createHandler, setByObject, remove } from './continuous-object-merge'
-import { PolySymbol } from './symbols'
+import { createMergedObject } from './object-merge'
 import { applyMetaPlugin } from './install'
 // import * as deepestResolver from './resolvers/deepest'
-import { Config, ActiveResolverObject, ActiveResolverMethod, MetaContext, MetainfoInput, MetaProxy } from './types'
-
-let contextCounter: number = 0
+import { Config, Resolver, MetainfoInput, MetaContext, MetaProxy } from './types'
+import type { ResolveMethod } from './object-merge'
 
 export type Manager = {
   readonly config: Config
 
   install(app: App): void
-  createMetaProxy(obj: MetainfoInput, vm?: ComponentInternalInstance): MetaProxy
+  addMeta(obj: MetainfoInput, vm?: ComponentInternalInstance): MetaProxy
 }
 
-export const shadow = markRaw({})
 export const active = reactive({})
 
-export function createManager (config: Config, resolver: ActiveResolverObject): Manager {
-  const resolve: ActiveResolverMethod = (key, pathSegments, getShadow, getActive) => {
-    if (!resolver) {
-      return
-    }
-
+export function createManager (config: Config, resolver: Resolver | ResolveMethod): Manager {
+  const resolve: ResolveMethod = (options, contexts, active, key, pathSegments) => {
     if (isFunction(resolver)) {
-      return resolver(key, pathSegments, getShadow, getActive)
+      return resolver(options, contexts, active, key, pathSegments)
     }
 
-    return resolver.resolve(key, pathSegments, getShadow, getActive)
+    return resolver.resolve(options, contexts, active, key, pathSegments)
   }
+
+  const { addSource, delSource } = createMergedObject(resolve, active)
 
   // TODO: validate resolver
   const manager: Manager = {
@@ -39,28 +34,19 @@ export function createManager (config: Config, resolver: ActiveResolverObject): 
       applyMetaPlugin(app, this, active)
     },
 
-    createMetaProxy (obj, vm) {
-      const context: MetaContext = {
-        id: PolySymbol(`ctx${contextCounter++}`),
-        vm: vm || undefined,
-        resolve,
-        shadow,
-        active
+    addMeta (metaObj, vm) {
+      const resolveContext: MetaContext = { vm }
+      if (resolver && 'setup' in resolver && isFunction(resolver.setup)) {
+        resolver.setup(resolveContext)
       }
 
-      const unmount = <T extends Function = () => any>() => remove(context)
+      // TODO: optimize initial compute
+      const meta = addSource(metaObj, resolveContext, true)
+
+      const unmount = () => delSource(meta)
       if (vm) {
         onUnmounted(unmount)
       }
-
-      if (resolver && resolver.setup && isFunction(resolver)) {
-        resolver.setup(context)
-      }
-
-      setByObject(context, obj)
-
-      const handler = /* #__PURE__ */ createHandler(context)
-      const meta = createProxy(obj, handler)
 
       return {
         meta,

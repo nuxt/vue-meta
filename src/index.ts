@@ -1,4 +1,5 @@
 export { defaultConfig } from './config'
 export { createManager } from './manager'
+export { resolveOption } from './resolvers'
 export * from './useApi'
 export * from './types'

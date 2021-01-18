@@ -7,7 +7,7 @@ import { VueLoaderPlugin } from 'vue-loader'
 // const srcDir = path.join(__dirname, '..', 'src')
 
 export default {
-  devtool: 'inline-source-map',
+  devtool: 'source-map',
   mode: 'development',
   entry: fs.readdirSync(__dirname)
     .reduce((entries, dir) => {

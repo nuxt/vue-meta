@@ -1,11 +1,19 @@
 import { ComponentInternalInstance } from 'vue'
+import type { MergedObject, ResolveContext, ResolveMethod } from '../object-merge'
 
 export type Immutable<T> = {
   readonly [P in keyof T]: Immutable<T[P]>
 }
 
 export type TODO = any
-export type PathSegments = Array<string>
+
+export type MetainfoInput = {
+  [key: string]: TODO
+}
+
+export type MetaContext = ResolveContext & {
+  vm: ComponentInternalInstance | undefined
+}
 
 export interface ConfigOption {
   tag?: string
@@ -23,25 +31,12 @@ export interface Config {
   [key: string]: ConfigOption
 }
 
-export interface MetainfoInput {
-  [key: string]: TODO
-}
+export interface MetainfoProxy extends MergedObject {
 
-export interface MetainfoProxy extends MetainfoInput {
-  // Should be a symbol, but: https://github.com/microsoft/TypeScript/issues/1863
-  __vm_proxy?: any // eslint-disable-line camelcase
 }
 
 export interface MetainfoActive {
   [key: string]: TODO
-}
-
-export type MetaContext = {
-  id: string | symbol
-  vm?: ComponentInternalInstance
-  resolve: ActiveResolverMethod
-  active: Object
-  shadow: Object
 }
 
 export type MetaProxy = {
@@ -49,36 +44,9 @@ export type MetaProxy = {
   unmount: TODO
 }
 
-export type ActiveResolverSetup = (context: MetaContext) => void
-export type ActiveResolverMethod = (
-  key: string,
-  pathSegments: PathSegments,
-  shadow: GetShadowNodes,
-  active: GetActiveNode
-) => any
+export type ResolveSetup = (context: MetaContext) => void
 
-export interface ActiveResolverObject {
-  setup?: ActiveResolverSetup
-  resolve: ActiveResolverMethod
-}
-
-export interface ManagerResolverObject {
-  setup: ActiveResolverSetup
-  resolve: ActiveResolverMethod
-}
-
-export interface ShadowNode {
-  [key: string]: TODO
-}
-
-export interface ActiveNode {
-  [key: string]: TODO
-}
-
-export interface GetShadowNodes {
-  (): Array<ShadowNode>
-}
-
-export interface GetActiveNode {
-  (): ActiveNode
+export type Resolver = {
+  setup?: ResolveSetup
+  resolve: ResolveMethod
 }
