@@ -39,10 +39,10 @@ app.use((req, res, next) => {
   if (req.url.endsWith('.js')) {
     res.setHeader('Content-Type', 'application/javascript')
     res.send('')
-    next()
   } else if (req.url.endsWith('.css')) {
     res.setHeader('Content-Type', 'text/css')
     res.send('')
+  } else {
     next()
   }
 })

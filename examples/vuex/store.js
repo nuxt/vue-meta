@@ -46,7 +46,7 @@ export default new Vuex.Store({
     publishedPosts (state) {
       return state.posts.filter(post => post.published)
     },
-    publishedPostsCount (state, getters) {
+    publishedPostsCount (_, getters) {
       return getters.publishedPosts.length
     }
   },

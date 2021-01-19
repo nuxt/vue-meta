@@ -1,62 +1,8 @@
-import {
-  createApp,
-  defineComponent,
-  reactive,
-  toRefs,
-  h,
-  watch
-} from 'vue'
-import { createRouter, createWebHistory } from 'vue-router'
-import { defaultConfig, createManager, useMeta, useMetainfo, resolveOption } from 'vue-meta'
-// import About from './about.vue'
+import { watch } from 'vue'
+import { useMeta, useMetainfo } from 'vue-meta'
 
-const metaUpdated = 'no'
-
-const ChildComponent = defineComponent({
-  name: 'child-component',
-  props: {
-    page: String
-  },
-  template: `
-  <div>
-    <h3>You're looking at the <strong>{{ page }}</strong> page</h3>
-    <p>Has metaInfo been updated due to navigation? {{ metaUpdated }}</p>
-  </div>
-  `,
-  setup (props) {
-    const state = reactive({
-      date: null,
-      metaUpdated
-    })
-
-    const title = props.page[0].toUpperCase() + props.page.slice(1)
-    console.log('ChildComponent Setup')
-
-    useMeta({
-      charset: 'utf16',
-      title,
-      description: 'Description ' + props.page,
-      og: {
-        title: 'Og Title ' + props.page,
-      },
-    })
-
-    return toRefs(state)
-  }
-})
-
-function view (page) {
-  return {
-    name: `section-${page}`,
-    render () {
-      return h(ChildComponent, { page })
-    }
-  }
-}
-
-const App = {
+export default {
   setup () {
-    // console.log('App', getCurrentInstance())
     const { meta } = useMeta({
       base: { href: '/vue-router', target: '_blank' },
       charset: 'utf8',
@@ -99,7 +45,7 @@ const App = {
         // TODO { rawContent: 'window.b = "<br/>"; </script><script> alert(\'123321\');' },
         { src: 'body-script2.js', to: 'body' },
         { src: 'body-script3.js', to: '#put-it-here' }
-      ],
+      ]
       /* esi: {
         children: [
           {
@@ -145,9 +91,11 @@ const App = {
 
     const metadata = useMetainfo()
 
-    window.$metadata = metadata
+    if (!process.server) {
+      window.$metadata = metadata
+    }
 
-    watch(metadata, (newValue, oldValue) => {
+    watch(metadata, (newValue) => {
       console.log('UPDATE', newValue)
     })
 
@@ -216,41 +164,3 @@ const App = {
     </div>
   `
 }
-
-const decisionMaker5000000 = resolveOption((prevValue, context) => {
-  const { uid = 0 } = context.vm || {}
-  if (!prevValue || prevValue < uid) {
-    return uid
-  }
-})
-
-const metaManager = createManager({
-  ...defaultConfig,
-  esi: {
-    group: true,
-    namespaced: true,
-    attributes: ['src', 'test', 'text']
-  }
-}, decisionMaker5000000)
-
-useMeta(
-  {
-    og: {
-      something: 'test',
-    },
-  },
-  metaManager
-) /**/
-
-const router = createRouter({
-  history: createWebHistory('/vue-router'),
-  routes: [
-    { name: 'home', path: '/', component: view('home') },
-    { name: 'about', path: '/about', component: view('about') }
-  ]
-})
-
-const app = createApp(App)
-app.use(router)
-app.use(metaManager)
-app.mount('#app')

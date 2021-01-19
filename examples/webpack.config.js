@@ -7,7 +7,7 @@ import { VueLoaderPlugin } from 'vue-loader'
 // const srcDir = path.join(__dirname, '..', 'src')
 
 export default {
-  devtool: 'source-map',
+  devtool: 'inline-source-map',
   mode: 'development',
   entry: fs.readdirSync(__dirname)
     .reduce((entries, dir) => {
@@ -16,11 +16,17 @@ export default {
       if (dir === 'ssr') {
         entries[dir] = path.join(fullDir, 'browser.js')
       } else if (dir === 'vue-router') {
-        const entry = path.join(fullDir, 'app.js')
-        if (fs.statSync(fullDir).isDirectory() && fs.existsSync(entry)) {
-          entries[dir] = entry
+        const possibleEntries = ['browser', 'app']
+        for (const entryName of possibleEntries) {
+          const entry = path.join(fullDir, entryName + '.js')
+
+          if (fs.statSync(fullDir).isDirectory() && fs.existsSync(entry)) {
+            entries[dir] = entry
+            break
+          }
         }
       }
+
       return entries
     }, {}),
   output: {
@@ -39,22 +45,7 @@ export default {
       {
         test: /\.js$/,
         exclude: /node_modules/,
-        use: {
-          loader: 'babel-loader',
-          options: {
-            presets: [
-              ['@babel/preset-env', {
-                useBuiltIns: 'usage',
-                corejs: '3',
-                targets: { ie: 9, safari: '5.1' }
-              }]
-            ]
-          }
-        }
-      },
-      {
-        resourceQuery: /blockType=head/,
-        loader: require.resolve('./meta-loader.js')
+        use: 'babel-loader'
       },
       {
         test: /\.vue$/,
@@ -63,7 +54,7 @@ export default {
     ]
   },
   resolve: {
-    extensions: ['.tsx', '.ts', '.js'],
+    extensions: ['.tsx', 'd.ts', '.ts', '.js', '.vue'],
     alias: {
       // this isn't technically needed, since the default `vue` entry for bundlers
       // is a simple `export * from '@vue/runtime-dom`. However having this
@@ -83,11 +74,9 @@ export default {
     new VueLoaderPlugin(),
     new webpack.DefinePlugin({
       'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV || 'development'),
-      __DEV__: process.env.NODE_ENV !== 'production'
-    }),
-    new webpack.DefinePlugin({
+      __DEV__: JSON.stringify(process.env.NODE_ENV !== 'production'),
       __VUE_OPTIONS_API__: JSON.stringify(true),
-      __VUE_PROD_DEVTOOLS__: JSON.stringify(true),
+      __VUE_PROD_DEVTOOLS__: JSON.stringify(true)
     })
   ],
   devServer: {

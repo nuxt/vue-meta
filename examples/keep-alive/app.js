@@ -3,7 +3,7 @@ import VueMeta from 'vue-meta'
 
 Vue.use(VueMeta)
 
-Vue.component('foo', {
+Vue.component('Foo', {
   template: '<p>Foo component</p>',
   metaInfo: {
     title: 'Keep me Foo'

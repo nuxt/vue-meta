@@ -3,7 +3,7 @@ import VueMeta from 'vue-meta'
 
 Vue.use(VueMeta)
 
-Vue.component('child', {
+Vue.component('Child', {
   name: 'Child',
   props: {
     page: {
