@@ -1,7 +1,6 @@
 import { inject, getCurrentInstance, ComponentInternalInstance } from 'vue'
-import { Manager } from './manager'
 import { metaInfoKey } from './symbols'
-import { MetainfoActive, MetainfoInput, MetaProxy } from './types'
+import type { Manager, MetainfoActive, MetainfoInput, MetaProxy } from './types'
 
 export function getCurrentManager (vm?: ComponentInternalInstance): Manager {
   if (!vm) {

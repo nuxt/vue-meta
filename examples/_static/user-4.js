@@ -1,3 +1,8 @@
+if (!window.users) {
+  window.users = []
+  console.warn('window.users was not set')
+}
+
 window.users.push({
   id: 4,
   name: 'Patricia Lebsack',

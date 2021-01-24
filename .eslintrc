@@ -3,7 +3,8 @@
     "@nuxtjs/eslint-config-typescript"
   ],
   "globals": {
-    "__DEV__": true
+    "__DEV__": true,
+    "__BROWSER__": false,
   },
   "overrides": [
     {

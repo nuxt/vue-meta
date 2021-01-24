@@ -29,7 +29,7 @@ export default {
           { tag: 'link', rel: 'stylesheet', href: 'style2.css' }
         ]
       },
-      body: 'body-script1.js',
+      body: 'body-script1.js', // TODO: fix
       htmlAttrs: {
         amp: true,
         lang: ['en', 'nl']
@@ -44,7 +44,7 @@ export default {
         // TODO { content: 'window.a = "<br/>"; </script><script>alert(\'asdasd\');' },
         // TODO { rawContent: 'window.b = "<br/>"; </script><script> alert(\'123321\');' },
         { src: 'body-script2.js', to: 'body' },
-        { src: 'body-script3.js', to: '#put-it-here' }
+        { src: 'body-script3.js', to: 'body-prepend' }
       ]
       /* esi: {
         children: [
@@ -115,20 +115,15 @@ export default {
       }
     }
     setTimeout(() => walk(metadata), 1000) */
-
-    return {
-      metadata
-    }
-  },
-  template: `
-    <metainfo>
-      <template v-slot:base="{ content, metainfo }">http://nuxt.dev:3000{{ content }}</template>
+    /*
+     <template v-slot:base="{ content, metainfo }">http://nuxt.dev:3000{{ content }}</template>
       <template v-slot:title="{ content, metainfo }">{{ content }} - {{ metainfo.description }} - Hello</template>
       <template v-slot:og(title)="{ content, metainfo, og }">
         {{ content }} - {{ og.description }} - {{ metainfo.description }} - Hello Again
       </template>
 
-      <!-- // TODO: Using script triggers [Vue warn]: Template compilation error: Tags with side effect (<script> and <style>) are ignored in client component templates. -->
+      <!-- // TODO: Using script triggers [Vue warn]: Template compilation error: Tags with side effect (<script> and <style>) are i
+gnored in client component templates. -->
       <component is="script">window.users = []</component>
       <component is="script" src="user-1.js"></component>
       <component is="script" src="user-2.js"></component>
@@ -147,6 +142,14 @@ export default {
       <template v-slot:body>
         <component is="script" src="user-4.js"></component>
       </template>
+*/
+    return {
+      metadata
+    }
+  },
+  template: `
+    <metainfo>
+      <template v-slot:body><br/></template>
     </metainfo>
 
     <div id="app">

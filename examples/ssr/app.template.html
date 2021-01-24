@@ -1,16 +1,16 @@
 <!doctype html>
-<html {{ htmlAttrs.text(true) }}>
-  <head {{ headAttrs.text() }}>
-    {{ head(true) }}
+<html {{ htmlAttrs }}>
+  <head {{ headAttrs }}>
+    {{ head }}
     <link rel="stylesheet" href="/global.css">
   </head>
-  <body {{ bodyAttrs.text() }}>
-    {{ bodyPrepend(true) }}
+  <body {{ bodyAttrs }}>
+    <body-prepend id="body-prepend">{{ bodyPrepend }}</body-prepend>
 
     <a href="/">&larr; Examples index</a>
     {{ app }}
 
     <script src="/__build__/ssr.js"></script>
-    {{ bodyAppend(true) }}
+    {{ bodyAppend }}
   </body>
 </html>

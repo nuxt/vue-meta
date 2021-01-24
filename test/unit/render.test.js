@@ -478,10 +478,10 @@ describe('render', () => {
     const setAttribute = jest.fn()
     const removeAttribute = jest.fn()
 
-    const doc = jest.spyOn(document, 'querySelector').mockReturnValue({
+    const doc = jest.spyOn(document, 'querySelectorAll').mockReturnValue([{
       setAttribute,
       removeAttribute
-    })
+    }])
 
     const context = {}
 

@@ -1,17 +1,20 @@
-import fs from 'fs'
-import path from 'path'
-import consola from 'consola'
-import express from 'express'
-import rewrite from 'express-urlrewrite'
-import webpack from 'webpack'
-import webpackDevMiddleware from 'webpack-dev-middleware'
-import WebpackConfig from './webpack.config'
-import { renderPage } from './ssr/server'
+const fs = require('fs')
+const path = require('path')
+const consola = require('consola')
+const express = require('express')
+const rewrite = require('express-urlrewrite')
+const webpack = require('webpack')
+const webpackDevMiddleware = require('webpack-dev-middleware')
+const webpackConfig = require('./webpack.config')
+const jiti = require('./jiti')
+
+const { renderPage } = jiti('./ssr/server.js')
+// const { renderPage } = require('./ssr/server')
 
 const app = express()
 
 app.use(
-  webpackDevMiddleware(webpack(WebpackConfig), {
+  webpackDevMiddleware(webpack(webpackConfig(true)), {
     publicPath: '/__build__/',
     writeToDisk: true,
     stats: {

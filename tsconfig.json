@@ -30,6 +30,6 @@
   "include": [
     "src/global.d.ts",
     "src/**/*.ts",
-    "__tests__/**/*.ts"
+    "test/**/*.ts"
   ],
 }

@@ -1,5 +1,6 @@
 module.exports = {
   testEnvironment: 'jest-environment-jsdom-global',
+  preset: 'ts-jest',
 
   expand: true,
 
@@ -41,6 +42,7 @@ module.exports = {
   ],
   
   globals: {
-    __DEV__: true
+    __DEV__: true,
+    __BROWSER__: true,
   }
 }

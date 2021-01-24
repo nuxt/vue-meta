@@ -51,7 +51,7 @@ export const createHandler: (context: MergeContext, resolveContext: ResolveConte
   },
   set: (target, key, value) => {
     const success = Reflect.set(target, key, value)
-    console.warn(success, 'PROXY SET\nkey:', key, '\npath:', pathSegments, '\ntarget:', isArray(target), target, '\ncontext:\n', context)
+    // console.warn(success, 'PROXY SET\nkey:', key, '\npath:', pathSegments, '\ntarget:', isArray(target), target, '\ncontext:\n', context)
 
     if (success) {
       const isArrayItem = isArray(target)
@@ -113,7 +113,7 @@ export const createHandler: (context: MergeContext, resolveContext: ResolveConte
         resolved = clone(resolved)
       }
 
-      console.log('SET VALUE', isArrayItem, key, '\nresolved:\n', resolved, '\nsources:\n', context.sources, '\nactive:\n', active, Object.keys(active))
+      //      console.log('SET VALUE', isArrayItem, key, '\nresolved:\n', resolved, '\nsources:\n', context.sources, '\nactive:\n', active, Object.keys(active))
 
       if (isArrayItem && activeSegmentKey) {
         active[activeSegmentKey] = resolved
@@ -122,12 +122,12 @@ export const createHandler: (context: MergeContext, resolveContext: ResolveConte
       }
     }
 
-    console.log('CONTEXT.ACTIVE', context.active, '\nparent:\n', target)
+    //    console.log('CONTEXT.ACTIVE', context.active, '\nparent:\n', target)
     return success
   },
   deleteProperty: (target, key) => {
     const success = Reflect.deleteProperty(target, key)
-    console.warn('PROXY DELETE\nkey:', key, '\npath:', pathSegments, '\nparent:', isArray(target), target)
+    //    console.warn('PROXY DELETE\nkey:', key, '\npath:', pathSegments, '\nparent:', isArray(target), target)
 
     if (success) {
       const isArrayItem = isArray(target)
@@ -174,7 +174,7 @@ export const createHandler: (context: MergeContext, resolveContext: ResolveConte
           resolved = clone(resolved)
         }
 
-        console.log('SET VALUE', resolved)
+        //        console.log('SET VALUE', resolved)
         if (isArrayItem && activeSegmentKey) {
           active[activeSegmentKey] = resolved
         } else {

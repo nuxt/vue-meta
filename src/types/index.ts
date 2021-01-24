@@ -1,9 +1,5 @@
-import { ComponentInternalInstance } from 'vue'
+import type { App, VNode, ComponentInternalInstance } from 'vue'
 import type { MergedObject, ResolveContext, ResolveMethod } from '../object-merge'
-
-export type Immutable<T> = {
-  readonly [P in keyof T]: Immutable<T[P]>
-}
 
 export type TODO = any
 
@@ -49,4 +45,28 @@ export type ResolveSetup = (context: MetaContext) => void
 export type Resolver = {
   setup?: ResolveSetup
   resolve: ResolveMethod
+}
+
+export type Manager = {
+  readonly config: Config
+
+  install(app: App): void
+  addMeta(obj: MetainfoInput, vm?: ComponentInternalInstance): MetaProxy
+
+  render(ctx: { slots?: any }): Array<VNode>
+}
+
+declare module '@vue/runtime-core' {
+  interface ComponentInternalInstance {
+    $metaManager: Manager
+  }
+}
+
+declare global {
+  namespace NodeJS {
+    interface Process {
+      client: boolean
+      server: boolean
+    }
+  }
 }

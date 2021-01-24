@@ -233,19 +233,37 @@ export function renderAttributes (
   key: string,
   data: TODO,
   config: TODO = {}
-): void {
+): RenderedMetainfoNode | void {
   // console.info('renderAttributes', key, data, config)
 
   const { attributesFor } = config
 
-  if (!cachedElements[attributesFor]) {
-    const el = document.querySelector(attributesFor)
+  if (!__BROWSER__) {
+    // render attributes in a placeholder vnode so Vue
+    // will render the string for us
+    return {
+      to: '',
+      vnode: h(`ssr-${attributesFor}`, data)
+    }
+  }
 
-    if (el) {
-      cachedElements[attributesFor] = {
-        el,
-        attrs: []
-      }
+  if (!cachedElements[attributesFor]) {
+    const [el, el2] = Array.from(document.querySelectorAll(attributesFor))
+
+    if (__DEV__ && !el) {
+      // eslint-disable-next-line no-console
+      console.error('Could not find element with selector', attributesFor, ', won\'t render attributes')
+      return
+    }
+
+    if (__DEV__ && el2) {
+      // eslint-disable-next-line no-console
+      console.warn('Found multiple elements with selector', attributesFor)
+    }
+
+    cachedElements[attributesFor] = {
+      el,
+      attrs: []
     }
   }
 

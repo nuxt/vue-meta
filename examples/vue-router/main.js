@@ -1,6 +1,6 @@
 import { h } from 'vue'
 import { createRouter as createVueRouter, createMemoryHistory, createWebHistory } from 'vue-router'
-import { createManager, defaultConfig, resolveOption, useMeta } from 'vue-meta'
+import { createMetaManager, defaultConfig, resolveOption, useMeta } from 'vue-meta'
 import App from './App'
 import ChildComponent from './Child'
 
@@ -20,7 +20,7 @@ const decisionMaker5000000 = resolveOption((prevValue, context) => {
   }
 })
 
-const metaManager = createManager({
+const metaManager = createMetaManager({
   ...defaultConfig,
   esi: {
     group: true,

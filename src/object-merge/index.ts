@@ -6,6 +6,7 @@ export type MergeSource = {
   [key: string]: any
 }
 
+// eslint-disable-next-line no-use-before-define
 export type MergedObjectValue = boolean | number | string | MergedObject | any
 
 export type MergedObject = {
