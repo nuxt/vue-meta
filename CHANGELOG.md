@@ -2,6 +2,29 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [3.0.0-alpha.0](https://github.com/nuxt/vue-meta/compare/v2.3.3...v3.0.0-alpha.0) (2021-01-25)
+
+
+### Features
+
+* add amp-boilerplate as boolean attribute (resolves: [#530](https://github.com/nuxt/vue-meta/issues/530)) ([#531](https://github.com/nuxt/vue-meta/issues/531)) ([bb45319](https://github.com/nuxt/vue-meta/commit/bb453195747058d90862d2db20d6a538ef04811f))
+* add deepest resolver (wip) ([bb04dc0](https://github.com/nuxt/vue-meta/commit/bb04dc068dbcf1871bdd08eddd3bb7997b122f04))
+* add poc vue-compiler ([6d25ff2](https://github.com/nuxt/vue-meta/commit/6d25ff2f372f20af682389d2a8f85eacdc3423ed))
+* add support for attributes (wip) ([5eaa0ab](https://github.com/nuxt/vue-meta/commit/5eaa0ab5b63000a56e0f1d4460700cc6a10d3b79))
+* continued progress ([642a62c](https://github.com/nuxt/vue-meta/commit/642a62c56126f5dfdc094282f6bc179e07f022eb))
+* convert to ts (wip) ([28d3fc1](https://github.com/nuxt/vue-meta/commit/28d3fc192363b9caf0a8b25a357684e6e7ae337f))
+* first work on vue v3 composition metainfo app ([5d0eb1a](https://github.com/nuxt/vue-meta/commit/5d0eb1ab60ce476ed8a97e97d4d409e74284df9b))
+* implement first useApi basics ([b0edfbe](https://github.com/nuxt/vue-meta/commit/b0edfbe6bd638ae3404739ec881d6a0ef598e43c))
+* improve useApi ([303eae1](https://github.com/nuxt/vue-meta/commit/303eae1603a5f15611a9d66457a56b417784da8c))
+* make attributes part of the metainfo object ([5add8bf](https://github.com/nuxt/vue-meta/commit/5add8bf83f597e9576b3a4502d6d7a0f1a76014c))
+* make ssr work ([9cfde5b](https://github.com/nuxt/vue-meta/commit/9cfde5b5509e7cd0899ea450801bed753ec64075))
+* refactor of object merge & make vue-router example work ([e68b535](https://github.com/nuxt/vue-meta/commit/e68b53573e60969a0f616c053e58a90fe87ceee2))
+
+
+### Bug Fixes
+
+* resolving arrays (collections still wip) ([5c4ee7a](https://github.com/nuxt/vue-meta/commit/5c4ee7a54720ce54cd94217c2e663b350873f4f2))
+
 ### [2.3.3](https://github.com/nuxt/vue-meta/compare/v2.3.2...v2.3.3) (2020-02-26)
 
 

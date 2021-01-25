@@ -1,6 +1,6 @@
 {
   "name": "vue-meta",
-  "version": "2.3.3",
+  "version": "3.0.0-alpha.0",
   "description": "Manage HTML metadata in Vue.js components with SSR support",
   "main": "dist/vue-meta.cjs.js",
   "unpkg": "dist/vue-meta.global.js",
