@@ -4,6 +4,95 @@ All notable changes to this project will be documented in this file. See [standa
 
 ## [3.0.0-alpha.0](https://github.com/nuxt/vue-meta/compare/v2.3.3...v3.0.0-alpha.0) (2021-01-25)
 
+The first alpha release for vue-meta v3 supporting Vue 3, basic functionality should work but needs lots more testing. Don't use this in production. Help with squashing bugs would be appreciated.
+
+### Quick overview of features
+
+#### useApi
+
+See ./examples/vue-router for a working example
+
+```js
+import { watch } from 'vue'
+import { useMeta, useMetainfo } from 'vue-meta'
+
+export default {
+  setup () {
+    // add meta info. The object passed into useMeta is configurable
+    const { meta } = useMeta({
+      title: 'My Title'
+    })
+
+    // get the currently used metainfo
+    const metadata = useMetainfo()
+
+    watch(metadata, (newValue) => {
+      // metadata was updated, do something
+    })
+  }
+}
+```
+
+#### SSR
+
+See ./examples/ssr for a working example
+
+```js
+import { createSSRApp } from 'vue'
+import { renderToStringWithMeta } from 'vue-meta'
+import { App, metaManager } from './App'
+
+export function renderPage() {
+  const app = createSSRApp(App)
+  app.use(metaManager)
+
+  const [appHtml, ctx] = await renderToStringWithMeta(app)
+
+  return `
+  <html ${ctx.teleports.htmlAttrs || ''}>
+    <head ${ctx.teleports.headAttrs || ''}>
+     ${ctx.teleports.head || ''}
+    </head>
+    <body ${ctx.teleports.bodyAttrs || ''}>
+      <div id="app">${appHtml}</div>
+     ${ctx.teleports.body || ''}
+    </body>
+  </html>`
+```
+
+#### Meta Resolvers
+
+> needs more attention + real world testing
+
+In vue-meta v2 there was limited control on which metadata to show if you had multiple components returning the same information.
+
+In v3 we introduce meta resolvers, these are functions that should give you full control on which data to show when multiple options exist.
+
+See eg ./src/resolvers/deepest and ./examples/vue-router/main. The _deepest_ resolver uses the data of the component with the highest depth (from the $root component). The resolver in the vue-router example just returns the data of the newest component (highest _uid).
+
+#### Metainfo Component
+
+> Adding this component is currently required, but it will eventually be optional
+
+Add a `Metainfo` component in your app to extend the used metadata using slots.
+
+```vue
+  <div class="my-layout">
+    <metainfo>
+      <!-- // content contains the value active value for base from `useMetainfo` -->
+      <template v-slot:base="{ content, metainfo }">http://nuxt.dev:3000{{ content }}</template>
+      <template v-slot:title="{ content, metainfo }">
+        {{ content }} - {{ metainfo.description }} - Add the description to the title
+      </template>
+    </metainfo>
+  </div>
+```
+
+#### Known Issues
+
+- _Metainfo component has to be present otherwise client side updates wont work_
+- _The error `Uncaught ReferenceError: body is not defined` is logged in the browser_
+  Solution: Add a body slot to your metainfo component with an empty tag: `<metainfo><template v-slot:body><span/></template></metainfo>`
 
 ### Features
 
