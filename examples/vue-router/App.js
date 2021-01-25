@@ -149,7 +149,7 @@ gnored in client component templates. -->
   },
   template: `
     <metainfo>
-      <template v-slot:body><br/></template>
+      <template v-slot:body><span/></template>
     </metainfo>
 
     <div id="app">
