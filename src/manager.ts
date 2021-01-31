@@ -1,35 +1,41 @@
-import { h, reactive, onUnmounted, Teleport, VNode, Comment } from 'vue'
+import { h, reactive, onUnmounted, Teleport, Comment, getCurrentInstance } from 'vue'
+import type { VNode } from 'vue'
 import { isArray, isFunction } from '@vue/shared'
 import { createMergedObject } from './object-merge'
 import { renderMeta } from './render'
-import { metaInfoKey } from './symbols'
+import { metaActiveKey } from './symbols'
 import { Metainfo } from './Metainfo'
 import type { ResolveMethod } from './object-merge'
-import type { Manager, Config, Resolver, MetaContext, MetainfoActive } from './types'
+import type {
+  MetaActive,
+  MetaConfig,
+  MetaManager,
+  MetaResolver,
+  MetaResolveContext,
+  MetaTeleports
+} from './types'
 
 export const ssrAttribute = 'data-vm-ssr'
 
-export const active: MetainfoActive = reactive({})
+export const active: MetaActive = reactive({})
 
-export function addVnode (teleports: any, to: string, _vnodes: VNode | Array<VNode>) {
-  const vnodes = (isArray(_vnodes) ? _vnodes : [_vnodes]) as Array<VNode>
+export function addVnode (teleports: MetaTeleports, to: string, vnodes: VNode | Array<VNode>): void {
+  const nodes = (isArray(vnodes) ? vnodes : [vnodes]) as Array<VNode>
 
-  if (!__BROWSER__) {
-    // dont add ssrAttribute for attribute vnode placeholder
-    if (!to.endsWith('Attrs')) {
-      vnodes.forEach((vnode) => {
-        if (!vnode.props) {
-          vnode.props = {}
-        }
-        vnode.props[ssrAttribute] = true
-      })
-    }
-  } else {
+  if (__BROWSER__) {
     // Comments shouldnt have any use on the client as they are not reactive anyway
-    vnodes.forEach((vnode, idx) => {
+    nodes.forEach((vnode, idx) => {
       if (vnode.type === Comment) {
-        vnodes.splice(idx, 1)
+        nodes.splice(idx, 1)
       }
+    })
+  // only add ssrAttribute's for real meta tags
+  } else if (!to.endsWith('Attrs')) {
+    nodes.forEach((vnode) => {
+      if (!vnode.props) {
+        vnode.props = {}
+      }
+      vnode.props[ssrAttribute] = true
     })
   }
 
@@ -37,10 +43,12 @@ export function addVnode (teleports: any, to: string, _vnodes: VNode | Array<VNo
     teleports[to] = []
   }
 
-  teleports[to].push(...vnodes)
+  teleports[to].push(...nodes)
 }
 
-export function createMetaManager (config: Config, resolver: Resolver | ResolveMethod): Manager {
+export function createMetaManager (config: MetaConfig, resolver: MetaResolver | ResolveMethod): MetaManager {
+  let cleanedUpSsr = false
+
   const resolve: ResolveMethod = (options, contexts, active, key, pathSegments) => {
     if (isFunction(resolver)) {
       return resolver(options, contexts, active, key, pathSegments)
@@ -51,21 +59,23 @@ export function createMetaManager (config: Config, resolver: Resolver | ResolveM
 
   const { addSource, delSource } = createMergedObject(resolve, active)
 
-  let cleanedUpSsr = false
-
   // TODO: validate resolver
-  const manager: Manager = {
+  const manager: MetaManager = {
     config,
 
     install (app) {
       app.component('Metainfo', Metainfo)
 
       app.config.globalProperties.$metaManager = manager
-      app.provide(metaInfoKey, active)
+      app.provide(metaActiveKey, active)
     },
 
     addMeta (metaObj, vm) {
-      const resolveContext: MetaContext = { vm }
+      if (!vm) {
+        vm = getCurrentInstance() || undefined
+      }
+
+      const resolveContext: MetaResolveContext = { vm }
       if (resolver && 'setup' in resolver && isFunction(resolver.setup)) {
         resolver.setup(resolveContext)
       }
@@ -84,14 +94,14 @@ export function createMetaManager (config: Config, resolver: Resolver | ResolveM
       }
     },
 
-    render ({ slots }: any = {}): Array<VNode> {
+    render ({ slots } = {}) {
       // cleanup ssr tags if not yet done
       if (__BROWSER__ && !cleanedUpSsr) {
         cleanedUpSsr = true
 
-        // Listen for DOM loaded because tags in the body couldnt be loaded
-        // yet once the manager does it first render
-        // (preferable there should only be one render on hydration)
+        // Listen for DOM loaded because tags in the body couldnt
+        // have loaded yet once the manager does it first render
+        // (preferable there should only be one meta render on hydration)
         window.addEventListener('DOMContentLoaded', () => {
           const ssrTags = document.querySelectorAll(`[${ssrAttribute}]`)
 
@@ -101,36 +111,53 @@ export function createMetaManager (config: Config, resolver: Resolver | ResolveM
         })
       }
 
-      const teleports: { [key: string]: VNode | Array<VNode> } = {}
+      const teleports: MetaTeleports = {}
 
       for (const key in active) {
         const config = this.config[key] || {}
 
-        const vnode = renderMeta(
+        let renderedNodes = renderMeta(
           { metainfo: active, slots },
           key,
           active[key],
           config
         )
 
-        if (!vnode) {
+        if (!renderedNodes) {
           continue
         }
 
-        const vnodes = isArray(vnode) ? vnode : [vnode]
+        if (!isArray(renderedNodes)) {
+          renderedNodes = [renderedNodes]
+        }
 
-        const defaultTo = (key !== 'base' && active[key].to) || config.to || (config.attributesFor ? key : 'head')
+        let defaultTo = key !== 'base' && active[key].to
 
-        for (const { to, vnode } of vnodes) {
-          addVnode(teleports, to || defaultTo, vnode)
+        if (!defaultTo && 'to' in config) {
+          defaultTo = config.to
+        }
+
+        if (!defaultTo && 'attributesFor' in config) {
+          defaultTo = key
+        }
+
+        for (const { to, vnode } of renderedNodes) {
+          addVnode(teleports, to || defaultTo || 'head', vnode)
         }
       }
 
       if (slots) {
-        for (const tag in slots) {
-          const slotFn = slots[tag]
-          if (isFunction(slotFn)) {
-            addVnode(teleports, tag === 'default' ? 'head' : tag, slotFn({ metainfo: active }))
+        for (const slotName in slots) {
+          const tagName = slotName === 'default' ? 'head' : slotName
+
+          // Only teleport the contents of head/body slots
+          if (tagName !== 'head' && tagName !== 'body') {
+            continue
+          }
+
+          const slot = slots[slotName]
+          if (isFunction(slot)) {
+            addVnode(teleports, tagName, slot({ metainfo: active }))
           }
         }
       }

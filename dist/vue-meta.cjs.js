@@ -91,29 +91,8 @@ const defaultConfig = {
     }
 };
 
-/**
- * Make a map and return a function for checking if a key
- * is in that map.
- * IMPORTANT: all calls of this function must be prefixed with
- * \/\*#\_\_PURE\_\_\*\/
- * So that rollup can tree-shake them if necessary.
- */
-(process.env.NODE_ENV !== 'production')
-    ? Object.freeze({})
-    : {};
-(process.env.NODE_ENV !== 'production') ? Object.freeze([]) : [];
-const isArray = Array.isArray;
-const isFunction = (val) => typeof val === 'function';
-const isString = (val) => typeof val === 'string';
-const isObject = (val) => val !== null && typeof val === 'object';
-const objectToString = Object.prototype.toString;
-const toTypeString = (value) => objectToString.call(value);
-const isPlainObject = (val) => toTypeString(val) === '[object Object]';
-
 /*
  * This is a fixed config for real HTML tags
- *
- * TODO: we probably dont need all attributes
  */
 const tags = {
     title: {
@@ -166,23 +145,33 @@ const tags = {
     }
 };
 
-function getConfigByKey(tagOrName, key, config) {
-    if (config && key in config) {
-        return config[key];
-    }
-    if (isArray(tagOrName)) {
-        for (const name of tagOrName) {
-            if (name && name in tags) {
-                return tags[name][key];
-            }
+function getTagConfigItem(tagOrName, key) {
+    for (const name of tagOrName) {
+        const tag = tags[name];
+        if (name && tag) {
+            return tag[key];
         }
-        return;
-    }
-    if (tagOrName in tags) {
-        const tag = tags[tagOrName];
-        return tag[key];
     }
 }
+
+/**
+ * Make a map and return a function for checking if a key
+ * is in that map.
+ * IMPORTANT: all calls of this function must be prefixed with
+ * \/\*#\_\_PURE\_\_\*\/
+ * So that rollup can tree-shake them if necessary.
+ */
+(process.env.NODE_ENV !== 'production')
+    ? Object.freeze({})
+    : {};
+(process.env.NODE_ENV !== 'production') ? Object.freeze([]) : [];
+const isArray = Array.isArray;
+const isFunction = (val) => typeof val === 'function';
+const isString = (val) => typeof val === 'string';
+const isObject = (val) => val !== null && typeof val === 'object';
+const objectToString = Object.prototype.toString;
+const toTypeString = (value) => objectToString.call(value);
+const isPlainObject = (val) => toTypeString(val) === '[object Object]';
 
 // https://github.com/microsoft/TypeScript/issues/1863
 const IS_PROXY = Symbol('kIsProxy');
@@ -443,41 +432,36 @@ const createMergedObject = (resolve, active = {}) => {
         sources
     };
     const compute = () => recompute(context);
-    const addSource = (source, resolveContext, recompute = false) => {
-        const proxy = createProxy(context, source, resolveContext || {});
-        if (recompute) {
-            compute();
-        }
-        return proxy;
-    };
-    const delSource = (sourceOrProxy, recompute = true) => {
-        const index = sources.findIndex(src => src === sourceOrProxy || src[PROXY_TARGET] === sourceOrProxy);
-        if (index > -1) {
-            sources.splice(index, 1);
+    return {
+        context,
+        compute,
+        addSource: (source, resolveContext, recompute = false) => {
+            const proxy = createProxy(context, source, resolveContext || {});
             if (recompute) {
                 compute();
             }
-            return true;
+            return proxy;
+        },
+        delSource: (sourceOrProxy, recompute = true) => {
+            const index = sources.findIndex(src => src === sourceOrProxy || src[PROXY_TARGET] === sourceOrProxy);
+            if (index > -1) {
+                sources.splice(index, 1);
+                if (recompute) {
+                    compute();
+                }
+                return true;
+            }
+            return false;
         }
-        return false;
-    };
-    return {
-        context,
-        active,
-        resolve,
-        sources,
-        addSource,
-        delSource,
-        compute
     };
 };
 
 function renderMeta(context, key, data, config) {
     // console.info('renderMeta', key, data, config)
-    if (config.attributesFor) {
+    if ('attributesFor' in config) {
         return renderAttributes(context, key, data, config);
     }
-    if (config.group) {
+    if ('group' in config) {
         return renderGroup(context, key, data, config);
     }
     return renderTag(context, key, data, config);
@@ -487,7 +471,7 @@ function renderGroup(context, key, data, config) {
     if (isArray(data)) {
         {
             // eslint-disable-next-line no-console
-            console.warn('Specifying an array for group properties isnt supported mostly as we didnt found a use-case for this yet. If you have one, please create an issue on the vue-meta repo');
+            console.warn('Specifying an array for group properties isnt supported');
         }
         // config.attributes = getConfigKey([key, config.tag], 'attributes', config)
         return [];
@@ -513,7 +497,7 @@ function renderGroup(context, key, data, config) {
 function renderTag(context, key, data, config = {}, groupConfig) {
     // console.info('renderTag', key, data, config, groupConfig)
     const contentAttributes = ['content', 'json', 'rawContent'];
-    const getConfig = (key) => getConfigByKey([tag, config.tag], key, config);
+    const getTagConfig = (key) => getTagConfigItem([tag, config.tag], key);
     if (isArray(data)) {
         return data
             .map((child) => {
@@ -522,7 +506,7 @@ function renderTag(context, key, data, config = {}, groupConfig) {
             .flat();
     }
     const { tag = config.tag || key } = data;
-    let content;
+    let content = '';
     let hasChilds = false;
     let isRaw = false;
     if (isString(data)) {
@@ -574,24 +558,24 @@ function renderTag(context, key, data, config = {}, groupConfig) {
         content = getSlotContent(context, slotName, content, data);
     }
     else {
-        const contentAsAttribute = getConfig('contentAsAttribute');
-        let valueAttribute = config.valueAttribute;
+        const contentAsAttribute = !!getTagConfig('contentAsAttribute');
+        let { valueAttribute } = config;
         if (!valueAttribute && contentAsAttribute) {
-            const tagAttributes = getConfig('attributes');
-            valueAttribute = isString(contentAsAttribute) ? contentAsAttribute : tagAttributes[0];
+            const [tagAttribute] = getTagConfig('attributes');
+            valueAttribute = isString(contentAsAttribute) ? contentAsAttribute : tagAttribute;
         }
         if (!valueAttribute) {
             content = getSlotContent(context, slotName, content, data);
         }
         else {
-            if (!config.nameless) {
-                const keyAttribute = getConfig('keyAttribute');
+            const { nameless, keyAttribute } = config;
+            if (!nameless) {
                 if (keyAttribute) {
                     attributes[keyAttribute] = fullName;
                 }
             }
             attributes[valueAttribute] = getSlotContent(context, slotName, attributes[valueAttribute] || content, groupConfig);
-            content = undefined;
+            content = '';
         }
     }
     const finalTag = groupConfig && groupConfig.tagNamespace
@@ -601,22 +585,22 @@ function renderTag(context, key, data, config = {}, groupConfig) {
     // console.log('      ATTRIBUTES', attributes)
     // console.log('      CONTENT', content)
     // // console.log(data, attributes, config)
-    let vnode;
-    if (isRaw) {
+    if (isRaw && content) {
         attributes.innerHTML = content;
-        vnode = vue.h(finalTag, attributes);
     }
-    else {
-        vnode = vue.h(finalTag, attributes, content);
-    }
+    // Ignore empty string content
+    const vnode = vue.h(finalTag, attributes, content || undefined);
     return {
         to: data.to,
         vnode
     };
 }
-function renderAttributes(context, key, data, config = {}) {
+function renderAttributes(context, key, data, config) {
     // console.info('renderAttributes', key, data, config)
     const { attributesFor } = config;
+    if (!attributesFor) {
+        return;
+    }
     {
         // render attributes in a placeholder vnode so Vue
         // will render the string for us
@@ -627,19 +611,22 @@ function renderAttributes(context, key, data, config = {}) {
     }
 }
 function getSlotContent({ metainfo, slots }, slotName, content, groupConfig) {
-    if (!slots || !slots[slotName]) {
+    const slot = slots && slots[slotName];
+    if (!slot) {
         return content;
     }
-    const slotProps = {
+    const slotScopeProps = {
         content,
         metainfo
     };
     if (groupConfig && groupConfig.group) {
-        slotProps[groupConfig.group] = groupConfig.data;
+        const { group, data } = groupConfig;
+        slotScopeProps[group] = data;
     }
-    const slotContent = slots[slotName](slotProps);
+    const slotContent = slot(slotScopeProps);
     if (slotContent && slotContent.length) {
-        return slotContent[0].children;
+        const { children } = slotContent[0];
+        return children ? children.toString() : '';
     }
     return content;
 }
@@ -650,15 +637,18 @@ const PolySymbol = (name) =>
 hasSymbol
     ? Symbol( '[vue-meta]: ' + name )
     : ( '[vue-meta]: ' ) + name;
-const metaInfoKey = PolySymbol( 'metainfo' );
+const metaActiveKey = /*#__PURE__*/ PolySymbol( 'active_meta' );
 
 function getCurrentManager(vm) {
     if (!vm) {
-        vm = vue.getCurrentInstance();
+        vm = vue.getCurrentInstance() || undefined;
+    }
+    if (!vm) {
+        return undefined;
     }
     return vm.appContext.config.globalProperties.$metaManager;
 }
-function useMeta(obj, manager) {
+function useMeta(source, manager) {
     const vm = vue.getCurrentInstance();
     if (!manager && vm) {
         manager = getCurrentManager(vm);
@@ -667,10 +657,10 @@ function useMeta(obj, manager) {
         // oopsydoopsy
         throw new Error('No manager or current instance');
     }
-    return manager.addMeta(obj, vm || undefined);
+    return manager.addMeta(source, vm || undefined);
 }
-function useMetainfo() {
-    return vue.inject(metaInfoKey);
+function useActiveMeta() {
+    return vue.inject(metaActiveKey);
 }
 
 const MetainfoImpl = vue.defineComponent({
@@ -690,23 +680,20 @@ const Metainfo = MetainfoImpl;
 
 const ssrAttribute = 'data-vm-ssr';
 const active = vue.reactive({});
-function addVnode(teleports, to, _vnodes) {
-    const vnodes = (isArray(_vnodes) ? _vnodes : [_vnodes]);
-    {
-        // dont add ssrAttribute for attribute vnode placeholder
-        if (!to.endsWith('Attrs')) {
-            vnodes.forEach((vnode) => {
-                if (!vnode.props) {
-                    vnode.props = {};
-                }
-                vnode.props[ssrAttribute] = true;
-            });
-        }
+function addVnode(teleports, to, vnodes) {
+    const nodes = (isArray(vnodes) ? vnodes : [vnodes]);
+    if (!to.endsWith('Attrs')) {
+        nodes.forEach((vnode) => {
+            if (!vnode.props) {
+                vnode.props = {};
+            }
+            vnode.props[ssrAttribute] = true;
+        });
     }
     if (!teleports[to]) {
         teleports[to] = [];
     }
-    teleports[to].push(...vnodes);
+    teleports[to].push(...nodes);
 }
 function createMetaManager(config, resolver) {
     const resolve = (options, contexts, active, key, pathSegments) => {
@@ -722,9 +709,12 @@ function createMetaManager(config, resolver) {
         install(app) {
             app.component('Metainfo', Metainfo);
             app.config.globalProperties.$metaManager = manager;
-            app.provide(metaInfoKey, active);
+            app.provide(metaActiveKey, active);
         },
         addMeta(metaObj, vm) {
+            if (!vm) {
+                vm = vue.getCurrentInstance() || undefined;
+            }
             const resolveContext = { vm };
             if (resolver && 'setup' in resolver && isFunction(resolver.setup)) {
                 resolver.setup(resolveContext);
@@ -744,21 +734,34 @@ function createMetaManager(config, resolver) {
             const teleports = {};
             for (const key in active) {
                 const config = this.config[key] || {};
-                const vnode = renderMeta({ metainfo: active, slots }, key, active[key], config);
-                if (!vnode) {
+                let renderedNodes = renderMeta({ metainfo: active, slots }, key, active[key], config);
+                if (!renderedNodes) {
                     continue;
                 }
-                const vnodes = isArray(vnode) ? vnode : [vnode];
-                const defaultTo = (key !== 'base' && active[key].to) || config.to || (config.attributesFor ? key : 'head');
-                for (const { to, vnode } of vnodes) {
-                    addVnode(teleports, to || defaultTo, vnode);
+                if (!isArray(renderedNodes)) {
+                    renderedNodes = [renderedNodes];
+                }
+                let defaultTo = key !== 'base' && active[key].to;
+                if (!defaultTo && 'to' in config) {
+                    defaultTo = config.to;
+                }
+                if (!defaultTo && 'attributesFor' in config) {
+                    defaultTo = key;
+                }
+                for (const { to, vnode } of renderedNodes) {
+                    addVnode(teleports, to || defaultTo || 'head', vnode);
                 }
             }
             if (slots) {
-                for (const tag in slots) {
-                    const slotFn = slots[tag];
-                    if (isFunction(slotFn)) {
-                        addVnode(teleports, tag === 'default' ? 'head' : tag, slotFn({ metainfo: active }));
+                for (const slotName in slots) {
+                    const tagName = slotName === 'default' ? 'head' : slotName;
+                    // Only teleport the contents of head/body slots
+                    if (tagName !== 'head' && tagName !== 'body') {
+                        continue;
+                    }
+                    const slot = slots[slotName];
+                    if (isFunction(slot)) {
+                        addVnode(teleports, tagName, slot({ metainfo: active }));
                     }
                 }
             }
@@ -770,7 +773,7 @@ function createMetaManager(config, resolver) {
     return manager;
 }
 
-// rollup doesnt like an import, cant find export so use require
+// rollup doesnt like an import as it cant find the export so use require
 const { renderToString } = require('@vue/server-renderer');
 async function renderToStringWithMeta(app) {
     const ctx = {};
@@ -797,5 +800,5 @@ exports.defaultConfig = defaultConfig;
 exports.getCurrentManager = getCurrentManager;
 exports.renderToStringWithMeta = renderToStringWithMeta;
 exports.resolveOption = resolveOption;
+exports.useActiveMeta = useActiveMeta;
 exports.useMeta = useMeta;
-exports.useMetainfo = useMetainfo;

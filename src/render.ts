@@ -1,7 +1,19 @@
-import { h, VNode } from 'vue'
+import { h } from 'vue'
 import { isArray, isString } from '@vue/shared'
-import { getConfigByKey } from './config'
-import { TODO } from './types'
+import { getTagConfigItem } from './config'
+import type {
+  MetaConfigSectionAttribute,
+  MetaConfigSectionGroup,
+  MetaConfigSectionTag,
+  MetaConfigSection,
+  MetaGroupConfig,
+  MetaRenderContext,
+  MetaRenderedNode,
+  MetaRendered,
+  MetaTagConfigKey,
+  SlotScopeProperties,
+  TODO
+} from './types'
 
 const cachedElements: {
   [key: string]: {
@@ -10,63 +22,37 @@ const cachedElements: {
   }
 } = {}
 
-export interface RenderContext {
-  slots: any
-  [key: string]: TODO
-}
-
-export interface GroupConfig {
-  group: string
-  data: Array<TODO> | TODO
-  tagNamespace?: string
-  fullName?: string
-  slotName?: string
-}
-
-export interface SlotScopeProperties {
-  content: any
-  metainfo: any
-  [key: string]: any
-}
-
-export type RenderedMetainfoNode = {
-  vnode: VNode
-  to?: string
-}
-
-export type RenderedMetainfo = Array<RenderedMetainfoNode>
-
 export function renderMeta (
-  context: RenderContext,
+  context: MetaRenderContext,
   key: string,
   data: TODO,
-  config: TODO
-): void | RenderedMetainfo | RenderedMetainfoNode {
+  config: MetaConfigSection
+): void | MetaRendered | MetaRenderedNode {
   // console.info('renderMeta', key, data, config)
 
-  if (config.attributesFor) {
-    return renderAttributes(context, key, data, config)
+  if ('attributesFor' in config) {
+    return renderAttributes(context, key, data, config as MetaConfigSectionAttribute)
   }
 
-  if (config.group) {
-    return renderGroup(context, key, data, config)
+  if ('group' in config) {
+    return renderGroup(context, key, data, config as MetaConfigSectionGroup)
   }
 
   return renderTag(context, key, data, config)
 }
 
 export function renderGroup (
-  context: RenderContext,
+  context: MetaRenderContext,
   key: string,
   data: TODO,
-  config: TODO
-): RenderedMetainfo | RenderedMetainfoNode {
+  config: MetaConfigSectionGroup
+): MetaRendered | MetaRenderedNode {
   // console.info('renderGroup', key, data, config)
 
   if (isArray(data)) {
     if (__DEV__) {
       // eslint-disable-next-line no-console
-      console.warn('Specifying an array for group properties isnt supported mostly as we didnt found a use-case for this yet. If you have one, please create an issue on the vue-meta repo')
+      console.warn('Specifying an array for group properties isnt supported')
     }
     // config.attributes = getConfigKey([key, config.tag], 'attributes', config)
     return []
@@ -74,7 +60,7 @@ export function renderGroup (
 
   return Object.keys(data)
     .map((childKey) => {
-      const groupConfig: GroupConfig = {
+      const groupConfig: MetaGroupConfig = {
         group: key,
         data
       }
@@ -89,22 +75,22 @@ export function renderGroup (
         groupConfig.slotName = `${namespace}(${childKey})`
       }
 
-      return renderTag(context, key, data[childKey], config, groupConfig)
+      return renderTag(context, key, data[childKey], config as MetaConfigSectionTag, groupConfig)
     })
     .flat()
 }
 
 export function renderTag (
-  context: RenderContext,
+  context: MetaRenderContext,
   key: string,
   data: TODO,
-  config: TODO = {},
-  groupConfig?: GroupConfig
-): RenderedMetainfo | RenderedMetainfoNode {
+  config: MetaConfigSectionTag = {},
+  groupConfig?: MetaGroupConfig
+): MetaRendered | MetaRenderedNode {
   // console.info('renderTag', key, data, config, groupConfig)
 
   const contentAttributes = ['content', 'json', 'rawContent']
-  const getConfig = (key: string) => getConfigByKey([tag, config.tag], key, config)
+  const getTagConfig = (key: MetaTagConfigKey) => getTagConfigItem([tag, config.tag], key)
 
   if (isArray(data)) {
     return data
@@ -116,7 +102,7 @@ export function renderTag (
 
   const { tag = config.tag || key } = data
 
-  let content
+  let content: string = ''
   let hasChilds: boolean = false
   let isRaw: boolean = false
 
@@ -174,19 +160,19 @@ export function renderTag (
   if (hasChilds) {
     content = getSlotContent(context, slotName, content, data)
   } else {
-    const contentAsAttribute = getConfig('contentAsAttribute')
-    let valueAttribute = config.valueAttribute
+    const contentAsAttribute = !!getTagConfig('contentAsAttribute')
+    let { valueAttribute } = config
 
     if (!valueAttribute && contentAsAttribute) {
-      const tagAttributes = getConfig('attributes')
-      valueAttribute = isString(contentAsAttribute) ? contentAsAttribute : tagAttributes[0]
+      const [tagAttribute] = getTagConfig('attributes')
+      valueAttribute = isString(contentAsAttribute) ? contentAsAttribute : tagAttribute
     }
 
     if (!valueAttribute) {
       content = getSlotContent(context, slotName, content, data)
     } else {
-      if (!config.nameless) {
-        const keyAttribute = getConfig('keyAttribute')
+      const { nameless, keyAttribute } = config
+      if (!nameless) {
         if (keyAttribute) {
           attributes[keyAttribute] = fullName
         }
@@ -199,7 +185,7 @@ export function renderTag (
         groupConfig
       )
 
-      content = undefined
+      content = ''
     }
   }
 
@@ -213,14 +199,12 @@ export function renderTag (
   // console.log('      CONTENT', content)
   // // console.log(data, attributes, config)
 
-  let vnode
-
-  if (isRaw) {
+  if (isRaw && content) {
     attributes.innerHTML = content
-    vnode = h(finalTag, attributes)
-  } else {
-    vnode = h(finalTag, attributes, content)
   }
+
+  // Ignore empty string content
+  const vnode = h(finalTag, attributes, content || undefined)
 
   return {
     to: data.to,
@@ -229,14 +213,17 @@ export function renderTag (
 }
 
 export function renderAttributes (
-  context: RenderContext,
+  context: MetaRenderContext,
   key: string,
   data: TODO,
-  config: TODO = {}
-): RenderedMetainfoNode | void {
+  config: MetaConfigSectionAttribute
+): MetaRenderedNode | void {
   // console.info('renderAttributes', key, data, config)
 
   const { attributesFor } = config
+  if (!attributesFor) {
+    return
+  }
 
   if (!__BROWSER__) {
     // render attributes in a placeholder vnode so Vue
@@ -252,13 +239,13 @@ export function renderAttributes (
 
     if (__DEV__ && !el) {
       // eslint-disable-next-line no-console
-      console.error('Could not find element with selector', attributesFor, ', won\'t render attributes')
+      console.error('Could not find element for selector', attributesFor, ', won\'t render attributes')
       return
     }
 
     if (__DEV__ && el2) {
       // eslint-disable-next-line no-console
-      console.warn('Found multiple elements with selector', attributesFor)
+      console.warn('Found multiple elements for selector', attributesFor)
     }
 
     cachedElements[attributesFor] = {
@@ -272,7 +259,7 @@ export function renderAttributes (
   for (const attr in data) {
     const content = getSlotContent(context, `${key}(${attr})`, data[attr], data)
 
-    el.setAttribute(attr, `${content || ''}`)
+    el.setAttribute(attr, content || '')
 
     if (!attrs.includes(attr)) {
       attrs.push(attr)
@@ -286,28 +273,31 @@ export function renderAttributes (
 }
 
 export function getSlotContent (
-  { metainfo, slots }: RenderContext,
+  { metainfo, slots }: MetaRenderContext,
   slotName: string,
-  content: any,
-  groupConfig?: GroupConfig
-): TODO {
-  if (!slots || !slots[slotName]) {
+  content: string,
+  groupConfig?: MetaGroupConfig
+): string {
+  const slot = slots && slots[slotName]
+  if (!slot) {
     return content
   }
 
-  const slotProps: SlotScopeProperties = {
+  const slotScopeProps: SlotScopeProperties = {
     content,
     metainfo
   }
 
   if (groupConfig && groupConfig.group) {
-    slotProps[groupConfig.group] = groupConfig.data
+    const { group, data } = groupConfig
+    slotScopeProps[group] = data
   }
 
-  const slotContent = slots[slotName](slotProps)
+  const slotContent = slot(slotScopeProps)
 
   if (slotContent && slotContent.length) {
-    return slotContent[0].children
+    const { children } = slotContent[0]
+    return children ? children.toString() : ''
   }
 
   return content

@@ -1,12 +1,12 @@
 import { ResolveContext, ResolveMethod } from '../object-merge'
-import { MetaContext } from '../types'
+import { MetaResolveContext } from '../types'
 import { resolveOption } from '.'
 
-type MergeContextDeepest = MetaContext & {
+type MergeResolveContextDeepest = MetaResolveContext & {
   depth: number
 }
 
-export function setup (context: MergeContextDeepest): void {
+export function setup (context: MergeResolveContextDeepest): void {
   let depth: number = 0
 
   if (context.vm) {
@@ -25,7 +25,7 @@ export function setup (context: MergeContextDeepest): void {
 }
 
 export const resolve: ResolveMethod = resolveOption((acc: any, context: ResolveContext) => {
-  const { depth } = (context as unknown as MergeContextDeepest)
+  const { depth } = (context as unknown as MergeResolveContextDeepest)
   if (!acc || depth > acc) {
     return acc
   }

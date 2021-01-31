@@ -1,17 +1,9 @@
+import type { MetaTagsConfig } from '../types'
+
 /*
  * This is a fixed config for real HTML tags
- *
- * TODO: we probably dont need all attributes
  */
-
-export interface TagConfig {
-  keyAttribute?: string
-  contentAsAttribute?: boolean | string
-  attributes: boolean | Array<string>
-  [key: string]: any
-}
-
-const tags: { [key: string]: TagConfig } = {
+export const tags: MetaTagsConfig = {
   title: {
     attributes: false
   },
@@ -61,5 +53,3 @@ const tags: { [key: string]: TagConfig } = {
     attributes: false
   }
 }
-
-export { tags }

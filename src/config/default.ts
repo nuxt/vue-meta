@@ -1,6 +1,6 @@
-import { Config } from '../types'
+import { MetaConfig } from '../types'
 
-export const defaultConfig: Config = {
+export const defaultConfig: MetaConfig = {
   body: {
     tag: 'script',
     to: 'body'

@@ -1,5 +1,5 @@
 import { watch } from 'vue'
-import { useMeta, useMetainfo } from 'vue-meta'
+import { useMeta, useActiveMeta } from 'vue-meta'
 
 export default {
   setup () {
@@ -89,7 +89,7 @@ export default {
     setTimeout(() => (meta.title = 'My Updated Title'), 2000)
     setTimeout(() => (meta.htmlAttrs.amp = undefined), 2000)
 
-    const metadata = useMetainfo()
+    const metadata = useActiveMeta()
 
     if (!process.server) {
       window.$metadata = metadata
@@ -122,8 +122,7 @@ export default {
         {{ content }} - {{ og.description }} - {{ metainfo.description }} - Hello Again
       </template>
 
-      <!-- // TODO: Using script triggers [Vue warn]: Template compilation error: Tags with side effect (<script> and <style>) are i
-gnored in client component templates. -->
+      <!-- // TODO: Using script triggers [Vue warn]: Template compilation error: Tags with side effect (<script> and <style>) are ignored in client component templates. -->
       <component is="script">window.users = []</component>
       <component is="script" src="user-1.js"></component>
       <component is="script" src="user-2.js"></component>
@@ -149,7 +148,31 @@ gnored in client component templates. -->
   },
   template: `
     <metainfo>
-      <template v-slot:body><span/></template>
+     <template v-slot:base="{ content, metainfo }">http://nuxt.dev:3000{{ content }}</template>
+      <template v-slot:title="{ content, metainfo }">{{ content }} - {{ metainfo.description }} - Hello</template>
+      <template v-slot:og(title)="{ content, metainfo, og }">
+        {{ content }} - {{ og.description }} - {{ metainfo.description }} - Hello Again
+      </template>
+
+      <!-- // TODO: Using script triggers [Vue warn]: Template compilation error: Tags with side effect (<script> and <style>) are ignored in client component templates. -->
+      <component is="script">window.users = []</component>
+      <component is="script" src="user-1.js"></component>
+      <component is="script" src="user-2.js"></component>
+
+      <template v-slot:head="{ metainfo }">
+        <!--[if IE]>
+        // -> Reactivity is not supported by Vue in comments, all comments are ignored
+        <component is="script" :src="metainfo.script[0].src" ></component>
+        // -> but a static file should work
+        <script src="user-3.js" ></script>
+        // -> altho Vue probably strips comments in production builds (but can be configged afaik)
+        <![endif]-->
+        <component is="script" :src="metainfo.script[0].src" ></component>
+      </template>
+
+      <template v-slot:body>
+        <component is="script" src="user-4.js"></component>
+      </template>
     </metainfo>
 
     <div id="app">

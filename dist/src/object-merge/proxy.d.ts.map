@@ -1,1 +1,0 @@
-{"version":3,"file":"proxy.d.ts","sourceRoot":"","sources":["../../../src/object-merge/proxy.ts"],"names":[],"mappings":"AAKA,OAAO,KAAK,EAAE,YAAY,EAAE,WAAW,EAAqB,YAAY,EAAE,cAAc,EAAE,MAAM,GAAG,CAAA;AAEnG,eAAO,MAAM,WAAW,YAAa,YAAY,UAAU,WAAW,kBAAkB,cAAc,qCASrG,CAAA;AAED,eAAO,MAAM,aAAa,EAAE,CAAC,OAAO,EAAE,YAAY,EAAE,cAAc,EAAE,cAAc,EAAE,YAAY,EAAE,YAAY,KAAK,YAAY,CAAC,GAAG,CA2KjI,CAAA"}

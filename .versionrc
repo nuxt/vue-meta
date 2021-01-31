@@ -2,6 +2,6 @@
   "commit-all": true,
   "scripts": {
     "postbump": "yarn build",
-    "precommit": "git add -f dist/*"
+    "precommit": "git add -f dist/*.js dist/*.d.ts"
   }
 }

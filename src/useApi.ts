@@ -1,16 +1,20 @@
 import { inject, getCurrentInstance, ComponentInternalInstance } from 'vue'
-import { metaInfoKey } from './symbols'
-import type { Manager, MetainfoActive, MetainfoInput, MetaProxy } from './types'
+import { metaActiveKey } from './symbols'
+import type { MetaManager, MetaActive, MetaSource, MetaProxy } from './types'
 
-export function getCurrentManager (vm?: ComponentInternalInstance): Manager {
+export function getCurrentManager (vm?: ComponentInternalInstance): MetaManager | undefined {
   if (!vm) {
-    vm = getCurrentInstance()!
+    vm = getCurrentInstance() || undefined
+  }
+
+  if (!vm) {
+    return undefined
   }
 
   return vm.appContext.config.globalProperties.$metaManager
 }
 
-export function useMeta (obj: MetainfoInput, manager?: Manager): MetaProxy {
+export function useMeta (source: MetaSource, manager?: MetaManager): MetaProxy {
   const vm = getCurrentInstance()
 
   if (!manager && vm) {
@@ -22,9 +26,9 @@ export function useMeta (obj: MetainfoInput, manager?: Manager): MetaProxy {
     throw new Error('No manager or current instance')
   }
 
-  return manager.addMeta(obj, vm || undefined)
+  return manager.addMeta(source, vm || undefined)
 }
 
-export function useMetainfo (): MetainfoActive {
-  return inject(metaInfoKey)!
+export function useActiveMeta (): MetaActive {
+  return inject(metaActiveKey)!
 }

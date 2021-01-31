@@ -4,7 +4,10 @@
   ],
   "globals": {
     "__DEV__": true,
-    "__BROWSER__": false,
+    "__BROWSER__": false
+  },
+  "rules": {
+    "spaced-comment": ["error", "always", { "exceptions": ["#__PURE__"] }]
   },
   "overrides": [
     {
@@ -12,7 +15,7 @@
         "examples/**"
       ],
       "rules": {
-        "no-console": "off",
+        "no-console": "off"
       }
     }
   ]

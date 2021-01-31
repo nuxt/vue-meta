@@ -1,72 +1,114 @@
-import type { App, VNode, ComponentInternalInstance } from 'vue'
+import type { App, VNode, Slots, ComponentInternalInstance } from 'vue'
 import type { MergedObject, ResolveContext, ResolveMethod } from '../object-merge'
+import type { MetaConfig } from './config'
+
+export * from './config'
 
 export type TODO = any
 
-export type MetainfoInput = {
+/**
+ * Proxied meta source for tracking changes and updating the active meta daa
+ */
+export interface MetaSourceProxy extends MergedObject {}
+
+/**
+ * Metainfo data source input by the user through the useMeta fn
+ */
+export type MetaSource = {
   [key: string]: TODO
 }
 
-export type MetaContext = ResolveContext & {
+/**
+ * Return value of the useMeta api
+ */
+export type MetaProxy = {
+  meta: MetaSourceProxy
+  unmount: Function | false
+}
+
+/**
+ * The active/aggregated meta data currently rendered
+ */
+export interface MetaActive {
+  [key: string]: TODO
+}
+
+/**
+ * Context passed to the meta resolvers
+ */
+export type MetaResolveContext = ResolveContext & {
   vm: ComponentInternalInstance | undefined
 }
 
-export interface ConfigOption {
-  tag?: string
-  to?: string
-  group?: boolean
-  keyAttribute?: string
-  valueAttribute?: string
-  nameless?: boolean
-  namespaced?: boolean
-  namespacedAttribute?: boolean
-  attributesFor?: string
-}
+export type MetaResolveSetup = (context: MetaResolveContext) => void
 
-export interface Config {
-  [key: string]: ConfigOption
-}
-
-export interface MetainfoProxy extends MergedObject {
-
-}
-
-export interface MetainfoActive {
-  [key: string]: TODO
-}
-
-export type MetaProxy = {
-  meta: MetainfoProxy
-  unmount: TODO
-}
-
-export type ResolveSetup = (context: MetaContext) => void
-
-export type Resolver = {
-  setup?: ResolveSetup
+export type MetaResolver = {
+  setup?: MetaResolveSetup
   resolve: ResolveMethod
 }
 
-export type Manager = {
-  readonly config: Config
+/**
+ * The meta manager
+ */
+export type MetaManager = {
+  readonly config: MetaConfig
 
   install(app: App): void
-  addMeta(obj: MetainfoInput, vm?: ComponentInternalInstance): MetaProxy
+  addMeta(source: MetaSource, vm?: ComponentInternalInstance): MetaProxy
 
-  render(ctx: { slots?: any }): Array<VNode>
+  render(ctx?: { slots?: Slots }): Array<VNode>
 }
+
+/**
+ * @internal
+ */
+export type MetaTeleports = {
+  [key: string]: Array<VNode>
+}
+
+/**
+ * @internal
+ */
+export interface MetaRenderContext {
+  slots?: Slots
+  metainfo: MetaActive
+}
+
+/**
+ * @internal
+ */
+export interface MetaGroupConfig {
+  group: string
+  data: Array<TODO> | TODO
+  tagNamespace?: string
+  fullName?: string
+  slotName?: string
+}
+
+/**
+ * @internal
+ */
+export interface SlotScopeProperties {
+  content: string
+  metainfo: MetaActive
+  [key: string]: any
+}
+
+/**
+ * @internal
+ */
+export type MetaRenderedNode = {
+  vnode: VNode
+  to?: string
+}
+
+/**
+ * @internal
+ */
+export type MetaRendered = Array<MetaRenderedNode>
 
 declare module '@vue/runtime-core' {
   interface ComponentInternalInstance {
-    $metaManager: Manager
-  }
-}
-
-declare global {
-  namespace NodeJS {
-    interface Process {
-      client: boolean
-      server: boolean
-    }
+    $metaManager: MetaManager
   }
 }

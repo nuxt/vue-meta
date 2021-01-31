@@ -1,10 +1,6 @@
-import { defineComponent, VNodeProps } from 'vue'
+import { defineComponent } from 'vue'
+import type { VNodeProps, AllowedComponentProps, ComponentCustomProps } from 'vue'
 import { getCurrentManager } from './useApi'
-import { MetainfoActive } from './types'
-
-export interface MetainfoProps {
-  metainfo: MetainfoActive
-}
 
 export const MetainfoImpl = defineComponent({
   name: 'Metainfo',
@@ -23,6 +19,8 @@ export const MetainfoImpl = defineComponent({
 
 export const Metainfo = (MetainfoImpl as any) as {
   new (): {
-    $props: VNodeProps & MetainfoProps
+    $props: AllowedComponentProps &
+      ComponentCustomProps &
+      VNodeProps
   }
 }

@@ -1,7 +1,7 @@
 import type { App } from 'vue'
 import type { SSRContext } from '@vue/server-renderer'
 
-// rollup doesnt like an import, cant find export so use require
+// rollup doesnt like an import as it cant find the export so use require
 const { renderToString } = require('@vue/server-renderer')
 
 export async function renderToStringWithMeta (app: App): Promise<[string, SSRContext]> {

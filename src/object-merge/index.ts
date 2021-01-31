@@ -31,7 +31,14 @@ export type MergeContext = {
   sources: Array<MergeSource>
 }
 
-export const createMergedObject = (resolve: ResolveMethod, active: MergedObject = {}) => {
+export type MergedObjectBuilder = {
+  context: MergeContext
+  compute: () => void
+  addSource: (source: MergeSource, resolveContext: ResolveContext | undefined, recompute?: Boolean) => any
+  delSource: (sourceOrProxy: MergeSource, recompute?: boolean) => boolean
+}
+
+export const createMergedObject = (resolve: ResolveMethod, active: MergedObject = {}): MergedObjectBuilder => {
   const sources: Array<MergeSource> = []
 
   if (!active) {
@@ -44,41 +51,34 @@ export const createMergedObject = (resolve: ResolveMethod, active: MergedObject 
     sources
   }
 
-  const compute = () => recompute(context)
+  const compute: () => void = () => recompute(context)
 
-  const addSource = (source: MergeSource, resolveContext: ResolveContext | undefined, recompute: Boolean = false) => {
-    const proxy = createProxy(context, source, resolveContext || {})
-
-    if (recompute) {
-      compute()
-    }
-
-    return proxy
-  }
-
-  const delSource = (sourceOrProxy: MergeSource, recompute: boolean = true): boolean => {
-    const index = sources.findIndex(src => src === sourceOrProxy || src[PROXY_TARGET] === sourceOrProxy)
-
-    if (index > -1) {
-      sources.splice(index, 1)
+  return {
+    context,
+    compute,
+    addSource: (source, resolveContext, recompute = false) => {
+      const proxy = createProxy(context, source, resolveContext || {})
 
       if (recompute) {
         compute()
       }
 
-      return true
+      return proxy
+    },
+    delSource: (sourceOrProxy, recompute = true) => {
+      const index = sources.findIndex(src => src === sourceOrProxy || src[PROXY_TARGET] === sourceOrProxy)
+
+      if (index > -1) {
+        sources.splice(index, 1)
+
+        if (recompute) {
+          compute()
+        }
+
+        return true
+      }
+
+      return false
     }
-
-    return false
-  }
-
-  return {
-    context,
-    active,
-    resolve,
-    sources,
-    addSource,
-    delSource,
-    compute
   }
 }
