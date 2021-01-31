@@ -1,3 +1,5 @@
+> :warning: This is the readme for the next branch of vue-meta with Vue3 support
+
 <p align="center">
   <img src="./docs/.vuepress/public/vue-meta.png" alt="vue-meta" />
 </p>
@@ -7,30 +9,38 @@
 </h5>
 
 <p align="center">
-  <a href="http://npm-stat.com/charts.html?package=vue-meta"><img src="https://img.shields.io/npm/dm/vue-meta.svg" alt="npm downloads"></a>
-  <a href="http://npmjs.org/package/vue-meta"><img src="https://img.shields.io/npm/v/vue-meta.svg" alt="npm version"></a>
-  <a href="https://codecov.io/gh/nuxt/vue-meta"><img src="https://badgen.net/codecov/c/github/nuxt/vue-meta/master" alt="Coverage Status"></a>
-  <a href="https://circleci.com/gh/nuxt/vue-meta/"><img src="https://badgen.net/circleci/github/nuxt/vue-meta" alt="Build Status"></a>
-  <a href="https://david-dm.org/nuxt/vue-meta"><img src="https://david-dm.org/nuxt/vue-meta/status.svg" alt="dependencies Status"></a>
+  <a href="http://npm-stat.com/charts.html?package=vue-meta"><img src="https://img.shields.io/npm/dm/vue-meta/next.svg" alt="npm downloads"></a>
+  <a href="http://npmjs.org/package/vue-meta"><img src="https://img.shields.io/npm/v/vue-meta/next.svg" alt="npm version"></a>
+  <a href="https://codecov.io/gh/nuxt/vue-meta"><img src="https://badgen.net/codecov/c/github/nuxt/vue-meta/next" alt="Coverage Status"></a>
+  <a href="https://circleci.com/gh/nuxt/vue-meta/"><img src="https://badgen.net/circleci/github/nuxt/vue-meta/next" alt="Build Status"></a>
+  <a href="https://david-dm.org/nuxt/vue-meta"><img src="https://david-dm.org/nuxt/vue-meta/next/status.svg" alt="dependencies Status"></a>
   <a href="https://discord.nuxtjs.org/"><img src="https://badgen.net/badge/Discord/join-us/7289DA" alt="Discord"></a>
 </p>
 
 ```html
 <template>
-  ...
+  <div class="layout"
+    ...
+    <metainfo>
+      <template v-slot:title="{ content }">{{ content }} - Yay!</template>
+    </metainfo>
+  </div>
 </template>
 
 <script>
-  export default {
-    metaInfo: {
+import { useMeta } from 'vue-meta'
+
+export default {
+  setup () {
+    useMeta({
       title: 'My Example App',
-      titleTemplate: '%s - Yay!',
       htmlAttrs: {
         lang: 'en',
         amp: true
       }
-    }
+    })
   }
+}
 </script>
 ```
 ```html
@@ -49,82 +59,76 @@ These properties, when set on a deeply nested component, will cleverly overwrite
 
 Please find the documention on https://vue-meta.nuxtjs.org
 
-> :globe_with_meridians: Please help us translate the documentation into your language, see [here](#how-to-translate-documentation) for more information
 
 ## Examples
 
-Looking for more examples what vue-meta can do for you? Have a look at the [examples](https://github.com/nuxt/vue-meta/tree/master/examples)
+Looking for more examples what vue-meta can do for you? Have a look at the [examples](https://github.com/nuxt/vue-meta/tree/next/examples)
 
 ## Installation
 
 ##### Yarn
 ```sh
-$ yarn add vue-meta
+$ yarn add vue-meta@next
 ```
 
 ##### npm
 ```sh
-$ npm install vue-meta --save
-```
-
-##### Download / CDN
-
-Use the download links below - if you want a previous version, check the instructions at https://unpkg.com.
-
-Latest version: https://unpkg.com/vue-meta/dist/vue-meta.min.js
-
-Latest v1.x version: https://unpkg.com/vue-meta@1/dist/vue-meta.min.js
-
-**Uncompressed:**
-```html
-<script src="https://unpkg.com/vue-meta/dist/vue-meta.js"></script>
-```
-
-**Minified:**
-```html
-<script src="https://unpkg.com/vue-meta/dist/vue-meta.min.js"></script>
+$ npm install vue-meta@next --save
 ```
 
 ## Quick Usage
 
-See the [documentation](https://vue-meta.nuxtjs.org) for more information
-```js
-import Vue from 'vue'
-import VueMeta from 'vue-meta'
+### useApi
 
-Vue.use(VueMeta, {
-  // optional pluginOptions
-  refreshOnceOnNavigation: true
-})
+```js
+import { watch } from 'vue'
+import { useMeta, useActiveMeta } from 'vue-meta'
+
+export default {
+  setup () {
+    // add meta info. The object passed into useMeta is configurable
+    const { meta } = useMeta({
+      title: 'My Title'
+    })
+
+    // get the currently used metainfo
+    const metadata = useActiveMeta()
+
+    watch(metadata, (newValue) => {
+      // metadata was updated, do something
+    })
+  }
+}
 ```
 
-## Frameworks using vue-meta
+### SSR 
 
-If you wish to create your app even more quickly, take a look at the following frameworks which use vue-meta
+```js
+import { createSSRApp } from 'vue'
+import { renderToStringWithMeta } from 'vue-meta'
+import { App, metaManager } from './App'
 
-- [Nuxt.js](https://github.com/nuxt/nuxt.js) - The Vue.js Progressive Framework
-- [Gridsome](https://github.com/gridsome/gridsome) - The Vue.js JAMstack Framework
-- [Ream](https://github.com/ream/ream) - Framework for building universal web app and static website in Vue.js
-- [Vue-Storefront](https://github.com/DivanteLtd/vue-storefront) - PWA for eCommerce
-- [Factor JS](https://github.com/fiction-com/factor) - Extension-first VueJS platform for front-end developers.
+export function renderPage() {
+  const app = createSSRApp(App)
+  app.use(metaManager)
 
-## How to translate documentation
+  const [appHtml, ctx] = await renderToStringWithMeta(app)
 
-Thanks for your interest in translating the documentation. As our docs are based on VuePress, we recommend to have a look at their docs about [internationalization](https://vuepress.vuejs.org/guide/i18n.html#site-level-i18n-config) as well
-
-Here are the steps you will need to take:
-- Clone this repository
-- Create a new branch
-- Browse to `/docs/`
-- Create a folder with the language code you will add a translation for (eg `/zh/`)
-- Copy all `*.md` files and the folders `api`, `faq`, and `guide` to that folder
-- Translate the copied files in your language folder
-- Edit `.vuepress/config.yml` and add a config section for your locale in both `locales` as `themeConfig.locales`
-- Test your translation by running the docs dev server with `yarn docs`
-- Create a pull request with your changes
-- Receive eternal gratefulness from your fellow language speakers :heart:
+  return `
+  <html ${ctx.teleports.htmlAttrs || ''}>
+    <head ${ctx.teleports.headAttrs || ''}>
+     ${ctx.teleports.head || ''}
+    </head>
+    <body ${ctx.teleports.bodyAttrs || ''}>
+      <div id="app">${appHtml}</div>
+     ${ctx.teleports.body || ''}
+    </body>
+  </html>`
+```
 
 ## Old versions
+
+Click [here](https://github.com/nuxt/vue-meta/tree/master) if you are looking for the old v2 readme
 
 Click [here](https://github.com/nuxt/vue-meta/tree/1.x) if you are looking for the old v1 readme
 
