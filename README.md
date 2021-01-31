@@ -124,6 +124,7 @@ export function renderPage() {
      ${ctx.teleports.body || ''}
     </body>
   </html>`
+}
 ```
 
 ## Old versions
