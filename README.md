@@ -1,5 +1,7 @@
 > :warning: This is the readme for the next branch of vue-meta with Vue3 support
 
+> :information_source: Vue3 support for vue-meta is considered in mostly-stable-alpha stage
+
 <p align="center">
   <img src="./docs/.vuepress/public/vue-meta.png" alt="vue-meta" />
 </p>
