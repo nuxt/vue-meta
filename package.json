@@ -10,7 +10,7 @@
   "sideEffects": false,
   "files": [
     "dist/*.js",
-    "types/*.d.ts",
+    "dist/vue-meta.d.ts",
     "README.md"
   ],
   "homepage": "https://github.com/nuxt/vue-meta",
@@ -93,6 +93,7 @@
     "puppeteer-core": "^5.5.0",
     "rimraf": "^3.0.2",
     "rollup": "^2.38.0",
+    "rollup-plugin-dts": "^2.0.1",
     "rollup-plugin-terser": "^7.0.2",
     "rollup-plugin-typescript2": "^0.29.0",
     "selenium-webdriver": "^4.0.0-alpha.8",

@@ -6,6 +6,7 @@ import nodeResolve from '@rollup/plugin-node-resolve'
 import replace from '@rollup/plugin-replace'
 import { terser } from 'rollup-plugin-terser'
 import ts from 'rollup-plugin-typescript2'
+import dts from 'rollup-plugin-dts'
 import defaultsDeep from 'lodash/defaultsDeep'
 
 const pkg = require('../package.json')
@@ -74,7 +75,7 @@ function rollupConfig({
             declaration: !didTS,
             declarationMap: !didTS,
           },
-          exclude: ['__tests__', 'test-dts'],
+          exclude: ['node_modules', '__tests__', 'test-dts'],
         },
       }),
     ].concat(plugins),
@@ -154,4 +155,11 @@ export default [
       format: 'es'
     },
   }
-].map(rollupConfig)
+].map(rollupConfig).concat([{
+  input: path.resolve(__dirname, '../dist/src/index.d.ts'),
+  output: [{
+    file: `dist/${pkg.name}.d.ts`,
+    format: 'es',
+  }],
+  plugins: [dts()],
+}])
