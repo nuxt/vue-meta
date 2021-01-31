@@ -1,3 +1,7 @@
+### :v::3rd_place_medal:  Check the [next](https://github.com/nuxt/vue-meta/tree/next) branch for Vue3 support
+--------------
+
+
 <p align="center">
   <img src="./docs/.vuepress/public/vue-meta.png" alt="vue-meta" />
 </p>
