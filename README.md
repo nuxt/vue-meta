@@ -9,7 +9,7 @@
 </h5>
 
 <p align="center">
-  <a href="http://npm-stat.com/charts.html?package=vue-meta"><img src="https://img.shields.io/npm/dm/vue-meta/next.svg" alt="npm downloads"></a>
+  <a href="http://npm-stat.com/charts.html?package=vue-meta"><img src="https://img.shields.io/npm/dm/vue-meta.svg" alt="npm downloads"></a>
   <a href="http://npmjs.org/package/vue-meta"><img src="https://img.shields.io/npm/v/vue-meta/next.svg" alt="npm version"></a>
   <a href="https://codecov.io/gh/nuxt/vue-meta"><img src="https://badgen.net/codecov/c/github/nuxt/vue-meta/next" alt="Coverage Status"></a>
   <a href="https://circleci.com/gh/nuxt/vue-meta/"><img src="https://badgen.net/circleci/github/nuxt/vue-meta/next" alt="Build Status"></a>
