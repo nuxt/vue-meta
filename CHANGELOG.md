@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [3.0.0-alpha.1](https://github.com/nuxt/vue-meta/compare/v3.0.0-alpha.0...v3.0.0-alpha.1) (2021-01-31)
+
+
+### Features
+
+* rollup dts ([616d6b4](https://github.com/nuxt/vue-meta/commit/616d6b4db60e5b587ce85bb5915cb963a1f1e9cd))
+
+
+### Bug Fixes
+
+* consolidate types ([45704e0](https://github.com/nuxt/vue-meta/commit/45704e0a3187b168bee43e153aedfb82f3fe1d4c))
+
 ## [3.0.0-alpha.0](https://github.com/nuxt/vue-meta/compare/v2.3.3...v3.0.0-alpha.0) (2021-01-25)
 
 The first alpha release for vue-meta v3 supporting Vue 3, basic functionality should work but needs lots more testing. Don't use this in production. Help with squashing bugs would be appreciated.
