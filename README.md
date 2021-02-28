@@ -88,12 +88,33 @@ import { useMeta, useActiveMeta } from 'vue-meta'
 
 export default {
   setup () {
-    // add meta info. The object passed into useMeta is configurable
+    const counter = ref(0)
+
+    // Add meta info
+    // The object passed into useMeta is user configurable
     const { meta } = useMeta({
-      title: 'My Title'
+      title: 'My Title',
     })
 
-    // get the currently used metainfo
+    watchEffect(() => {
+      const counterValue = counter.value
+      meta.description = `Counted ${counterValue} times`
+    })
+
+    // Or use a computed prop
+    const computedMeta = computed(() => ({
+      title: 'My Title',
+      description : `Counted ${counter.value} times`
+    }))
+
+    const { meta, onRemoved } = useMeta(computedMeta)
+
+    onRemoved(() => {
+      // Do something as soon as this metadata is removed,
+      // eg because the component instance was destroyed
+    })
+
+    // Get the currently used metainfo
     const metadata = useActiveMeta()
 
     watch(metadata, (newValue) => {
@@ -101,6 +122,22 @@ export default {
     })
   }
 }
+```
+
+The useApi can also be used outside of a setup function, but then
+you need to get a reference to the metaManager somehow
+
+```js
+const { unmount } = useMeta(
+  {
+    og: {
+      something: 'test'
+    }
+  },
+  metaManager
+)
+
+unmount() // Remove metadata when needed
 ```
 
 ### SSR 
