@@ -1,40 +1,45 @@
-import { defineComponent, reactive, toRefs } from 'vue'
+import { defineComponent, reactive, computed, toRefs, onUnmounted } from 'vue'
+import { useRoute } from 'vue-router'
 import { useMeta } from 'vue-meta'
 
-const metaUpdated = 'no' // TODO: afterNavigation hook?
+let metaUpdated = 'no'
 
 export default defineComponent({
   name: 'ChildComponent',
-  props: {
-    page: {
-      type: String,
-      required: true
-    }
-  },
-  setup (props) {
+  setup () {
+    const route = useRoute()
+
     const state = reactive({
       date: null,
       metaUpdated
     })
 
-    const title = props.page[0].toUpperCase() + props.page.slice(1)
-    console.log('ChildComponent Setup')
-
-    useMeta({
+    const metaConfig = computed(() => ({
       charset: 'utf16',
-      title,
-      description: 'Description ' + props.page,
+      title: route.name[0].toUpperCase() + route.name.slice(1),
+      description: 'Description ' + route.name,
       og: {
-        title: 'Og Title ' + props.page
+        title: 'Og Title ' + route.name
       }
+    }))
+
+    const { onRemoved } = useMeta(metaConfig)
+
+    const pageName = computed(() => route.name)
+
+    onUnmounted(() => (metaUpdated = 'yes'))
+
+    onRemoved(() => {
+      console.log('Meta was removed', pageName.value)
     })
 
-    return toRefs(state)
+    return {
+      ...toRefs(state),
+      pageName
+    }
   },
-  template: `
-  <div>
-    <h3>You're looking at the <strong>{{ page }}</strong> page</h3>
+  template: `<div>
+    <h3>You're looking at the <strong>{{ pageName }}</strong> page</h3>
     <p>Has metaInfo been updated due to navigation? {{ metaUpdated }}</p>
-  </div>
-  `
+  </div>`
 })

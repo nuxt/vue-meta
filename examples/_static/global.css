@@ -7,16 +7,54 @@ html, body {
   padding: 0 20px;
 }
 
-ul {
-  line-height: 1.5em;
-  padding-left: 1.5em;
-}
-
 a {
-  color: #7f8c8d;
+  color: #2c3e50;
   text-decoration: none;
 }
 
 a:hover {
   color: #4fc08d;
+}
+
+ul.menu {
+ list-style-type: none;
+ display: flex;
+ padding-left: 15px;
+}
+
+ul.menu li {
+  margin: 0;
+  padding-right: 15px;
+}
+
+.page {
+  border: 1px solid #2c3e50;
+  border-radius: 1rem;
+  padding: 15px;
+}
+
+.metadata {
+  background-color: #fafafa;
+  border-radius: 1rem;
+  margin-top: 30px;
+  padding-bottom: 15px;
+}
+
+.metadata h4 {
+  padding: 15px;
+  border-top-left-radius: 1rem;
+  border-top-right-radius: 1rem;
+  background-color: #f7f7f7;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.metadata p {
+  font-size: 75%;
+  white-space: pre;
+  overflow-y: scroll;
+  height: 400px;
+  max-height: 50%;
+  padding-left: 15px;
+  padding-right: 15px;
+  margin: 0;
 }

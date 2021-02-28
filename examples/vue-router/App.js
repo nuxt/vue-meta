@@ -177,16 +177,21 @@ export default {
 
     <div id="app">
       <h1>vue-router</h1>
-      <router-link to="/">Home</router-link>
-      <router-link to="/about">About</router-link>
+      <ul class="menu">
+        <li><router-link to="/">Home</router-link></li>
+        <li><router-link to="/about">About</router-link></li>
+      </ul>
 
-      <router-view v-slot="{ Component }">
+      <router-view v-slot="{ Component }" class="page">
         <transition name="page" mode="out-in">
           <component :is="Component" />
         </transition>
       </router-view>
 
-      <p>Inspect Element to see the meta info</p>
+      <div class="metadata">
+        <h4>Active Metainfo:</h4>
+        <p>{{ JSON.stringify(metadata, null, 2)}}</p>
+      </div>
     </div>
   `
 }

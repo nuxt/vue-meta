@@ -1,7 +1,7 @@
-import { h, reactive, onUnmounted, Teleport, Comment, getCurrentInstance } from 'vue'
-import type { VNode } from 'vue'
+import { h, reactive, onUnmounted, App, Teleport, Comment, getCurrentInstance, ComponentInternalInstance, Slots } from 'vue'
+import type { VNode, ComponentPublicInstance } from 'vue'
 import { isArray, isFunction } from '@vue/shared'
-import { createMergedObject } from './object-merge'
+import { createMergedObject, MergedObjectBuilder } from './object-merge'
 import { renderMeta } from './render'
 import { metaActiveKey } from './symbols'
 import { Metainfo } from './Metainfo'
@@ -9,10 +9,14 @@ import type { ResolveMethod } from './object-merge'
 import type {
   MetaActive,
   MetaConfig,
-  MetaManager,
+  MetaGuards,
+  MetaGuardRemoved,
   MetaResolver,
   MetaResolveContext,
-  MetaTeleports
+  MetaTeleports,
+  MetaSource,
+  MetaResolverSetup,
+  MetaProxy
 } from './types'
 
 export const ssrAttribute = 'data-vm-ssr'
@@ -46,127 +50,192 @@ export function addVnode (teleports: MetaTeleports, to: string, vnodes: VNode | 
   teleports[to].push(...nodes)
 }
 
-export function createMetaManager (config: MetaConfig, resolver: MetaResolver | ResolveMethod): MetaManager {
-  let cleanedUpSsr = false
+// eslint-disable-next-line no-use-before-define
+export type createMetaManagerMethod = (config: MetaConfig, resolver: MetaResolver | ResolveMethod) => MetaManager
 
-  const resolve: ResolveMethod = (options, contexts, active, key, pathSegments) => {
-    if (isFunction(resolver)) {
-      return resolver(options, contexts, active, key, pathSegments)
+export const createMetaManager: createMetaManagerMethod = (config, resolver) => MetaManager.create(config, resolver)
+
+export class MetaManager {
+  config: MetaConfig
+  target: MergedObjectBuilder
+  resolver?: MetaResolverSetup
+
+  ssrCleanedUp: boolean = false
+
+  constructor (config: MetaConfig, target: MergedObjectBuilder, resolver: MetaResolver | ResolveMethod) {
+    this.config = config
+    this.target = target
+
+    if (resolver && 'setup' in resolver && isFunction(resolver.setup)) {
+      this.resolver = resolver as unknown as MetaResolverSetup
     }
-
-    return resolver.resolve(options, contexts, active, key, pathSegments)
   }
 
-  const { addSource, delSource } = createMergedObject(resolve, active)
-
-  // TODO: validate resolver
-  const manager: MetaManager = {
-    config,
-
-    install (app) {
-      app.component('Metainfo', Metainfo)
-
-      app.config.globalProperties.$metaManager = manager
-      app.provide(metaActiveKey, active)
-    },
-
-    addMeta (metaObj, vm) {
-      if (!vm) {
-        vm = getCurrentInstance() || undefined
+  static create: createMetaManagerMethod = (config, resolver) => {
+    const resolve: ResolveMethod = (options, contexts, active, key, pathSegments) => {
+      if (isFunction(resolver)) {
+        return resolver(options, contexts, active, key, pathSegments)
       }
 
-      const resolveContext: MetaResolveContext = { vm }
-      if (resolver && 'setup' in resolver && isFunction(resolver.setup)) {
-        resolver.setup(resolveContext)
-      }
+      return resolver.resolve(options, contexts, active, key, pathSegments)
+    }
 
-      // TODO: optimize initial compute
-      const meta = addSource(metaObj, resolveContext, true)
+    const mergedObject = createMergedObject(resolve, active)
 
-      const unmount = () => delSource(meta)
-      if (vm) {
-        onUnmounted(unmount)
-      }
+    // TODO: validate resolver
+    const manager = new MetaManager(config, mergedObject, resolver)
+    return manager
+  }
 
-      return {
-        meta,
-        unmount
-      }
-    },
+  install (app: App): void {
+    app.component('Metainfo', Metainfo)
 
-    render ({ slots } = {}) {
-      // cleanup ssr tags if not yet done
-      if (__BROWSER__ && !cleanedUpSsr) {
-        cleanedUpSsr = true
+    app.config.globalProperties.$metaManager = this
+    app.provide(metaActiveKey, active)
+  }
 
-        // Listen for DOM loaded because tags in the body couldnt
-        // have loaded yet once the manager does it first render
-        // (preferable there should only be one meta render on hydration)
-        window.addEventListener('DOMContentLoaded', () => {
-          const ssrTags = document.querySelectorAll(`[${ssrAttribute}]`)
+  addMeta (metadata: MetaSource, vm?: ComponentInternalInstance): MetaProxy {
+    if (!vm) {
+      vm = getCurrentInstance() || undefined
+    }
 
-          if (ssrTags && ssrTags.length) {
-            Array.from(ssrTags).forEach(el => el.parentNode && el.parentNode.removeChild(el))
+    const metaGuards: MetaGuards = ({
+      removed: []
+    })
+
+    const resolveContext: MetaResolveContext = { vm }
+    if (this.resolver) {
+      this.resolver.setup(resolveContext)
+    }
+
+    // TODO: optimize initial compute (once)
+    const meta = this.target.addSource(metadata, resolveContext, true)
+
+    const onRemoved = (removeGuard: MetaGuardRemoved) => metaGuards.removed.push(removeGuard)
+
+    const unmount = (ignoreGuards?: boolean) => this.unmount(!!ignoreGuards, meta, metaGuards, vm)
+
+    if (vm) {
+      onUnmounted(unmount)
+    }
+
+    return {
+      meta,
+      onRemoved,
+      unmount
+    }
+  }
+
+  private unmount (ignoreGuards: boolean, meta: any, metaGuards: MetaGuards, vm?: ComponentInternalInstance) {
+    if (vm) {
+      const { $el } = vm.proxy as unknown as ComponentPublicInstance
+
+      // Wait for element to be removed from DOM
+      if ($el && $el.offsetParent) {
+        let observer: MutationObserver | undefined = new MutationObserver((records) => {
+          for (const { removedNodes } of records) {
+            if (!removedNodes) {
+              continue
+            }
+
+            removedNodes.forEach((el) => {
+              if (el === $el && observer) {
+                observer.disconnect()
+                observer = undefined
+                this.reallyUnmount(ignoreGuards, meta, metaGuards)
+              }
+            })
           }
         })
+
+        observer.observe($el.parentNode, { childList: true })
+        return
+      }
+    }
+
+    this.reallyUnmount(ignoreGuards, meta, metaGuards)
+  }
+
+  private async reallyUnmount (ignoreGuards: boolean, meta: any, metaGuards: MetaGuards): Promise<void> {
+    this.target.delSource(meta)
+
+    if (!ignoreGuards && metaGuards) {
+      await Promise.all(metaGuards.removed.map(removeGuard => removeGuard()))
+    }
+  }
+
+  render ({ slots }: { slots?: Slots } = {}): VNode[] {
+    // TODO: clean this method
+
+    // cleanup ssr tags if not yet done
+    if (__BROWSER__ && !this.ssrCleanedUp) {
+      this.ssrCleanedUp = true
+
+      // Listen for DOM loaded because tags in the body couldnt
+      // have loaded yet once the manager does it first render
+      // (preferable there should only be one meta render on hydration)
+      window.addEventListener('DOMContentLoaded', () => {
+        const ssrTags = document.querySelectorAll(`[${ssrAttribute}]`)
+
+        if (ssrTags && ssrTags.length) {
+          Array.from(ssrTags).forEach(el => el.parentNode && el.parentNode.removeChild(el))
+        }
+      })
+    }
+
+    const teleports: MetaTeleports = {}
+
+    for (const key in active) {
+      const config = this.config[key] || {}
+
+      let renderedNodes = renderMeta(
+        { metainfo: active, slots },
+        key,
+        active[key],
+        config
+      )
+
+      if (!renderedNodes) {
+        continue
       }
 
-      const teleports: MetaTeleports = {}
+      if (!isArray(renderedNodes)) {
+        renderedNodes = [renderedNodes]
+      }
 
-      for (const key in active) {
-        const config = this.config[key] || {}
+      let defaultTo = key !== 'base' && active[key].to
 
-        let renderedNodes = renderMeta(
-          { metainfo: active, slots },
-          key,
-          active[key],
-          config
-        )
+      if (!defaultTo && 'to' in config) {
+        defaultTo = config.to
+      }
 
-        if (!renderedNodes) {
+      if (!defaultTo && 'attributesFor' in config) {
+        defaultTo = key
+      }
+
+      for (const { to, vnode } of renderedNodes) {
+        addVnode(teleports, to || defaultTo || 'head', vnode)
+      }
+    }
+
+    if (slots) {
+      for (const slotName in slots) {
+        const tagName = slotName === 'default' ? 'head' : slotName
+
+        // Only teleport the contents of head/body slots
+        if (tagName !== 'head' && tagName !== 'body') {
           continue
         }
 
-        if (!isArray(renderedNodes)) {
-          renderedNodes = [renderedNodes]
-        }
-
-        let defaultTo = key !== 'base' && active[key].to
-
-        if (!defaultTo && 'to' in config) {
-          defaultTo = config.to
-        }
-
-        if (!defaultTo && 'attributesFor' in config) {
-          defaultTo = key
-        }
-
-        for (const { to, vnode } of renderedNodes) {
-          addVnode(teleports, to || defaultTo || 'head', vnode)
+        const slot = slots[slotName]
+        if (isFunction(slot)) {
+          addVnode(teleports, tagName, slot({ metainfo: active }))
         }
       }
-
-      if (slots) {
-        for (const slotName in slots) {
-          const tagName = slotName === 'default' ? 'head' : slotName
-
-          // Only teleport the contents of head/body slots
-          if (tagName !== 'head' && tagName !== 'body') {
-            continue
-          }
-
-          const slot = slots[slotName]
-          if (isFunction(slot)) {
-            addVnode(teleports, tagName, slot({ metainfo: active }))
-          }
-        }
-      }
-
-      return Object.keys(teleports).map((to) => {
-        return h(Teleport, { to }, teleports[to])
-      })
     }
-  }
 
-  return manager
+    return Object.keys(teleports).map((to) => {
+      return h(Teleport, { to }, teleports[to])
+    })
+  }
 }

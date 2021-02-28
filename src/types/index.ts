@@ -1,8 +1,10 @@
-import type { App, VNode, Slots, ComponentInternalInstance } from 'vue'
+import type { VNode, Slots, ComponentInternalInstance } from 'vue'
 import type { MergedObject, ResolveContext, ResolveMethod } from '../object-merge'
-import type { MetaConfig } from './config'
+import type { MetaManager } from '../manager'
 
 export * from './config'
+
+export type Modify<T, R> = Omit<T, keyof R> & R;
 
 export type TODO = any
 
@@ -18,12 +20,15 @@ export type MetaSource = {
   [key: string]: TODO
 }
 
+export type MetaGuardRemoved = () => void | Promise<void>
+
 /**
  * Return value of the useMeta api
  */
 export type MetaProxy = {
   meta: MetaSourceProxy
-  unmount: Function | false
+  onRemoved: (removeGuard: MetaGuardRemoved) => void
+  unmount: (ignoreGuards?: boolean) => void
 }
 
 /**
@@ -47,23 +52,22 @@ export type MetaResolver = {
   resolve: ResolveMethod
 }
 
-/**
- * The meta manager
- */
-export type MetaManager = {
-  readonly config: MetaConfig
-
-  install(app: App): void
-  addMeta(source: MetaSource, vm?: ComponentInternalInstance): MetaProxy
-
-  render(ctx?: { slots?: Slots }): Array<VNode>
-}
+export type MetaResolverSetup = Modify<MetaResolver, {
+  setup: MetaResolveSetup
+}>
 
 /**
  * @internal
  */
 export type MetaTeleports = {
   [key: string]: Array<VNode>
+}
+
+/**
+ * @internal
+ */
+export interface MetaGuards {
+  removed: Array<MetaGuardRemoved>
 }
 
 /**
@@ -110,5 +114,6 @@ export type MetaRendered = Array<MetaRenderedNode>
 declare module '@vue/runtime-core' {
   interface ComponentInternalInstance {
     $metaManager: MetaManager
+    $metaGuards: MetaGuards
   }
 }

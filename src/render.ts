@@ -1,5 +1,5 @@
 import { h } from 'vue'
-import { isArray, isString } from '@vue/shared'
+import { isArray, isFunction, isString } from '@vue/shared'
 import { getTagConfigItem } from './config'
 import type {
   MetaConfigSectionAttribute,
@@ -279,7 +279,7 @@ export function getSlotContent (
   groupConfig?: MetaGroupConfig
 ): string {
   const slot = slots && slots[slotName]
-  if (!slot) {
+  if (!slot || !isFunction(slot)) {
     return content
   }
 

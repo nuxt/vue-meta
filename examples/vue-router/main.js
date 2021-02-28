@@ -4,12 +4,9 @@ import { createMetaManager, defaultConfig, resolveOption, useMeta } from 'vue-me
 import App from './App'
 import ChildComponent from './Child'
 
-function createView (page) {
+function createComponent () {
   return {
-    name: `section-${page}`,
-    render () {
-      return h(ChildComponent, { page })
-    }
+    render: () => h(ChildComponent)
   }
 }
 
@@ -41,14 +38,13 @@ useMeta(
 const createRouter = (base, isSSR) => createVueRouter({
   history: isSSR ? createMemoryHistory(base) : createWebHistory(base),
   routes: [
-    { name: 'home', path: '/', component: createView('home') },
-    { name: 'about', path: '/about', component: createView('about') }
+    { name: 'home', path: '/', component: createComponent() },
+    { name: 'about', path: '/about', component: createComponent() }
   ]
 })
 
 export {
   App,
   metaManager,
-  createRouter,
-  createView
+  createRouter
 }

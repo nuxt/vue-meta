@@ -10,5 +10,5 @@ export const PolySymbol = (name: string) =>
     : (__DEV__ ? '[vue-meta]: ' : '_vm_') + name
 
 export const metaActiveKey = /*#__PURE__*/ PolySymbol(
-  __DEV__ ? 'active_meta' : 'am'
+  __DEV__ ? 'meta_active' : 'ma'
 ) as InjectionKey<MetaActive>
