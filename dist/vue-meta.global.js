@@ -1,5 +1,5 @@
 /**
- * vue-meta v3.0.0-alpha.1
+ * vue-meta v3.0.0-alpha.2
  * (c) 2021
  * - Pim (@pimlie)
  * - All the amazing contributors
@@ -601,12 +601,12 @@ var VueMeta = (function (exports, vue) {
       }
       if (!cachedElements[attributesFor]) {
           const [el, el2] = Array.from(document.querySelectorAll(attributesFor));
-          if ( !el) {
+          if (!el) {
               // eslint-disable-next-line no-console
               console.error('Could not find element for selector', attributesFor, ', won\'t render attributes');
               return;
           }
-          if ( el2) {
+          if (el2) {
               // eslint-disable-next-line no-console
               console.warn('Found multiple elements for selector', attributesFor);
           }
@@ -630,7 +630,7 @@ var VueMeta = (function (exports, vue) {
   }
   function getSlotContent({ metainfo, slots }, slotName, content, groupConfig) {
       const slot = slots && slots[slotName];
-      if (!slot) {
+      if (!slot || !isFunction(slot)) {
           return content;
       }
       const slotScopeProps = {
@@ -653,9 +653,34 @@ var VueMeta = (function (exports, vue) {
   const PolySymbol = (name) => 
   // vm = vue meta
   hasSymbol
-      ? Symbol( '[vue-meta]: ' + name )
-      : ( '[vue-meta]: ' ) + name;
-  const metaActiveKey = /*#__PURE__*/ PolySymbol( 'active_meta' );
+      ? Symbol('[vue-meta]: ' + name )
+      : ('[vue-meta]: ' ) + name;
+  const metaActiveKey = /*#__PURE__*/ PolySymbol('meta_active' );
+
+  /**
+   * Apply the differences between newSource & oldSource to target
+   */
+  function applyDifference(target, newSource, oldSource) {
+      for (const key in newSource) {
+          if (!(key in oldSource)) {
+              target[key] = newSource[key];
+              continue;
+          }
+          // We dont care about nested objects here , these changes
+          // should already have been tracked by the MergeProxy
+          if (isObject(target[key])) {
+              continue;
+          }
+          if (newSource[key] !== oldSource[key]) {
+              target[key] = newSource[key];
+          }
+      }
+      for (const key in oldSource) {
+          if (!(key in newSource)) {
+              delete target[key];
+          }
+      }
+  }
 
   function getCurrentManager(vm) {
       if (!vm) {
@@ -667,15 +692,22 @@ var VueMeta = (function (exports, vue) {
       return vm.appContext.config.globalProperties.$metaManager;
   }
   function useMeta(source, manager) {
-      const vm = vue.getCurrentInstance();
+      const vm = vue.getCurrentInstance() || undefined;
       if (!manager && vm) {
           manager = getCurrentManager(vm);
       }
       if (!manager) {
-          // oopsydoopsy
           throw new Error('No manager or current instance');
       }
-      return manager.addMeta(source, vm || undefined);
+      if (vue.isProxy(source)) {
+          vue.watch(source, (newSource, oldSource) => {
+              // We only care about first level props, second+ level will already be changed by the merge proxy
+              applyDifference(metaProxy.meta, newSource, oldSource);
+          });
+          source = source.value;
+      }
+      const metaProxy = manager.addMeta(source, vm);
+      return metaProxy;
   }
   function useActiveMeta() {
       return vue.inject(metaActiveKey);
@@ -714,97 +746,142 @@ var VueMeta = (function (exports, vue) {
       }
       teleports[to].push(...nodes);
   }
-  function createMetaManager(config, resolver) {
-      let cleanedUpSsr = false;
+  const createMetaManager = (config, resolver) => MetaManager.create(config, resolver);
+  class MetaManager {
+      constructor(config, target, resolver) {
+          this.ssrCleanedUp = false;
+          this.config = config;
+          this.target = target;
+          if (resolver && 'setup' in resolver && isFunction(resolver.setup)) {
+              this.resolver = resolver;
+          }
+      }
+      install(app) {
+          app.component('Metainfo', Metainfo);
+          app.config.globalProperties.$metaManager = this;
+          app.provide(metaActiveKey, active);
+      }
+      addMeta(metadata, vm) {
+          if (!vm) {
+              vm = vue.getCurrentInstance() || undefined;
+          }
+          const metaGuards = ({
+              removed: []
+          });
+          const resolveContext = { vm };
+          if (this.resolver) {
+              this.resolver.setup(resolveContext);
+          }
+          // TODO: optimize initial compute (once)
+          const meta = this.target.addSource(metadata, resolveContext, true);
+          const onRemoved = (removeGuard) => metaGuards.removed.push(removeGuard);
+          const unmount = (ignoreGuards) => this.unmount(!!ignoreGuards, meta, metaGuards, vm);
+          if (vm) {
+              vue.onUnmounted(unmount);
+          }
+          return {
+              meta,
+              onRemoved,
+              unmount
+          };
+      }
+      unmount(ignoreGuards, meta, metaGuards, vm) {
+          if (vm) {
+              const { $el } = vm.proxy;
+              // Wait for element to be removed from DOM
+              if ($el && $el.offsetParent) {
+                  let observer = new MutationObserver((records) => {
+                      for (const { removedNodes } of records) {
+                          if (!removedNodes) {
+                              continue;
+                          }
+                          removedNodes.forEach((el) => {
+                              if (el === $el && observer) {
+                                  observer.disconnect();
+                                  observer = undefined;
+                                  this.reallyUnmount(ignoreGuards, meta, metaGuards);
+                              }
+                          });
+                      }
+                  });
+                  observer.observe($el.parentNode, { childList: true });
+                  return;
+              }
+          }
+          this.reallyUnmount(ignoreGuards, meta, metaGuards);
+      }
+      async reallyUnmount(ignoreGuards, meta, metaGuards) {
+          this.target.delSource(meta);
+          if (!ignoreGuards && metaGuards) {
+              await Promise.all(metaGuards.removed.map(removeGuard => removeGuard()));
+          }
+      }
+      render({ slots } = {}) {
+          // TODO: clean this method
+          // cleanup ssr tags if not yet done
+          if (!this.ssrCleanedUp) {
+              this.ssrCleanedUp = true;
+              // Listen for DOM loaded because tags in the body couldnt
+              // have loaded yet once the manager does it first render
+              // (preferable there should only be one meta render on hydration)
+              window.addEventListener('DOMContentLoaded', () => {
+                  const ssrTags = document.querySelectorAll(`[${ssrAttribute}]`);
+                  if (ssrTags && ssrTags.length) {
+                      Array.from(ssrTags).forEach(el => el.parentNode && el.parentNode.removeChild(el));
+                  }
+              });
+          }
+          const teleports = {};
+          for (const key in active) {
+              const config = this.config[key] || {};
+              let renderedNodes = renderMeta({ metainfo: active, slots }, key, active[key], config);
+              if (!renderedNodes) {
+                  continue;
+              }
+              if (!isArray(renderedNodes)) {
+                  renderedNodes = [renderedNodes];
+              }
+              let defaultTo = key !== 'base' && active[key].to;
+              if (!defaultTo && 'to' in config) {
+                  defaultTo = config.to;
+              }
+              if (!defaultTo && 'attributesFor' in config) {
+                  defaultTo = key;
+              }
+              for (const { to, vnode } of renderedNodes) {
+                  addVnode(teleports, to || defaultTo || 'head', vnode);
+              }
+          }
+          if (slots) {
+              for (const slotName in slots) {
+                  const tagName = slotName === 'default' ? 'head' : slotName;
+                  // Only teleport the contents of head/body slots
+                  if (tagName !== 'head' && tagName !== 'body') {
+                      continue;
+                  }
+                  const slot = slots[slotName];
+                  if (isFunction(slot)) {
+                      addVnode(teleports, tagName, slot({ metainfo: active }));
+                  }
+              }
+          }
+          return Object.keys(teleports).map((to) => {
+              return vue.h(vue.Teleport, { to }, teleports[to]);
+          });
+      }
+  }
+  MetaManager.create = (config, resolver) => {
       const resolve = (options, contexts, active, key, pathSegments) => {
           if (isFunction(resolver)) {
               return resolver(options, contexts, active, key, pathSegments);
           }
           return resolver.resolve(options, contexts, active, key, pathSegments);
       };
-      const { addSource, delSource } = createMergedObject(resolve, active);
+      const mergedObject = createMergedObject(resolve, active);
       // TODO: validate resolver
-      const manager = {
-          config,
-          install(app) {
-              app.component('Metainfo', Metainfo);
-              app.config.globalProperties.$metaManager = manager;
-              app.provide(metaActiveKey, active);
-          },
-          addMeta(metaObj, vm) {
-              if (!vm) {
-                  vm = vue.getCurrentInstance() || undefined;
-              }
-              const resolveContext = { vm };
-              if (resolver && 'setup' in resolver && isFunction(resolver.setup)) {
-                  resolver.setup(resolveContext);
-              }
-              // TODO: optimize initial compute
-              const meta = addSource(metaObj, resolveContext, true);
-              const unmount = () => delSource(meta);
-              if (vm) {
-                  vue.onUnmounted(unmount);
-              }
-              return {
-                  meta,
-                  unmount
-              };
-          },
-          render({ slots } = {}) {
-              // cleanup ssr tags if not yet done
-              if ( !cleanedUpSsr) {
-                  cleanedUpSsr = true;
-                  // Listen for DOM loaded because tags in the body couldnt
-                  // have loaded yet once the manager does it first render
-                  // (preferable there should only be one meta render on hydration)
-                  window.addEventListener('DOMContentLoaded', () => {
-                      const ssrTags = document.querySelectorAll(`[${ssrAttribute}]`);
-                      if (ssrTags && ssrTags.length) {
-                          Array.from(ssrTags).forEach(el => el.parentNode && el.parentNode.removeChild(el));
-                      }
-                  });
-              }
-              const teleports = {};
-              for (const key in active) {
-                  const config = this.config[key] || {};
-                  let renderedNodes = renderMeta({ metainfo: active, slots }, key, active[key], config);
-                  if (!renderedNodes) {
-                      continue;
-                  }
-                  if (!isArray(renderedNodes)) {
-                      renderedNodes = [renderedNodes];
-                  }
-                  let defaultTo = key !== 'base' && active[key].to;
-                  if (!defaultTo && 'to' in config) {
-                      defaultTo = config.to;
-                  }
-                  if (!defaultTo && 'attributesFor' in config) {
-                      defaultTo = key;
-                  }
-                  for (const { to, vnode } of renderedNodes) {
-                      addVnode(teleports, to || defaultTo || 'head', vnode);
-                  }
-              }
-              if (slots) {
-                  for (const slotName in slots) {
-                      const tagName = slotName === 'default' ? 'head' : slotName;
-                      // Only teleport the contents of head/body slots
-                      if (tagName !== 'head' && tagName !== 'body') {
-                          continue;
-                      }
-                      const slot = slots[slotName];
-                      if (isFunction(slot)) {
-                          addVnode(teleports, tagName, slot({ metainfo: active }));
-                      }
-                  }
-              }
-              return Object.keys(teleports).map((to) => {
-                  return vue.h(vue.Teleport, { to }, teleports[to]);
-              });
-          }
-      };
+      const manager = new MetaManager(config, mergedObject, resolver);
       return manager;
-  }
+  };
 
   exports.createMetaManager = createMetaManager;
   exports.deepestResolver = deepest;

@@ -1,6 +1,9 @@
-import { ComponentInternalInstance, App, Slots, VNode } from 'vue';
+import { App, ComponentInternalInstance, Slots, VNode } from 'vue';
 import { SSRContext } from '@vue/server-renderer';
 
+declare type MergeSource = {
+    [key: string]: any;
+};
 declare type MergedObjectValue = boolean | number | string | MergedObject | any;
 declare type MergedObject = {
     [key: string]: MergedObjectValue;
@@ -8,6 +11,35 @@ declare type MergedObject = {
 declare type PathSegments = Array<string>;
 declare type ResolveContext = {};
 declare type ResolveMethod = (options: Array<any>, contexts: Array<ResolveContext>, active: MergedObjectValue, key: string | number | symbol, pathSegments: PathSegments) => MergedObjectValue;
+declare type MergeContext = {
+    resolve: ResolveMethod;
+    active: MergedObject;
+    sources: Array<MergeSource>;
+};
+declare type MergedObjectBuilder = {
+    context: MergeContext;
+    compute: () => void;
+    addSource: (source: MergeSource, resolveContext: ResolveContext | undefined, recompute?: Boolean) => any;
+    delSource: (sourceOrProxy: MergeSource, recompute?: boolean) => boolean;
+};
+
+declare type createMetaManagerMethod = (config: MetaConfig, resolver: MetaResolver | ResolveMethod) => MetaManager;
+declare const createMetaManager: createMetaManagerMethod;
+declare class MetaManager {
+    config: MetaConfig;
+    target: MergedObjectBuilder;
+    resolver?: MetaResolverSetup;
+    ssrCleanedUp: boolean;
+    constructor(config: MetaConfig, target: MergedObjectBuilder, resolver: MetaResolver | ResolveMethod);
+    static create: createMetaManagerMethod;
+    install(app: App): void;
+    addMeta(metadata: MetaSource, vm?: ComponentInternalInstance): MetaProxy;
+    private unmount;
+    private reallyUnmount;
+    render({ slots }?: {
+        slots?: Slots;
+    }): VNode[];
+}
 
 declare type MetaConfigSectionKey = 'tag' | 'to' | 'keyAttribute' | 'valueAttribute' | 'nameless' | 'group' | 'namespaced' | 'namespacedAttribute' | 'attributesFor';
 interface MetaConfigSectionTag {
@@ -40,6 +72,7 @@ declare type MetaTagsConfig = {
     [key in MetaTagName]: MetaTagConfig;
 };
 
+declare type Modify<T, R> = Omit<T, keyof R> & R;
 declare type TODO = any;
 /**
  * Proxied meta source for tracking changes and updating the active meta daa
@@ -52,12 +85,14 @@ interface MetaSourceProxy extends MergedObject {
 declare type MetaSource = {
     [key: string]: TODO;
 };
+declare type MetaGuardRemoved = () => void | Promise<void>;
 /**
  * Return value of the useMeta api
  */
 declare type MetaProxy = {
     meta: MetaSourceProxy;
-    unmount: Function | false;
+    onRemoved: (removeGuard: MetaGuardRemoved) => void;
+    unmount: (ignoreGuards?: boolean) => void;
 };
 /**
  * The active/aggregated meta data currently rendered
@@ -76,23 +111,21 @@ declare type MetaResolver = {
     setup?: MetaResolveSetup;
     resolve: ResolveMethod;
 };
-/**
- * The meta manager
- */
-declare type MetaManager = {
-    readonly config: MetaConfig;
-    install(app: App): void;
-    addMeta(source: MetaSource, vm?: ComponentInternalInstance): MetaProxy;
-    render(ctx?: {
-        slots?: Slots;
-    }): Array<VNode>;
-};
+declare type MetaResolverSetup = Modify<MetaResolver, {
+    setup: MetaResolveSetup;
+}>;
 /**
  * @internal
  */
 declare type MetaTeleports = {
     [key: string]: Array<VNode>;
 };
+/**
+ * @internal
+ */
+interface MetaGuards {
+    removed: Array<MetaGuardRemoved>;
+}
 /**
  * @internal
  */
@@ -132,6 +165,7 @@ declare type MetaRendered = Array<MetaRenderedNode>;
 declare module '@vue/runtime-core' {
     interface ComponentInternalInstance {
         $metaManager: MetaManager;
+        $metaGuards: MetaGuards;
     }
 }
 
@@ -152,8 +186,6 @@ declare namespace deepest_d {
 
 declare const defaultConfig: MetaConfig;
 
-declare function createMetaManager(config: MetaConfig, resolver: MetaResolver | ResolveMethod): MetaManager;
-
 declare type ResolveOptionReducer = (accumulator: any, context: ResolveContext) => ResolveMethod;
 declare const resolveOption: (predicament: ResolveOptionReducer) => ResolveMethod;
 
@@ -163,4 +195,4 @@ declare function getCurrentManager(vm?: ComponentInternalInstance): MetaManager 
 declare function useMeta(source: MetaSource, manager?: MetaManager): MetaProxy;
 declare function useActiveMeta(): MetaActive;
 
-export { MetaActive, MetaConfig, MetaConfigSection, MetaConfigSectionAttribute, MetaConfigSectionGroup, MetaConfigSectionKey, MetaConfigSectionTag, MetaGroupConfig, MetaManager, MetaProxy, MetaRenderContext, MetaRendered, MetaRenderedNode, MetaResolveContext, MetaResolveSetup, MetaResolver, MetaSource, MetaSourceProxy, MetaTagConfig, MetaTagConfigKey, MetaTagName, MetaTagsConfig, MetaTeleports, SlotScopeProperties, TODO, createMetaManager, deepest_d as deepestResolver, defaultConfig, getCurrentManager, renderToStringWithMeta, resolveOption, useActiveMeta, useMeta };
+export { MetaActive, MetaConfig, MetaConfigSection, MetaConfigSectionAttribute, MetaConfigSectionGroup, MetaConfigSectionKey, MetaConfigSectionTag, MetaGroupConfig, MetaGuardRemoved, MetaGuards, MetaProxy, MetaRenderContext, MetaRendered, MetaRenderedNode, MetaResolveContext, MetaResolveSetup, MetaResolver, MetaResolverSetup, MetaSource, MetaSourceProxy, MetaTagConfig, MetaTagConfigKey, MetaTagName, MetaTagsConfig, MetaTeleports, Modify, SlotScopeProperties, TODO, createMetaManager, deepest_d as deepestResolver, defaultConfig, getCurrentManager, renderToStringWithMeta, resolveOption, useActiveMeta, useMeta };
