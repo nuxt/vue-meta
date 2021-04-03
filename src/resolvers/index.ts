@@ -1,11 +1,13 @@
-import { ResolveContext, ResolveMethod } from '../object-merge'
+import type { ResolveContext, ResolveMethod } from '../object-merge'
 
-export type ResolveOptionReducer = (accumulator: any, context: ResolveContext) => ResolveMethod
+export interface ResolveOptionPredicament<T, U> {
+  (currentValue: T | undefined, context: U): T
+}
 
-export const resolveOption: (predicament: ResolveOptionReducer) => ResolveMethod = predicament => (options, contexts) => {
+export const resolveOption = <T, U = ResolveContext>(predicament: ResolveOptionPredicament<T, U>, initialValue?: T): ResolveMethod<U> => (options, contexts) => {
   let resolvedIndex = -1
 
-  contexts.reduce((acc: ResolveContext | undefined, context, index) => {
+  contexts.reduce((acc, context, index) => {
     const retval = predicament(acc, context)
 
     if (retval !== acc) {
@@ -14,7 +16,7 @@ export const resolveOption: (predicament: ResolveOptionReducer) => ResolveMethod
     }
 
     return acc
-  }, undefined)
+  }, initialValue)
 
   if (resolvedIndex > -1) {
     return options[resolvedIndex]

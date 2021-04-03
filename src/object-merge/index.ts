@@ -17,9 +17,9 @@ export type PathSegments = Array<string>
 
 export type ResolveContext = {}
 
-export type ResolveMethod = (
+export type ResolveMethod<T = ResolveContext> = (
   options: Array<any>,
-  contexts: Array<ResolveContext>,
+  contexts: Array<T>,
   active: MergedObjectValue,
   key: string | number | symbol,
   pathSegments: PathSegments,
