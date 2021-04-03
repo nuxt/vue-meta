@@ -9,7 +9,6 @@ const webpackConfig = require('./webpack.config')
 const jiti = require('./jiti')
 
 const { renderPage } = jiti('./ssr/server.js')
-// const { renderPage } = require('./ssr/server')
 
 const app = express()
 
@@ -34,6 +33,7 @@ fs.readdirSync(__dirname)
 
 app.use(express.static(path.join(__dirname, '_static')))
 app.use(express.static(__dirname))
+app.use('/_static/dist', express.static(path.join(__dirname, '../dist')))
 
 app.use((req, res, next) => {
   // Return empty css/javascript files if the file didnt exists
