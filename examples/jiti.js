@@ -24,7 +24,7 @@ module.exports = require('jiti')(__filename, {
           root: '.',
           extensions: ['.ts'],
           alias: {
-            'vue-meta': path.resolve(__dirname, '../src/')
+            '^vue-meta$': path.resolve(__dirname, '../src/')
           }
         }]
       ]
