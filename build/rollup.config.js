@@ -35,7 +35,7 @@ function rollupConfig({
     exclude: 'node_modules',
     delimiters: ['', ''],
     values: {
-      'process.server' : isBrowserBuild ? 'false' : 'true', // should not be used anymore
+      'process.env.NODE_ENV': JSON.stringify(isProductionBuild ? 'production' : 'development'),
       '__DEV__': config.output.format === 'es' && !isBrowserBuild ? "(process.env.NODE_ENV !== 'production')" : !isProductionBuild,
       '__BROWSER__': isBrowserBuild,
     }
