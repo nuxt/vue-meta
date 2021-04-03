@@ -6,6 +6,9 @@ import { renderMeta } from './render'
 import { metaActiveKey } from './symbols'
 import { Metainfo } from './Metainfo'
 import type { ResolveMethod } from './object-merge'
+import { defaultConfig } from './config/default'
+import * as defaultResolver from './resolvers/deepest'
+
 import type {
   MetaActive,
   MetaConfig,
@@ -53,7 +56,7 @@ export function addVnode (teleports: MetaTeleports, to: string, vnodes: VNode | 
 // eslint-disable-next-line no-use-before-define
 export type createMetaManagerMethod = (config: MetaConfig, resolver: MetaResolver | ResolveMethod) => MetaManager
 
-export const createMetaManager: createMetaManagerMethod = (config, resolver) => MetaManager.create(config, resolver)
+export const createMetaManager = (config?: MetaConfig, resolver?: MetaResolver): MetaManager => MetaManager.create(config || defaultConfig, resolver || (defaultResolver as MetaResolver))
 
 export class MetaManager {
   config: MetaConfig
