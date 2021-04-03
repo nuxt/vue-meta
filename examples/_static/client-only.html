@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <script src="https://unpkg.com/vue@next"></script>
+  <script src="https://unpkg.com/vue-router@next"></script>
+  <!-- script src="https://unpkg.com/vue-meta@next"></script -->
+  <script src="dist/vue-meta.global.js"></script>
+  <link rel="stylesheet" href="global.css">
+  <style>
+  .page-enter-active, .page-leave-active {
+    transition: opacity .5s
+  }
+  .page-enter, .page-leave-to {
+    opacity: 0
+  }
+  </style>
+</head>
+<body>
+  <body-prepend id="body-prepend"></body-prepend>
+  <a href="/">&larr; Examples index</a>
+  <div id="app">
+    <metainfo>
+     <template v-slot:base="{ content, metainfo }">http://nuxt.dev:3000{{ content }}</template>
+      <template v-slot:title="{ content, metainfo }">{{ content }} - {{ metainfo.description }} - Hello</template>
+      <template v-slot:og(title)="{ content, metainfo, og }">
+        {{ content }} - {{ og.description }} - {{ metainfo.description }} - Hello Again
+      </template>
+
+      <!-- // TODO: Using script triggers [Vue warn]: Template compilation error: Tags with side effect (<script> and <style>) are ignored in client component templates. -->
+      <component is="script">window.users = []</component>
+      <component is="script" src="user-1.js"></component>
+      <component is="script" src="user-2.js"></component>
+
+      <template v-slot:body>
+        <component is="script" src="user-4.js"></component>
+      </template>
+    </metainfo>
+
+    <h1>vue-router</h1>
+    <ul class="menu">
+      <li><router-link to="/">Home</router-link></li>
+      <li><router-link to="/about">About</router-link></li>
+    </ul>
+
+    <router-view v-slot="{ Component }" class="page">
+      <transition name="page" mode="out-in">
+        <component :is="Component" />
+      </transition>
+    </router-view>
+
+    <div class="metadata">
+      <h4>Active Metainfo:</h4>
+      <p>{{ JSON.stringify(metadata, null, 2)}}</p>
+    </div>
+  </div>
+
+  <script>
+const App = {
+  setup() {
+    const { meta } = VueMeta.useMeta({
+      base: { href: '/_static', target: '_blank' },
+      charset: 'utf8',
+      title: 'My Title',
+      description: 'The Description',
+      og: {
+        title: 'Og Title',
+        description: 'Bla bla',
+        image: [
+          'https://picsum.photos/600/400/?image=80',
+          'https://picsum.photos/600/400/?image=82'
+        ]
+      },
+      twitter: {
+        title: 'Twitter Title'
+      },
+      noscript: [
+        { tag: 'link', rel: 'stylesheet', href: 'style.css' }
+      ],
+      otherNoscript: {
+        tag: 'noscript',
+        'data-test': 'hello',
+        children: [
+          { tag: 'link', rel: 'stylesheet', href: 'style2.css' }
+        ]
+      },
+      body: 'body-script1.js', // TODO: fix
+      htmlAttrs: {
+        amp: true,
+        lang: ['en', 'nl']
+      },
+    })    
+
+    const metadata = VueMeta.useActiveMeta()
+
+    return {
+      metadata
+    }
+  }
+}
+
+const Home = {
+  setup() {
+    VueMeta.useMeta({
+      title: 'Home page'
+    })
+  },
+  template: `<div>Home</div>`
+}
+
+const About = {
+  setup() {
+    VueMeta.useMeta({
+      title: 'About page'
+    })
+  },
+  template: `<div>About</div>`
+}
+
+const router = VueRouter.createRouter({
+  history: VueRouter.createWebHashHistory('/_static/client-only.html'),
+  routes: [
+    { name: 'home', path: '/', component: Home },
+    { name: 'about', path: '/about', component: About }
+  ]
+})
+
+const metaManager = VueMeta.createMetaManager()
+
+const app = Vue.createApp(App)
+app.use(router)
+app.use(metaManager)
+app.mount('#app')
+  
+  </script>
+</body>
+</html>
