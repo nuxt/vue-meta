@@ -36,7 +36,7 @@
     "build": "yarn clean && rollup -c build/rollup.config.js",
     "clean": "rimraf dist/*",
     "coverage": "codecov",
-    "dev": "yarn clean && node examples/server.js",
+    "dev": "node examples/server.js",
     "docs": "vuepress dev --host 0.0.0.0 --port 3000 docs",
     "docs:build": "vuepress build docs",
     "lint": "eslint --ext .js,.ts src test examples",
