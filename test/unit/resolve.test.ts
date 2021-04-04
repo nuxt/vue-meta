@@ -1,19 +1,20 @@
 import { isArray, isPlainObject } from '@vue/shared'
-import { createMergedObject } from '../../src/object-merge'
+import { createMergedObject, ResolveMethod } from '../../src/object-merge'
 
-const resolve = (options) => {
-  // console.log('RESOLVE\n', options)
+const resolve: ResolveMethod = <T>(sources: T[]) => {
+  // console.log('RESOLVE\n', sources)
 
-  const hasArrayOption = options.some(option => isArray(option))
+  const hasArrayOption = sources.some(source => isArray(source))
   if (hasArrayOption) {
-    const groupedOptions = {}
-    for (const option of options) {
-      if (!isArray(option)) {
+    const groupedOptions: Record<string, object> = {}
+    for (const source of sources) {
+      if (!isArray(source)) {
         continue
       }
 
-      for (const value of option) {
+      for (const value of source) {
         if (isPlainObject(value) && 'vmid' in value) {
+          // @ts-ignore
           groupedOptions[value.vmid] = value
         }
       }
@@ -21,16 +22,19 @@ const resolve = (options) => {
 
     // console.log('GROUPED OPTIONS', groupedOptions)
     const values = []
-    for (const option of options) {
-      if (!isArray(option)) {
+    for (const source of sources) {
+      if (!isArray(source)) {
         continue
       }
 
-      for (const value of option) {
+      for (const value of source) {
         if (!isPlainObject(value) || !('vmid' in value)) {
           values.push(value)
+        // @ts-ignore
         } else if (groupedOptions[value.vmid]) {
+          // @ts-ignore
           values.push(groupedOptions[value.vmid])
+          // @ts-ignore
           delete groupedOptions[value.vmid]
         }
       }
@@ -40,7 +44,7 @@ const resolve = (options) => {
     return values
   }
 
-  return options[options.length - 1]
+  return sources[sources.length - 1]
 }
 
 describe('resolve', () => {
@@ -53,11 +57,14 @@ describe('resolve', () => {
       str: 'string value 2'
     }
 
-    const { active, addSource, delSource } = createMergedObject(resolve)
+    type Source = { str?: string }
+
+    const { context, addSource, delSource } = createMergedObject<Source>(resolve, {})
+    const { active } = context
 
     // Set initial value & init proxy
     addSource(source1)
-    const proxy2 = addSource(source2, null, true /* do an initial compute/walk of all sources */)
+    const proxy2 = addSource(source2, undefined, true /* do an initial compute/walk of all sources */)
 
     expect(active.str).toBe('string value 2')
 
@@ -87,11 +94,14 @@ describe('resolve', () => {
       }
     }
 
-    const { active, addSource, delSource } = createMergedObject(resolve)
+    type Source = { obj?: { key?: string } }
+
+    const { context, addSource, delSource } = createMergedObject<Source>(resolve, {})
+    const { active } = context
 
     // Set initial value & init proxy
     const proxy1 = addSource(source1)
-    const proxy2 = addSource(source2, null, true /* do an initial compute/walk of all sources */)
+    const proxy2 = addSource(source2, undefined, true /* do an initial compute/walk of all sources */)
 
     expect(active.obj.key).toBe('object value 2')
 
@@ -126,11 +136,12 @@ describe('resolve', () => {
       ]
     }
 
-    const { active, sources, addSource, delSource } = createMergedObject(resolve)
+    const { context, addSource, delSource } = createMergedObject(resolve, {})
+    const { active, sources } = context
 
     // Set initial value & init proxy
     const proxy1 = addSource(source1)
-    const proxy2 = addSource(source2, null, true /* do an initial compute/walk of all sources */)
+    const proxy2 = addSource(source2, undefined, true /* do an initial compute/walk of all sources */)
 
     expect(active.arr).toEqual(['array value 1', 'array value 2'])
 
@@ -156,7 +167,7 @@ describe('resolve', () => {
     expect(active.arr).toEqual(['test again 2.1'])
 
     proxy1.arr = ['test again 1']
-    addSource(proxy1, null, true)
+    addSource(proxy1, undefined, true)
     expect(active.arr).toEqual(['test again 2.1', 'test again 1'])
 
     proxy2.arr = []
@@ -179,11 +190,19 @@ describe('resolve', () => {
       ]
     }
 
-    const { active, sources, addSource, delSource } = createMergedObject(resolve)
+    type Source = {
+      arr?: {
+        vmid?: string,
+        key: string
+      }[]
+    }
+
+    const { context, addSource, delSource } = createMergedObject<Source>(resolve, {})
+    const { active, sources } = context
 
     // Set initial value & init proxy
     const proxy1 = addSource(source1)
-    const proxy2 = addSource(source2, null, true /* do an initial compute/walk of all sources */)
+    const proxy2 = addSource(source2, undefined, true /* do an initial compute/walk of all sources */)
 
     expect(active.arr).toEqual([
       { key: 'collection value 1.1' },
@@ -227,7 +246,7 @@ describe('resolve', () => {
     expect(active.arr).toBeUndefined()
     expect(active).toEqual({})
 
-    const proxy3 = addSource({ arr: [{ vmid: 'a', key: 'test again 1' }] }, null, true)
+    const proxy3 = addSource({ arr: [{ vmid: 'a', key: 'test again 1' }] }, undefined, true)
 
     expect(sources.length).toBe(2)
     expect(active.arr).toEqual([{ vmid: 'a', key: 'test again 1' }])

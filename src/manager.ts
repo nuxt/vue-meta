@@ -60,12 +60,12 @@ export const createMetaManager = (config?: MetaConfig, resolver?: MetaResolver):
 
 export class MetaManager {
   config: MetaConfig
-  target: MergedObjectBuilder
+  target: MergedObjectBuilder<MetaSource>
   resolver?: MetaResolverSetup
 
   ssrCleanedUp: boolean = false
 
-  constructor (config: MetaConfig, target: MergedObjectBuilder, resolver: MetaResolver | ResolveMethod) {
+  constructor (config: MetaConfig, target: MergedObjectBuilder<MetaSource>, resolver: MetaResolver | ResolveMethod) {
     this.config = config
     this.target = target
 
@@ -83,7 +83,7 @@ export class MetaManager {
       return resolver.resolve(options, contexts, active, key, pathSegments)
     }
 
-    const mergedObject = createMergedObject(resolve, active)
+    const mergedObject = createMergedObject<MetaSource>(resolve, active)
 
     // TODO: validate resolver
     const manager = new MetaManager(config, mergedObject, resolver)

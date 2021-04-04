@@ -3,7 +3,7 @@ import { clone, pluck } from '../utils'
 import { RESOLVE_CONTEXT } from './constants'
 import type { MergeContext, MergeSource, MergedObject, PathSegments, ResolveContext } from '.'
 
-export const allKeys = (source?: MergeSource, ...sources: Array<MergeSource>): Array<string> => {
+export const allKeys = <T>(source?: MergeSource<T>, ...sources: MergeSource<T>[]): string[] => {
   const keys = source ? Object.keys(source) : []
 
   if (sources) {
@@ -25,7 +25,7 @@ export const allKeys = (source?: MergeSource, ...sources: Array<MergeSource>): A
   return keys
 }
 
-export const recompute = (context: MergeContext, sources?: Array<MergeSource>, target?: MergedObject, path: PathSegments = []): void => {
+export const recompute = <T>(context: MergeContext<T>, sources?: MergeSource<T>[], target?: MergedObject, path: PathSegments = []): void => {
   if (!path.length) {
     if (!target) {
       target = context.active
@@ -52,6 +52,7 @@ export const recompute = (context: MergeContext, sources?: Array<MergeSource>, t
 
   for (const key of keys) {
     // This assumes consistent types usages for keys across sources
+    // @ts-ignore
     if (isPlainObject(sources[0][key])) {
       if (!target[key]) {
         target[key] = {}
@@ -60,6 +61,7 @@ export const recompute = (context: MergeContext, sources?: Array<MergeSource>, t
       const keySources = []
       for (const source of sources) {
         if (key in source) {
+          // @ts-ignore
           keySources.push(source[key])
         }
       }
@@ -69,6 +71,7 @@ export const recompute = (context: MergeContext, sources?: Array<MergeSource>, t
     }
 
     // Ensure the target is an array if source is an array and target is empty
+    // @ts-ignore
     if (!target[key] && isArray(sources[0][key])) {
       target[key] = []
     }

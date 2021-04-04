@@ -1,7 +1,9 @@
+import { MergeContext } from 'src/object-merge'
 import { createProxy } from '../../src/object-merge/proxy'
 
 describe('proxy', () => {
-  let context
+  let context: MergeContext<any>
+
   beforeEach(() => {
     context = {
       sources: [],
@@ -18,7 +20,7 @@ describe('proxy', () => {
       }
     }
 
-    const proxy = createProxy(context, target)
+    const proxy = createProxy(context, target, {})
 
     expect(proxy.str).toBe('test')
     expect(proxy.obj.str).toBe('test')
@@ -27,7 +29,7 @@ describe('proxy', () => {
   test('string (set, update, delete)', () => {
     const target = {}
 
-    const proxy = createProxy(context, target)
+    const proxy = createProxy(context, target, {})
 
     proxy.str = 'test'
 
@@ -45,7 +47,7 @@ describe('proxy', () => {
   test('array (set, update, delete)', () => {
     const target = {}
 
-    const proxy = createProxy(context, target)
+    const proxy = createProxy(context, target, {})
 
     proxy.arr = [0, 1]
 
@@ -68,7 +70,7 @@ describe('proxy', () => {
   test('proxy (set object)', () => {
     const target = {}
 
-    const proxy = createProxy(context, target)
+    const proxy = createProxy(context, target, {})
 
     proxy.obj = { str: 'test' }
 
@@ -79,7 +81,7 @@ describe('proxy', () => {
   test('proxy (remove)', () => {
     const target = {}
 
-    const proxy = createProxy(context, target)
+    const proxy = createProxy(context, target, {})
 
     proxy.obj = { str: 'test' }
 
@@ -93,7 +95,7 @@ describe('proxy', () => {
   test('proxy (remove child)', () => {
     const target = {}
 
-    const proxy = createProxy(context, target)
+    const proxy = createProxy(context, target, {})
 
     proxy.obj = { str: 'test' }
 

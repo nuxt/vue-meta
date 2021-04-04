@@ -4,7 +4,7 @@ export interface ResolveOptionPredicament<T, U> {
   (currentValue: T | undefined, context: U): T
 }
 
-export const resolveOption = <T, U = ResolveContext>(predicament: ResolveOptionPredicament<T, U>, initialValue?: T): ResolveMethod<U> => (options, contexts) => {
+export const resolveOption = <T, U = ResolveContext>(predicament: ResolveOptionPredicament<T, U>, initialValue?: T): ResolveMethod<any, U> => (options, contexts) => {
   let resolvedIndex = -1
 
   contexts.reduce((acc, context, index) => {

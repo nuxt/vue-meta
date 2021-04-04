@@ -1,10 +1,12 @@
+// @ts-nocheck
+import { MetaRenderContext } from 'src'
 import * as render from '../../src/render'
 
 // Note: testing isnt rly independent as they also rely on ./src/config/tags
 
 describe('render', () => {
   test('render key-string element (without value attribute)', () => {
-    const context = {}
+    const context: MetaRenderContext = { metainfo: {} }
     const key = 'TitleTest'
     const data = 'my title'
     const config = {
@@ -13,6 +15,10 @@ describe('render', () => {
 
     const res = render.renderMeta(context, key, data, config)
     // console.log('RES', res)
+    if (!res) {
+      expect(res).toBeTruthy()
+      return
+    }
 
     expect(res.to).toBeUndefined()
     expect(res.vnode).toMatchObject({ __v_isVNode: true })
@@ -24,7 +30,7 @@ describe('render', () => {
   })
 
   test('render key-string element (without name attribute)', () => {
-    const context = {}
+    const context: MetaRenderContext = { metainfo: {} }
     const key = 'CharsetTest'
     const data = 'utf8'
     const config = {
@@ -44,7 +50,7 @@ describe('render', () => {
   })
 
   test('render key-string element (with name attribute)', () => {
-    const context = {}
+    const context: MetaRenderContext = { metainfo: {} }
     const key = 'DescriptionTest'
     const data = 'my description'
     const config = {
@@ -62,7 +68,7 @@ describe('render', () => {
   })
 
   test('render key-object element', () => {
-    const context = {}
+    const context: MetaRenderContext = { metainfo: {} }
     const key = 'DescriptionTest2'
     const data = { content: 'my description 2' }
     const config = {
@@ -80,7 +86,7 @@ describe('render', () => {
   })
 
   test('render key-object element with json', () => {
-    const context = {}
+    const context: MetaRenderContext = { metainfo: {} }
     const key = 'JsonTest'
     const data = { json: ['content'] }
     const config = {
@@ -99,7 +105,7 @@ describe('render', () => {
   })
 
   test('render key-object element with raw content', () => {
-    const context = {}
+    const context: MetaRenderContext = { metainfo: {} }
     const key = 'RawTest'
     const data = { rawContent: '<p>One JS please!</p>' }
     const config = {
@@ -117,7 +123,7 @@ describe('render', () => {
   })
 
   test('render array<key-string> elements', () => {
-    const context = {}
+    const context: MetaRenderContext = { metainfo: {} }
     const key = 'kal-el'
     const data = [
       'man',
@@ -146,7 +152,7 @@ describe('render', () => {
   })
 
   test('render array<key-object> elements', () => {
-    const context = {}
+    const context: MetaRenderContext = { metainfo: {} }
     const key = 'kal-el'
     const data = [
       { super: 'man' },
@@ -173,7 +179,7 @@ describe('render', () => {
   })
 
   test('render custom group', () => {
-    const context = {}
+    const context: MetaRenderContext = { metainfo: {} }
     const key = 'customGroup'
     const data = {
       title: 'my custom title',
@@ -203,7 +209,7 @@ describe('render', () => {
   })
 
   test('render custom group (namespaced tag)', () => {
-    const context = {}
+    const context: MetaRenderContext = { metainfo: {} }
     const key = 'og'
     const data = {
       title: 'my og title',
@@ -249,7 +255,7 @@ describe('render', () => {
   })
 
   test('render custom group (namespaced attribute and name attribute)', () => {
-    const context = {}
+    const context: MetaRenderContext = { metainfo: {} }
     const key = 'og'
     const data = {
       title: 'my og title',
@@ -296,7 +302,7 @@ describe('render', () => {
 
   test('render custom group (array)', () => {
     const spy = jest.spyOn(console, 'warn').mockImplementation(_ => _)
-    const context = {}
+    const context: MetaRenderContext = { metainfo: {} }
     const key = 'og'
     const data = ['data']
 
@@ -319,7 +325,7 @@ describe('render', () => {
   })
 
   test('render custom group (tag namespaced)', () => {
-    const context = {}
+    const context: MetaRenderContext = { metainfo: {} }
     const key = 'esi'
     const data = {
       children: [{
@@ -483,7 +489,7 @@ describe('render', () => {
       removeAttribute
     }])
 
-    const context = {}
+    const context: MetaRenderContext = { metainfo: {} }
 
     const res = render.renderMeta(context, key, data, config)
     // console.log('RES', res)

@@ -1,9 +1,14 @@
-import { PROXY_TARGET } from './constants'
+import { IS_PROXY, PROXY_SOURCES, PROXY_TARGET, RESOLVE_CONTEXT } from './constants'
 import { createProxy } from './proxy'
 import { recompute } from './recompute'
 
-export type MergeSource = {
-  [key: string]: any
+export interface ResolveContext {}
+
+export type MergeSource<T extends Object> = { [K in keyof T]: T[K] } & {
+  [IS_PROXY]: boolean
+  [PROXY_SOURCES]: MergeSource<T>[]
+  [PROXY_TARGET]: MergeSource<T>
+  [RESOLVE_CONTEXT]: ResolveContext
 }
 
 // eslint-disable-next-line no-use-before-define
@@ -15,49 +20,45 @@ export type MergedObject = {
 
 export type PathSegments = Array<string>
 
-export type ResolveContext = {}
+export interface ResolveMethod<T = any, U = ResolveContext> {
+  (
+    options: Array<T>,
+    contexts: Array<U>,
+    active: MergedObjectValue,
+    key: string | number | symbol,
+    pathSegments: PathSegments,
+  ): MergedObjectValue
+}
 
-export type ResolveMethod<T = ResolveContext> = (
-  options: Array<any>,
-  contexts: Array<T>,
-  active: MergedObjectValue,
-  key: string | number | symbol,
-  pathSegments: PathSegments,
-) => MergedObjectValue
-
-export type MergeContext = {
+export type MergeContext<T> = {
   resolve: ResolveMethod
   active: MergedObject
-  sources: Array<MergeSource>
+  sources: MergeSource<T>[]
 }
 
-export type MergedObjectBuilder = {
-  context: MergeContext
+export type MergedObjectBuilder<T> = {
+  context: MergeContext<T>
   compute: () => void
-  addSource: (source: MergeSource, resolveContext: ResolveContext | undefined, recompute?: Boolean) => any
-  delSource: (sourceOrProxy: MergeSource, recompute?: boolean) => boolean
+  addSource: (source: T, resolveContext?: ResolveContext, recompute?: Boolean) => any
+  delSource: (sourceOrProxy: T | MergeSource<T>, recompute?: boolean) => boolean
 }
 
-export const createMergedObject = (resolve: ResolveMethod, active: MergedObject = {}): MergedObjectBuilder => {
-  const sources: Array<MergeSource> = []
+export const createMergedObject = <T extends Object>(resolve: ResolveMethod<T>, active: T): MergedObjectBuilder<T> => {
+  const sources: MergeSource<T>[] = []
 
-  if (!active) {
-    active = {}
-  }
-
-  const context: MergeContext = {
+  const context: MergeContext<T> = {
     active,
     resolve,
     sources
   }
 
-  const compute: () => void = () => recompute(context)
+  const compute: () => void = () => recompute<T>(context)
 
   return {
     context,
     compute,
     addSource: (source, resolveContext, recompute = false) => {
-      const proxy = createProxy(context, source, resolveContext || {})
+      const proxy = createProxy<T>(context, source, resolveContext || {})
 
       if (recompute) {
         compute()
@@ -66,7 +67,7 @@ export const createMergedObject = (resolve: ResolveMethod, active: MergedObject 
       return proxy
     },
     delSource: (sourceOrProxy, recompute = true) => {
-      const index = sources.findIndex(src => src === sourceOrProxy || src[PROXY_TARGET] === sourceOrProxy)
+      const index = sources.findIndex(source => source === sourceOrProxy || source[PROXY_TARGET] === sourceOrProxy)
 
       if (index > -1) {
         sources.splice(index, 1)

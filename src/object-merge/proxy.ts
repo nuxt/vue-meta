@@ -5,9 +5,9 @@ import { IS_PROXY, PROXY_SOURCES, PROXY_TARGET, RESOLVE_CONTEXT } from './consta
 import { recompute } from './recompute'
 import type { MergeContext, MergeSource, MergedObjectValue, PathSegments, ResolveContext } from '.'
 
-export const createProxy = (context: MergeContext, target: MergeSource, resolveContext: ResolveContext, pathSegments: PathSegments = []) => {
-  const handler = createHandler(context, resolveContext, pathSegments)
-  const proxy = markRaw(new Proxy(target, handler))
+export const createProxy = <T extends Record<string, any>>(context: MergeContext<T>, target: T, resolveContext: ResolveContext, pathSegments: PathSegments = []): MergeSource<T> => {
+  const handler = createHandler<T>(context, resolveContext, pathSegments)
+  const proxy = markRaw(new Proxy(target, handler)) as MergeSource<T>
 
   if (!pathSegments.length && context.sources) {
     context.sources.push(proxy)
@@ -16,7 +16,7 @@ export const createProxy = (context: MergeContext, target: MergeSource, resolveC
   return proxy
 }
 
-export const createHandler: (context: MergeContext, resolveContext: ResolveContext, pathSegments: PathSegments) => ProxyHandler<any> = (context, resolveContext, pathSegments = []) => ({
+export const createHandler = <T>(context: MergeContext<T>, resolveContext: ResolveContext, pathSegments: PathSegments = []): ProxyHandler<MergeSource<T>> => ({
   get: (target, key, receiver) => {
     if (key === IS_PROXY) {
       return true
@@ -40,11 +40,11 @@ export const createHandler: (context: MergeContext, resolveContext: ResolveConte
       return value
     }
 
-    if (!value[IS_PROXY]) {
+    if (!(value as MergeSource<T>)[IS_PROXY]) {
       const keyPath: PathSegments = [...pathSegments, (key as string)]
 
-      value = createProxy(context, value, resolveContext, keyPath)
-      target[key] = value
+      value = createProxy<typeof value>(context, value, resolveContext, keyPath)
+      Reflect.set(target, key, value)
     }
 
     return value
@@ -87,8 +87,8 @@ export const createHandler: (context: MergeContext, resolveContext: ResolveConte
         return success
       }
 
-      let keyContexts: Array<ResolveContext> = []
-      let keySources
+      let keyContexts: ResolveContext[] = []
+      let keySources: MergeSource<T>[]
 
       if (isArrayItem) {
         keySources = proxies
@@ -138,6 +138,7 @@ export const createHandler: (context: MergeContext, resolveContext: ResolveConte
 
       let index = 0
       for (const segment of pathSegments) {
+        // @ts-ignore
         proxies = proxies.map(proxy => proxy[segment])
 
         if (isArrayItem && index === pathSegments.length - 1) {
@@ -152,7 +153,7 @@ export const createHandler: (context: MergeContext, resolveContext: ResolveConte
       // Check if the key still exists in one of the sourceProxies,
       // if so resolve the new value, if not remove the key
       if (proxies.some(proxy => (key in proxy))) {
-        let keyContexts: Array<ResolveContext> = []
+        let keyContexts: ResolveContext[] = []
         let keySources
 
         if (isArrayItem) {

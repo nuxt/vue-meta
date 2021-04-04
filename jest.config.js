@@ -6,10 +6,6 @@ module.exports = {
 
   forceExit: false,
 
-  // https://github.com/facebook/jest/pull/6747 fix warning here
-  // But its performance overhead is pretty bad (30+%).
-  // detectOpenHandles: true
-
   setupFilesAfterEnv: ['./test/utils/setup'],
 
   coverageDirectory: './coverage',
@@ -31,8 +27,9 @@ module.exports = {
   ],
 
   transform: {
-    '^.+\\.[tj]s$': 'babel-jest',
-    '.*\\.(vue)$': 'vue-jest'
+    '^.+\\.jsx?$': 'babel-jest',
+    '^.+\\.tsx?$': 'ts-jest',
+    '^.+\\.vue$': 'vue-jest'
   },
 
   moduleFileExtensions: [
@@ -40,7 +37,7 @@ module.exports = {
     'js',
     'json'
   ],
-  
+
   globals: {
     __DEV__: true,
     __BROWSER__: true,
