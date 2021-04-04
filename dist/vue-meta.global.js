@@ -1,5 +1,5 @@
 /**
- * vue-meta v3.0.0-alpha.2
+ * vue-meta v3.0.0-alpha.3
  * (c) 2021
  * - Pim (@pimlie)
  * - All the amazing contributors
@@ -9,7 +9,7 @@
 var VueMeta = (function (exports, vue) {
   'use strict';
 
-  const resolveOption = predicament => (options, contexts) => {
+  const resolveOption = (predicament, initialValue) => (options, contexts) => {
       let resolvedIndex = -1;
       contexts.reduce((acc, context, index) => {
           const retval = predicament(acc, context);
@@ -18,7 +18,7 @@ var VueMeta = (function (exports, vue) {
               return retval;
           }
           return acc;
-      }, undefined);
+      }, initialValue);
       if (resolvedIndex > -1) {
           return options[resolvedIndex];
       }
@@ -37,14 +37,15 @@ var VueMeta = (function (exports, vue) {
       }
       context.depth = depth;
   }
-  const resolve = resolveOption((acc, context) => {
+  const resolve = resolveOption((currentValue, context) => {
       const { depth } = context;
-      if (!acc || depth > acc) {
-          return acc;
+      if (!currentValue || depth > currentValue) {
+          return depth;
       }
+      return currentValue;
   });
 
-  var deepest = /*#__PURE__*/Object.freeze({
+  var defaultResolver = /*#__PURE__*/Object.freeze({
     __proto__: null,
     setup: setup,
     resolve: resolve
@@ -158,10 +159,9 @@ var VueMeta = (function (exports, vue) {
    * \/\*#\_\_PURE\_\_\*\/
    * So that rollup can tree-shake them if necessary.
    */
-  (process.env.NODE_ENV !== 'production')
-      ? Object.freeze({})
-      : {};
-  (process.env.NODE_ENV !== 'production') ? Object.freeze([]) : [];
+  Object.freeze({})
+      ;
+  Object.freeze([]) ;
   const isArray = Array.isArray;
   const isFunction = (val) => typeof val === 'function';
   const isString = (val) => typeof val === 'string';
@@ -249,6 +249,7 @@ var VueMeta = (function (exports, vue) {
       }
       for (const key of keys) {
           // This assumes consistent types usages for keys across sources
+          // @ts-ignore
           if (isPlainObject(sources[0][key])) {
               if (!target[key]) {
                   target[key] = {};
@@ -256,6 +257,7 @@ var VueMeta = (function (exports, vue) {
               const keySources = [];
               for (const source of sources) {
                   if (key in source) {
+                      // @ts-ignore
                       keySources.push(source[key]);
                   }
               }
@@ -263,6 +265,7 @@ var VueMeta = (function (exports, vue) {
               continue;
           }
           // Ensure the target is an array if source is an array and target is empty
+          // @ts-ignore
           if (!target[key] && isArray(sources[0][key])) {
               target[key] = [];
           }
@@ -306,7 +309,7 @@ var VueMeta = (function (exports, vue) {
           if (!value[IS_PROXY]) {
               const keyPath = [...pathSegments, key];
               value = createProxy(context, value, resolveContext, keyPath);
-              target[key] = value;
+              Reflect.set(target, key, value);
           }
           return value;
       },
@@ -378,6 +381,7 @@ var VueMeta = (function (exports, vue) {
               let active = context.active;
               let index = 0;
               for (const segment of pathSegments) {
+                  // @ts-ignore
                   proxies = proxies.map(proxy => proxy[segment]);
                   if (isArrayItem && index === pathSegments.length - 1) {
                       activeSegmentKey = segment;
@@ -418,11 +422,8 @@ var VueMeta = (function (exports, vue) {
       }
   });
 
-  const createMergedObject = (resolve, active = {}) => {
+  const createMergedObject = (resolve, active) => {
       const sources = [];
-      if (!active) {
-          active = {};
-      }
       const context = {
           active,
           resolve,
@@ -440,7 +441,7 @@ var VueMeta = (function (exports, vue) {
               return proxy;
           },
           delSource: (sourceOrProxy, recompute = true) => {
-              const index = sources.findIndex(src => src === sourceOrProxy || src[PROXY_TARGET] === sourceOrProxy);
+              const index = sources.findIndex(source => source === sourceOrProxy || source[PROXY_TARGET] === sourceOrProxy);
               if (index > -1) {
                   sources.splice(index, 1);
                   if (recompute) {
@@ -746,7 +747,7 @@ var VueMeta = (function (exports, vue) {
       }
       teleports[to].push(...nodes);
   }
-  const createMetaManager = (config, resolver) => MetaManager.create(config, resolver);
+  const createMetaManager = (config, resolver) => MetaManager.create(config || defaultConfig, resolver || defaultResolver);
   class MetaManager {
       constructor(config, target, resolver) {
           this.ssrCleanedUp = false;
@@ -884,7 +885,7 @@ var VueMeta = (function (exports, vue) {
   };
 
   exports.createMetaManager = createMetaManager;
-  exports.deepestResolver = deepest;
+  exports.deepestResolver = defaultResolver;
   exports.defaultConfig = defaultConfig;
   exports.getCurrentManager = getCurrentManager;
   exports.resolveOption = resolveOption;

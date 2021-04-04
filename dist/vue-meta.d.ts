@@ -1,36 +1,49 @@
 import { App, ComponentInternalInstance, Slots, VNode } from 'vue';
 import { SSRContext } from '@vue/server-renderer';
 
-declare type MergeSource = {
-    [key: string]: any;
+declare const IS_PROXY: unique symbol;
+declare const PROXY_SOURCES: unique symbol;
+declare const PROXY_TARGET: unique symbol;
+declare const RESOLVE_CONTEXT: unique symbol;
+
+interface ResolveContext {
+}
+declare type MergeSource<T extends Object> = {
+    [K in keyof T]: T[K];
+} & {
+    [IS_PROXY]: boolean;
+    [PROXY_SOURCES]: MergeSource<T>[];
+    [PROXY_TARGET]: MergeSource<T>;
+    [RESOLVE_CONTEXT]: ResolveContext;
 };
 declare type MergedObjectValue = boolean | number | string | MergedObject | any;
 declare type MergedObject = {
     [key: string]: MergedObjectValue;
 };
 declare type PathSegments = Array<string>;
-declare type ResolveContext = {};
-declare type ResolveMethod = (options: Array<any>, contexts: Array<ResolveContext>, active: MergedObjectValue, key: string | number | symbol, pathSegments: PathSegments) => MergedObjectValue;
-declare type MergeContext = {
+interface ResolveMethod<T = any, U = ResolveContext> {
+    (options: Array<T>, contexts: Array<U>, active: MergedObjectValue, key: string | number | symbol, pathSegments: PathSegments): MergedObjectValue;
+}
+declare type MergeContext<T> = {
     resolve: ResolveMethod;
     active: MergedObject;
-    sources: Array<MergeSource>;
+    sources: MergeSource<T>[];
 };
-declare type MergedObjectBuilder = {
-    context: MergeContext;
+declare type MergedObjectBuilder<T> = {
+    context: MergeContext<T>;
     compute: () => void;
-    addSource: (source: MergeSource, resolveContext: ResolveContext | undefined, recompute?: Boolean) => any;
-    delSource: (sourceOrProxy: MergeSource, recompute?: boolean) => boolean;
+    addSource: (source: T, resolveContext?: ResolveContext, recompute?: Boolean) => any;
+    delSource: (sourceOrProxy: T | MergeSource<T>, recompute?: boolean) => boolean;
 };
 
 declare type createMetaManagerMethod = (config: MetaConfig, resolver: MetaResolver | ResolveMethod) => MetaManager;
-declare const createMetaManager: createMetaManagerMethod;
+declare const createMetaManager: (config?: MetaConfig | undefined, resolver?: MetaResolver | undefined) => MetaManager;
 declare class MetaManager {
     config: MetaConfig;
-    target: MergedObjectBuilder;
+    target: MergedObjectBuilder<MetaSource>;
     resolver?: MetaResolverSetup;
     ssrCleanedUp: boolean;
-    constructor(config: MetaConfig, target: MergedObjectBuilder, resolver: MetaResolver | ResolveMethod);
+    constructor(config: MetaConfig, target: MergedObjectBuilder<MetaSource>, resolver: MetaResolver | ResolveMethod);
     static create: createMetaManagerMethod;
     install(app: App): void;
     addMeta(metadata: MetaSource, vm?: ComponentInternalInstance): MetaProxy;
@@ -173,7 +186,7 @@ declare type MergeResolveContextDeepest = MetaResolveContext & {
     depth: number;
 };
 declare function setup(context: MergeResolveContextDeepest): void;
-declare const resolve: ResolveMethod;
+declare const resolve: ResolveMethod<any, MergeResolveContextDeepest>;
 
 declare const deepest_d_setup: typeof setup;
 declare const deepest_d_resolve: typeof resolve;
@@ -186,8 +199,10 @@ declare namespace deepest_d {
 
 declare const defaultConfig: MetaConfig;
 
-declare type ResolveOptionReducer = (accumulator: any, context: ResolveContext) => ResolveMethod;
-declare const resolveOption: (predicament: ResolveOptionReducer) => ResolveMethod;
+interface ResolveOptionPredicament<T, U> {
+    (currentValue: T | undefined, context: U): T;
+}
+declare const resolveOption: <T, U = ResolveContext>(predicament: ResolveOptionPredicament<T, U>, initialValue?: T | undefined) => ResolveMethod<any, U>;
 
 declare function renderToStringWithMeta(app: App): Promise<[string, SSRContext]>;
 

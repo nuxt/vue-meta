@@ -2,6 +2,23 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [3.0.0-alpha.3](https://github.com/nuxt/vue-meta/compare/v3.0.0-alpha.2...v3.0.0-alpha.3) (2021-04-04)
+
+
+### Features
+
+* add fully static / client-only example ([c6c3b47](https://github.com/nuxt/vue-meta/commit/c6c3b4758664b0b7ea2487ed785128416d0905b5))
+* make createMetaManager util args optional (use defaults) ([89d7f58](https://github.com/nuxt/vue-meta/commit/89d7f584910da78a6af6bc700dde61a8a1625658))
+
+
+### Bug Fixes
+
+* dont call clean before starting dev server ([683ea9c](https://github.com/nuxt/vue-meta/commit/683ea9c0765dea40b98093d6946cabc0369d79c2))
+* fix/improve resolver types ([fcb47a9](https://github.com/nuxt/vue-meta/commit/fcb47a9d5f106704f1e187154b5691939130f630))
+* only match vue-meta in jiti alias ([2b8c5e8](https://github.com/nuxt/vue-meta/commit/2b8c5e8866e54d9fd784a6f1bb3733d572aaa8af))
+* replace node-env in rollup config ([ed6ba9f](https://github.com/nuxt/vue-meta/commit/ed6ba9fa942869e9c10dbd1df251381451117e74))
+* use dynamic import for vue server-renderer ([8e2fed1](https://github.com/nuxt/vue-meta/commit/8e2fed1525f1c8594ab4bf4360ffb4af11ea8ddb))
+
 ## [3.0.0-alpha.2](https://github.com/nuxt/vue-meta/compare/v3.0.0-alpha.1...v3.0.0-alpha.2) (2021-02-28)
 
 

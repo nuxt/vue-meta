@@ -1,5 +1,5 @@
 /**
- * vue-meta v3.0.0-alpha.2
+ * vue-meta v3.0.0-alpha.3
  * (c) 2021
  * - Pim (@pimlie)
  * - All the amazing contributors
@@ -8,7 +8,7 @@
 
 import { markRaw, h, getCurrentInstance, isProxy, watch, inject, defineComponent, reactive, onUnmounted, Teleport } from 'vue';
 
-const resolveOption = predicament => (options, contexts) => {
+const resolveOption = (predicament, initialValue) => (options, contexts) => {
     let resolvedIndex = -1;
     contexts.reduce((acc, context, index) => {
         const retval = predicament(acc, context);
@@ -17,7 +17,7 @@ const resolveOption = predicament => (options, contexts) => {
             return retval;
         }
         return acc;
-    }, undefined);
+    }, initialValue);
     if (resolvedIndex > -1) {
         return options[resolvedIndex];
     }
@@ -36,14 +36,15 @@ function setup(context) {
     }
     context.depth = depth;
 }
-const resolve = resolveOption((acc, context) => {
+const resolve = resolveOption((currentValue, context) => {
     const { depth } = context;
-    if (!acc || depth > acc) {
-        return acc;
+    if (!currentValue || depth > currentValue) {
+        return depth;
     }
+    return currentValue;
 });
 
-var deepest = /*#__PURE__*/Object.freeze({
+var defaultResolver = /*#__PURE__*/Object.freeze({
   __proto__: null,
   setup: setup,
   resolve: resolve
@@ -157,10 +158,9 @@ function getTagConfigItem(tagOrName, key) {
  * \/\*#\_\_PURE\_\_\*\/
  * So that rollup can tree-shake them if necessary.
  */
-(process.env.NODE_ENV !== 'production')
-    ? Object.freeze({})
-    : {};
-(process.env.NODE_ENV !== 'production') ? Object.freeze([]) : [];
+Object.freeze({})
+    ;
+Object.freeze([]) ;
 const isArray = Array.isArray;
 const isFunction = (val) => typeof val === 'function';
 const isString = (val) => typeof val === 'string';
@@ -248,6 +248,7 @@ const recompute = (context, sources, target, path = []) => {
     }
     for (const key of keys) {
         // This assumes consistent types usages for keys across sources
+        // @ts-ignore
         if (isPlainObject(sources[0][key])) {
             if (!target[key]) {
                 target[key] = {};
@@ -255,6 +256,7 @@ const recompute = (context, sources, target, path = []) => {
             const keySources = [];
             for (const source of sources) {
                 if (key in source) {
+                    // @ts-ignore
                     keySources.push(source[key]);
                 }
             }
@@ -262,6 +264,7 @@ const recompute = (context, sources, target, path = []) => {
             continue;
         }
         // Ensure the target is an array if source is an array and target is empty
+        // @ts-ignore
         if (!target[key] && isArray(sources[0][key])) {
             target[key] = [];
         }
@@ -305,7 +308,7 @@ const createHandler = (context, resolveContext, pathSegments = []) => ({
         if (!value[IS_PROXY]) {
             const keyPath = [...pathSegments, key];
             value = createProxy(context, value, resolveContext, keyPath);
-            target[key] = value;
+            Reflect.set(target, key, value);
         }
         return value;
     },
@@ -377,6 +380,7 @@ const createHandler = (context, resolveContext, pathSegments = []) => ({
             let active = context.active;
             let index = 0;
             for (const segment of pathSegments) {
+                // @ts-ignore
                 proxies = proxies.map(proxy => proxy[segment]);
                 if (isArrayItem && index === pathSegments.length - 1) {
                     activeSegmentKey = segment;
@@ -417,11 +421,8 @@ const createHandler = (context, resolveContext, pathSegments = []) => ({
     }
 });
 
-const createMergedObject = (resolve, active = {}) => {
+const createMergedObject = (resolve, active) => {
     const sources = [];
-    if (!active) {
-        active = {};
-    }
     const context = {
         active,
         resolve,
@@ -439,7 +440,7 @@ const createMergedObject = (resolve, active = {}) => {
             return proxy;
         },
         delSource: (sourceOrProxy, recompute = true) => {
-            const index = sources.findIndex(src => src === sourceOrProxy || src[PROXY_TARGET] === sourceOrProxy);
+            const index = sources.findIndex(source => source === sourceOrProxy || source[PROXY_TARGET] === sourceOrProxy);
             if (index > -1) {
                 sources.splice(index, 1);
                 if (recompute) {
@@ -465,7 +466,7 @@ function renderMeta(context, key, data, config) {
 function renderGroup(context, key, data, config) {
     // console.info('renderGroup', key, data, config)
     if (isArray(data)) {
-        if ((process.env.NODE_ENV !== 'production')) {
+        if (("development" !== 'production')) {
             // eslint-disable-next-line no-console
             console.warn('Specifying an array for group properties isnt supported');
         }
@@ -631,9 +632,9 @@ const hasSymbol = typeof Symbol === 'function' && typeof Symbol.toStringTag === 
 const PolySymbol = (name) => 
 // vm = vue meta
 hasSymbol
-    ? Symbol((process.env.NODE_ENV !== 'production') ? '[vue-meta]: ' + name : name)
-    : ((process.env.NODE_ENV !== 'production') ? '[vue-meta]: ' : '_vm_') + name;
-const metaActiveKey = /*#__PURE__*/ PolySymbol((process.env.NODE_ENV !== 'production') ? 'meta_active' : 'ma');
+    ? Symbol(("development" !== 'production') ? '[vue-meta]: ' + name : name)
+    : (("development" !== 'production') ? '[vue-meta]: ' : '_vm_') + name;
+const metaActiveKey = /*#__PURE__*/ PolySymbol(("development" !== 'production') ? 'meta_active' : 'ma');
 
 /**
  * Apply the differences between newSource & oldSource to target
@@ -723,7 +724,7 @@ function addVnode(teleports, to, vnodes) {
     }
     teleports[to].push(...nodes);
 }
-const createMetaManager = (config, resolver) => MetaManager.create(config, resolver);
+const createMetaManager = (config, resolver) => MetaManager.create(config || defaultConfig, resolver || defaultResolver);
 class MetaManager {
     constructor(config, target, resolver) {
         this.ssrCleanedUp = false;
@@ -846,9 +847,8 @@ MetaManager.create = (config, resolver) => {
     return manager;
 };
 
-// rollup doesnt like an import as it cant find the export so use require
-const { renderToString } = require('@vue/server-renderer');
 async function renderToStringWithMeta(app) {
+    const { renderToString } = await import('@vue/server-renderer');
     const ctx = {};
     const html = await renderToString(app, ctx);
     // TODO: better way of determining whether meta was rendered with the component or not
@@ -867,4 +867,4 @@ async function renderToStringWithMeta(app) {
     return [html, ctx];
 }
 
-export { createMetaManager, deepest as deepestResolver, defaultConfig, getCurrentManager, renderToStringWithMeta, resolveOption, useActiveMeta, useMeta };
+export { createMetaManager, defaultResolver as deepestResolver, defaultConfig, getCurrentManager, renderToStringWithMeta, resolveOption, useActiveMeta, useMeta };
