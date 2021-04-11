@@ -3,6 +3,7 @@
   "version": "3.0.0-alpha.3",
   "description": "Manage HTML metadata in Vue.js components with SSR support",
   "main": "dist/vue-meta.cjs.js",
+  "browser": "dist/vue-meta.esm-browser.min.js",
   "unpkg": "dist/vue-meta.global.js",
   "jsdelivr": "dist/vue-meta.global.js",
   "module": "dist/vue-meta.esm-bundler.js",
@@ -13,6 +14,7 @@
     "dist/vue-meta.d.ts",
     "README.md"
   ],
+  "types": "dist/vue-meta.d.ts",
   "homepage": "https://github.com/nuxt/vue-meta",
   "bugs": "https://github.com/nuxt/vue-meta/issues",
   "repository": {
@@ -49,7 +51,6 @@
     "test:types": "tsc --build tsconfig.json"
   },
   "peerDependencies": {
-    "@vue/server-renderer": "^3.0.6",
     "vue": "^3.0.0"
   },
   "devDependencies": {
