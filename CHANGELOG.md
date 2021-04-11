@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [3.0.0-alpha.4](https://github.com/nuxt/vue-meta/compare/v3.0.0-alpha.3...v3.0.0-alpha.4) (2021-04-11)
+
+
+### Bug Fixes
+
+* add browser & types entry ([2257686](https://github.com/nuxt/vue-meta/commit/225768611a7a66e179e86190202162c327bea451))
+
 ## [3.0.0-alpha.3](https://github.com/nuxt/vue-meta/compare/v3.0.0-alpha.2...v3.0.0-alpha.3) (2021-04-04)
 
 
