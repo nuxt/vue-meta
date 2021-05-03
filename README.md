@@ -144,7 +144,7 @@ unmount() // Remove metadata when needed
 
 ```js
 import { createSSRApp } from 'vue'
-import { renderToStringWithMeta } from 'vue-meta'
+import { renderToStringWithMeta } from 'vue-meta/ssr'
 import { App, metaManager } from './App'
 
 export function renderPage() {

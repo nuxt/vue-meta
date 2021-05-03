@@ -1,9 +1,8 @@
+import { renderToString } from '@vue/server-renderer'
 import type { App } from 'vue'
 import type { SSRContext } from '@vue/server-renderer'
 
 export async function renderToStringWithMeta (app: App): Promise<[string, SSRContext]> {
-  const { renderToString } = await import('@vue/server-renderer')
-
   const ctx: SSRContext = {}
 
   const html = await renderToString(app, ctx)

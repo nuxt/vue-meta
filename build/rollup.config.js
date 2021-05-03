@@ -32,6 +32,7 @@ function rollupConfig({
   const isProductionBuild = config.output.file.includes('.prod.')
 
   const replaceConfig = {
+    preventAssignment: true,
     exclude: 'node_modules',
     delimiters: ['', ''],
     values: {
@@ -154,12 +155,23 @@ export default [
       file: pkg.module.replace('-bundler.js', '-browser.min.js'),
       format: 'es'
     },
+  },
+  // SSR build
+  {
+    input: 'src/ssr.ts',
+    output: {
+      file: 'ssr/index.js',
+      format: 'es'
+    },
+  },
+ 
+].map(rollupConfig).concat([
+  {
+    input: path.resolve(__dirname, '../dist/src/index.d.ts'),
+    output: [{
+      file: `dist/${pkg.name}.d.ts`,
+      format: 'es',
+    }],
+    plugins: [dts()],
   }
-].map(rollupConfig).concat([{
-  input: path.resolve(__dirname, '../dist/src/index.d.ts'),
-  output: [{
-    file: `dist/${pkg.name}.d.ts`,
-    format: 'es',
-  }],
-  plugins: [dts()],
-}])
+])
