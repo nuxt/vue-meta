@@ -1,4 +1,4 @@
-import { defineComponent, reactive, computed, toRefs, onUnmounted } from 'vue'
+import { defineComponent, ref, reactive, computed, toRefs, onUnmounted } from 'vue'
 import { useRoute } from 'vue-router'
 import { useMeta } from 'vue-meta'
 
@@ -14,12 +14,14 @@ export default defineComponent({
       metaUpdated
     })
 
+    const ogTitle = ref('Og Child Title')
+
     const metaConfig = computed(() => ({
       charset: 'utf16',
       title: route.name[0].toUpperCase() + route.name.slice(1),
       description: 'Description ' + route.name,
       og: {
-        title: 'Og Title ' + route.name
+        title: ogTitle.value + ' ' + route.name
       }
     }))
 
@@ -28,6 +30,9 @@ export default defineComponent({
     const pageName = computed(() => route.name)
 
     onUnmounted(() => (metaUpdated = 'yes'))
+
+    setTimeout(() => (ogTitle.value = 'Updated Child Og Title'), 1000)
+    setTimeout(() => (delete metaConfig.value.og), 3000)
 
     onRemoved(() => {
       console.log('Meta was removed', pageName.value)

@@ -29,7 +29,6 @@ export function useMeta (source: MetaSource, manager?: MetaManager): MetaProxy {
 
   if (isProxy(source)) {
     watch(source, (newSource, oldSource) => {
-      // We only care about first level props, second+ level will already be changed by the merge proxy
       applyDifference(metaProxy.meta, newSource, oldSource)
     })
 

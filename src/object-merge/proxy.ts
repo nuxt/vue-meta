@@ -51,7 +51,7 @@ export const createHandler = <T>(context: MergeContext<T>, resolveContext: Resol
   },
   set: (target, key, value) => {
     const success = Reflect.set(target, key, value)
-    // console.warn(success, 'PROXY SET\nkey:', key, '\npath:', pathSegments, '\ntarget:', isArray(target), target, '\ncontext:\n', context)
+    // console.warn(success, 'PROXY SET\nkey:', key, '\nvalue:', value, '\npath:', pathSegments, '\ntarget:', isArray(target), target, '\ncontext:\n', context)
 
     if (success) {
       const isArrayItem = isArray(target)
