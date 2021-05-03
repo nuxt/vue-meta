@@ -1,5 +1,5 @@
 /**
- * vue-meta v3.0.0-alpha.4
+ * vue-meta v3.0.0-alpha.5
  * (c) 2021
  * - Pim (@pimlie)
  * - All the amazing contributors
@@ -11,18 +11,6 @@
 Object.defineProperty(exports, '__esModule', { value: true });
 
 var vue = require('vue');
-
-function _interopNamespace(e) {
-  if (e && e.__esModule) return e;
-  var n = Object.create(null);
-  if (e) {
-    Object.keys(e).forEach(function (k) {
-      n[k] = e[k];
-    });
-  }
-  n['default'] = e;
-  return Object.freeze(n);
-}
 
 const resolveOption = (predicament, initialValue) => (options, contexts) => {
     let resolvedIndex = -1;
@@ -330,7 +318,7 @@ const createHandler = (context, resolveContext, pathSegments = []) => ({
     },
     set: (target, key, value) => {
         const success = Reflect.set(target, key, value);
-        // console.warn(success, 'PROXY SET\nkey:', key, '\npath:', pathSegments, '\ntarget:', isArray(target), target, '\ncontext:\n', context)
+        // console.warn(success, 'PROXY SET\nkey:', key, '\nvalue:', value, '\npath:', pathSegments, '\ntarget:', isArray(target), target, '\ncontext:\n', context)
         if (success) {
             const isArrayItem = isArray(target);
             let hasArrayParent = false;
@@ -661,9 +649,8 @@ function applyDifference(target, newSource, oldSource) {
             target[key] = newSource[key];
             continue;
         }
-        // We dont care about nested objects here , these changes
-        // should already have been tracked by the MergeProxy
         if (isObject(target[key])) {
+            applyDifference(target[key], newSource[key], oldSource[key]);
             continue;
         }
         if (newSource[key] !== oldSource[key]) {
@@ -696,7 +683,6 @@ function useMeta(source, manager) {
     }
     if (vue.isProxy(source)) {
         vue.watch(source, (newSource, oldSource) => {
-            // We only care about first level props, second+ level will already be changed by the merge proxy
             applyDifference(metaProxy.meta, newSource, oldSource);
         });
         source = source.value;
@@ -863,31 +849,10 @@ MetaManager.create = (config, resolver) => {
     return manager;
 };
 
-async function renderToStringWithMeta(app) {
-    const { renderToString } = await Promise.resolve().then(function () { return /*#__PURE__*/_interopNamespace(require('@vue/server-renderer')); });
-    const ctx = {};
-    const html = await renderToString(app, ctx);
-    // TODO: better way of determining whether meta was rendered with the component or not
-    if (!ctx.teleports || !ctx.teleports.head) {
-        const teleports = app.config.globalProperties.$metaManager.render();
-        await Promise.all(teleports.map((teleport) => renderToString(teleport, ctx)));
-    }
-    const { teleports } = ctx;
-    for (const target in teleports) {
-        if (target.endsWith('Attrs')) {
-            const str = teleports[target];
-            // match from first space to first >, these should be all rendered attributes
-            teleports[target] = str.slice(str.indexOf(' ') + 1, str.indexOf('>'));
-        }
-    }
-    return [html, ctx];
-}
-
 exports.createMetaManager = createMetaManager;
 exports.deepestResolver = defaultResolver;
 exports.defaultConfig = defaultConfig;
 exports.getCurrentManager = getCurrentManager;
-exports.renderToStringWithMeta = renderToStringWithMeta;
 exports.resolveOption = resolveOption;
 exports.useActiveMeta = useActiveMeta;
 exports.useMeta = useMeta;

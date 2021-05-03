@@ -1,5 +1,4 @@
 import { App, ComponentInternalInstance, Slots, VNode } from 'vue';
-import { SSRContext } from '@vue/server-renderer';
 
 declare const IS_PROXY: unique symbol;
 declare const PROXY_SOURCES: unique symbol;
@@ -204,10 +203,8 @@ interface ResolveOptionPredicament<T, U> {
 }
 declare const resolveOption: <T, U = ResolveContext>(predicament: ResolveOptionPredicament<T, U>, initialValue?: T | undefined) => ResolveMethod<any, U>;
 
-declare function renderToStringWithMeta(app: App): Promise<[string, SSRContext]>;
-
 declare function getCurrentManager(vm?: ComponentInternalInstance): MetaManager | undefined;
 declare function useMeta(source: MetaSource, manager?: MetaManager): MetaProxy;
 declare function useActiveMeta(): MetaActive;
 
-export { MetaActive, MetaConfig, MetaConfigSection, MetaConfigSectionAttribute, MetaConfigSectionGroup, MetaConfigSectionKey, MetaConfigSectionTag, MetaGroupConfig, MetaGuardRemoved, MetaGuards, MetaProxy, MetaRenderContext, MetaRendered, MetaRenderedNode, MetaResolveContext, MetaResolveSetup, MetaResolver, MetaResolverSetup, MetaSource, MetaSourceProxy, MetaTagConfig, MetaTagConfigKey, MetaTagName, MetaTagsConfig, MetaTeleports, Modify, SlotScopeProperties, TODO, createMetaManager, deepest_d as deepestResolver, defaultConfig, getCurrentManager, renderToStringWithMeta, resolveOption, useActiveMeta, useMeta };
+export { MetaActive, MetaConfig, MetaConfigSection, MetaConfigSectionAttribute, MetaConfigSectionGroup, MetaConfigSectionKey, MetaConfigSectionTag, MetaGroupConfig, MetaGuardRemoved, MetaGuards, MetaProxy, MetaRenderContext, MetaRendered, MetaRenderedNode, MetaResolveContext, MetaResolveSetup, MetaResolver, MetaResolverSetup, MetaSource, MetaSourceProxy, MetaTagConfig, MetaTagConfigKey, MetaTagName, MetaTagsConfig, MetaTeleports, Modify, SlotScopeProperties, TODO, createMetaManager, deepest_d as deepestResolver, defaultConfig, getCurrentManager, resolveOption, useActiveMeta, useMeta };

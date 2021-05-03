@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [3.0.0-alpha.5](https://github.com/nuxt/vue-meta/compare/v3.0.0-alpha.4...v3.0.0-alpha.5) (2021-05-03)
+
+
+### Bug Fixes
+
+* apply diff on nested computed objects ([29b294c](https://github.com/nuxt/vue-meta/commit/29b294c2be1bdbb57d6341871df72848c9d0b034))
+* dont include ssr support in main dist ([5699bf4](https://github.com/nuxt/vue-meta/commit/5699bf4ff202a731830621583183dd8ae97a2c7c))
+
 ## [3.0.0-alpha.4](https://github.com/nuxt/vue-meta/compare/v3.0.0-alpha.3...v3.0.0-alpha.4) (2021-04-11)
 
 

@@ -1,5 +1,5 @@
 /**
- * vue-meta v3.0.0-alpha.4
+ * vue-meta v3.0.0-alpha.5
  * (c) 2021
  * - Pim (@pimlie)
  * - All the amazing contributors
@@ -314,7 +314,7 @@ const createHandler = (context, resolveContext, pathSegments = []) => ({
     },
     set: (target, key, value) => {
         const success = Reflect.set(target, key, value);
-        // console.warn(success, 'PROXY SET\nkey:', key, '\npath:', pathSegments, '\ntarget:', isArray(target), target, '\ncontext:\n', context)
+        // console.warn(success, 'PROXY SET\nkey:', key, '\nvalue:', value, '\npath:', pathSegments, '\ntarget:', isArray(target), target, '\ncontext:\n', context)
         if (success) {
             const isArrayItem = isArray(target);
             let hasArrayParent = false;
@@ -666,9 +666,8 @@ function applyDifference(target, newSource, oldSource) {
             target[key] = newSource[key];
             continue;
         }
-        // We dont care about nested objects here , these changes
-        // should already have been tracked by the MergeProxy
         if (isObject(target[key])) {
+            applyDifference(target[key], newSource[key], oldSource[key]);
             continue;
         }
         if (newSource[key] !== oldSource[key]) {
@@ -701,7 +700,6 @@ function useMeta(source, manager) {
     }
     if (isProxy(source)) {
         watch(source, (newSource, oldSource) => {
-            // We only care about first level props, second+ level will already be changed by the merge proxy
             applyDifference(metaProxy.meta, newSource, oldSource);
         });
         source = source.value;
