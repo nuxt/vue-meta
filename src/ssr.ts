@@ -2,9 +2,7 @@ import { renderToString } from '@vue/server-renderer'
 import type { App } from 'vue'
 import type { SSRContext } from '@vue/server-renderer'
 
-export async function renderToStringWithMeta (app: App): Promise<[string, SSRContext]> {
-  const ctx: SSRContext = {}
-
+export async function renderToStringWithMeta (app: App, ctx: SSRContext = {}): Promise<[string, SSRContext]> {
   const html = await renderToString(app, ctx)
 
   // TODO: better way of determining whether meta was rendered with the component or not
