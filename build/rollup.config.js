@@ -9,9 +9,10 @@ import ts from 'rollup-plugin-typescript2'
 import dts from 'rollup-plugin-dts'
 import defaultsDeep from 'lodash/defaultsDeep'
 
+const r = p => path.resolve(__dirname, p)
 const pkg = require('../package.json')
 
-const banner =  `/**
+const banner = `/**
  * ${pkg.name} v${pkg.version}
  * (c) ${new Date().getFullYear()}
  * - Pim (@pimlie)
@@ -22,14 +23,15 @@ const banner =  `/**
 
 let didTS = false
 
-function rollupConfig({
+function rollupConfig ({
   plugins = [],
   external = [],
   ...config
-  }) {
-
-  const isBrowserBuild = !config.output || !config.output.format || config.output.format === 'iife' || config.output.file.includes('-browser.')
-  const isProductionBuild = config.output.file.includes('.prod.')
+}) {
+  const { file, format } = config?.output
+  const isProductionBuild = file.includes('.prod.')
+  const isESMBundlerBuild = file.includes('.esm-bundler.')
+  const isBrowserBuild = format === 'iife' || file.includes('-browser.')
 
   const replaceConfig = {
     preventAssignment: true,
@@ -37,8 +39,8 @@ function rollupConfig({
     delimiters: ['', ''],
     values: {
       'process.env.NODE_ENV': JSON.stringify(isProductionBuild ? 'production' : 'development'),
-      '__DEV__': config.output.format === 'es' && !isBrowserBuild ? "(process.env.NODE_ENV !== 'production')" : !isProductionBuild,
-      '__BROWSER__': isBrowserBuild,
+      __DEV__: config.output.format === 'es' && !isBrowserBuild ? "(process.env.NODE_ENV !== 'production')" : !isProductionBuild,
+      __BROWSER__: isESMBundlerBuild || isBrowserBuild
     }
   }
 
@@ -53,7 +55,6 @@ function rollupConfig({
     input: 'src/index.ts',
     output: {
       name: 'VueMeta',
-      format: 'iife',
       sourcemap: false,
       banner,
       externalLiveBindings: false,
@@ -68,25 +69,25 @@ function rollupConfig({
       commonjs(),
       ts({
         check: !didTS,
-        tsconfig: path.resolve(__dirname, '../tsconfig.json'),
-        cacheRoot: path.resolve(__dirname, '../node_modules/.rts2_cache'),
+        tsconfig: r('../tsconfig.json'),
+        cacheRoot: r('../node_modules/.rts2_cache'),
         tsconfigOverride: {
           compilerOptions: {
             sourceMap: true,
             declaration: !didTS,
-            declarationMap: !didTS,
+            declarationMap: !didTS
           },
-          exclude: ['node_modules', '__tests__', 'test-dts'],
-        },
-      }),
-    ].concat(plugins),
+          exclude: ['node_modules', '__tests__', 'test-dts']
+        }
+      })
+    ].concat(plugins)
   })
 
   if (isBrowserBuild) {
     // remove the ssr renderToString helper for browser builds
     thisConfig.plugins.unshift(alias({
       entries: [
-        { find: '.\/ssr', replacement: path.resolve(__dirname, './stub.js') },
+        { find: '.\/ssr', replacement: r('./stub.js') }
       ]
     }))
   }
@@ -96,8 +97,8 @@ function rollupConfig({
       module: config.output.format === 'es',
       compress: {
         ecma: 2015,
-        pure_getters: true,
-      },
+        pure_getters: true
+      }
     }
 
     thisConfig.plugins.push(terser(terserOpts))
@@ -113,48 +114,50 @@ export default [
   {
     output: {
       file: pkg.unpkg,
-    },
+      format: 'iife'
+    }
   },
   // minimized umd web build
   {
     output: {
       file: pkg.unpkg.replace('.js', '.min.js'),
-    },
+      format: 'iife'
+    }
   },
   // common js build
   {
     output: {
       file: pkg.main,
       format: 'cjs'
-    },
+    }
   },
   // common js build
   {
     output: {
       file: pkg.main.replace('.js', '.prod.js'),
       format: 'cjs'
-    },
+    }
   },
   // esm build
   {
     output: {
       file: pkg.module,
       format: 'es'
-    },
+    }
   },
   // browser esm build
   {
     output: {
       file: pkg.module.replace('-bundler.js', '-browser.js'),
       format: 'es'
-    },
+    }
   },
   // minimized browser esm build
   {
     output: {
       file: pkg.module.replace('-bundler.js', '-browser.min.js'),
       format: 'es'
-    },
+    }
   },
   // SSR build
   {
@@ -162,16 +165,27 @@ export default [
     output: {
       file: 'ssr/index.js',
       format: 'es'
-    },
-  },
- 
+    }
+  }
+
 ].map(rollupConfig).concat([
   {
-    input: path.resolve(__dirname, '../dist/src/index.d.ts'),
+    input: r('../dist/src/index.d.ts'),
     output: [{
       file: `dist/${pkg.name}.d.ts`,
       format: 'es',
+      banner: `${banner}
+/// <reference path="ssr.d.ts" />
+      `
     }],
-    plugins: [dts()],
+    plugins: [dts()]
+  },
+  {
+    input: r('../dist/src/ssr.d.ts'),
+    output: [{
+      file: `dist/${pkg.name}-ssr.d.ts`,
+      format: 'es'
+    }],
+    plugins: [dts()]
   }
 ])
