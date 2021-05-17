@@ -1,13 +1,13 @@
 import { h, reactive, onUnmounted, App, Teleport, Comment, getCurrentInstance, ComponentInternalInstance, Slots } from 'vue'
-import type { VNode, ComponentPublicInstance } from 'vue'
 import { isArray, isFunction } from '@vue/shared'
 import { createMergedObject, MergedObjectBuilder } from './object-merge'
 import { renderMeta } from './render'
 import { metaActiveKey } from './symbols'
 import { Metainfo } from './Metainfo'
-import type { ResolveMethod } from './object-merge'
 import { defaultConfig } from './config/default'
 import * as defaultResolver from './resolvers/deepest'
+import type { VNode, ComponentPublicInstance } from 'vue'
+import type { ResolveMethod } from './object-merge'
 
 import type {
   MetaActive,
@@ -18,7 +18,6 @@ import type {
   MetaResolveContext,
   MetaTeleports,
   MetaSource,
-  MetaResolverSetup,
   MetaProxy
 } from './types'
 
@@ -26,10 +25,10 @@ export const ssrAttribute = 'data-vm-ssr'
 
 export const active: MetaActive = reactive({})
 
-export function addVnode (teleports: MetaTeleports, to: string, vnodes: VNode | Array<VNode>): void {
+export function addVnode (isSSR: boolean, teleports: MetaTeleports, to: string, vnodes: VNode | Array<VNode>): void {
   const nodes = (isArray(vnodes) ? vnodes : [vnodes]) as Array<VNode>
 
-  if (__BROWSER__) {
+  if (!isSSR) {
     // Comments shouldnt have any use on the client as they are not reactive anyway
     nodes.forEach((vnode, idx) => {
       if (vnode.type === Comment) {
@@ -54,27 +53,29 @@ export function addVnode (teleports: MetaTeleports, to: string, vnodes: VNode | 
 }
 
 // eslint-disable-next-line no-use-before-define
-export type createMetaManagerMethod = (config: MetaConfig, resolver: MetaResolver | ResolveMethod) => MetaManager
+export type CreateMetaManagerMethod = (isSSR: boolean, config: MetaConfig, resolver: MetaResolver | ResolveMethod) => MetaManager
 
-export const createMetaManager = (config?: MetaConfig, resolver?: MetaResolver): MetaManager => MetaManager.create(config || defaultConfig, resolver || (defaultResolver as MetaResolver))
+export const createMetaManager = (isSSR = false, config?: MetaConfig, resolver?: MetaResolver): MetaManager => MetaManager.create(isSSR, config || defaultConfig, resolver || (defaultResolver as MetaResolver))
 
 export class MetaManager {
+  isSSR = false
   config: MetaConfig
   target: MergedObjectBuilder<MetaSource>
-  resolver?: MetaResolverSetup
+  resolver?: MetaResolver
 
   ssrCleanedUp: boolean = false
 
-  constructor (config: MetaConfig, target: MergedObjectBuilder<MetaSource>, resolver: MetaResolver | ResolveMethod) {
+  constructor (isSSR: boolean, config: MetaConfig, target: MergedObjectBuilder<MetaSource>, resolver: MetaResolver | ResolveMethod) {
+    this.isSSR = isSSR
     this.config = config
     this.target = target
 
     if (resolver && 'setup' in resolver && isFunction(resolver.setup)) {
-      this.resolver = resolver as unknown as MetaResolverSetup
+      this.resolver = resolver
     }
   }
 
-  static create: createMetaManagerMethod = (config, resolver) => {
+  static create: CreateMetaManagerMethod = (isSSR, config, resolver) => {
     const resolve: ResolveMethod = (options, contexts, active, key, pathSegments) => {
       if (isFunction(resolver)) {
         return resolver(options, contexts, active, key, pathSegments)
@@ -86,7 +87,7 @@ export class MetaManager {
     const mergedObject = createMergedObject<MetaSource>(resolve, active)
 
     // TODO: validate resolver
-    const manager = new MetaManager(config, mergedObject, resolver)
+    const manager = new MetaManager(isSSR, config, mergedObject, resolver)
     return manager
   }
 
@@ -107,8 +108,9 @@ export class MetaManager {
     })
 
     const resolveContext: MetaResolveContext = { vm }
-    if (this.resolver) {
-      this.resolver.setup(resolveContext)
+    const { resolver } = this
+    if (resolver && resolver.setup) {
+      resolver.setup(resolveContext)
     }
 
     // TODO: optimize initial compute (once)
@@ -169,9 +171,10 @@ export class MetaManager {
 
   render ({ slots }: { slots?: Slots } = {}): VNode[] {
     // TODO: clean this method
+    const { isSSR } = this
 
     // cleanup ssr tags if not yet done
-    if (__BROWSER__ && !this.ssrCleanedUp) {
+    if (!isSSR && !this.ssrCleanedUp) {
       this.ssrCleanedUp = true
 
       // Listen for DOM loaded because tags in the body couldnt
@@ -181,9 +184,9 @@ export class MetaManager {
         const ssrTags = document.querySelectorAll(`[${ssrAttribute}]`)
 
         if (ssrTags && ssrTags.length) {
-          Array.from(ssrTags).forEach(el => el.parentNode && el.parentNode.removeChild(el))
+          ssrTags.forEach(el => el.parentNode && el.parentNode.removeChild(el))
         }
-      })
+      }, { once: true })
     }
 
     const teleports: MetaTeleports = {}
@@ -192,7 +195,7 @@ export class MetaManager {
       const config = this.config[key] || {}
 
       let renderedNodes = renderMeta(
-        { metainfo: active, slots },
+        { isSSR, metainfo: active, slots },
         key,
         active[key],
         config
@@ -217,7 +220,7 @@ export class MetaManager {
       }
 
       for (const { to, vnode } of renderedNodes) {
-        addVnode(teleports, to || defaultTo || 'head', vnode)
+        addVnode(this.isSSR, teleports, to || defaultTo || 'head', vnode)
       }
     }
 
@@ -232,13 +235,14 @@ export class MetaManager {
 
         const slot = slots[slotName]
         if (isFunction(slot)) {
-          addVnode(teleports, tagName, slot({ metainfo: active }))
+          addVnode(this.isSSR, teleports, tagName, slot({ metainfo: active }))
         }
       }
     }
 
     return Object.keys(teleports).map((to) => {
-      return h(Teleport, { to }, teleports[to])
+      const teleport = teleports[to]
+      return h(Teleport, { to }, teleport)
     })
   }
 }

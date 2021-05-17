@@ -1,13 +1,12 @@
-import { renderToString } from '@vue/server-renderer'
 import type { App } from 'vue'
 import type { SSRContext } from '@vue/server-renderer'
 
-export async function renderToStringWithMeta (app: App, ctx: SSRContext = {}): Promise<[string, SSRContext]> {
-  const html = await renderToString(app, ctx)
-
+export async function renderMetaToString (app: App, ctx: SSRContext = {}): Promise<SSRContext> {
   // TODO: better way of determining whether meta was rendered with the component or not
   if (!ctx.teleports || !ctx.teleports.head) {
-    const teleports = app.config.globalProperties.$metaManager.render()
+    const { renderToString } = await import('@vue/server-renderer')
+
+    const teleports = app.config.globalProperties.$metaManager?.render()
     await Promise.all(teleports.map((teleport: any) => renderToString(teleport, ctx)))
   }
 
@@ -21,5 +20,5 @@ export async function renderToStringWithMeta (app: App, ctx: SSRContext = {}): P
     }
   }
 
-  return [html, ctx]
+  return ctx
 }

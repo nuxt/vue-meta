@@ -197,7 +197,7 @@ export function renderTag (
   // console.info('FINAL TAG', finalTag)
   // console.log('      ATTRIBUTES', attributes)
   // console.log('      CONTENT', content)
-  // // console.log(data, attributes, config)
+  // console.log(data, attributes, config)
 
   if (isRaw && content) {
     attributes.innerHTML = content
@@ -221,11 +221,11 @@ export function renderAttributes (
   // console.info('renderAttributes', key, data, config)
 
   const { attributesFor } = config
-  if (!attributesFor) {
+  if (!attributesFor || !data) {
     return
   }
 
-  if (!__BROWSER__) {
+  if (context.isSSR) {
     // render attributes in a placeholder vnode so Vue
     // will render the string for us
     return {
@@ -257,7 +257,11 @@ export function renderAttributes (
   const { el, attrs } = cachedElements[attributesFor]
 
   for (const attr in data) {
-    const content = getSlotContent(context, `${key}(${attr})`, data[attr], data)
+    let content = getSlotContent(context, `${key}(${attr})`, data[attr], data)
+
+    if (isArray(content)) {
+      content = content.join(',')
+    }
 
     el.setAttribute(attr, content || '')
 

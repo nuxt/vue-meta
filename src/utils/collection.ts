@@ -3,7 +3,7 @@ export const pluck = <T extends Record<string, any>>(collection: T[], key: strin
   const plucked: T[] = []
 
   for (const row of collection) {
-    if (key in row) {
+    if (row && key in row) {
       plucked.push(row[key])
 
       if (callback) {

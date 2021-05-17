@@ -1,8 +1,8 @@
 import { inject, getCurrentInstance, ComponentInternalInstance, isProxy, watch } from 'vue'
-import type { MetaManager } from './manager'
 import { metaActiveKey } from './symbols'
-import type { MetaActive, MetaSource, MetaProxy } from './types'
 import { applyDifference } from './utils/diff'
+import type { MetaManager } from './manager'
+import type { MetaActive, MetaSource, MetaProxy } from './types'
 
 export function getCurrentManager (vm?: ComponentInternalInstance): MetaManager | undefined {
   if (!vm) {
