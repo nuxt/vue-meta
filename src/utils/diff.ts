@@ -23,7 +23,7 @@ export function applyDifference (target: AnyObject, newSource: AnyObject, oldSou
   }
 
   for (const key in oldSource) {
-    if (!(key in newSource)) {
+    if (!newSource || !(key in newSource)) {
       delete target[key]
     }
   }
