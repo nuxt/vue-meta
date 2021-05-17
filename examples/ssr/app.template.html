@@ -5,10 +5,10 @@
     <link rel="stylesheet" href="/global.css">
   </head>
   <body {{ bodyAttrs }}>
-    <body-prepend id="body-prepend">{{ bodyPrepend }}</body-prepend>
+    <div id="body-prepend">{{ bodyPrepend }}</div>
 
     <a href="/">&larr; Examples index</a>
-    {{ app }}
+    <div id="app">{{ app }}</div>
 
     <script src="/__build__/ssr.js"></script>
     {{ bodyAppend }}

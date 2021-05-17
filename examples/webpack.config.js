@@ -63,6 +63,7 @@ module.exports = (isBrowser) => {
         // on the first HMR update and causes the page to reload.
         vue: 'vue/dist/vue.esm-bundler.js',
         'vue-meta': path.resolve(__dirname, '../src/'),
+        'vue-meta/ssr': path.resolve(__dirname, '../src/ssr'),
         ...extraAliases
       }
     },

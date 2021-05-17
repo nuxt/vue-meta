@@ -25,7 +25,11 @@
     "removeComments": false,
     "jsx": "preserve",
     "lib": ["esnext", "dom"],
-    "types": ["jest", "node"]
+    "types": ["jest", "node"],
+    "paths": {
+      "vue-meta": ["./src/"],
+      "vue-meta/*": ["./src/*"],
+    }
   },
   "include": [
     "src/global.d.ts",

@@ -1,6 +1,7 @@
 import { defineComponent, ref, reactive, computed, toRefs, onUnmounted } from 'vue'
+import { isSymbol } from '@vue/shared'
 import { useRoute } from 'vue-router'
-import { useMeta } from 'vue-meta'
+import { useMeta } from '../../src'
 
 let metaUpdated = 'no'
 
@@ -16,23 +17,35 @@ export default defineComponent({
 
     const ogTitle = ref('Og Child Title')
 
+    let routeName: string
+    if (isSymbol(route.name)) {
+      routeName = route.name.toString()
+    } else if (route.name) {
+      routeName = route.name
+    }
+
     const metaConfig = computed(() => ({
       charset: 'utf16',
-      title: route.name[0].toUpperCase() + route.name.slice(1),
-      description: 'Description ' + route.name,
+      title: routeName[0].toUpperCase() + routeName.slice(1),
+      description: 'Description ' + routeName,
       og: {
-        title: ogTitle.value + ' ' + route.name
-      }
+        title: ogTitle.value + ' ' + routeName
+      },
+      htmlAttrs: routeName !== 'home'
+        ? {}
+        : {
+            lang: ['nl']
+          }
     }))
 
     const { onRemoved } = useMeta(metaConfig)
 
-    const pageName = computed(() => route.name)
+    const pageName = computed(() => routeName)
 
     onUnmounted(() => (metaUpdated = 'yes'))
 
     setTimeout(() => (ogTitle.value = 'Updated Child Og Title'), 1000)
-    setTimeout(() => (delete metaConfig.value.og), 3000)
+    setTimeout(() => (delete (metaConfig.value as Partial<typeof metaConfig.value>).og), 3000)
 
     onRemoved(() => {
       console.log('Meta was removed', pageName.value)
