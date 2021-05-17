@@ -1,11 +1,11 @@
-import type { MetaResolveContext } from '../types'
 import { resolveOption } from './index'
+import type { MetaResolveContext, MetaResolveSetup } from '../types'
 
 type MergeResolveContextDeepest = MetaResolveContext & {
   depth: number
 }
 
-export function setup (context: MergeResolveContextDeepest): void {
+export const setup: MetaResolveSetup = (context) => {
   let depth: number = 0
 
   if (context.vm) {
@@ -20,11 +20,11 @@ export function setup (context: MergeResolveContextDeepest): void {
     } while (vm && vm.parent && vm !== vm.root)
   }
 
-  context.depth = depth
+  (context as MergeResolveContextDeepest).depth = depth
 }
 
-export const resolve = resolveOption<number, MergeResolveContextDeepest>((currentValue, context) => {
-  const { depth } = context
+export const resolve = resolveOption<number>((currentValue, context) => {
+  const { depth } = context as MergeResolveContextDeepest
 
   if (!currentValue || depth > currentValue) {
     return depth
