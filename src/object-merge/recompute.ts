@@ -25,14 +25,27 @@ export const allKeys = <T>(source?: MergeSource<T>, ...sources: MergeSource<T>[]
   return keys
 }
 
-export const recompute = <T>(context: MergeContext<T>, sources?: MergeSource<T>[], target?: MergedObject, path: PathSegments = []): void => {
-  if (!path.length) {
-    if (!target) {
-      target = context.active
-    }
+export const recompute = <T>(context: MergeContext<T>, path: PathSegments = [], target?: MergedObject, sources?: MergeSource<T>[]): void => {
+  const setTargetAndSources = !target && !sources
+  if (setTargetAndSources) {
+    ({ active: target, sources } = context)
 
-    if (!sources) {
-      sources = context.sources
+    if (path.length) {
+      for (let i = 0; i < path.length; i++) {
+        const seg = path[i]
+
+        if (!target || !target[seg]) {
+          if (__DEV__) {
+            // eslint-disable-next-line no-console
+            console.error(`recompute: segment ${seg} not found on target`, path, target)
+          }
+          return
+        }
+
+        target = target[seg]
+
+        sources = sources.map(source => (source as Record<string, any>)[seg]).filter(Boolean)
+      }
     }
   }
 
@@ -53,7 +66,17 @@ export const recompute = <T>(context: MergeContext<T>, sources?: MergeSource<T>[
   for (const key of keys) {
     // This assumes consistent types usages for keys across sources
     // @ts-ignore
-    if (isPlainObject(sources[0][key])) {
+    let isObject = false
+    for (let i = 0; i < sources.length; i++) {
+      const source = sources[i] as Record<string, any>
+
+      if (source && key in source && source[key] !== undefined) {
+        isObject = isPlainObject(source[key])
+        break
+      }
+    }
+
+    if (isObject) {
       if (!target[key]) {
         target[key] = {}
       }
@@ -66,7 +89,7 @@ export const recompute = <T>(context: MergeContext<T>, sources?: MergeSource<T>[
         }
       }
 
-      recompute(context, keySources, target[key], [...path, key])
+      recompute(context, [...path, key], target[key], keySources)
       continue
     }
 
@@ -91,7 +114,6 @@ export const recompute = <T>(context: MergeContext<T>, sources?: MergeSource<T>[
       resolved = clone(resolved)
     }
 
-    // console.log('RESOLVED', key, resolved, 'was', target[key])
     target[key] = resolved
   }
 }
