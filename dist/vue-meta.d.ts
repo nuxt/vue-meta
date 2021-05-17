@@ -1,3 +1,13 @@
+/**
+ * vue-meta v3.0.0-alpha.6
+ * (c) 2021
+ * - Pim (@pimlie)
+ * - All the amazing contributors
+ * @license MIT
+ */
+
+/// <reference path="ssr.d.ts" />
+      
 import { App, ComponentInternalInstance, Slots, VNode } from 'vue';
 
 declare const IS_PROXY: unique symbol;
@@ -35,15 +45,16 @@ declare type MergedObjectBuilder<T> = {
     delSource: (sourceOrProxy: T | MergeSource<T>, recompute?: boolean) => boolean;
 };
 
-declare type createMetaManagerMethod = (config: MetaConfig, resolver: MetaResolver | ResolveMethod) => MetaManager;
-declare const createMetaManager: (config?: MetaConfig | undefined, resolver?: MetaResolver | undefined) => MetaManager;
+declare type CreateMetaManagerMethod = (isSSR: boolean, config: MetaConfig, resolver: MetaResolver | ResolveMethod) => MetaManager;
+declare const createMetaManager: (isSSR?: boolean, config?: MetaConfig | undefined, resolver?: MetaResolver | undefined) => MetaManager;
 declare class MetaManager {
+    isSSR: boolean;
     config: MetaConfig;
     target: MergedObjectBuilder<MetaSource>;
-    resolver?: MetaResolverSetup;
+    resolver?: MetaResolver;
     ssrCleanedUp: boolean;
-    constructor(config: MetaConfig, target: MergedObjectBuilder<MetaSource>, resolver: MetaResolver | ResolveMethod);
-    static create: createMetaManagerMethod;
+    constructor(isSSR: boolean, config: MetaConfig, target: MergedObjectBuilder<MetaSource>, resolver: MetaResolver | ResolveMethod);
+    static create: CreateMetaManagerMethod;
     install(app: App): void;
     addMeta(metadata: MetaSource, vm?: ComponentInternalInstance): MetaProxy;
     private unmount;
@@ -116,16 +127,14 @@ interface MetaActive {
  * Context passed to the meta resolvers
  */
 declare type MetaResolveContext = ResolveContext & {
-    vm: ComponentInternalInstance | undefined;
+    vm?: ComponentInternalInstance;
 };
 declare type MetaResolveSetup = (context: MetaResolveContext) => void;
 declare type MetaResolver = {
     setup?: MetaResolveSetup;
     resolve: ResolveMethod;
 };
-declare type MetaResolverSetup = Modify<MetaResolver, {
-    setup: MetaResolveSetup;
-}>;
+declare type MetaResolverSetup = Required<MetaResolver>;
 /**
  * @internal
  */
@@ -142,8 +151,9 @@ interface MetaGuards {
  * @internal
  */
 interface MetaRenderContext {
-    slots?: Slots;
+    isSSR: boolean;
     metainfo: MetaActive;
+    slots?: Slots;
 }
 /**
  * @internal
@@ -181,11 +191,8 @@ declare module '@vue/runtime-core' {
     }
 }
 
-declare type MergeResolveContextDeepest = MetaResolveContext & {
-    depth: number;
-};
-declare function setup(context: MergeResolveContextDeepest): void;
-declare const resolve: ResolveMethod<any, MergeResolveContextDeepest>;
+declare const setup: MetaResolveSetup;
+declare const resolve: ResolveMethod<any, ResolveContext>;
 
 declare const deepest_d_setup: typeof setup;
 declare const deepest_d_resolve: typeof resolve;

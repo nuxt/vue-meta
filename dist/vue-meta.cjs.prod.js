@@ -1,5 +1,5 @@
 /**
- * vue-meta v3.0.0-alpha.5
+ * vue-meta v3.0.0-alpha.6
  * (c) 2021
  * - Pim (@pimlie)
  * - All the amazing contributors
@@ -27,7 +27,7 @@ const resolveOption = (predicament, initialValue) => (options, contexts) => {
     }
 };
 
-function setup(context) {
+const setup = (context) => {
     let depth = 0;
     if (context.vm) {
         let { vm } = context;
@@ -39,7 +39,7 @@ function setup(context) {
         } while (vm && vm.parent && vm !== vm.root);
     }
     context.depth = depth;
-}
+};
 const resolve = resolveOption((currentValue, context) => {
     const { depth } = context;
     if (!currentValue || depth > currentValue) {
@@ -200,7 +200,7 @@ function clone(v) {
 const pluck = (collection, key, callback) => {
     const plucked = [];
     for (const row of collection) {
-        if (key in row) {
+        if (row && key in row) {
             plucked.push(row[key]);
             if (callback) {
                 callback(row);
@@ -227,13 +227,19 @@ const allKeys = (source, ...sources) => {
     // TODO: add check for consistent types for each key (dev only)
     return keys;
 };
-const recompute = (context, sources, target, path = []) => {
-    if (!path.length) {
-        if (!target) {
-            target = context.active;
-        }
-        if (!sources) {
-            sources = context.sources;
+const recompute = (context, path = [], target, sources) => {
+    const setTargetAndSources = !target && !sources;
+    if (setTargetAndSources) {
+        ({ active: target, sources } = context);
+        if (path.length) {
+            for (let i = 0; i < path.length; i++) {
+                const seg = path[i];
+                if (!target || !target[seg]) {
+                    return;
+                }
+                target = target[seg];
+                sources = sources.map(source => source[seg]).filter(Boolean);
+            }
         }
     }
     if (!target || !sources) {
@@ -250,7 +256,15 @@ const recompute = (context, sources, target, path = []) => {
     for (const key of keys) {
         // This assumes consistent types usages for keys across sources
         // @ts-ignore
-        if (isPlainObject(sources[0][key])) {
+        let isObject = false;
+        for (let i = 0; i < sources.length; i++) {
+            const source = sources[i];
+            if (source && key in source && source[key] !== undefined) {
+                isObject = isPlainObject(source[key]);
+                break;
+            }
+        }
+        if (isObject) {
             if (!target[key]) {
                 target[key] = {};
             }
@@ -261,7 +275,7 @@ const recompute = (context, sources, target, path = []) => {
                     keySources.push(source[key]);
                 }
             }
-            recompute(context, keySources, target[key], [...path, key]);
+            recompute(context, [...path, key], target[key], keySources);
             continue;
         }
         // Ensure the target is an array if source is an array and target is empty
@@ -275,7 +289,6 @@ const recompute = (context, sources, target, path = []) => {
         if (isPlainObject(resolved)) {
             resolved = clone(resolved);
         }
-        // console.log('RESOLVED', key, resolved, 'was', target[key])
         target[key] = resolved;
     }
 };
@@ -306,6 +319,7 @@ const createHandler = (context, resolveContext, pathSegments = []) => ({
         if (!isObject(value)) {
             return value;
         }
+        // Also return a merge proxy for nested objects
         if (!value[IS_PROXY]) {
             const keyPath = [...pathSegments, key];
             value = createProxy(context, value, resolveContext, keyPath);
@@ -343,6 +357,12 @@ const createHandler = (context, resolveContext, pathSegments = []) => ({
                 recompute(context);
                 return success;
             }
+            else if (isPlainObject(value)) {
+                // if an object was assigned to this key make sure to recompute all
+                // of its individual properies
+                recompute(context, pathSegments);
+                return success;
+            }
             let keyContexts = [];
             let keySources;
             if (isArrayItem) {
@@ -354,13 +374,13 @@ const createHandler = (context, resolveContext, pathSegments = []) => ({
             }
             let resolved = context.resolve(keySources, keyContexts, active, key, pathSegments);
             // Ensure to clone if value is an object, cause sources is an array of
-            // the sourceProxies not the sources so we could trigger an endless loop when
+            // the sourceProxies and not the sources so we could trigger an endless loop when
             // updating a prop on an obj as the prop on the active object refers to
             // a prop on a proxy
             if (isPlainObject(resolved)) {
                 resolved = clone(resolved);
             }
-            //      console.log('SET VALUE', isArrayItem, key, '\nresolved:\n', resolved, '\nsources:\n', context.sources, '\nactive:\n', active, Object.keys(active))
+            // console.log('SET VALUE', isArrayItem, key, '\nresolved:\n', resolved, '\nsources:\n', context.sources, '\nactive:\n', active, Object.keys(active))
             if (isArrayItem && activeSegmentKey) {
                 active[activeSegmentKey] = resolved;
             }
@@ -373,7 +393,7 @@ const createHandler = (context, resolveContext, pathSegments = []) => ({
     },
     deleteProperty: (target, key) => {
         const success = Reflect.deleteProperty(target, key);
-        //    console.warn('PROXY DELETE\nkey:', key, '\npath:', pathSegments, '\nparent:', isArray(target), target)
+        // console.warn('PROXY DELETE\nkey:', key, '\npath:', pathSegments, '\nparent:', isArray(target), target)
         if (success) {
             const isArrayItem = isArray(target);
             let activeSegmentKey;
@@ -382,7 +402,7 @@ const createHandler = (context, resolveContext, pathSegments = []) => ({
             let index = 0;
             for (const segment of pathSegments) {
                 // @ts-ignore
-                proxies = proxies.map(proxy => proxy[segment]);
+                proxies = proxies.map(proxy => proxy && proxy[segment]);
                 if (isArrayItem && index === pathSegments.length - 1) {
                     activeSegmentKey = segment;
                     break;
@@ -392,7 +412,7 @@ const createHandler = (context, resolveContext, pathSegments = []) => ({
             }
             // Check if the key still exists in one of the sourceProxies,
             // if so resolve the new value, if not remove the key
-            if (proxies.some(proxy => (key in proxy))) {
+            if (proxies.some(proxy => proxy && (key in proxy))) {
                 let keyContexts = [];
                 let keySources;
                 if (isArrayItem) {
@@ -406,7 +426,7 @@ const createHandler = (context, resolveContext, pathSegments = []) => ({
                 if (isPlainObject(resolved)) {
                     resolved = clone(resolved);
                 }
-                //        console.log('SET VALUE', resolved)
+                // console.log('SET VALUE', resolved)
                 if (isArrayItem && activeSegmentKey) {
                     active[activeSegmentKey] = resolved;
                 }
@@ -454,6 +474,7 @@ const createMergedObject = (resolve, active) => {
     };
 };
 
+const cachedElements = {};
 function renderMeta(context, key, data, config) {
     // console.info('renderMeta', key, data, config)
     if ('attributesFor' in config) {
@@ -578,7 +599,7 @@ function renderTag(context, key, data, config = {}, groupConfig) {
     // console.info('FINAL TAG', finalTag)
     // console.log('      ATTRIBUTES', attributes)
     // console.log('      CONTENT', content)
-    // // console.log(data, attributes, config)
+    // console.log(data, attributes, config)
     if (isRaw && content) {
         attributes.innerHTML = content;
     }
@@ -592,16 +613,38 @@ function renderTag(context, key, data, config = {}, groupConfig) {
 function renderAttributes(context, key, data, config) {
     // console.info('renderAttributes', key, data, config)
     const { attributesFor } = config;
-    if (!attributesFor) {
+    if (!attributesFor || !data) {
         return;
     }
-    {
+    if (context.isSSR) {
         // render attributes in a placeholder vnode so Vue
         // will render the string for us
         return {
             to: '',
             vnode: vue.h(`ssr-${attributesFor}`, data)
         };
+    }
+    if (!cachedElements[attributesFor]) {
+        const [el, el2] = Array.from(document.querySelectorAll(attributesFor));
+        cachedElements[attributesFor] = {
+            el,
+            attrs: []
+        };
+    }
+    const { el, attrs } = cachedElements[attributesFor];
+    for (const attr in data) {
+        let content = getSlotContent(context, `${key}(${attr})`, data[attr], data);
+        if (isArray(content)) {
+            content = content.join(',');
+        }
+        el.setAttribute(attr, content || '');
+        if (!attrs.includes(attr)) {
+            attrs.push(attr);
+        }
+    }
+    const attrsToRemove = attrs.filter(attr => !data[attr]);
+    for (const attr of attrsToRemove) {
+        el.removeAttribute(attr);
     }
 }
 function getSlotContent({ metainfo, slots }, slotName, content, groupConfig) {
@@ -651,7 +694,7 @@ function applyDifference(target, newSource, oldSource) {
         }
     }
     for (const key in oldSource) {
-        if (!(key in newSource)) {
+        if (!newSource || !(key in newSource)) {
             delete target[key];
         }
     }
@@ -704,9 +747,18 @@ const Metainfo = MetainfoImpl;
 
 const ssrAttribute = 'data-vm-ssr';
 const active = vue.reactive({});
-function addVnode(teleports, to, vnodes) {
+function addVnode(isSSR, teleports, to, vnodes) {
     const nodes = (isArray(vnodes) ? vnodes : [vnodes]);
-    if (!to.endsWith('Attrs')) {
+    if (!isSSR) {
+        // Comments shouldnt have any use on the client as they are not reactive anyway
+        nodes.forEach((vnode, idx) => {
+            if (vnode.type === vue.Comment) {
+                nodes.splice(idx, 1);
+            }
+        });
+        // only add ssrAttribute's for real meta tags
+    }
+    else if (!to.endsWith('Attrs')) {
         nodes.forEach((vnode) => {
             if (!vnode.props) {
                 vnode.props = {};
@@ -719,10 +771,12 @@ function addVnode(teleports, to, vnodes) {
     }
     teleports[to].push(...nodes);
 }
-const createMetaManager = (config, resolver) => MetaManager.create(config || defaultConfig, resolver || defaultResolver);
+const createMetaManager = (isSSR = false, config, resolver) => MetaManager.create(isSSR, config || defaultConfig, resolver || defaultResolver);
 class MetaManager {
-    constructor(config, target, resolver) {
+    constructor(isSSR, config, target, resolver) {
+        this.isSSR = false;
         this.ssrCleanedUp = false;
+        this.isSSR = isSSR;
         this.config = config;
         this.target = target;
         if (resolver && 'setup' in resolver && isFunction(resolver.setup)) {
@@ -742,8 +796,9 @@ class MetaManager {
             removed: []
         });
         const resolveContext = { vm };
-        if (this.resolver) {
-            this.resolver.setup(resolveContext);
+        const { resolver } = this;
+        if (resolver && resolver.setup) {
+            resolver.setup(resolveContext);
         }
         // TODO: optimize initial compute (once)
         const meta = this.target.addSource(metadata, resolveContext, true);
@@ -790,10 +845,25 @@ class MetaManager {
         }
     }
     render({ slots } = {}) {
+        // TODO: clean this method
+        const { isSSR } = this;
+        // cleanup ssr tags if not yet done
+        if (!isSSR && !this.ssrCleanedUp) {
+            this.ssrCleanedUp = true;
+            // Listen for DOM loaded because tags in the body couldnt
+            // have loaded yet once the manager does it first render
+            // (preferable there should only be one meta render on hydration)
+            window.addEventListener('DOMContentLoaded', () => {
+                const ssrTags = document.querySelectorAll(`[${ssrAttribute}]`);
+                if (ssrTags && ssrTags.length) {
+                    ssrTags.forEach(el => el.parentNode && el.parentNode.removeChild(el));
+                }
+            }, { once: true });
+        }
         const teleports = {};
         for (const key in active) {
             const config = this.config[key] || {};
-            let renderedNodes = renderMeta({ metainfo: active, slots }, key, active[key], config);
+            let renderedNodes = renderMeta({ isSSR, metainfo: active, slots }, key, active[key], config);
             if (!renderedNodes) {
                 continue;
             }
@@ -808,7 +878,7 @@ class MetaManager {
                 defaultTo = key;
             }
             for (const { to, vnode } of renderedNodes) {
-                addVnode(teleports, to || defaultTo || 'head', vnode);
+                addVnode(this.isSSR, teleports, to || defaultTo || 'head', vnode);
             }
         }
         if (slots) {
@@ -820,16 +890,17 @@ class MetaManager {
                 }
                 const slot = slots[slotName];
                 if (isFunction(slot)) {
-                    addVnode(teleports, tagName, slot({ metainfo: active }));
+                    addVnode(this.isSSR, teleports, tagName, slot({ metainfo: active }));
                 }
             }
         }
         return Object.keys(teleports).map((to) => {
-            return vue.h(vue.Teleport, { to }, teleports[to]);
+            const teleport = teleports[to];
+            return vue.h(vue.Teleport, { to }, teleport);
         });
     }
 }
-MetaManager.create = (config, resolver) => {
+MetaManager.create = (isSSR, config, resolver) => {
     const resolve = (options, contexts, active, key, pathSegments) => {
         if (isFunction(resolver)) {
             return resolver(options, contexts, active, key, pathSegments);
@@ -838,7 +909,7 @@ MetaManager.create = (config, resolver) => {
     };
     const mergedObject = createMergedObject(resolve, active);
     // TODO: validate resolver
-    const manager = new MetaManager(config, mergedObject, resolver);
+    const manager = new MetaManager(isSSR, config, mergedObject, resolver);
     return manager;
 };
 
