@@ -14,7 +14,8 @@ export const defaultConfig: MetaConfig = {
     valueAttribute: 'charset'
   },
   description: {
-    tag: 'meta'
+    tag: 'meta',
+    keyAttribute: 'name'
   },
   og: {
     group: true,
