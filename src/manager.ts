@@ -23,8 +23,6 @@ import type {
 
 export const ssrAttribute = 'data-vm-ssr'
 
-export const active: MetaActive = reactive({})
-
 export function addVnode (isSSR: boolean, teleports: MetaTeleports, to: string, vnodes: VNode | Array<VNode>): void {
   const nodes = (isArray(vnodes) ? vnodes : [vnodes]) as Array<VNode>
 
@@ -84,6 +82,7 @@ export class MetaManager {
       return resolver.resolve(options, contexts, active, key, pathSegments)
     }
 
+    const active: MetaActive = reactive({})
     const mergedObject = createMergedObject<MetaSource>(resolve, active)
 
     // TODO: validate resolver
@@ -95,7 +94,7 @@ export class MetaManager {
     app.component('Metainfo', Metainfo)
 
     app.config.globalProperties.$metaManager = this
-    app.provide(metaActiveKey, active)
+    app.provide(metaActiveKey, this.target.context.active)
   }
 
   addMeta (metadata: MetaSource, vm?: ComponentInternalInstance): MetaProxy {
@@ -170,6 +169,7 @@ export class MetaManager {
   }
 
   render ({ slots }: { slots?: Slots } = {}): VNode[] {
+    const active = this.target.context.active;
     // TODO: clean this method
     const { isSSR } = this
 
