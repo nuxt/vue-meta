@@ -40,6 +40,7 @@ package-lock.json
 
 # built code
 dist
+ssr
 lib
 es
 __build__

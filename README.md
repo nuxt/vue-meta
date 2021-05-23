@@ -144,14 +144,17 @@ unmount() // Remove metadata when needed
 
 ```js
 import { createSSRApp } from 'vue'
-import { renderToStringWithMeta } from 'vue-meta'
+import { renderToString } from '@vue/server-renderer'
+import { renderToStringWithMeta } from 'vue-meta/ssr'
 import { App, metaManager } from './App'
 
 export function renderPage() {
   const app = createSSRApp(App)
   app.use(metaManager)
 
-  const [appHtml, ctx] = await renderToStringWithMeta(app)
+  const ctx = {}
+  const appHtml = await renderToString(app, ctx)
+  await renderMetaToString(app, ctx)
 
   return `
   <html ${ctx.teleports.htmlAttrs || ''}>

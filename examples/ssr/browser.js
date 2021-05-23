@@ -1,9 +1,6 @@
-import { createApp } from 'vue'
-import { App, createRouter, metaManager } from '../vue-router/main'
+import { createApp } from '../vue-router/main'
 
 window.users = []
 
-const app = createApp(App)
-app.use(createRouter('/ssr'))
-app.use(metaManager)
-app.mount('#app')
+const { app, router } = createApp('/ssr', null)
+router.isReady().then(() => app.mount('#app'))

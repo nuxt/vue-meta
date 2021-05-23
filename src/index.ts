@@ -4,7 +4,6 @@ export { defaultConfig } from './config'
 export { createMetaManager } from './manager'
 export { resolveOption } from './resolvers'
 
-export * from './ssr'
 export * from './types'
 export * from './useApi'
 

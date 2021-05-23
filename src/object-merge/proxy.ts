@@ -40,6 +40,7 @@ export const createHandler = <T>(context: MergeContext<T>, resolveContext: Resol
       return value
     }
 
+    // Also return a merge proxy for nested objects
     if (!(value as MergeSource<T>)[IS_PROXY]) {
       const keyPath: PathSegments = [...pathSegments, (key as string)]
 
@@ -51,7 +52,7 @@ export const createHandler = <T>(context: MergeContext<T>, resolveContext: Resol
   },
   set: (target, key, value) => {
     const success = Reflect.set(target, key, value)
-    // console.warn(success, 'PROXY SET\nkey:', key, '\npath:', pathSegments, '\ntarget:', isArray(target), target, '\ncontext:\n', context)
+    // console.warn(success, 'PROXY SET\nkey:', key, '\nvalue:', value, '\npath:', pathSegments, '\ntarget:', isArray(target), target, '\ncontext:\n', context)
 
     if (success) {
       const isArrayItem = isArray(target)
@@ -85,6 +86,11 @@ export const createHandler = <T>(context: MergeContext<T>, resolveContext: Resol
         // update from)
         recompute(context)
         return success
+      } else if (isPlainObject(value)) {
+        // if an object was assigned to this key make sure to recompute all
+        // of its individual properies
+        recompute(context, pathSegments)
+        return success
       }
 
       let keyContexts: ResolveContext[] = []
@@ -106,14 +112,14 @@ export const createHandler = <T>(context: MergeContext<T>, resolveContext: Resol
       )
 
       // Ensure to clone if value is an object, cause sources is an array of
-      // the sourceProxies not the sources so we could trigger an endless loop when
+      // the sourceProxies and not the sources so we could trigger an endless loop when
       // updating a prop on an obj as the prop on the active object refers to
       // a prop on a proxy
       if (isPlainObject(resolved)) {
         resolved = clone(resolved)
       }
 
-      //      console.log('SET VALUE', isArrayItem, key, '\nresolved:\n', resolved, '\nsources:\n', context.sources, '\nactive:\n', active, Object.keys(active))
+      // console.log('SET VALUE', isArrayItem, key, '\nresolved:\n', resolved, '\nsources:\n', context.sources, '\nactive:\n', active, Object.keys(active))
 
       if (isArrayItem && activeSegmentKey) {
         active[activeSegmentKey] = resolved
@@ -127,7 +133,7 @@ export const createHandler = <T>(context: MergeContext<T>, resolveContext: Resol
   },
   deleteProperty: (target, key) => {
     const success = Reflect.deleteProperty(target, key)
-    //    console.warn('PROXY DELETE\nkey:', key, '\npath:', pathSegments, '\nparent:', isArray(target), target)
+    // console.warn('PROXY DELETE\nkey:', key, '\npath:', pathSegments, '\nparent:', isArray(target), target)
 
     if (success) {
       const isArrayItem = isArray(target)
@@ -139,7 +145,7 @@ export const createHandler = <T>(context: MergeContext<T>, resolveContext: Resol
       let index = 0
       for (const segment of pathSegments) {
         // @ts-ignore
-        proxies = proxies.map(proxy => proxy[segment])
+        proxies = proxies.map(proxy => proxy && proxy[segment])
 
         if (isArrayItem && index === pathSegments.length - 1) {
           activeSegmentKey = segment
@@ -152,7 +158,7 @@ export const createHandler = <T>(context: MergeContext<T>, resolveContext: Resol
 
       // Check if the key still exists in one of the sourceProxies,
       // if so resolve the new value, if not remove the key
-      if (proxies.some(proxy => (key in proxy))) {
+      if (proxies.some(proxy => proxy && (key in proxy))) {
         let keyContexts: ResolveContext[] = []
         let keySources
 
@@ -175,7 +181,7 @@ export const createHandler = <T>(context: MergeContext<T>, resolveContext: Resol
           resolved = clone(resolved)
         }
 
-        //        console.log('SET VALUE', resolved)
+        // console.log('SET VALUE', resolved)
         if (isArrayItem && activeSegmentKey) {
           active[activeSegmentKey] = resolved
         } else {

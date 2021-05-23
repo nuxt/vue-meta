@@ -1,10 +1,11 @@
 import path from 'path'
 import fs from 'fs-extra'
-import { createSSRApp } from 'vue'
-import { renderToStringWithMeta } from 'vue-meta'
+import { renderToString } from '@vue/server-renderer'
+
+import { renderMetaToString } from 'vue-meta/ssr'
 
 import template from 'lodash/template'
-import { App, createRouter, metaManager } from '../vue-router/main'
+import { createApp } from '../vue-router/main'
 
 const templateFile = path.resolve(__dirname, 'app.template.html')
 const templateContent = fs.readFileSync(templateFile, { encoding: 'utf8' })
@@ -17,17 +18,13 @@ process.server = true
 export async function renderPage ({ url }) {
   console.log('renderPage', url)
 
-  const app = createSSRApp(App)
-  const router = createRouter('/ssr', true)
-
-  app.use(router)
-  app.use(metaManager)
-
-  await router.push(url.substr(4))
-
+  const { app, router } = createApp('/ssr', true)
+  router.push(url.slice(4))
   await router.isReady()
 
-  const [appHtml, ctx] = await renderToStringWithMeta(app)
+  const ctx = {}
+  const appHtml = await renderToString(app, ctx)
+  await renderMetaToString(app, ctx)
 
   if (!ctx.teleports) {
     ctx.teleports = {}

@@ -1,5 +1,5 @@
-import type { MetaTagConfigKey, MetaTagName } from '../types'
 import { tags } from './tags'
+import type { MetaTagConfigKey, MetaTagName } from '../types'
 
 export function getTagConfigItem (
   tagOrName: Array<MetaTagName>,

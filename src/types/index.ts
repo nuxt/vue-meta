@@ -42,7 +42,7 @@ export interface MetaActive {
  * Context passed to the meta resolvers
  */
 export type MetaResolveContext = ResolveContext & {
-  vm: ComponentInternalInstance | undefined
+  vm?: ComponentInternalInstance
 }
 
 export type MetaResolveSetup = (context: MetaResolveContext) => void
@@ -52,9 +52,7 @@ export type MetaResolver = {
   resolve: ResolveMethod
 }
 
-export type MetaResolverSetup = Modify<MetaResolver, {
-  setup: MetaResolveSetup
-}>
+export type MetaResolverSetup = Required<MetaResolver>
 
 /**
  * @internal
@@ -74,8 +72,9 @@ export interface MetaGuards {
  * @internal
  */
 export interface MetaRenderContext {
-  slots?: Slots
+  isSSR: boolean
   metainfo: MetaActive
+  slots?: Slots
 }
 
 /**

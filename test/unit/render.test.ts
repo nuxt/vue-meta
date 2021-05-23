@@ -54,7 +54,8 @@ describe('render', () => {
     const key = 'DescriptionTest'
     const data = 'my description'
     const config = {
-      tag: 'meta'
+      tag: 'meta',
+      keyAttribute: 'name'
     }
 
     const res = render.renderMeta(context, key, data, config)
@@ -72,7 +73,8 @@ describe('render', () => {
     const key = 'DescriptionTest2'
     const data = { content: 'my description 2' }
     const config = {
-      tag: 'meta'
+      tag: 'meta',
+      keyAttribute: 'name'
     }
 
     const res = render.renderMeta(context, key, data, config)

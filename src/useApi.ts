@@ -1,8 +1,8 @@
 import { inject, getCurrentInstance, ComponentInternalInstance, isProxy, watch } from 'vue'
-import type { MetaManager } from './manager'
 import { metaActiveKey } from './symbols'
-import type { MetaActive, MetaSource, MetaProxy } from './types'
 import { applyDifference } from './utils/diff'
+import type { MetaManager } from './manager'
+import type { MetaActive, MetaSource, MetaProxy } from './types'
 
 export function getCurrentManager (vm?: ComponentInternalInstance): MetaManager | undefined {
   if (!vm) {
@@ -29,7 +29,6 @@ export function useMeta (source: MetaSource, manager?: MetaManager): MetaProxy {
 
   if (isProxy(source)) {
     watch(source, (newSource, oldSource) => {
-      // We only care about first level props, second+ level will already be changed by the merge proxy
       applyDifference(metaProxy.meta, newSource, oldSource)
     })
 

@@ -2,6 +2,30 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [3.0.0-alpha.6](https://github.com/nuxt/vue-meta/compare/v3.0.0-alpha.5...v3.0.0-alpha.6) (2021-05-17)
+
+
+### Features
+
+* add support for recomputing nested paths ([8c0fb63](https://github.com/nuxt/vue-meta/commit/8c0fb63f123151395d0c7afcffe2af1869a71e41))
+
+
+### Bug Fixes
+
+* also delete previous values if computed value was faly ([449bb20](https://github.com/nuxt/vue-meta/commit/449bb20e6f42d0ddb837c2ba8e7d8197e887f205))
+* better ssr support ([1d84787](https://github.com/nuxt/vue-meta/commit/1d847870e949ea7dac710153361185cc75ed704a))
+* make types of deepest resolver compatible ([d8651be](https://github.com/nuxt/vue-meta/commit/d8651be35bd288f5e6016121b6ee384ba190afd9))
+* recompute all props when assigning an object to a proxy key ([cae8e35](https://github.com/nuxt/vue-meta/commit/cae8e35340d17b72c6da4283d0043274c5dc53d3))
+* rollup config, esm-bundler builds are also browser builds ([d7be9a4](https://github.com/nuxt/vue-meta/commit/d7be9a43e517910357e6232e0572a05b78e5ab5d))
+
+## [3.0.0-alpha.5](https://github.com/nuxt/vue-meta/compare/v3.0.0-alpha.4...v3.0.0-alpha.5) (2021-05-03)
+
+
+### Bug Fixes
+
+* apply diff on nested computed objects ([29b294c](https://github.com/nuxt/vue-meta/commit/29b294c2be1bdbb57d6341871df72848c9d0b034))
+* dont include ssr support in main dist ([5699bf4](https://github.com/nuxt/vue-meta/commit/5699bf4ff202a731830621583183dd8ae97a2c7c))
+
 ## [3.0.0-alpha.4](https://github.com/nuxt/vue-meta/compare/v3.0.0-alpha.3...v3.0.0-alpha.4) (2021-04-11)
 
 

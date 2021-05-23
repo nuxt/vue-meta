@@ -41,10 +41,10 @@ app.use((req, res, next) => {
   // the examples without errors in the browser
   if (req.url.endsWith('.js')) {
     res.setHeader('Content-Type', 'application/javascript')
-    res.send('')
+    res.send('/* empty */')
   } else if (req.url.endsWith('.css')) {
     res.setHeader('Content-Type', 'text/css')
-    res.send('')
+    res.send('/* empty */')
   } else {
     next()
   }

@@ -1,5 +1,5 @@
 import { watch } from 'vue'
-import { useMeta, useActiveMeta } from 'vue-meta'
+import { useMeta, useActiveMeta } from '../../src'
 
 export default {
   setup () {
@@ -32,7 +32,7 @@ export default {
       body: 'body-script1.js', // TODO: fix
       htmlAttrs: {
         amp: true,
-        lang: ['en', 'nl']
+        lang: ['en']
       },
       bodyAttrs: {
         class: ['theme-dark']
@@ -44,7 +44,7 @@ export default {
         // TODO { content: 'window.a = "<br/>"; </script><script>alert(\'asdasd\');' },
         // TODO { rawContent: 'window.b = "<br/>"; </script><script> alert(\'123321\');' },
         { src: 'body-script2.js', to: 'body' },
-        { src: 'body-script3.js', to: 'body-prepend' }
+        { src: 'body-script3.js', to: '#body-prepend' }
       ]
       /* esi: {
         children: [
@@ -87,16 +87,16 @@ export default {
     })
 
     setTimeout(() => (meta.title = 'My Updated Title'), 2000)
-    setTimeout(() => (meta.htmlAttrs.amp = undefined), 2000)
+    // setTimeout(() => (meta.htmlAttrs.amp = undefined), 2000)
 
     const metadata = useActiveMeta()
 
-    if (!process.server) {
+    /* if (!process.server) {
       window.$metadata = metadata
-    }
+    } */
 
     watch(metadata, (newValue) => {
-      console.log('UPDATE', newValue)
+      console.log('META UPDATED', newValue)
     })
 
     /* let i = 0
@@ -146,6 +146,9 @@ export default {
       metadata
     }
   },
+  mounted () {
+    // window.$vue = this.$
+  },
   template: `
     <metainfo>
      <template v-slot:base="{ content, metainfo }">http://nuxt.dev:3000{{ content }}</template>
@@ -162,7 +165,7 @@ export default {
       <template v-slot:head="{ metainfo }">
         <!--[if IE]>
         // -> Reactivity is not supported by Vue in comments, all comments are ignored
-        <component is="script" :src="metainfo.script[0].src" ></component>
+        <component is="script" :src="metainfo.script[0].src" data-duplicate="true"></component>
         // -> but a static file should work
         <script src="user-3.js" ></script>
         // -> altho Vue probably strips comments in production builds (but can be configged afaik)
@@ -175,23 +178,21 @@ export default {
       </template>
     </metainfo>
 
-    <div id="app">
-      <h1>vue-router</h1>
-      <ul class="menu">
-        <li><router-link to="/">Home</router-link></li>
-        <li><router-link to="/about">About</router-link></li>
-      </ul>
+    <h1>vue-router</h1>
+    <ul class="menu">
+      <li><router-link to="/">Home</router-link></li>
+      <li><router-link to="/about">About</router-link></li>
+    </ul>
 
-      <router-view v-slot="{ Component }" class="page">
-        <transition name="page" mode="out-in">
-          <component :is="Component" />
-        </transition>
-      </router-view>
+    <router-view v-slot="{ Component }" class="page">
+      <transition name="page" mode="out-in">
+        <component :is="Component" />
+      </transition>
+    </router-view>
 
-      <div class="metadata">
-        <h4>Active Metainfo:</h4>
-        <p>{{ JSON.stringify(metadata, null, 2)}}</p>
-      </div>
+    <div class="metadata">
+      <h4>Active Metainfo:</h4>
+      <p>{{ JSON.stringify(metadata, null, 2)}}</p>
     </div>
   `
 }

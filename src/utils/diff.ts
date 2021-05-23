@@ -12,9 +12,8 @@ export function applyDifference (target: AnyObject, newSource: AnyObject, oldSou
       continue
     }
 
-    // We dont care about nested objects here , these changes
-    // should already have been tracked by the MergeProxy
     if (isObject(target[key])) {
+      applyDifference(target[key], newSource[key], oldSource[key])
       continue
     }
 
@@ -24,7 +23,7 @@ export function applyDifference (target: AnyObject, newSource: AnyObject, oldSou
   }
 
   for (const key in oldSource) {
-    if (!(key in newSource)) {
+    if (!newSource || !(key in newSource)) {
       delete target[key]
     }
   }
