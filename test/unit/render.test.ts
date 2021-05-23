@@ -6,7 +6,7 @@ import * as render from '../../src/render'
 
 describe('render', () => {
   test('render key-string element (without value attribute)', () => {
-    const context: MetaRenderContext = { metainfo: {} }
+    const context: MetaRenderContext = { isSSR: true, metainfo: {} }
     const key = 'TitleTest'
     const data = 'my title'
     const config = {
@@ -384,6 +384,7 @@ describe('render', () => {
 
     const slot = jest.fn().mockReturnValue([{ children: 'slot title' }])
     const context = {
+      isSSR: true,
       metainfo: { [key]: data },
       slots: { title: slot }
     }
@@ -453,6 +454,7 @@ describe('render', () => {
 
     const slot = jest.fn().mockReturnValue(undefined) // slot returns nothing
     const context = {
+      isSSR: true,
       metainfo: { [key]: data },
       slots: { title: slot }
     }
