@@ -1,5 +1,5 @@
 /**
- * vue-meta v3.0.0-alpha.6
+ * vue-meta v3.0.0-alpha.7
  * (c) 2021
  * - Pim (@pimlie)
  * - All the amazing contributors
@@ -96,6 +96,8 @@ declare type MetaTagsConfig = {
 };
 
 declare type Modify<T, R> = Omit<T, keyof R> & R;
+declare type Truthy<T> = T extends undefined | void | null | false | 0 | '' ? never : T;
+declare type ExcludesFalsy = <T>(x: T) => x is Truthy<T>;
 declare type TODO = any;
 /**
  * Proxied meta source for tracking changes and updating the active meta daa
@@ -214,4 +216,4 @@ declare function getCurrentManager(vm?: ComponentInternalInstance): MetaManager 
 declare function useMeta(source: MetaSource, manager?: MetaManager): MetaProxy;
 declare function useActiveMeta(): MetaActive;
 
-export { MetaActive, MetaConfig, MetaConfigSection, MetaConfigSectionAttribute, MetaConfigSectionGroup, MetaConfigSectionKey, MetaConfigSectionTag, MetaGroupConfig, MetaGuardRemoved, MetaGuards, MetaProxy, MetaRenderContext, MetaRendered, MetaRenderedNode, MetaResolveContext, MetaResolveSetup, MetaResolver, MetaResolverSetup, MetaSource, MetaSourceProxy, MetaTagConfig, MetaTagConfigKey, MetaTagName, MetaTagsConfig, MetaTeleports, Modify, SlotScopeProperties, TODO, createMetaManager, deepest_d as deepestResolver, defaultConfig, getCurrentManager, resolveOption, useActiveMeta, useMeta };
+export { ExcludesFalsy, MetaActive, MetaConfig, MetaConfigSection, MetaConfigSectionAttribute, MetaConfigSectionGroup, MetaConfigSectionKey, MetaConfigSectionTag, MetaGroupConfig, MetaGuardRemoved, MetaGuards, MetaProxy, MetaRenderContext, MetaRendered, MetaRenderedNode, MetaResolveContext, MetaResolveSetup, MetaResolver, MetaResolverSetup, MetaSource, MetaSourceProxy, MetaTagConfig, MetaTagConfigKey, MetaTagName, MetaTagsConfig, MetaTeleports, Modify, SlotScopeProperties, TODO, Truthy, createMetaManager, deepest_d as deepestResolver, defaultConfig, getCurrentManager, resolveOption, useActiveMeta, useMeta };

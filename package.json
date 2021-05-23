@@ -1,6 +1,6 @@
 {
   "name": "vue-meta",
-  "version": "3.0.0-alpha.6",
+  "version": "3.0.0-alpha.7",
   "description": "Manage HTML metadata in Vue.js components with SSR support",
   "main": "dist/vue-meta.cjs.js",
   "browser": "dist/vue-meta.esm-browser.min.js",

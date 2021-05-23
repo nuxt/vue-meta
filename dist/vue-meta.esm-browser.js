@@ -1,12 +1,12 @@
 /**
- * vue-meta v3.0.0-alpha.6
+ * vue-meta v3.0.0-alpha.7
  * (c) 2021
  * - Pim (@pimlie)
  * - All the amazing contributors
  * @license MIT
  */
 
-import { markRaw, h, getCurrentInstance, isProxy, watch, inject, defineComponent, reactive, onUnmounted, Teleport, Comment } from 'vue';
+import { markRaw, h, getCurrentInstance, isProxy, watch, inject, defineComponent, onUnmounted, Teleport, reactive, Comment } from 'vue';
 
 const resolveOption = (predicament, initialValue) => (options, contexts) => {
     let resolvedIndex = -1;
@@ -514,6 +514,7 @@ function renderGroup(context, key, data, config) {
         }
         return renderTag(context, key, data[childKey], config, groupConfig);
     })
+        .filter(Boolean)
         .flat();
 }
 function renderTag(context, key, data, config = {}, groupConfig) {
@@ -525,6 +526,7 @@ function renderTag(context, key, data, config = {}, groupConfig) {
             .map((child) => {
             return renderTag(context, key, child, config, groupConfig);
         })
+            .filter(Boolean)
             .flat();
     }
     const { tag = config.tag || key } = data;
@@ -541,7 +543,7 @@ function renderTag(context, key, data, config = {}, groupConfig) {
             if (isArray(data)) {
                 return data.map(({ vnode }) => vnode);
             }
-            return data.vnode;
+            return data && data.vnode;
         });
     }
     else {
@@ -590,8 +592,9 @@ function renderTag(context, key, data, config = {}, groupConfig) {
             content = getSlotContent(context, slotName, content, data);
         }
         else {
-            const { nameless, keyAttribute } = config;
+            const { nameless } = config;
             if (!nameless) {
+                const keyAttribute = config.keyAttribute || getTagConfig('keyAttribute');
                 if (keyAttribute) {
                     attributes[keyAttribute] = fullName;
                 }
@@ -603,6 +606,10 @@ function renderTag(context, key, data, config = {}, groupConfig) {
     const finalTag = groupConfig && groupConfig.tagNamespace
         ? `${groupConfig.tagNamespace}:${tag}`
         : tag;
+    if (finalTag === 'title' && !context.isSSR) {
+        document.title = content;
+        return;
+    }
     // console.info('FINAL TAG', finalTag)
     // console.log('      ATTRIBUTES', attributes)
     // console.log('      CONTENT', content)
@@ -762,7 +769,6 @@ const MetainfoImpl = defineComponent({
 const Metainfo = MetainfoImpl;
 
 const ssrAttribute = 'data-vm-ssr';
-const active = reactive({});
 function addVnode(isSSR, teleports, to, vnodes) {
     const nodes = (isArray(vnodes) ? vnodes : [vnodes]);
     if (!isSSR) {
@@ -802,7 +808,7 @@ class MetaManager {
     install(app) {
         app.component('Metainfo', Metainfo);
         app.config.globalProperties.$metaManager = this;
-        app.provide(metaActiveKey, active);
+        app.provide(metaActiveKey, this.target.context.active);
     }
     addMeta(metadata, vm) {
         if (!vm) {
@@ -861,20 +867,27 @@ class MetaManager {
         }
     }
     render({ slots } = {}) {
+        const active = this.target.context.active;
         // TODO: clean this method
         const { isSSR } = this;
         // cleanup ssr tags if not yet done
         if (!isSSR && !this.ssrCleanedUp) {
             this.ssrCleanedUp = true;
-            // Listen for DOM loaded because tags in the body couldnt
-            // have loaded yet once the manager does it first render
-            // (preferable there should only be one meta render on hydration)
-            window.addEventListener('DOMContentLoaded', () => {
+            const cleanUpSSR = () => {
                 const ssrTags = document.querySelectorAll(`[${ssrAttribute}]`);
                 if (ssrTags && ssrTags.length) {
                     ssrTags.forEach(el => el.parentNode && el.parentNode.removeChild(el));
                 }
-            }, { once: true });
+            };
+            if (document.readyState === 'loading') {
+                // Listen for DOM loaded because tags in the body couldnt
+                // have loaded yet once the manager does it first render
+                // (preferable there should only be one meta render on hydration)
+                window.addEventListener('DOMContentLoaded', cleanUpSSR, { once: true });
+            }
+            else {
+                cleanUpSSR();
+            }
         }
         const teleports = {};
         for (const key in active) {
@@ -923,6 +936,7 @@ MetaManager.create = (isSSR, config, resolver) => {
         }
         return resolver.resolve(options, contexts, active, key, pathSegments);
     };
+    const active = reactive({});
     const mergedObject = createMergedObject(resolve, active);
     // TODO: validate resolver
     const manager = new MetaManager(isSSR, config, mergedObject, resolver);

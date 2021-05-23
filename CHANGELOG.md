@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [3.0.0-alpha.7](https://github.com/nuxt/vue-meta/compare/v3.0.0-alpha.6...v3.0.0-alpha.7) (2021-05-23)
+
+
+### Bug Fixes
+
+* check if DOM is still loading before cleanup ([1785d4f](https://github.com/nuxt/vue-meta/commit/1785d4fef6b2c2adaa645e44419c3da883863562))
+* export ssr type declarion into ssr folder ([01e4aed](https://github.com/nuxt/vue-meta/commit/01e4aed34034984e5a523d77db9bd79e66418678))
+* get keyAttribute _either_ from section or tag config ([e551fe4](https://github.com/nuxt/vue-meta/commit/e551fe46fe6f81726f6f6ce9734aedccdc0753df))
+* get keyAttribute either from section or tag config ([3b3d3f4](https://github.com/nuxt/vue-meta/commit/3b3d3f4397eb83003c5d1dd69ec862b39c9fbf37))
+* SSR active, dont use global active var due to runInNewContext: false  ([#668](https://github.com/nuxt/vue-meta/issues/668)) ([6593e92](https://github.com/nuxt/vue-meta/commit/6593e9272dea7585cb72b925beafad2020c623db))
+* use document.title to update title on the client ([88d57e7](https://github.com/nuxt/vue-meta/commit/88d57e71993bab8866cc9de22534b39ca01dbf33))
+
 ## [3.0.0-alpha.6](https://github.com/nuxt/vue-meta/compare/v3.0.0-alpha.5...v3.0.0-alpha.6) (2021-05-17)
 
 
