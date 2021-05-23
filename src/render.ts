@@ -174,8 +174,9 @@ export function renderTag (
     if (!valueAttribute) {
       content = getSlotContent(context, slotName, content, data)
     } else {
-      const { nameless, keyAttribute } = config
+      const { nameless } = config
       if (!nameless) {
+        const keyAttribute = getTagConfig('keyAttribute')
         if (keyAttribute) {
           attributes[keyAttribute] = fullName
         }
