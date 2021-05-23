@@ -177,16 +177,22 @@ export class MetaManager {
     if (!isSSR && !this.ssrCleanedUp) {
       this.ssrCleanedUp = true
 
-      // Listen for DOM loaded because tags in the body couldnt
-      // have loaded yet once the manager does it first render
-      // (preferable there should only be one meta render on hydration)
-      window.addEventListener('DOMContentLoaded', () => {
+      const cleanUpSSR = () => {
         const ssrTags = document.querySelectorAll(`[${ssrAttribute}]`)
 
         if (ssrTags && ssrTags.length) {
           ssrTags.forEach(el => el.parentNode && el.parentNode.removeChild(el))
         }
-      }, { once: true })
+      }
+
+      if (document.readyState === 'loading') {
+        // Listen for DOM loaded because tags in the body couldnt
+        // have loaded yet once the manager does it first render
+        // (preferable there should only be one meta render on hydration)
+        window.addEventListener('DOMContentLoaded', cleanUpSSR, { once: true })
+      } else {
+        cleanUpSSR()
+      }
     }
 
     const teleports: MetaTeleports = {}
