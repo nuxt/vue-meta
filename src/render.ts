@@ -176,7 +176,7 @@ export function renderTag (
     } else {
       const { nameless } = config
       if (!nameless) {
-        const keyAttribute = getTagConfig('keyAttribute')
+        const keyAttribute = config.keyAttribute || getTagConfig('keyAttribute')
         if (keyAttribute) {
           attributes[keyAttribute] = fullName
         }
