@@ -169,7 +169,7 @@ export class MetaManager {
   }
 
   render ({ slots }: { slots?: Slots } = {}): VNode[] {
-    const active = this.target.context.active;
+    const active = this.target.context.active
     // TODO: clean this method
     const { isSSR } = this
 
