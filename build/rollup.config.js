@@ -183,7 +183,7 @@ export default [
   {
     input: r('../dist/src/ssr.d.ts'),
     output: [{
-      file: `dist/${pkg.name}-ssr.d.ts`,
+      file: 'ssr/index.d.ts',
       format: 'es'
     }],
     plugins: [dts()]
