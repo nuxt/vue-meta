@@ -6,6 +6,9 @@ export * from './config'
 
 export type Modify<T, R> = Omit<T, keyof R> & R;
 
+export type Truthy<T> = T extends undefined | void | null | false | 0 | '' ? never : T
+export type ExcludesFalsy = <T>(x: T) => x is Truthy<T>
+
 export type TODO = any
 
 /**

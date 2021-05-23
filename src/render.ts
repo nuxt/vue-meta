@@ -12,7 +12,8 @@ import type {
   MetaRendered,
   MetaTagConfigKey,
   SlotScopeProperties,
-  TODO
+  TODO,
+  ExcludesFalsy
 } from './types'
 
 const cachedElements: {
@@ -77,6 +78,7 @@ export function renderGroup (
 
       return renderTag(context, key, data[childKey], config as MetaConfigSectionTag, groupConfig)
     })
+    .filter(Boolean as any as ExcludesFalsy)
     .flat()
 }
 
@@ -86,7 +88,7 @@ export function renderTag (
   data: TODO,
   config: MetaConfigSectionTag = {},
   groupConfig?: MetaGroupConfig
-): MetaRendered | MetaRenderedNode {
+): MetaRendered | MetaRenderedNode | void {
   // console.info('renderTag', key, data, config, groupConfig)
 
   const contentAttributes = ['content', 'json', 'rawContent']
@@ -97,6 +99,7 @@ export function renderTag (
       .map((child) => {
         return renderTag(context, key, child, config, groupConfig)
       })
+      .filter(Boolean as any as ExcludesFalsy)
       .flat()
   }
 
@@ -118,7 +121,7 @@ export function renderTag (
         return data.map(({ vnode }) => vnode)
       }
 
-      return data.vnode
+      return data && data.vnode
     })
   } else {
     let i = 0
@@ -193,6 +196,11 @@ export function renderTag (
     groupConfig && groupConfig.tagNamespace
       ? `${groupConfig.tagNamespace}:${tag}`
       : tag
+
+  if (finalTag === 'title' && !context.isSSR) {
+    document.title = content
+    return
+  }
 
   // console.info('FINAL TAG', finalTag)
   // console.log('      ATTRIBUTES', attributes)
