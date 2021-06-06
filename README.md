@@ -169,6 +169,22 @@ export function renderPage() {
 }
 ```
 
+### Use Options API
+```js
+// Install the plugin first
+import { plugin as vueMetaPlugin } from 'vue-meta'
+app.use(vueMetaPlugin)
+
+// then in your Component.vue
+export default {
+  metaInfo() {
+    return {
+      title: 'My Options API title',
+    }
+  }
+}
+```
+
 ## Old versions
 
 Click [here](https://github.com/nuxt/vue-meta/tree/master) if you are looking for the old v2 readme
