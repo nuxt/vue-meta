@@ -13,6 +13,7 @@
     "dist/*.js",
     "dist/vue-meta.d.ts",
     "ssr/*.js",
+    "ssr/index.d.ts",
     "README.md"
   ],
   "types": "dist/vue-meta.d.ts",
