@@ -80,6 +80,38 @@ $ npm install vue-meta@next --save
 
 ## Quick Usage
 
+### Setup
+
+```js
+// main.ts
+import { createApp as createVueApp } from 'vue'
+import { createMemoryHistory } from 'vue-router'
+import { createMetaManager, plugin as metaPlugin } from 'vue-meta'
+import App from './App'
+
+export const createApp = (base: string) => {
+  const app = createVueApp(App)
+  const router = createMemoryHistory(base)
+  const metaManager = createMetaManager()
+
+  app.use(router)
+  app.use(metaManager)
+  app.use(metaPlugin) // optional, only needed for OptionsAPI (see below)
+
+  return {
+    app,
+    router,
+    metaManager
+  }
+}
+
+// browser.ts
+import { createApp } from './main'
+
+const { app, router } = createApp('/')
+router.isReady().then(() => app.mount('#app'))
+```
+
 ### useApi
 
 ```js
