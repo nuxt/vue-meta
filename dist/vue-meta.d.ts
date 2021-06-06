@@ -1,5 +1,5 @@
 /**
- * vue-meta v3.0.0-alpha.7
+ * vue-meta v3.0.0-alpha.8
  * (c) 2021
  * - Pim (@pimlie)
  * - All the amazing contributors
@@ -63,6 +63,110 @@ declare class MetaManager {
         slots?: Slots;
     }): VNode[];
 }
+
+interface AttributeProperty {
+    [key: string]: string | string[];
+}
+interface MetaDataProperty {
+    vmid?: string;
+    once?: boolean;
+    skip?: boolean;
+    body?: boolean;
+    pbody?: boolean;
+    [key: string]: any;
+}
+interface MetaPropertyCharset extends MetaDataProperty {
+    charset: string;
+}
+interface MetaPropertyEquiv extends MetaDataProperty {
+    httpEquiv: string;
+    content: string;
+}
+interface MetaPropertyTrueEquiv extends MetaDataProperty {
+    'http-equiv': string;
+    content: string;
+}
+interface MetaPropertyName extends MetaDataProperty {
+    name: string;
+    content: string;
+}
+interface MetaPropertyMicrodata extends MetaDataProperty {
+    itemprop: string;
+    content: string;
+}
+interface MetaPropertyProperty extends MetaDataProperty {
+    property: string;
+    content: string;
+}
+interface LinkPropertyBase extends MetaDataProperty {
+    rel: string;
+    crossOrigin?: string | null;
+    media?: string;
+    nonce?: string;
+    referrerPolicy?: string;
+    rev?: string;
+    type?: string;
+}
+interface LinkPropertyHref extends LinkPropertyBase {
+    href?: string;
+    hreflang?: string;
+    callback?: void;
+}
+interface LinkPropertyHrefCallback extends LinkPropertyBase {
+    vmid: string;
+    href?: string;
+    hreflang?: string;
+}
+interface StyleProperty extends MetaDataProperty {
+    cssText: string;
+    media?: string;
+    nonce?: string;
+    type?: string;
+}
+interface ScriptPropertyBase extends MetaDataProperty {
+    type?: string;
+    charset?: string;
+    async?: boolean;
+    defer?: boolean;
+    crossOrigin?: string;
+    nonce?: string;
+}
+interface ScriptPropertyText extends ScriptPropertyBase {
+    innerHTML: string;
+}
+interface ScriptPropertySrc extends ScriptPropertyBase {
+    src: string;
+    callback?: void;
+}
+interface ScriptPropertySrcCallback extends ScriptPropertyBase {
+    vmid: string;
+}
+declare type JsonVal = string | number | boolean | JsonObj | JsonObj[] | null;
+interface JsonObj {
+    [key: string]: JsonVal | JsonVal[];
+}
+interface ScriptPropertyJson extends ScriptPropertyBase {
+    json: JsonObj;
+}
+interface NoScriptProperty extends MetaDataProperty {
+    innerHTML: string;
+}
+interface ComponentMetaInfo {
+    title?: string;
+    htmlAttrs?: AttributeProperty;
+    headAttrs?: AttributeProperty;
+    bodyAttrs?: AttributeProperty;
+    base?: {
+        target: string;
+        href: string;
+    };
+    meta?: (MetaPropertyCharset | MetaPropertyEquiv | MetaPropertyTrueEquiv | MetaPropertyName | MetaPropertyMicrodata | MetaPropertyProperty)[];
+    link?: (LinkPropertyBase | LinkPropertyHref | LinkPropertyHrefCallback)[];
+    style?: StyleProperty[];
+    script?: (ScriptPropertyText | ScriptPropertySrc | ScriptPropertySrcCallback | ScriptPropertyJson)[];
+    noscript?: NoScriptProperty[];
+}
+declare type ComponentOptionsMetaInfo = ComponentMetaInfo | (() => ComponentMetaInfo);
 
 declare type MetaConfigSectionKey = 'tag' | 'to' | 'keyAttribute' | 'valueAttribute' | 'nameless' | 'group' | 'namespaced' | 'namespacedAttribute' | 'attributesFor';
 interface MetaConfigSectionTag {
@@ -191,6 +295,9 @@ declare module '@vue/runtime-core' {
         $metaManager: MetaManager;
         $metaGuards: MetaGuards;
     }
+    interface ComponentCustomOptions {
+        metaInfo?: ComponentOptionsMetaInfo;
+    }
 }
 
 declare const setup: MetaResolveSetup;
@@ -207,6 +314,11 @@ declare namespace deepest_d {
 
 declare const defaultConfig: MetaConfig;
 
+declare type PluginOptions = {
+    keyName: string;
+};
+declare const install: (app: App, _options?: Partial<PluginOptions>) => void;
+
 interface ResolveOptionPredicament<T, U> {
     (currentValue: T | undefined, context: U): T;
 }
@@ -216,4 +328,4 @@ declare function getCurrentManager(vm?: ComponentInternalInstance): MetaManager 
 declare function useMeta(source: MetaSource, manager?: MetaManager): MetaProxy;
 declare function useActiveMeta(): MetaActive;
 
-export { ExcludesFalsy, MetaActive, MetaConfig, MetaConfigSection, MetaConfigSectionAttribute, MetaConfigSectionGroup, MetaConfigSectionKey, MetaConfigSectionTag, MetaGroupConfig, MetaGuardRemoved, MetaGuards, MetaProxy, MetaRenderContext, MetaRendered, MetaRenderedNode, MetaResolveContext, MetaResolveSetup, MetaResolver, MetaResolverSetup, MetaSource, MetaSourceProxy, MetaTagConfig, MetaTagConfigKey, MetaTagName, MetaTagsConfig, MetaTeleports, Modify, SlotScopeProperties, TODO, Truthy, createMetaManager, deepest_d as deepestResolver, defaultConfig, getCurrentManager, resolveOption, useActiveMeta, useMeta };
+export { ExcludesFalsy, MetaActive, MetaConfig, MetaConfigSection, MetaConfigSectionAttribute, MetaConfigSectionGroup, MetaConfigSectionKey, MetaConfigSectionTag, MetaGroupConfig, MetaGuardRemoved, MetaGuards, MetaProxy, MetaRenderContext, MetaRendered, MetaRenderedNode, MetaResolveContext, MetaResolveSetup, MetaResolver, MetaResolverSetup, MetaSource, MetaSourceProxy, MetaTagConfig, MetaTagConfigKey, MetaTagName, MetaTagsConfig, MetaTeleports, Modify, SlotScopeProperties, TODO, Truthy, createMetaManager, deepest_d as deepestResolver, defaultConfig, getCurrentManager, install as plugin, resolveOption, useActiveMeta, useMeta };

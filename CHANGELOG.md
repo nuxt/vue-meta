@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [3.0.0-alpha.8](https://github.com/nuxt/vue-meta/compare/v3.0.0-alpha.7...v3.0.0-alpha.8) (2021-06-06)
+
+
+### Features
+
+* add plugin for options api support ([0745f16](https://github.com/nuxt/vue-meta/commit/0745f1668388c85d9a4eb50a26a350f8278b490c))
+
+
+### Bug Fixes
+
+* remove unsupported meta types from v2 ([1bf1184](https://github.com/nuxt/vue-meta/commit/1bf1184c6e1ffe488c17b75ac54b7711d84f8fd9))
+
 ## [3.0.0-alpha.7](https://github.com/nuxt/vue-meta/compare/v3.0.0-alpha.6...v3.0.0-alpha.7) (2021-05-23)
 
 

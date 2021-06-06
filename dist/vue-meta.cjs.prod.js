@@ -1,5 +1,5 @@
 /**
- * vue-meta v3.0.0-alpha.7
+ * vue-meta v3.0.0-alpha.8
  * (c) 2021
  * - Pim (@pimlie)
  * - All the amazing contributors
@@ -779,9 +779,12 @@ function addVnode(isSSR, teleports, to, vnodes) {
 }
 const createMetaManager = (isSSR = false, config, resolver) => MetaManager.create(isSSR, config || defaultConfig, resolver || defaultResolver);
 class MetaManager {
+    isSSR = false;
+    config;
+    target;
+    resolver;
+    ssrCleanedUp = false;
     constructor(isSSR, config, target, resolver) {
-        this.isSSR = false;
-        this.ssrCleanedUp = false;
         this.isSSR = isSSR;
         this.config = config;
         this.target = target;
@@ -789,6 +792,19 @@ class MetaManager {
             this.resolver = resolver;
         }
     }
+    static create = (isSSR, config, resolver) => {
+        const resolve = (options, contexts, active, key, pathSegments) => {
+            if (isFunction(resolver)) {
+                return resolver(options, contexts, active, key, pathSegments);
+            }
+            return resolver.resolve(options, contexts, active, key, pathSegments);
+        };
+        const active = vue.reactive({});
+        const mergedObject = createMergedObject(resolve, active);
+        // TODO: validate resolver
+        const manager = new MetaManager(isSSR, config, mergedObject, resolver);
+        return manager;
+    };
     install(app) {
         app.component('Metainfo', Metainfo);
         app.config.globalProperties.$metaManager = this;
@@ -913,24 +929,36 @@ class MetaManager {
         });
     }
 }
-MetaManager.create = (isSSR, config, resolver) => {
-    const resolve = (options, contexts, active, key, pathSegments) => {
-        if (isFunction(resolver)) {
-            return resolver(options, contexts, active, key, pathSegments);
+
+const defaultOptions = {
+    keyName: 'metaInfo'
+};
+const createMixin = options => ({
+    created() {
+        const instance = vue.getCurrentInstance();
+        if (!instance?.type || !(options.keyName in instance.type)) {
+            return;
         }
-        return resolver.resolve(options, contexts, active, key, pathSegments);
-    };
-    const active = vue.reactive({});
-    const mergedObject = createMergedObject(resolve, active);
-    // TODO: validate resolver
-    const manager = new MetaManager(isSSR, config, mergedObject, resolver);
-    return manager;
+        const metaInfo = instance.type[options.keyName];
+        if (isFunction(metaInfo)) {
+            const computedMetaInfo = vue.computed(metaInfo);
+            useMeta(computedMetaInfo);
+        }
+        else {
+            useMeta(metaInfo);
+        }
+    }
+});
+const install = (app, _options = {}) => {
+    const options = Object.assign({}, defaultOptions, _options);
+    app.mixin(createMixin(options));
 };
 
 exports.createMetaManager = createMetaManager;
 exports.deepestResolver = defaultResolver;
 exports.defaultConfig = defaultConfig;
 exports.getCurrentManager = getCurrentManager;
+exports.plugin = install;
 exports.resolveOption = resolveOption;
 exports.useActiveMeta = useActiveMeta;
 exports.useMeta = useMeta;
