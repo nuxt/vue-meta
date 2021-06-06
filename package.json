@@ -67,7 +67,7 @@
     "@babel/node": "^7.10.1",
     "@babel/plugin-syntax-dynamic-import": "^7.8.3",
     "@babel/preset-env": "^7.10.2",
-    "@nuxtjs/eslint-config": "^3.0.0",
+    "@nuxtjs/eslint-config": "^6.0.1",
     "@vue/server-test-utils": "^1.0.3",
     "@vue/test-utils": "^1.0.3",
     "@vuepress/plugin-google-analytics": "^1.5.1",
