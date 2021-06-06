@@ -127,11 +127,6 @@ export interface ComponentMetaInfo {
     style?: StyleProperty[]
     script?: (ScriptPropertyText | ScriptPropertySrc | ScriptPropertySrcCallback | ScriptPropertyJson)[]
     noscript?: NoScriptProperty[]
-
-    __dangerouslyDisableSanitizers?: string[]
-    __dangerouslyDisableSanitizersByTagID?: {
-      [key: string]: string[]
-    }
   }
 
 export type ComponentOptionsMetaInfo = ComponentMetaInfo | (() => ComponentMetaInfo)
