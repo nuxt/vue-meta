@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [3.0.0-alpha.9](https://github.com/nuxt/vue-meta/compare/v3.0.0-alpha.8...v3.0.0-alpha.9) (2021-06-06)
+
+
+### Bug Fixes
+
+* include ssr types in npm publish ([8e3f785](https://github.com/nuxt/vue-meta/commit/8e3f785160a3c31971e3b11e66ad56b6e3c03b06))
+
 ## [3.0.0-alpha.8](https://github.com/nuxt/vue-meta/compare/v3.0.0-alpha.7...v3.0.0-alpha.8) (2021-06-06)
 
 

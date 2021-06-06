@@ -1,5 +1,5 @@
 /**
- * vue-meta v3.0.0-alpha.8
+ * vue-meta v3.0.0-alpha.9
  * (c) 2021
  * - Pim (@pimlie)
  * - All the amazing contributors
