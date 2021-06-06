@@ -170,6 +170,10 @@ export function renderPage() {
 ```
 
 ### Use Options API
+The plugin only adds support for the metaInfo component prop. You still need to create a meta manager.
+
+> Compared to v2, the properties _changed_, _afterNavigation_ & the _\_\_dangerouslyX_ props are not support.
+
 ```js
 // Install the plugin first
 import { plugin as vueMetaPlugin } from 'vue-meta'
