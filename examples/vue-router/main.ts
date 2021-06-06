@@ -1,13 +1,14 @@
 import { h, createApp as createVueApp, createSSRApp } from 'vue'
 import { createRouter as createVueRouter, createMemoryHistory, createWebHistory } from 'vue-router'
-import { createMetaManager as createVueMetaManager, defaultConfig, useMeta } from '../../src'
+import { createMetaManager as createVueMetaManager, defaultConfig, useMeta, plugin } from '../../src'
 import * as deepestResolver from '../../src/resolvers/deepest'
 import App from './App'
-import ChildComponent from './Child'
+import PageComponent from './Page'
+import PageOptions from './Options'
 
-function createComponent () {
+function createPage () {
   return {
-    render: () => h(ChildComponent)
+    render: () => h(PageComponent)
   }
 }
 /*
@@ -34,8 +35,9 @@ const createMetaManager = (isSSR = false) => createVueMetaManager(
 const createRouter = (base: string, isSSR = false) => createVueRouter({
   history: isSSR ? createMemoryHistory(base) : createWebHistory(base),
   routes: [
-    { name: 'home', path: '/', component: createComponent() },
-    { name: 'about', path: '/about', component: createComponent() }
+    { name: 'home', path: '/', component: createPage() },
+    { name: 'about', path: '/about', component: createPage() },
+    { name: 'options', path: '/options', component: PageOptions }
   ]
 })
 
@@ -46,6 +48,7 @@ const createApp = (base: string, isSSR = null) => {
 
   app.use(router)
   app.use(metaManager)
+  app.use(plugin)
 
   useMeta(
     {

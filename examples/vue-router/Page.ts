@@ -7,6 +7,11 @@ let metaUpdated = 'no'
 
 export default defineComponent({
   name: 'ChildComponent',
+  metaInfo () {
+    return {
+      title: 'asdf'
+    }
+  },
   setup () {
     const route = useRoute()
 

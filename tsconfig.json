@@ -32,8 +32,9 @@
     }
   },
   "include": [
-    "src/global.d.ts",
     "src/**/*.ts",
-    "test/**/*.ts"
+    "test/**/*.ts",
+    "examples/**/*.ts",
+    "examples/**/*.vue"
   ],
 }

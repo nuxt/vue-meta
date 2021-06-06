@@ -44,13 +44,13 @@ module.exports = (isBrowser) => {
     module: {
       rules: [
         {
+          test: /\.vue$/,
+          use: 'vue-loader'
+        },
+        {
           test: /\.tsx?$/,
           use: 'ts-loader',
           exclude: /node_modules/
-        },
-        {
-          test: /\.vue$/,
-          use: 'vue-loader'
         }
       ]
     },

@@ -1,3 +1,4 @@
+import { ComponentOptionsMetaInfo } from './options'
 import type { VNode, Slots, ComponentInternalInstance } from 'vue'
 import type { MergedObject, ResolveContext, ResolveMethod } from '../object-merge'
 import type { MetaManager } from '../manager'
@@ -117,5 +118,9 @@ declare module '@vue/runtime-core' {
   interface ComponentInternalInstance {
     $metaManager: MetaManager
     $metaGuards: MetaGuards
+  }
+
+  interface ComponentCustomOptions {
+    metaInfo?: ComponentOptionsMetaInfo
   }
 }

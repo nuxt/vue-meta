@@ -182,6 +182,7 @@ export default {
     <ul class="menu">
       <li><router-link to="/">Home</router-link></li>
       <li><router-link to="/about">About</router-link></li>
+      <li><router-link to="/options">Options</router-link></li>
     </ul>
 
     <router-view v-slot="{ Component }" class="page">
