@@ -1,5 +1,5 @@
-import { resolveOption } from './index'
 import type { MetaResolveContext, MetaResolveSetup } from '../types'
+import { resolveOption } from './index'
 
 type MergeResolveContextDeepest = MetaResolveContext & {
   depth: number

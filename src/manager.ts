@@ -1,12 +1,12 @@
 import { h, reactive, onUnmounted, App, Teleport, Comment, getCurrentInstance, ComponentInternalInstance, Slots } from 'vue'
 import { isArray, isFunction } from '@vue/shared'
+import type { VNode, ComponentPublicInstance } from 'vue'
 import { createMergedObject, MergedObjectBuilder } from './object-merge'
 import { renderMeta } from './render'
 import { metaActiveKey } from './symbols'
 import { Metainfo } from './Metainfo'
 import { defaultConfig } from './config/default'
 import * as defaultResolver from './resolvers/deepest'
-import type { VNode, ComponentPublicInstance } from 'vue'
 import type { ResolveMethod } from './object-merge'
 
 import type {

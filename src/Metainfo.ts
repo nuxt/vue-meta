@@ -1,6 +1,6 @@
 import { defineComponent } from 'vue'
-import { getCurrentManager } from './useApi'
 import type { VNodeProps, AllowedComponentProps, ComponentCustomProps } from 'vue'
+import { getCurrentManager } from './useApi'
 
 export const MetainfoImpl = defineComponent({
   name: 'Metainfo',

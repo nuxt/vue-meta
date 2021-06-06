@@ -1,7 +1,7 @@
-import { ComponentOptionsMetaInfo } from './options'
 import type { VNode, Slots, ComponentInternalInstance } from 'vue'
 import type { MergedObject, ResolveContext, ResolveMethod } from '../object-merge'
 import type { MetaManager } from '../manager'
+import { ComponentOptionsMetaInfo } from './options'
 
 export * from './config'
 
