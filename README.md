@@ -174,6 +174,8 @@ unmount() // Remove metadata when needed
 
 ### SSR 
 
+> Note that vue-meta/ssr is a ESM module so you might need to tell Webpack/Babel to transform it
+
 ```js
 import { createSSRApp } from 'vue'
 import { renderToString } from '@vue/server-renderer'
