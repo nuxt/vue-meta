@@ -27,6 +27,10 @@ export const defaultConfig: MetaConfig = {
     namespacedAttribute: true,
     tag: 'meta'
   },
+  'theme-color': {
+    tag: 'meta',
+    keyAttribute: 'name',
+  },
   htmlAttrs: {
     attributesFor: 'html'
   },
