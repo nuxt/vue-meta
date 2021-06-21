@@ -59,6 +59,10 @@ Please find the documention on https://vue-meta.nuxtjs.org
 
 Looking for more examples what vue-meta can do for you? Have a look at the [examples](https://github.com/nuxt/vue-meta/tree/master/examples)
 
+## What It Is Not
+
+Vue Meta, on it's own, is not a solution to rendering dynamic metadata for consumption by robots and scrapers, such as Facebook or Twitter. Scrapers do not execute javascript, so any dyanmic meta solution that is solely implemented in Javascript will never render the correct tags for robots. There are several approaches to solving this problem, including: server-side rendering of pages to HTML, use Nginx/Apache to serve alternate HTML pages for robots, do similar with express.js or other middleware.
+
 ## Installation
 
 ##### Yarn
