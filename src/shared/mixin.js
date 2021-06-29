@@ -26,11 +26,14 @@ export default function createMixin (Vue, options) {
         configurable: true,
         get () {
           // Show deprecation warning once when devtools enabled
-          if (devtoolsEnabled && !$root[rootConfigKey].deprecationWarningShown) {
-            warn('VueMeta DeprecationWarning: _hasMetaInfo has been deprecated and will be removed in a future version. Please use hasMetaInfo(vm) instead')
-            $root[rootConfigKey].deprecationWarningShown = true
+          try {
+            if (devtoolsEnabled && !$root[rootConfigKey].deprecationWarningShown) {
+              warn('VueMeta DeprecationWarning: _hasMetaInfo has been deprecated and will be removed in a future version. Please use hasMetaInfo(vm) instead')
+              $root[rootConfigKey].deprecationWarningShown = true
+            }
+          } finally {
+            return hasMetaInfo(this)
           }
-          return hasMetaInfo(this)
         }
       })
 
