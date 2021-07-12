@@ -13,7 +13,7 @@ export const tags: MetaTagsConfig = {
   },
   meta: {
     contentAsAttribute: true,
-    keyAttribute: 'name',
+    nameless: true,
     attributes: ['content', 'name', 'http-equiv', 'charset']
   },
   link: {
