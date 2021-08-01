@@ -21,7 +21,7 @@ export const createMixin: CreateMixin = options => ({
 
     const metaInfo = (instance.type as any)[options.keyName] as ComponentOptionsMetaInfo
     if (isFunction(metaInfo)) {
-      const computedMetaInfo = computed(metaInfo)
+      const computedMetaInfo = computed(metaInfo.bind(this))
       useMeta(computedMetaInfo)
     } else {
       useMeta(metaInfo)

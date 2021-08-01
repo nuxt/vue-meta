@@ -1,3 +1,5 @@
+import { ComponentOptionsMixin } from 'vue'
+
 export interface AttributeProperty {
     [key: string]: string | string[]
   }
@@ -129,4 +131,5 @@ export interface ComponentMetaInfo {
     noscript?: NoScriptProperty[]
   }
 
-export type ComponentOptionsMetaInfo = ComponentMetaInfo | (() => ComponentMetaInfo)
+// TODO: how to infer the real component options in this?
+export type ComponentOptionsMetaInfo = ComponentMetaInfo | ((this: ComponentOptionsMixin) => ComponentMetaInfo)
