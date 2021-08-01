@@ -175,7 +175,7 @@ export default [
       file: `dist/${pkg.name}.d.ts`,
       format: 'es',
       banner: `${banner}
-/// <reference path="ssr.d.ts" />
+/// <reference path="../ssr/index.d.ts" />
       `
     }],
     plugins: [dts()]
