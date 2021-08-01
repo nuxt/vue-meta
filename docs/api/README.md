@@ -176,7 +176,7 @@ set({
 setTimeout(() => remove(), 3000)
 ```
 
-There is no reactivity for custom apps. The integrator need to take care of that and call `set` and `remove` when appropiate. If you call `addApp.set` on the client before the app is mounted, the tags will be processed on the first refresh. If you call set when the app is mounted they tags are immediately processed.
+There is no reactivity for custom apps. The integrator need to take care of that and call `set` and `remove` when appropriate. If you call `addApp.set` on the client before the app is mounted, the tags will be processed on the first refresh. If you call set when the app is mounted they tags are immediately processed.
 
 The function is called addApp because the added metaInfo is treated exactly the same as when there are multiple apps on one page. Eg the tags that will be added will also list the `appId` you specifiy:
 ```html
