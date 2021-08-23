@@ -1,6 +1,6 @@
 /**
  * vue-meta v2.4.0
- * (c) 2020
+ * (c) 2021
  * - Declan de Wet
  * - Sébastien Chopin (@Atinux)
  * - Pim (@pimlie)
@@ -1488,6 +1488,10 @@
   function setMetaInfo(rootVm, appId, options, metaInfo) {
     // if a vm exists _and_ its mounted then immediately update
     if (rootVm && rootVm.$el) {
+      if (appsMetaInfo && appsMetaInfo[appId]) {
+        delete appsMetaInfo[appId];
+      }
+
       return updateClientMetaInfo(appId, options, metaInfo);
     } // store for later, the info
     // will be set on the first refresh

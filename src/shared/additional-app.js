@@ -15,6 +15,9 @@ export function addApp (rootVm, appId, options) {
 export function setMetaInfo (rootVm, appId, options, metaInfo) {
   // if a vm exists _and_ its mounted then immediately update
   if (rootVm && rootVm.$el) {
+    if (appsMetaInfo && appsMetaInfo[appId]) {
+      delete appsMetaInfo[appId]
+    }
     return updateClientMetaInfo(appId, options, metaInfo)
   }
 
