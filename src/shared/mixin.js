@@ -99,7 +99,9 @@ export default function createMixin (Vue, options) {
           // credit for this suggestion goes to [Sébastien Chopin](https://github.com/Atinux)
           this.$on('hook:created', function () {
             this.$watch('$metaInfo', function () {
-              triggerUpdate(options, this[rootKey], 'watcher')
+              if (!this._inactive) {
+                triggerUpdate(options, this[rootKey], 'watcher')
+              }
             })
           })
         }
