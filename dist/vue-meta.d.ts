@@ -6,7 +6,7 @@
  * @license MIT
  */
 
-/// <reference path="ssr.d.ts" />
+/// <reference path="../ssr/index.d.ts" />
       
 import { App, ComponentInternalInstance, Slots, VNode } from 'vue';
 
