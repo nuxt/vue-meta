@@ -199,7 +199,13 @@ export function renderTag (
       : tag
 
   if (finalTag === 'title' && !context.isSSR) {
-    document.title = content
+    const { titleTemplate: template } = context.metainfo
+    const title = template
+      ? isFunction(template)
+        ? template(content)
+        : template.replace( /%s/g, content)
+      : content;
+    document.title = title
     return
   }
 
