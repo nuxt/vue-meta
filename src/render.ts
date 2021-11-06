@@ -203,8 +203,8 @@ export function renderTag (
     const title = template
       ? isFunction(template)
         ? template(content)
-        : template.replace( /%s/g, content)
-      : content;
+        : template.replace(/%s/g, content)
+      : content
     document.title = title
     return
   }
