@@ -200,6 +200,10 @@ export class MetaManager {
     for (const key in active) {
       const config = this.config[key] || {}
 
+      if (key === 'titleTemplate') {
+        continue;
+      }
+
       let renderedNodes = renderMeta(
         { isSSR, metainfo: active, slots },
         key,
