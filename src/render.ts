@@ -269,7 +269,8 @@ export function renderAttributes (
     let content = getSlotContent(context, `${key}(${attr})`, data[attr], data)
 
     if (isArray(content)) {
-      content = content.join(',')
+      const joinWith: string = (attr === 'class') ? ' ' : ','
+      content = content.join(joinWith)
     }
 
     el.setAttribute(attr, content || '')
