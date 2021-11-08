@@ -201,7 +201,7 @@ export class MetaManager {
       const config = this.config[key] || {}
 
       if (key === 'titleTemplate') {
-        continue;
+        continue
       }
 
       let renderedNodes = renderMeta(
