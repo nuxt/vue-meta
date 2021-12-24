@@ -27,8 +27,9 @@ function install (Vue, options) {
 }
 
 if (process.client) {
-  // automatic install
-  if (!isUndefined(window) && !isUndefined(window.Vue)) {
+  // automatic install if window.Vue is not undefined
+  // it can be skipped by setting `window.vueMetaSkipAutoInstall = true` before load vue-meta script
+  if (!isUndefined(window) && !isUndefined(window.Vue) && !window.vueMetaSkipAutoInstall) {
     /* istanbul ignore next */
     install(window.Vue)
   }
