@@ -120,7 +120,7 @@ declare module '@vue/runtime-core' {
     $metaGuards: MetaGuards
   }
 
-  interface ComponentCustomOptions {
+  interface ComponentCustomProperties {
     metaInfo?: ComponentOptionsMetaInfo
   }
 }
