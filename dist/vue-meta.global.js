@@ -1,6 +1,6 @@
 /**
- * vue-meta v3.0.0-alpha.9
- * (c) 2021
+ * vue-meta v3.0.0-alpha.10
+ * (c) 2022
  * - Pim (@pimlie)
  * - All the amazing contributors
  * @license MIT
@@ -958,7 +958,7 @@ var VueMeta = (function (exports, vue) {
           }
           const metaInfo = instance.type[options.keyName];
           if (isFunction(metaInfo)) {
-              const computedMetaInfo = vue.computed(metaInfo);
+              const computedMetaInfo = vue.computed(metaInfo.bind(this));
               useMeta(computedMetaInfo);
           }
           else {

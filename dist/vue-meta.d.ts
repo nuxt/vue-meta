@@ -1,14 +1,14 @@
 /**
- * vue-meta v3.0.0-alpha.9
- * (c) 2021
+ * vue-meta v3.0.0-alpha.10
+ * (c) 2022
  * - Pim (@pimlie)
  * - All the amazing contributors
  * @license MIT
  */
 
-/// <reference path="ssr.d.ts" />
+/// <reference path="../ssr/index.d.ts" />
       
-import { App, ComponentInternalInstance, Slots, VNode } from 'vue';
+import { App, ComponentInternalInstance, Slots, VNode, ComponentOptionsMixin } from 'vue';
 
 declare const IS_PROXY: unique symbol;
 declare const PROXY_SOURCES: unique symbol;
@@ -166,7 +166,7 @@ interface ComponentMetaInfo {
     script?: (ScriptPropertyText | ScriptPropertySrc | ScriptPropertySrcCallback | ScriptPropertyJson)[];
     noscript?: NoScriptProperty[];
 }
-declare type ComponentOptionsMetaInfo = ComponentMetaInfo | (() => ComponentMetaInfo);
+declare type ComponentOptionsMetaInfo = ComponentMetaInfo | ((this: ComponentOptionsMixin) => ComponentMetaInfo);
 
 declare type MetaConfigSectionKey = 'tag' | 'to' | 'keyAttribute' | 'valueAttribute' | 'nameless' | 'group' | 'namespaced' | 'namespacedAttribute' | 'attributesFor';
 interface MetaConfigSectionTag {
