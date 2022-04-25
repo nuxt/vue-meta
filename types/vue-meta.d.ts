@@ -73,32 +73,32 @@ export interface MetaPropertyCharset extends MetaDataProperty {
 
 export interface MetaPropertyEquiv extends MetaDataProperty {
   httpEquiv: string,
-  content: string,
+  content: string | null | undefined,
   template?: (chunk: string) => string
 }
 
 export interface MetaPropertyTrueEquiv extends MetaDataProperty {
   'http-equiv': string,
-  content: string,
+  content: string | null | undefined,
   template?: (chunk: string) => string
 }
 
 export interface MetaPropertyName extends MetaDataProperty {
   name: string,
-  content: string,
+  content: string | null | undefined,
   template?: (chunk: string) => string
 }
 
 export interface MetaPropertyMicrodata extends MetaDataProperty {
   itemprop: string,
-  content: string,
+  content: string | null | undefined,
   template?: (chunk: string) => string
 }
 
 // non-w3c interface
 export interface MetaPropertyProperty extends MetaDataProperty {
   property: string,
-  content: string,
+  content: string | null | undefined,
   template?: (chunk: string) => string
 }
 
@@ -143,7 +143,7 @@ export interface ScriptPropertyBase extends MetaDataProperty {
 }
 
 export interface ScriptPropertyText extends ScriptPropertyBase {
-  innerHTML: string
+  innerHTML: string | null | undefined
 }
 
 export interface ScriptPropertySrc extends ScriptPropertyBase {
@@ -167,7 +167,7 @@ export interface ScriptPropertyJson extends ScriptPropertyBase {
 }
 
 export interface NoScriptProperty extends MetaDataProperty {
-  innerHTML: string,
+  innerHTML: string | null | undefined,
 }
 
 export interface MetaInfo {
