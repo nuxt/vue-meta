@@ -85,7 +85,7 @@ export function renderGroup (
 export function renderTag (
   context: MetaRenderContext,
   key: string,
-  data: TODO,
+  data: TODO = '',
   config: MetaConfigSectionTag = {},
   groupConfig?: MetaGroupConfig
 ): MetaRendered | MetaRenderedNode | void {
