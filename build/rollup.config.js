@@ -1,6 +1,7 @@
 import path from 'path'
 import alias from '@rollup/plugin-alias'
-// import babel from '@rollup/plugin-babel'
+import babel from '@rollup/plugin-babel'
+import { DEFAULT_EXTENSIONS } from '@babel/core'
 import commonjs from '@rollup/plugin-commonjs'
 import nodeResolve from '@rollup/plugin-node-resolve'
 import replace from '@rollup/plugin-replace'
@@ -62,11 +63,10 @@ function rollupConfig ({
         vue: 'Vue'
       }
     },
-    external,
+    external: [...external, /@babel\/runtime/],
     plugins: [
       replace(replaceConfig),
       nodeResolve(),
-      commonjs(),
       ts({
         check: !didTS,
         tsconfig: r('../tsconfig.json'),
@@ -79,7 +79,17 @@ function rollupConfig ({
           },
           exclude: ['node_modules', '__tests__', 'test-dts']
         }
-      })
+      }),
+      babel({
+        babelHelpers: 'runtime',
+        exclude: 'node_modules/**',
+        extensions: [
+          ...DEFAULT_EXTENSIONS,
+          '.ts',
+          '.tsx'
+        ]
+      }),
+      commonjs()
     ].concat(plugins)
   })
 
