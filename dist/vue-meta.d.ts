@@ -46,7 +46,7 @@ declare type MergedObjectBuilder<T> = {
 };
 
 declare type CreateMetaManagerMethod = (isSSR: boolean, config: MetaConfig, resolver: MetaResolver | ResolveMethod) => MetaManager;
-declare const createMetaManager: (isSSR?: boolean, config?: MetaConfig | undefined, resolver?: MetaResolver | undefined) => MetaManager;
+declare const createMetaManager: (isSSR?: boolean, config?: MetaConfig, resolver?: MetaResolver) => MetaManager;
 declare class MetaManager {
     isSSR: boolean;
     config: MetaConfig;
