@@ -91,7 +91,7 @@
     "eslint-plugin-vue": "^6.2.2",
     "esm": "^3.2.25",
     "fs-extra": "^9.0.1",
-    "geckodriver": "^1.19.1",
+    "geckodriver": "^3.2.0",
     "get-port": "^5.1.1",
     "hable": "3.0.0",
     "is-wsl": "^2.2.0",
