@@ -75,7 +75,7 @@
     "babel-core": "^7.0.0-bridge",
     "babel-eslint": "^10.1.0",
     "babel-jest": "^26.0.1",
-    "babel-loader": "^8.1.0",
+    "babel-loader": "^9.1.0",
     "babel-plugin-dynamic-import-node": "^2.3.3",
     "browserstack-local": "^1.4.5",
     "chromedriver": "^86.0.0",
