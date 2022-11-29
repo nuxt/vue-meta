@@ -21,6 +21,8 @@ export default function createMixin (Vue, options) {
       const $root = this[rootKey]
       const $options = this.$options
       const devtoolsEnabled = Vue.config.devtools
+      
+      $root[rootConfigKey] = {}
 
       Object.defineProperty(this, '_hasMetaInfo', {
         configurable: true,
