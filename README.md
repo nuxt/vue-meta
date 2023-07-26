@@ -1,3 +1,9 @@
+# This project is not actively maintained anymore.
+## More information can be found in https://github.com/nuxt/vue-meta/issues/808
+
+---
+
+
 ### :v::3rd_place_medal:  Check the [next](https://github.com/nuxt/vue-meta/tree/next) branch for Vue3 support
 --------------
 
