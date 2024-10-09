@@ -73,7 +73,7 @@
     "@vuepress/plugin-google-analytics": "^1.5.1",
     "@vuepress/plugin-pwa": "^1.5.1",
     "babel-core": "^7.0.0-bridge",
-    "babel-eslint": "^10.1.0",
+    "@babel/eslint-parser": "^7.11.0",
     "babel-jest": "^26.0.1",
     "babel-loader": "^8.1.0",
     "babel-plugin-dynamic-import-node": "^2.3.3",
